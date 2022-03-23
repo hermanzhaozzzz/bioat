@@ -11,6 +11,11 @@
 ##############
 # common project
 ##############
+# spyder
+.spyproject/
+*/.spyproject/
+*/.spyproject/*
+*/.spyproject/*/*
 
 # jupyterlab meta
 */.ipynb_checkpoints/
