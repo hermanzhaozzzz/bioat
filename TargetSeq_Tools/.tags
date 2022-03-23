@@ -1,0 +1,136 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Fasta	get_fasta.py	/^from pyfasta import Fasta$/;"	i
+Seq	loader.py	/^from Bio import Seq, SeqIO$/;"	i
+SeqIO	loader.py	/^from Bio import Seq, SeqIO$/;"	i
+absolute_pos	loader.py	/^            absolute_pos = start + idx_seq - 1$/;"	v
+argparse	get_detect-seq_info.py	/^import argparse$/;"	i
+argparse	get_fasta.py	/^import argparse$/;"	i
+argparse	get_target-seq_info.py	/^import argparse$/;"	i
+argparse_setting	get_detect-seq_info.py	/^def argparse_setting():$/;"	f
+argparse_setting	get_target-seq_info.py	/^def argparse_setting():$/;"	f
+args	get_detect-seq_info.py	/^    args = argparse_setting()$/;"	v
+args	get_fasta.py	/^    args = get_opt()$/;"	v
+back_indel_shift	parse_pysam.py	/^def back_indel_shift(info_index_list, cur_index) -> int:$/;"	f
+bam_file	get_detect-seq_info.py	/^    bam_file = pysam.AlignmentFile(pt_bam, "rb")$/;"	v
+bam_file	parse_pysam.py	/^    bam_file = pysam.AlignmentFile(pt_bam, "rb")$/;"	v
+bam_obj	get_detect-seq_info.py	/^                bam_obj=bam_file,$/;"	v
+bam_obj	parse_pysam.py	/^        bam_obj=bam_file,$/;"	v
+base_list	parse_pysam.py	/^            base_list = [i.upper() for i in pileup.get_query_sequences()]$/;"	v
+bowtie_table	get_detect-seq_info.py	/^        bowtie_table=pt_aligninfo,$/;"	v
+chr_name	parse_pysam.py	/^    chr_name = site_idx_list[0].split("_")[0]$/;"	v
+chrom	loader.py	/^        chrom = df_row["chrom"]$/;"	v
+columns	loader.py	/^        columns=[$/;"	v
+datefmt	parse_pysam.py	/^        datefmt="%Y-%m-%d %H:%M:%S",$/;"	v
+df	get_compare_table_for_detect_seq_and_target_seq.py	/^        df = pd.read_csv(pt_df, sep=",", header=0, index_col=False)$/;"	v
+df	loader.py	/^    df = load_region_absolute_position(bowtie_table)$/;"	v
+df	loader.py	/^    df = load_region_absolute_position(pt_aligninfo)$/;"	v
+df_detect	get_compare_table_for_detect_seq_and_target_seq.py	/^        df_detect = pd.concat([df_detect, df], axis=0, ignore_index=True)$/;"	v
+df_detect	get_compare_table_for_detect_seq_and_target_seq.py	/^    df_detect = pd.DataFrame()$/;"	v
+df_detect	get_detect-seq_info.py	/^    df_detect = pd.DataFrame(dt_all_region).T$/;"	v
+df_detect_single_base	get_detect-seq_info.py	/^    df_detect_single_base = df_region.merge(df_detect, how="left", on=["site_idx"])$/;"	v
+df_out	loader.py	/^    df_out = pd.DataFrame($/;"	v
+df_region	get_detect-seq_info.py	/^    df_region = load_everybase_from_bowtie_table($/;"	v
+df_target	get_compare_table_for_detect_seq_and_target_seq.py	/^        df_target = pd.concat([df_target, df], axis=0, ignore_index=True)$/;"	v
+df_target	get_compare_table_for_detect_seq_and_target_seq.py	/^    df_target = pd.DataFrame()$/;"	v
+dt_all_region	get_detect-seq_info.py	/^    dt_all_region = {}$/;"	v
+dt_one_region	get_detect-seq_info.py	/^            dt_one_region = get_query_site_mpileup_info($/;"	v
+dt_ref	get_detect-seq_info.py	/^    dt_ref = load_reference_fasta_as_dict($/;"	v
+dt_type	get_target-seq_info.py	/^dt_type = {$/;"	v
+fastafile	parse_pysam.py	/^        fastafile=genome_obj,$/;"	v
+filemode	parse_pysam.py	/^        filemode="w",$/;"	v
+force	parse_pysam.py	/^        force=True,$/;"	v
+format	parse_pysam.py	/^        format="%(levelname)-5s @ %(asctime)s: %(message)s ",$/;"	v
+genome_obj	get_detect-seq_info.py	/^                genome_obj=genome_ref,$/;"	v
+genome_obj	parse_pysam.py	/^        genome_obj=genome_ref,$/;"	v
+genome_ref	get_detect-seq_info.py	/^    genome_ref = pysam.FastaFile(filename=pt_ref)$/;"	v
+genome_ref	parse_pysam.py	/^    genome_ref = pysam.FastaFile(filename=pt_ref)$/;"	v
+genome_seq	loader.py	/^        genome_seq = df_row["sequence"]$/;"	v
+get_align_mismatch_pairs	parse_pysam.py	/^def get_align_mismatch_pairs(align, ref_genome_dict=None) -> list:$/;"	f
+get_opt	get_fasta.py	/^def get_opt():$/;"	f
+get_query_site_mpileup_info	get_detect-seq_info.py	/^from parse_pysam import get_query_site_mpileup_info$/;"	i
+get_query_site_mpileup_info	parse_pysam.py	/^def get_query_site_mpileup_info($/;"	f
+get_reference_sequence_from_aligned_segment	loader.py	/^def get_reference_sequence_from_aligned_segment(align, ref_genome_dict) -> SeqIO:$/;"	f
+ignore_overlaps	parse_pysam.py	/^        ignore_overlaps=ignore_overlaps,$/;"	v
+key	parse_pysam.py	/^        key = "_".join(site_idx.split("_")[:2])$/;"	v
+lens	loader.py	/^        lens = len(df_row["sequence"])$/;"	v
+level	parse_pysam.py	/^        level=log_verbose,$/;"	v
+load_everybase_from_bowtie_table	get_detect-seq_info.py	/^from loader import load_everybase_from_bowtie_table, load_reference_fasta_as_dict$/;"	i
+load_everybase_from_bowtie_table	loader.py	/^def load_everybase_from_bowtie_table($/;"	f
+load_reference_fasta_as_dict	get_detect-seq_info.py	/^from loader import load_everybase_from_bowtie_table, load_reference_fasta_as_dict$/;"	i
+load_reference_fasta_as_dict	loader.py	/^def load_reference_fasta_as_dict($/;"	f
+load_region_absolute_position	loader.py	/^def load_region_absolute_position(bowtie_table: str) -> pd.DataFrame:$/;"	f
+log_verbose	get_detect-seq_info.py	/^        log_verbose=logging.DEBUG,$/;"	v
+logging	get_compare_table_for_detect_seq_and_target_seq.py	/^import logging$/;"	i
+logging	get_detect-seq_info.py	/^import logging$/;"	i
+logging	get_target-seq_info.py	/^import logging$/;"	i
+logging	loader.py	/^import logging$/;"	i
+logging	parse_pysam.py	/^import logging$/;"	i
+logging_setting	get_compare_table_for_detect_seq_and_target_seq.py	/^def logging_setting():$/;"	f
+logging_setting	get_detect-seq_info.py	/^def logging_setting():$/;"	f
+logging_setting	get_target-seq_info.py	/^def logging_setting():$/;"	f
+ls	loader.py	/^    ls = []$/;"	v
+ls_detect	get_compare_table_for_detect_seq_and_target_seq.py	/^    ls_detect = [i.strip() for i in pt_detect.split(",") if i.strip() != ""]$/;"	v
+ls_site_idx	get_detect-seq_info.py	/^            ls_site_idx = ls_site_idx_all[i : i + 100]$/;"	v
+ls_site_idx_all	get_detect-seq_info.py	/^        ls_site_idx_all = df_one_region.site_idx.tolist()$/;"	v
+ls_target	get_compare_table_for_detect_seq_and_target_seq.py	/^    ls_target = [i.strip() for i in pt_target.split(",") if i.strip() != ""]$/;"	v
+max_depth	parse_pysam.py	/^        max_depth=max_depth,$/;"	v
+min_base_quality	parse_pysam.py	/^        min_base_quality=min_base_quality,$/;"	v
+min_mapping_quality	parse_pysam.py	/^        min_mapping_quality=min_mapping_quality,$/;"	v
+mpileup_iter	parse_pysam.py	/^    mpileup_iter = bam_obj.pileup($/;"	v
+narrow_cutoff	get_detect-seq_info.py	/^        narrow_cutoff=0,$/;"	v
+near_seq	loader.py	/^                near_seq = Seq.Seq($/;"	v
+near_seq_extend	get_detect-seq_info.py	/^        near_seq_extend=0,$/;"	v
+now_count	get_detect-seq_info.py	/^    now_count = 0$/;"	v
+np	get_compare_table_for_detect_seq_and_target_seq.py	/^import numpy as np$/;"	i
+np	get_detect-seq_info.py	/^import numpy as np$/;"	i
+np	get_target-seq_info.py	/^import numpy as np$/;"	i
+os	get_compare_table_for_detect_seq_and_target_seq.py	/^import os$/;"	i
+os	get_target-seq_info.py	/^import os$/;"	i
+pd	get_compare_table_for_detect_seq_and_target_seq.py	/^import pandas as pd$/;"	i
+pd	get_detect-seq_info.py	/^import pandas as pd$/;"	i
+pd	get_target-seq_info.py	/^import pandas as pd$/;"	i
+pd	loader.py	/^import pandas as pd$/;"	i
+pt_aligninfo	get_detect-seq_info.py	/^    pt_aligninfo = args.bowtie_table$/;"	v
+pt_aligninfo	loader.py	/^    pt_aligninfo = ".\/test.align.tsv"$/;"	v
+pt_bam	get_detect-seq_info.py	/^    pt_bam = args.bam$/;"	v
+pt_bam	parse_pysam.py	/^    pt_bam = "\/Users\/zhaohuanan\/zhaohn_HD\/3.project\/2021_DdCBE_topic\/20210224_DetectSeq_all_bams\/bam\/293T-DdCBE-ND6-All-PD_rep2_hg38.MAPQ20.bam"$/;"	v
+pt_detect	get_compare_table_for_detect_seq_and_target_seq.py	/^    pt_detect = "..\/..\/20210908_DdCBE-detect-seq-info_ND4-Det_rep1.csv, ..\/..\/20210908_DdCBE-detect-seq-info_ND4-Det_rep2.csv,..\/..\/20210908_DdCBE-detect-seq-info_ND5-1-Det_rep1.csv,..\/..\/20210908_DdCBE-detect-seq-info_ND5-1-Det_rep2.csv,..\/..\/20210908_DdCBE-detect-seq-info_ND6-Det_rep1.csv,..\/..\/20210908_DdCBE-detect-seq-info_ND6-Det_rep2.csv"$/;"	v
+pt_out	get_detect-seq_info.py	/^    pt_out = args.out$/;"	v
+pt_ref	get_detect-seq_info.py	/^    pt_ref = args.reference$/;"	v
+pt_ref	parse_pysam.py	/^    pt_ref = "\/Users\/zhaohuanan\/zhaohn_HD\/2.database\/db_genomes\/genome_fa\/genome_ucsc_hg38\/chr20.fa"$/;"	v
+pt_target	get_compare_table_for_detect_seq_and_target_seq.py	/^    pt_target = "..\/..\/20210908_DdCBE-target-seq-info.csv,"$/;"	v
+pysam	get_detect-seq_info.py	/^import pysam$/;"	i
+pysam	parse_pysam.py	/^import pysam$/;"	i
+ref_fasta_path	get_detect-seq_info.py	/^        ref_fasta_path=pt_ref,$/;"	v
+ref_name	get_detect-seq_info.py	/^        ref_name="All",$/;"	v
+region_count	get_detect-seq_info.py	/^    region_count = len(df_region.groupby("region_id"))$/;"	v
+region_end	parse_pysam.py	/^        region_end = int(site_idx_list[-1].split("_")[1])$/;"	v
+region_id	loader.py	/^        region_id = df_row["region_id"]$/;"	v
+region_start	parse_pysam.py	/^        region_start = int(site_idx_list[0].split("_")[1])$/;"	v
+relative_pos	loader.py	/^                relative_pos = idx_seq + 1$/;"	v
+relative_pos	loader.py	/^                relative_pos = lens - idx_seq$/;"	v
+rep	get_detect-seq_info.py	/^    rep = args.rep$/;"	v
+return_base_ratio	get_target-seq_info.py	/^def return_base_ratio(x):$/;"	f
+run	get_fasta.py	/^def run(args):$/;"	f
+run_index	parse_pysam.py	/^        run_index = "%s_%s" % (chr_name, pileup.reference_pos + 1)$/;"	v
+site_dict	parse_pysam.py	/^    site_dict = {}$/;"	v
+site_dist	parse_pysam.py	/^        site_dist = region_end - region_start$/;"	v
+site_dist	parse_pysam.py	/^    site_dist = 0$/;"	v
+site_idx_list	get_detect-seq_info.py	/^                site_idx_list=ls_site_idx,$/;"	v
+site_idx_list	parse_pysam.py	/^        site_idx_list=["chr20_53025829", "chr20_53025830"],$/;"	v
+start	loader.py	/^        start = df_row["start"] + 1$/;"	v
+strand	loader.py	/^        strand = df_row["strand"]$/;"	v
+stream	parse_pysam.py	/^        stream=sys.stderr,$/;"	v
+sys	get_compare_table_for_detect_seq_and_target_seq.py	/^import sys$/;"	i
+sys	get_detect-seq_info.py	/^import sys$/;"	i
+sys	get_fasta.py	/^import sys$/;"	i
+sys	get_target-seq_info.py	/^import sys$/;"	i
+sys	loader.py	/^import sys$/;"	i
+sys	parse_pysam.py	/^import sys$/;"	i
+treatment	get_detect-seq_info.py	/^        treatment = treatment.strip()$/;"	v
+treatment	get_detect-seq_info.py	/^    treatment = args.treatment$/;"	v
