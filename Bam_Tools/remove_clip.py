@@ -128,7 +128,7 @@ if __name__ == "__main__":
         so = None
 
     if so != "queryname" or so == "coordinate" or so is None:
-        raise ValueError("the input BAM|SAM must be sorted by name and has header!")
+        raise ValueError(f"the input BAM|SAM must be sorted by name and has header SO:queryname!\nyour header: {so}")
 
     write_mode = 'wb' if args.output_format == "BAM" else 'w'
     bam_out = pysam.AlignmentFile(args.output, "w", template=bam_in)
