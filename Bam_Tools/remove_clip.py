@@ -49,33 +49,7 @@ def check_version():
             f"pysam version is {pysam.__version__} and it should >=0.19.1")
     if compared_version(sys.version.split()[0], "3.9.1") == -1:
         raise ValueError(
-            f"Python version is {sys.version.split()[0]} and it should >= 3.9.1")
-
-
-def check_name_sorted(bam, threads=os.cpu_count() - 1, prefix="sorted.temp"):
-    """Sort bam file by name if position sorted.
-
-    Args:
-        bam: str, path of bam with or without position sort
-        threads: int, threads used by samtools sort
-        prefix: str, [prefix]sorted.temp.bam
-
-    Returns:
-        str, if bam is sorted by query name, return path of bam; else, return path of the [prefix]sorted.temp.bam
-    """
-    with pysam.AlignmentFile(bam, 'rb') as this_bam:
-        try:
-            so = this_bam.header['HD']['SO']
-        except KeyError:
-            so = None
-
-    if so == "queryname":
-        return False, bam
-    elif so == "coordinate" or so is None:
-        print('it seems that input bam is not sorted by name, \nstart to sort bam by queryname ...')
-        bam_sortn = f'{bam[:-4]}_{prefix}.bam'
-        pysam.sort('-@', str(threads), '-n', bam, "-O", "BAM", "-o", bam_sortn)
-        return True, bam_sortn
+            f"Python version is {sys.version.split()[0]} and it should >= 3.9.1:)")
 
 
 def get_args():
@@ -87,14 +61,15 @@ def get_args():
         "--input",
         help="BAM file sorted by coordinate with soft/hard clip reads",
         type=str,
-        default=sys.stdin,
-        required=True)
+        nargs='?',
+        default=sys.stdin)
 
     parser.add_argument(
         "-o",
         "--output",
         help="BAM file sorted by coordinate without soft/hard clip reads",
         type=str,
+        nargs='?',
         default=sys.stdout)
     parser.add_argument(
         "-t",
@@ -102,7 +77,7 @@ def get_args():
         help="threads used by pysam and samtools core, default=os.cpu_count() - 1",
         type=str,
         default=os.cpu_count() -
-        1)
+                1)
     parser.add_argument(
         "-b",
         "--output_format",
@@ -134,70 +109,82 @@ if __name__ == "__main__":
     # input_bam = "../Test_Resources/test_sorted.bam"
     # # input_bam = "../Test_Resources/test_sorted_n.bam"
     # output_bam = "../Test_Outfiles/test_sorted_rmclip.bam"
-
     check_version()
 
-    # remember to remove input
-    if_temp, input_bam = check_name_sorted(
-        bam=args.input, threads=args.threads)
+    if sys.stdin.isatty():
+        try:
+            bam_in = pysam.AlignmentFile(args.input, "r", threads=args.threads, check_sq=False)
+        except ValueError:
+            bam_in = pysam.AlignmentFile(args.input, "rb", threads=args.threads, check_sq=False)
+    else:
+        try:
+            bam_in = pysam.AlignmentFile("-", "r", threads=args.threads, check_sq=False)
+        except ValueError:
+            bam_in = pysam.AlignmentFile("-", "rb", threads=args.threads, check_sq=False)
+
+    try:
+        so = bam_in.header['HD']['SO']
+    except KeyError:
+        so = None
+
+    if so != "queryname" or so == "coordinate" or so is None:
+        raise ValueError("the input BAM|SAM must be sorted by name and has header!")
+
     write_mode = 'wb' if args.output_format == "BAM" else 'w'
+    bam_out = pysam.AlignmentFile(args.output, "w", template=bam_in)
 
-    with pysam.AlignmentFile(input_bam, "rb") as bam_in, \
-            pysam.AlignmentFile(args.output, "w", template=bam_in) as bam_out:
+    # Iterate through reads.
+    read1, read2 = None, None
 
-        # Iterate through reads.
-        read1, read2 = None, None
+    for read in bam_in:
+        if not read.is_paired or read.is_unmapped or read.mate_is_unmapped:
+            # or read.is_duplicate:
+            # only use mapped paired reads
+            continue
+        # ------------------------------------------------------------------->>>>>>>>>>
+        # 如果先看到read1，将read1赋给read， 判断是否read1、read2都存在
+        #    不都存在：
+        #        即read2不存在，进入下个循环
+        #    都存在，判断query name是否一致
+        # ------------------------------------------------------------------->>>>>>>>>>
+        if read.is_read2:
+            # if first is read2, then use it to find read2
+            read2 = read
+        else:
+            # if first is read1, then use it to find read1, and next query
+            read1 = read
+            read2 = None
+            continue
 
-        for read in bam_in:
-            if not read.is_paired or read.is_unmapped or read.mate_is_unmapped:
-                # or read.is_duplicate:
-                # only use mapped paired reads
-                continue
-            # ------------------------------------------------------------------->>>>>>>>>>
-            # 如果先看到read1，将read1赋给read， 判断是否read1、read2都存在
-            #    不都存在：
-            #        即read2不存在，进入下个循环
-            #    都存在，判断query name是否一致
-            # ------------------------------------------------------------------->>>>>>>>>>
-            if read.is_read2:
-                # if first is read2, then use it to find read2
-                read2 = read
-            else:
-                # if first is read1, then use it to find read1, and next query
-                read1 = read
-                read2 = None
-                continue
+        if None not in [
+            read1,
+            read2] and read1.query_name == read2.query_name:
+            # print("found a pair!")
+            # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read1.cigarstring}')
+            # print(read.get_cigar_stats())
+            softclip1 = read1.get_cigar_stats()[0][4]
+            softclip2 = read2.get_cigar_stats()[0][4]
 
-            if None not in [
-                    read1,
-                    read2] and read1.query_name == read2.query_name:
-                # print("found a pair!")
-                # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read1.cigarstring}')
-                # print(read.get_cigar_stats())
-                softclip1 = read1.get_cigar_stats()[0][4]
-                softclip2 = read2.get_cigar_stats()[0][4]
-
-                if not args.remove_as_paired:
-                    if softclip1 <= args.max_clip:
-                        bam_out.write(read1)
-                    if softclip2 <= args.max_clip:
-                        bam_out.write(read2)
-                elif args.remove_as_paired:
-                    if softclip1 <= args.max_clip and softclip2 <= args.max_clip:
-                        bam_out.write(read1)
-                        bam_out.write(read2)
-                    else:
-                        # print("Filtering pairs")
-                        # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read2.cigarstring}')
-                        # print(read1.get_cigar_stats()[0][4])
-                        # print(read2.get_cigar_stats()[0][4])
-                        pass
+            if not args.remove_as_paired:
+                if softclip1 <= args.max_clip:
+                    bam_out.write(read1)
+                if softclip2 <= args.max_clip:
+                    bam_out.write(read2)
+            elif args.remove_as_paired:
+                if softclip1 <= args.max_clip and softclip2 <= args.max_clip:
+                    bam_out.write(read1)
+                    bam_out.write(read2)
                 else:
-                    pass
+                    # print("Filtering pairs")
                     # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read2.cigarstring}')
-                    # raise ValueError(
-                    #     f"remove_se_or_pe can not be {args.remove_se_or_pe}")
+                    # print(read1.get_cigar_stats()[0][4])
+                    # print(read2.get_cigar_stats()[0][4])
+                    pass
+            else:
+                pass
+                # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read2.cigarstring}')
+                # raise ValueError(
+                #     f"remove_se_or_pe can not be {args.remove_se_or_pe}")
 
-    if if_temp:
-        print(f"remove temp file {input_bam}")
-        os.remove(input_bam)
+    bam_in.close()
+    bam_out.close()
