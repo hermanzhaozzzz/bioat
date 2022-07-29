@@ -9,6 +9,7 @@ import string
 import random
 
 import Bio
+import Bio.SeqIO
 from Bio.Align.substitution_matrices import Array
 # %% Version information
 VERSION_INFO = """
