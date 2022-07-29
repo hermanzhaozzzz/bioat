@@ -123,9 +123,9 @@ def _log_cmd_str(args):
     --N0_T_award {N0_T_award}
     --temp_dir {temp_dir}
     --verbose {verbose}""".format(
-        input=args.input,
+        input=args.input_bam,
         query_seq=args.query_seq,
-        output=args.output,
+        output=args.output_bam,
         reference=args.reference,
         extend_method=args.extend_method,
         extend_length=args.extend_length,
