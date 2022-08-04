@@ -3,7 +3,7 @@
 ##############
 test_outfiles/
 
-
+src/biat/__pycache__/
 
 
 
@@ -11,6 +11,8 @@ test_outfiles/
 ##############
 # common project
 ##############
+# python cache
+
 # spyder
 .spyproject/
 */.spyproject/
