@@ -61,9 +61,3 @@ slurm-*.out
 /tmpdir_*/
 .localized
 
-
-
-
-# Added by cargo
-
-/target
