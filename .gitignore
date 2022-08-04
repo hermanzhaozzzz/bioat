@@ -21,6 +21,7 @@ test_outfiles/
 */.ipynb_checkpoints/
 
 # pycharm meta
+.idea/
 */.idea/
 
 # vscode
