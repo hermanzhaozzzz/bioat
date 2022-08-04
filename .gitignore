@@ -13,6 +13,9 @@ src/biat/__pycache__/
 ##############
 # python cache
 
+# Added by cargo
+/target
+
 # spyder
 .spyproject/
 */.spyproject/
