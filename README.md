@@ -1,11 +1,17 @@
 # BioinformaticAnalysisTools
 
+## Introduction
 A bioinformatic python toolkit accelerated with rust!
 
 - Author: Hua-nan ZHAO @Tsinghua University
 - E-Mail: hermanzhaozzzz@gmail.com
 
-## test
+## Installation
+```shell
+pip install biat
+```
+
+## unit testing
 ```shell
 cd tests
 python -m pytest
@@ -13,6 +19,10 @@ python -m pytest
 poetry run pytest
 ```
 ## usage
+
+
+## history
+
 
 
 
