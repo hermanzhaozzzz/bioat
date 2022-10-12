@@ -66,14 +66,12 @@ if __name__ == '__main__':
         # '/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T/fastq', # for test
         # '/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T.1/1T/fastq', # for test\
         # 
+        '/lustre1/chengqiyi_pkuhpc/zhaohn',
         '/lustre1/chengqiyi_pkuhpc/JiangZhe',
         '/lustre1/chengqiyi_pkuhpc/LiuCong',
         '/lustre1/chengqiyi_pkuhpc/liuwenqing',
         '/lustre1/chengqiyi_pkuhpc/lubo',
         '/lustre1/chengqiyi_pkuhpc/shx',
-        '/lustre1/chengqiyi_pkuhpc/zhaohn',
-        '/lustre3/chengqiyi_pkuhpc/folder_for_learning/zhaohn_for_alphafold',
-        '/lustre2/chengqiyi_pkuhpc/00.seqdata',
         '/lustre2/chengqiyi_pkuhpc/bds',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/bds',
         '/lustre2/chengqiyi_pkuhpc/dyy',
@@ -94,11 +92,9 @@ if __name__ == '__main__':
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/Leizhixin',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/LiuJiangle',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/lixy',
-        '/lustre3/chengqiyi_pkuhpc/folder_for_learning/LSY',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/lzc',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/test2',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/ydy',
-        '/lustre3/chengqiyi_pkuhpc/folder_for_learning/zhangxx',
         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/ZhuangYuan',
     ]
     
@@ -112,6 +108,7 @@ if __name__ == '__main__':
         
         # print("aim_path: ", aim_path)
         for file in files:
+            # continue
             cur_path = os.path.join(aim_path, file)
             # print("cur_path: ", cur_path)
             if os.path.isdir(cur_path):
@@ -121,7 +118,11 @@ if __name__ == '__main__':
                     print(f"INFO:    Processed {file_size[0]}  {file_size[1]:.3f}TB")
                 except Exception as err:  # 捕捉所有异常
                     print(f"WARNING: {err} @ {cur_path}, Skip ...")
-
+                except FileNotFoundError:
+                    print(f"FileNotFoundError @ {cur_path}")
+                    continue
+                except Exception as err:
+                    print(f"Exception @ {cur_path}: {err}")
                     
         # print("file_sizes: ", file_sizes)
         file_sizes.sort(key=lambda t: t[1], reverse=True)
@@ -131,7 +132,7 @@ if __name__ == '__main__':
     with open(out_path, 'wt') as f:
         f.write(f'{date_time},by,Huanan Zhao,\n,,,\n')
         f.write("USER,PATH,TOTAL_SIZE,UNIT\n")        
-        print(dt_size)
+        # print(dt_size)
         
         for key in dt_size.keys():
             user = os.path.basename(key)
