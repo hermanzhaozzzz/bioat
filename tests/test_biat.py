@@ -1,4 +1,4 @@
-import biat
+from tests import biat
 
 
 def test_version():
