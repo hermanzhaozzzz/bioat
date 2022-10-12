@@ -1,14 +1,20 @@
 [tool.poetry]
 name = "biat"
 version = "0.1.0"
-description = ""
+description = "Herman ZHAO's Bioinformatic toolkit"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+pysam = "*"
+pysamstats = "*"
+biopython = "*"
+pandas = "*"
+numpy = "*"
+tqdm = "*"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.1.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
