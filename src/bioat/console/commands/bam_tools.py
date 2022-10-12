@@ -26,13 +26,4 @@ class BamToolsCommand(Command):
 
     def handle(self):
         name = self.argument("bamtools")
-
-        if name:
-            text = f"Hello {name}"
-        else:
-            text = "Hello"
-
-        if self.option("yell"):
-            text = text.upper()
-
-        self.line(text)
+        self.line(name)

@@ -9,7 +9,7 @@ test_outfiles/
 # python cache
 **/__pycache__/
 **/.pytest_cache/
-
+**/dist/
 # spyder
 **/.spyproject/
 

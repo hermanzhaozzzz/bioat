@@ -8,7 +8,7 @@ A bioinformatic python toolkit accelerated with rust!
 
 ## Installation
 ```shell
-pip install biat
+pip install bioat
 ```
 
 ## unit testing

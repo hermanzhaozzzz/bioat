@@ -1,16 +1,12 @@
-# ——————————————————>>>>>>>>>>
-# Project Name: remove_clip.py
-# Author: Herman ZHAO
-# E-mail: hermanzhaozzzz@gmail.com
-# Update log:
-#     2022-07-29: start project
-#     YYYY-MM-DD: fix project #
-# ——————————————————>>>>>>>>>>
 import argparse
 import os
 import sys
 
 import pysam
+
+
+class RemoveClip():
+    pass
 
 
 def compared_version(ver1, ver2):
