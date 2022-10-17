@@ -22,7 +22,7 @@ fire = "^0.4.0"
 
 [tool.poetry.scripts]
 bioat = "bioat._cli:main"
-bioat_merge_table = "bioat.table.merge_table:main"
+bioat-table-merge-table = "bioat.table.merge_table:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.3"
