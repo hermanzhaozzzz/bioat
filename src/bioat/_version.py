@@ -1,4 +1,4 @@
-upgrade_date = '2022-10-14'
-version = '0.1.1.2'
+upgrade_date = '2022-10-17'
+version = '0.1.1.3'
 author = 'Hua-nan ZHAO @ Tsinghua University'
 email = 'hermanzhaozzzz@gmail.com'
