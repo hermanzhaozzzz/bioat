@@ -1,5 +1,5 @@
-from sys import stdout
 import pandas as pd
+from sys import stdout
 from fire import Fire
 
 
