@@ -1,0 +1,143 @@
+
+--------------------------------------------------------------------------------
+python find-significant-mpmat.py
+    --mpmat_table ../mpmat/test_merge.select.sort_rmchrYM.mpmat.gz
+    --output ../poisson_res/test_vs_ctrl_test_ctrl.select.pvalue_table
+    --ctrl_BAM /Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/bam/test_ctrl.bam
+    --treat_BAM ../bam/test_final_rmdup.bam
+    --reference /Users/zhaohuanan/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa
+    --thread 8
+    --query_mutation_type CT,GA
+    --verbose 3
+    --keep_temp_file False
+    --mpmat_filter_info_col_index -1
+    --mpmat_block_info_col_index -1
+    --region_block_mut_num_cutoff 2
+    --query_mut_min_cutoff 2
+    --query_mut_max_cutoff 16
+    --total_mut_max_cutoff 16
+    --other_mut_max_cutoff 6
+    --seq_reads_length 150
+    --scale_reads_count 1000000
+    --lambda_method ctrl_max
+    --poisson_method mutation
+    
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Check exist 
+ 	--mpmat_table ../mpmat/test_merge.select.sort_rmchrYM.mpmat.gz 
+INFO  @ 2022-10-13 15:30:08: Yes! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Check exist 
+ 	--ctrl_BAM /Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/bam/test_ctrl.bam 
+INFO  @ 2022-10-13 15:30:08: Yes! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Check exist 
+ 	--treat_BAM ../bam/test_final_rmdup.bam 
+INFO  @ 2022-10-13 15:30:08: Yes! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Check exist 
+ 	--reference /Users/zhaohuanan/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa 
+INFO  @ 2022-10-13 15:30:08: Yes! 
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Try to split mpmat file... 
+INFO  @ 2022-10-13 15:30:08: Output dir is /Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res 
+INFO  @ 2022-10-13 15:30:08: Processing chr1 .mpmat file 
+INFO  @ 2022-10-13 15:30:08: Try to split .mpmat file. DONE! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:08: Calculating ctrl sample Poisson background... 
+INFO  @ 2022-10-13 15:30:08: Starting to count genome Poisson lambada background... 
+INFO  @ 2022-10-13 15:30:09: Starting to load the reference genome... 
+DEBUG @ 2022-10-13 15:30:11: Loading genome...	chr1 
+INFO  @ 2022-10-13 15:30:11: Loading genome done! 
+INFO  @ 2022-10-13 15:30:11: Starting to count alignment mutation info on chr1 ... 
+INFO  @ 2022-10-13 15:30:13: Counting Poisson background on chr1 ... Done! 
+INFO  @ 2022-10-13 15:30:13: Calculation done! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:13: Calculating treat sample Poisson background... 
+INFO  @ 2022-10-13 15:30:13: Starting to count genome Poisson lambada background... 
+INFO  @ 2022-10-13 15:30:14: Starting to load the reference genome... 
+DEBUG @ 2022-10-13 15:30:16: Loading genome...	chr1 
+INFO  @ 2022-10-13 15:30:18: Loading genome done! 
+INFO  @ 2022-10-13 15:30:18: Starting to count alignment mutation info on chr1 ... 
+INFO  @ 2022-10-13 15:30:18: Counting Poisson background on chr1 ... Done! 
+INFO  @ 2022-10-13 15:30:18: Calculation done! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:30:19: Starting to calculate genome effective length... 
+DEBUG @ 2022-10-13 15:30:21: Run on chr1 ... 
+DEBUG @ 2022-10-13 15:30:25: Run on chr2 ... 
+DEBUG @ 2022-10-13 15:30:29: Run on chr3 ... 
+DEBUG @ 2022-10-13 15:30:33: Run on chr4 ... 
+DEBUG @ 2022-10-13 15:30:37: Run on chr5 ... 
+DEBUG @ 2022-10-13 15:30:40: Run on chr6 ... 
+DEBUG @ 2022-10-13 15:30:43: Run on chr7 ... 
+DEBUG @ 2022-10-13 15:30:46: Run on chr8 ... 
+DEBUG @ 2022-10-13 15:30:48: Run on chr9 ... 
+DEBUG @ 2022-10-13 15:30:50: Run on chr10 ... 
+DEBUG @ 2022-10-13 15:30:53: Run on chr11 ... 
+DEBUG @ 2022-10-13 15:30:55: Run on chr12 ... 
+DEBUG @ 2022-10-13 15:30:57: Run on chr13 ... 
+DEBUG @ 2022-10-13 15:30:59: Run on chr14 ... 
+DEBUG @ 2022-10-13 15:31:00: Run on chr15 ... 
+DEBUG @ 2022-10-13 15:31:02: Run on chr16 ... 
+DEBUG @ 2022-10-13 15:31:03: Run on chr17 ... 
+DEBUG @ 2022-10-13 15:31:04: Run on chr18 ... 
+DEBUG @ 2022-10-13 15:31:06: Run on chr19 ... 
+DEBUG @ 2022-10-13 15:31:07: Run on chr20 ... 
+DEBUG @ 2022-10-13 15:31:08: Run on chr21 ... 
+DEBUG @ 2022-10-13 15:31:08: Run on chr22 ... 
+DEBUG @ 2022-10-13 15:31:10: Run on chrX ... 
+DEBUG @ 2022-10-13 15:31:12: Run on chrY ... 
+DEBUG @ 2022-10-13 15:31:12: Run on chrM ... 
+INFO  @ 2022-10-13 15:31:12: Calculating genome effective length, done! 
+Warning chr1 query_high_mismatch_count scale_value is 0!!!
+Use all_align_count scale info instead.
+Warning total query_high_mismatch_count scale_value is 0!!!
+Use all_align_count scale info instead.
+INFO  @ 2022-10-13 15:31:12: -------------------------------------------------------------------------------- 
+INFO  @ 2022-10-13 15:31:12: Starting to run Poisson test... 
+INFO  @ 2022-10-13 15:31:13: Starting to run Poisson test on 
+	/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res/temp_test_merge.select.sort_rmchrYM.mpmat.gz.chr1.C5WnAIly7rQSK96G 
+DEBUG @ 2022-10-13 15:31:13: run_mpmat_poisson_test step with params:
+        mpmat_filename=/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res/temp_test_merge.select.sort_rmchrYM.mpmat.gz.chr1.C5WnAIly7rQSK96G
+        out_poisson_filename=/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res/temp_test_merge.select.sort_rmchrYM.mpmat.gz.chr1.C5WnAIly7rQSK96G.PoissonResult
+        ctrl_bam_filename=/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/bam/test_ctrl.bam
+        treat_bam_filename=../bam/test_final_rmdup.bam
+        ref_genome_fa_filename=/Users/zhaohuanan/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa
+        select_chr_name_list=['chr1']
+        scale_factor_dict={'ctrl': {'chr1': {'all_align_count.scale_factor': 149.43796992481202, 'region_mut_count.scale_factor': 71.49346879535558, 'region_non_mut_count.scale_factor': 185.596458527493}, 'total': {'all_align_count.scale_factor': 149.43796992481202, 'region_mut_count.scale_factor': 71.49346879535558, 'region_non_mut_count.scale_factor': 185.596458527493}}, 'treat': {'chr1': {'all_align_count.scale_factor': 1.0, 'region_mut_count.scale_factor': 1.0, 'region_non_mut_count.scale_factor': 1.0}, 'total': {'all_align_count.scale_factor': 1.0, 'region_mut_count.scale_factor': 1.0, 'region_non_mut_count.scale_factor': 1.0}}}
+        normalize_scale_factor_dict={'ctrl': {'chr1': {'all_align_count.scale_factor': 0.397505, 'region_mut_count.scale_factor': 0.397505, 'region_non_mut_count.scale_factor': 0.397505}, 'total': {'all_align_count.scale_factor': 0.397505, 'region_mut_count.scale_factor': 0.397505, 'region_non_mut_count.scale_factor': 0.397505}}, 'treat': {'chr1': {'all_align_count.scale_factor': 0.00266, 'region_mut_count.scale_factor': 0.00266, 'region_non_mut_count.scale_factor': 0.00266}, 'total': {'all_align_count.scale_factor': 0.00266, 'region_mut_count.scale_factor': 0.00266, 'region_non_mut_count.scale_factor': 0.00266}}}
+        genome_bg_dict={'ctrl': {'scale_mut_bg': {'genome_bg': 1.683119686158924e-05, 'chr1': 0.00021452639698786553, 'total': 1.683119686158924e-05}, 'norm_scale_mut_bg': {'genome_bg': 0.006327517617138813, 'chr1': 0.0806490214240096, 'total': 0.006327517617138813}, 'scale_all_bg': {'genome_bg': 0.00013582258893737246, 'chr1': 0.00173116213148179, 'total': 0.00013582258893737246}, 'norm_scale_all_bg': {'genome_bg': 0.05106112366066634, 'chr1': 0.6508128313841316, 'total': 0.05106112366066634}}, 'treat': {'scale_mut_bg': {'genome_bg': 2.3542285953094836e-07, 'chr1': 0.00044841004082366666, 'total': 3.518111420219911e-05}, 'norm_scale_mut_bg': {'genome_bg': 0.013225982782781621, 'chr1': 0.1685752033171679, 'total': 0.013225982782781621}, 'scale_all_bg': {'genome_bg': 9.088894141543146e-07, 'chr1': 0.00173116213148179, 'total': 0.00013582258893737246}, 'norm_scale_all_bg': {'genome_bg': 0.05106112366066634, 'chr1': 0.6508128313841316, 'total': 0.05106112366066634}}}
+        lambda_bg_method=ctrl_max
+        poisson_method=mutation
+        region_block_mut_num_cutoff=2
+        reads_query_mut_min_cutoff=2
+        reads_query_mut_max_cutoff=16
+        reads_total_mut_max_cutoff=16
+        reads_other_mut_max_cutoff=6
+        log_verbose=3 
+INFO  @ 2022-10-13 15:31:13: Starting to load the reference genome... 
+DEBUG @ 2022-10-13 15:31:15: Loading genome...	chr1 
+INFO  @ 2022-10-13 15:31:15: Loading genome done! 
+INFO  @ 2022-10-13 15:31:15: Running Poisson test on chr1, processed line number 1 
+INFO  @ 2022-10-13 15:31:16: Run Poisson test successfully on .mpmat file 
+	/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res/temp_test_merge.select.sort_rmchrYM.mpmat.gz.chr1.C5WnAIly7rQSK96G 
+INFO  @ 2022-10-13 15:31:17: Calculation of Poisson test result. Done! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Starting to merge files... 
+DEBUG @ 2022-10-13 15:31:17: Merging files, processing on 
+	/Users/zhaohuanan/PycharmProjects/snakepipes_detect-seq/poisson_res/temp_test_merge.select.sort_rmchrYM.mpmat.gz.chr1.C5WnAIly7rQSK96G.PoissonResult 
+INFO  @ 2022-10-13 15:31:17: Merging files, done! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Calculating FDR value and make final output table... 
+INFO  @ 2022-10-13 15:31:17: Done! 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Set <keep_temp_file> as False... Removing temp files... 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Removing mpmat split files... 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Removing Poisson test split files... 
+--------------------------------------------------------------------------------
+INFO  @ 2022-10-13 15:31:17: Removing Poisson test raw file... 
+INFO  @ 2022-10-13 15:31:17: Everything done! 
