@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.1.1.4"
+version = "0.1.1.5"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -22,6 +22,7 @@ fire = "^0.4.0"
 
 [tool.poetry.scripts]
 bioat = "bioat._cli:main"
+bioat_fastatools = "bioat.fasta._cli:main"
 bioat-table-merge-table = "bioat.table.merge_table:main"
 
 [tool.poetry.group.dev.dependencies]
