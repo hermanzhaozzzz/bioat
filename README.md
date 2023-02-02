@@ -24,5 +24,8 @@ poetry run pytest
 ## history
 
 
-
+## backup
+```shell
+ poetry add git+ssh://git@github.com:pysam-developers/pysam.git
+```
 
