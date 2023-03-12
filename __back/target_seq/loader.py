@@ -8,11 +8,11 @@ from Bio import Seq, SeqIO
 def load_reference_fasta_as_dict(
     ref_fasta_path, ref_name="All", log_verbose=logging.DEBUG
 ) -> dict:
-    """Load the reference fasta file and return a dict of reference.
+    """Load the reference fastx file and return a dict of reference.
 
     Args:
         ref_fasta_path (str):
-            Reference fasta file path
+            Reference fastx file path
         ref_name (str/list, optional):
             If set All, load all "seq ids" in reference,
             else only try to load specific chromosome name, such as "chr1". Defaults to "All".
@@ -41,7 +41,7 @@ def load_reference_fasta_as_dict(
     )
     # load genome as dict
     try:
-        genome_fa = SeqIO.parse(handle=ref_fasta_path, format="fasta")
+        genome_fa = SeqIO.parse(handle=ref_fasta_path, format="fastx")
     except OSError:
         raise OSError("Wrong file path: %s" % ref_fasta_path)
 

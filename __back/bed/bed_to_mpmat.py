@@ -155,7 +155,7 @@ def parser():
         help="Path of the bmat file, gzip file is accepted",
     )
     args.add_argument(
-        "-g", "--genome", required=True, help="Path of the genome fasta file"
+        "-g", "--genome", required=True, help="Path of the genome fastx file"
     )
     args.add_argument(
         "-o",
@@ -243,7 +243,7 @@ def load_reference_fasta_as_dict(ref_fasta_path, ref_name_list="All", log_verbos
     """load_reference_fasta_as_dict.
 
     Args
-        ref_fasta_path (str): Reference fasta file path.
+        ref_fasta_path (str): Reference fastx file path.
         ref_name_list (str): If set All, load all seq info in reference,
             else only try to load seq_id in the list.
         ref_order_dict (dict): like this:
@@ -279,10 +279,10 @@ def load_reference_fasta_as_dict(ref_fasta_path, ref_name_list="All", log_verbos
     try:
         if ref_fasta_path.endswith(".gz"):
             genome_fa = SeqIO.parse(
-                handle=gzip.open(ref_fasta_path, "rt"), format="fasta"
+                handle=gzip.open(ref_fasta_path, "rt"), format="fastx"
             )
         else:
-            genome_fa = SeqIO.parse(handle=open(ref_fasta_path, "rt"), format="fasta")
+            genome_fa = SeqIO.parse(handle=open(ref_fasta_path, "rt"), format="fastx")
     except:
         raise IOError("Load file error! %s" % ref_fasta_path)
 
@@ -320,7 +320,7 @@ def query_region_bmat_info(bmat_file, site_index_list, genome_order_dict):
     """query_region_bmat_info.
 
     Args
-        bmat_file (BmatLine object): Reference fasta file path.
+        bmat_file (BmatLine object): Reference fastx file path.
         site_index_list (list): like [chr1_20452_CT, chr1_20467_C., chr1_20474_CT].
         genome_order_dict (dict): or FUN <cmp_site_index>, like this:
             {

@@ -48,7 +48,7 @@ def argparse_setting():
         type=str,
         required=True,
         help="""
-            fasta, the same genome used to mapping bam file.
+            fastx, the same genome used to mapping bam file.
         """,
     )
     parser.add_argument(

@@ -67,7 +67,7 @@ PIPELINE = """
 INPUT
     <mpmat> or <BED> format
 
-    <fasta>
+    <fastx>
 
     <alignment settings>
 
@@ -79,7 +79,7 @@ OUTPUT
 
 
 DESIGN
-    0. use bedtools getfasta to get fasta temp files
+    0. use bedtools getfasta to get fastx temp files
 
     1. read all mpmat and fa file
 
@@ -250,7 +250,7 @@ def make_temp_fasta(input_filename,
             str, 'bed' or 'mpmat'
 
         <genome_fasta>
-            str, reference genome fasta file
+            str, reference genome fastx file
 
         <temp_dir>
             str, temp dir to store temp files
@@ -355,7 +355,7 @@ def make_temp_fasta(input_filename,
     # log
     logging.info("Output temp bed with filename: %s\n" % in_fun_temp_bed_filename)
 
-    # use bedtools to make fasta file
+    # use bedtools to make fastx file
     temp_fasta_filename = in_fun_temp_bed_filename + ".fa"
 
     # only report sequence same to the genome fwd
@@ -931,7 +931,7 @@ if __name__ == '__main__':
                         help="Output alignment result table (.art) filename, default=stdout", default="stdout")
 
     parser.add_argument("-r", "--reference",
-                        help="Reference genome fasta file", required=True)
+                        help="Reference genome fastx file", required=True)
 
     parser.add_argument("-m", "--extend_method",
                         help="Select and extend region of mpmat file to get FASTA file, "
@@ -1014,9 +1014,9 @@ if __name__ == '__main__':
     sys.stderr.write(_log_cmd_str(ARGS) + "\n")
 
     # ------------------------------------------------------------------------>>>>>>>
-    # make temp fasta
+    # make temp fastx
     # ------------------------------------------------------------------------>>>>>>>
-    # get fasta temp
+    # get fastx temp
     sys.stderr.write("-" * 80 + "\n")
     logging.info("From input file to generate FASTA file...\n")
     temp_fa_state, temp_fa_filename, temp_bed_filename = make_temp_fasta(ARGS.input,
@@ -1104,7 +1104,7 @@ if __name__ == '__main__':
 
     region_file = open(ARGS.input, "r")
     temp_bed = open(temp_bed_filename, "r")
-    temp_fa = Bio.SeqIO.parse(temp_fa_filename, format="fasta")
+    temp_fa = Bio.SeqIO.parse(temp_fa_filename, format="fastx")
 
     # output header line
     out_file.write("\t".join(out_header_list) + "\n")
@@ -1133,7 +1133,7 @@ if __name__ == '__main__':
         region_chr_end = int(region_list[2])
         region_signal_strand = bed_list[5]
 
-        # load fasta seq
+        # load fastx seq
         fasta_seq_fwd = fa_info.seq.upper()
         fasta_seq_rev = Bio.Seq.reverse_complement(fasta_seq_fwd)
 

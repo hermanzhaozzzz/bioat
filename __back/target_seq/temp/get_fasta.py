@@ -8,7 +8,7 @@ def get_opt():
     """Check and parsing the opts"""
     parser = argparse.ArgumentParser(
         prog="seqFasta",
-        description="seqFasta: A program to get fasta file from BED file ",
+        description="seqFasta: A program to get fastx file from BED file ",
         usage="%(prog)s.py [options] -g genome -b bedfile",
     )
     parser.add_argument(
@@ -17,7 +17,7 @@ def get_opt():
         nargs="?",
         type=str,
         default=sys.stdin,
-        help="The path of fasta genome file, the suffix must be '.fa' or '.fasta'. [Required]",
+        help="The path of fastx genome file, the suffix must be '.fa' or '.fastx'. [Required]",
         required=True,
     )
     parser.add_argument(
@@ -35,7 +35,7 @@ def get_opt():
         nargs="?",
         type=str,
         default=None,
-        help="The prefix of fasta seq name, default is None, means to use the origin region_id of the bed",
+        help="The prefix of fastx seq name, default is None, means to use the origin region_id of the bed",
         required=False,
     )
     parser.add_argument(

@@ -1,0 +1,2 @@
+class HiC():
+    pass
