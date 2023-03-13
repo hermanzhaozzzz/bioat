@@ -1,11 +1,6 @@
 from __future__ import absolute_import
 import fire
-from .about import about
-from .fastx import Fastx
-from .table import Table
-from .hic import HiC
-from .mgi import Mgi
-from .system import System
+from . import about, Fastx, HiC, Mgi, System, Table, __version__
 
 
 class Cli(object):
@@ -31,6 +26,9 @@ class Cli(object):
 
     def list(self):
         return "all cmds"
+
+    def version(self):
+        return __version__
 
 
 def main() -> int:
