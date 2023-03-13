@@ -627,6 +627,21 @@ files = [
 ]
 
 [[package]]
+name = "dill"
+version = "0.3.6"
+description = "serialize all of python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "dill-0.3.6-py3-none-any.whl", hash = "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0"},
+    {file = "dill-0.3.6.tar.gz", hash = "sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373"},
+]
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
 name = "docutils"
 version = "0.19"
 description = "Docutils -- Python Documentation Utilities"
@@ -1483,6 +1498,26 @@ files = [
     {file = "packaging-23.0-py3-none-any.whl", hash = "sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2"},
     {file = "packaging-23.0.tar.gz", hash = "sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97"},
 ]
+
+[[package]]
+name = "pandarallel"
+version = "1.6.4"
+description = "An easy to use library to speed up computation (by parallelizing on multi CPUs) with pandas."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pandarallel-1.6.4.tar.gz", hash = "sha256:70091652485050241ffac37c3e94d21732697c63ee4613ae7bf85da076be41f2"},
+]
+
+[package.dependencies]
+dill = ">=0.3.1"
+pandas = ">=1"
+psutil = "*"
+
+[package.extras]
+dev = ["numpy", "pytest", "pytest-cov"]
+doc = ["mkdocs-material"]
 
 [[package]]
 name = "pandas"
@@ -2620,4 +2655,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "3.9.6"
-content-hash = "4f194c9a3e8047b9c076a50dba6dd1d799c27c472183ca1bcfecbcd872d95457"
+content-hash = "aab132c18e2501977559edd30b8725f7d80e98a9c244a568ea9689a29f92e126"

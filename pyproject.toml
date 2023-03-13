@@ -22,6 +22,7 @@ cython = "^0.29.33"
 pysam = "^0.20.0"
 biopython = "^1.81"
 jupyter = "^1.0.0"
+pandarallel = "^1.6.4"
 
 [tool.poetry.scripts]
 bioat = "bioat.cli:main"
