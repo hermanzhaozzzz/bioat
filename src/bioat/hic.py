@@ -95,7 +95,7 @@ class HiC:
             ]
             threshold = round((df_bin_interaction_count['total'] >= 1000).sum() / total_bins * 100, 1)
 
-            if threshold > 0.8:
+            if threshold > 80:
                 output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
                 write_lines += 1
             else:
