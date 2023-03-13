@@ -5,11 +5,13 @@ try:
     pandarallel.initialize(
         progress_bar=False,
         use_memory_fs=True,
+        verbose=1
     )
 except SystemError:
     pandarallel.initialize(
         progress_bar=False,
         use_memory_fs=False,
+        verbose=1
     )
 
 

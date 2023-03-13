@@ -1,11 +1,11 @@
+from __future__ import absolute_import
 import fire
-from version import (__version__, __author__, __upgrade_date__, __email__, __doc_format__)
-from about import about
-from fastx import Fastx
-from table import Table
-from hic import HiC
-from mgi import Mgi
-from system import System
+from .about import about
+from .fastx import Fastx
+from .table import Table
+from .hic import HiC
+from .mgi import Mgi
+from .system import System
 
 
 class Cli(object):
