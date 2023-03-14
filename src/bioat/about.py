@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from .version import (__version__, __author__, __upgrade_date__, __name__, __email__, __doc_format__)
+from bioat.version import (__version__, __author__, __upgrade_date__, __name__, __email__, __doc_format__)
 
 about = f"""
 BioinformaticAnalysisTools ({__name__})

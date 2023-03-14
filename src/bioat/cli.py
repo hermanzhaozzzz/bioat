@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 import fire
-from . import about, Fastx, HiC, Mgi, System, Table, __version__
+from bioat import about, Fastx, HiC, Mgi, System, Table, __version__
 
 
 class Cli(object):

@@ -1,5 +1,13 @@
+from __future__ import absolute_import
+
+import time
 import pandas as pd
+from bioat.logger import set_logging_level
 from pandarallel import pandarallel
+import logging
+from bioat._dev_tools import profile
+import gc
+
 
 try:
     pandarallel.initialize(
@@ -19,6 +27,7 @@ class HiC:
     def __init__(self):
         pass
 
+    @profile
     def get_effective_resolutions(self, genome_index, valid_pairs, output):
         """Get deepest resolution of cis-interation.
 
@@ -28,16 +37,17 @@ class HiC:
         :param valid_pairs: rm_dup_pairs.allValidPairs by HiC-Pro
         :param output: table_output, TSV file
         """
+        logging.debug('Develop mode is on')
         # load ref genome lengths
         df_chromosome = pd.read_csv(
             genome_index,
             sep='\t',
             usecols=[0, 1],
             names=['chromosome', 'length'],
-            index_col='chromosome'
+            index_col='chromosome',
         )
         # load sample valid pairs by HiC-Pro after remove duplication and filter.
-        df_valid_pairs = pd.read_csv(
+        reader = pd.read_csv(
             valid_pairs,
             sep='\t',
             header=None,
@@ -45,19 +55,35 @@ class HiC:
                 'read_name', 'chr_A', 'start_A', 'strand_A', 'chr_B', 'start_B', 'strand_B', 'insert_size',
                 'fragment_name_A', 'fragment_name_B', 'mapQ_A', 'mapQ_B', 'allele_specific_info'
             ],
-            usecols=['chr_A', 'start_A', 'chr_B', 'start_B']
+            usecols=['chr_A', 'start_A', 'chr_B', 'start_B'],
+            dtype={
+                'chr_A': str,
+                'start_A': int,
+                'chr_B': str,
+                'start_B': int,
+            },
+            iterator=True
         )
+        chunks = []
 
+        while True:
+            try:
+                chunk = reader.get_chunk(10_000_000)
+                chunks.append(chunk)
+            except StopIteration:
+                logging.debug("pandas reader iteration is done.")
+                break
+
+        df_valid_pairs = pd.concat(chunks, ignore_index=True)
+        logging.debug(df_valid_pairs.info(memory_usage='deep'))
         # 思路：二分法确认new_bin下线
-        new_bin = 1_000_000  # 1M
-
         output = open(output, 'wt')
         write_lines = 0
         output.write('test_bin(kb)\ttotal_bins\tthreshold(%)\tis_effective\n')
         write_lines += 1
         # 思路：二分法确认new_bin下线
         circle = 1
-        new_bin = 1_000_000
+        new_bin = 512_000  # 512kb
 
         def get_bin_index(x):
             cumsum = df_chromosome['bins_cumsum'][x['chr_A']]
@@ -79,6 +105,7 @@ class HiC:
 
             # calculate mapped bin index
             df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.parallel_apply(
+            # df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.apply(
                 get_bin_index,
                 axis=1,
                 result_type='expand'
@@ -104,8 +131,19 @@ class HiC:
                 else:
                     output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
                 break
+            del s_bin_idx_count1, s_bin_idx_count2, df_bin_interaction_count
+            gc.collect()
         output.close()
 
 
 if __name__ == '__main__':
-    pass
+    set_logging_level(level='DEBUG')
+    a = time.time()
+    hic = HiC()
+    hic.get_effective_resolutions(
+        genome_index="/Volumes/zhaohn_HD/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa.fai",
+        valid_pairs="../../data/hic/test.rm_dup_pairs.allValidPairs",
+        output="/Users/zhaohuanan/Downloads/testout"
+    )
+    a = time.time() - a
+    # print(f'\n{a:.3f}s')
