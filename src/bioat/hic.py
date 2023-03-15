@@ -123,13 +123,16 @@ class HiC:
             threshold = round((df_bin_interaction_count['total'] >= 1000).sum() / total_bins * 100, 1)
 
             if threshold > 80:
-                output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
+                # 输出结果为有效,进入下一个循环
+                output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tYES\n')
                 write_lines += 1
             else:
-                if write_lines != 1:
-                    output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tYES\n')
-                else:
-                    output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
+                # if write_lines != 1:
+                #     # 第1+n次计算无效,直接终止程序
+                #     output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
+                # else:
+                #     # 第一次计算就无效,直接终止程序
+                output.write(f'{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n')
                 break
             del s_bin_idx_count1, s_bin_idx_count2, df_bin_interaction_count
             gc.collect()
