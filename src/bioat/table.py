@@ -11,10 +11,10 @@ class Table():
             inputs,
             tags,
             output,
-            input_fmt,
-            output_fmt='csv',
-            input_header=True,
-            output_header=True
+            input_fmt='tsv',
+            output_fmt='tsv',
+            input_header=False,
+            output_header=False
     ):
         """A simple tool to merge same formatted tables from different sample.
 
@@ -22,9 +22,10 @@ class Table():
         :param inputs: csv files joint by comma
         :param tags: tags for each file
         :param output: output file name
-        :param output_fmt: csv | tsv, define the output format
-        :param input_header: True or False
-        :param output_header: True of False
+        :param input_fmt: tsv | csv, define the output format
+        :param output_fmt: tsv | csv, define the output format
+        :param input_header: True | False, has header or not
+        :param output_header: True | False, has header or not
         """
         # fix params
         inputs = list(inputs) if isinstance(inputs, tuple) else inputs.split(',')
@@ -35,9 +36,9 @@ class Table():
 
         df = pd.DataFrame()
 
-        for input, tag in zip(inputs, tags):
+        for file, tag in zip(inputs, tags):
             _df = pd.read_csv(
-                input,
+                file,
                 sep=dt_sep[input_fmt],
                 header=input_header,
                 index_col=None)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.1.2.4"
+version = "0.1.2.5"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -16,15 +16,11 @@ python = "^3.9.6"
 pandas = "^1.5.3"
 numpy = "^1.24.1"
 tqdm = "^4.64.1"
-pip = "^22"
 fire = "^0.5.0"
 cython = "^0.29.33"
 pysam = "^0.20.0"
 biopython = "^1.81"
-jupyter = "^1.0.0"
 pandarallel = "^1.6.4"
-pyarrow = "^11.0.0"
-dask = "^2023.3.1"
 
 [tool.poetry.scripts]
 bioat = "bioat.cli:main"
