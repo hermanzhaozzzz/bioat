@@ -19,13 +19,13 @@ class Table():
         """A simple tool to merge same formatted tables from different sample.
 
         Params
-        :param inputs: csv files joint by comma
-        :param tags: tags for each file
-        :param output: output file name
-        :param input_fmt: tsv | csv, define the output format
-        :param output_fmt: tsv | csv, define the output format
-        :param input_header: True | False, has header or not
-        :param output_header: True | False, has header or not
+        :param inputs: table files
+        :param tags: tags for each table
+        :param output: merged file
+        :param input_fmt: tsv | csv
+        :param output_fmt: tsv | csv
+        :param input_header: True | False, input table has header or not
+        :param output_header: True | False, output table has header or not
         """
         # fix params
         inputs = list(inputs) if isinstance(inputs, tuple) else inputs.split(',')
