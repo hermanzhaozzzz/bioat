@@ -3,6 +3,7 @@
 """
 from __future__ import annotations, absolute_import
 from bioat.about import about
+from bioat.bam import Bam
 from bioat.fastx import Fastx
 from bioat.hic import HiC
 from bioat.logger import set_logging_level

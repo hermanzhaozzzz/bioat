@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 import fire
-from bioat import about, Fastx, HiC, Mgi, System, Table, __version__
+from bioat import about, Bam, Fastx, HiC, Mgi, System, Table, __version__
 
 
 class Cli(object):
@@ -13,6 +13,7 @@ class Cli(object):
     """
 
     def __init__(self):
+        self.bam = Bam()
         self.fastx = Fastx()
         self.hic = HiC()
         self.mgi = Mgi()

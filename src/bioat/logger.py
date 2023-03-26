@@ -15,7 +15,8 @@ def set_logging_level(level='ERROR'):
     }
     logging.basicConfig(level=dt_level[level])
 
-    logging.info(f'set logging level = {level}')
+    if level not in ('NOTSET', 'INFO'):
+        logging.info(f'set logging level = {level}')
 
 
 if __name__ == '__main__':

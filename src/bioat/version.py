@@ -1,5 +1,5 @@
-__upgrade_date__ = '2022-10-18'
-__version__ = '0.1.2.6'
+__upgrade_date__ = '2023-03-26'
+__version__ = '0.1.3.0'
 __author__ = 'Hua-nan ZHAO @ Tsinghua University'
 __email__ = 'hermanzhaozzzz@gmail.com'
 __doc_format__ = "restructuredtext"
