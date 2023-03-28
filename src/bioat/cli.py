@@ -14,21 +14,31 @@ class Cli(object):
 
     def __init__(self):
         self.bam = Bam()
-        self.fastx = Fastx()
+        # self.fastx = Fastx()
         self.hic = HiC()
         self.mgi = Mgi()
-        self.system = System()
+        # self.system = System()
         self.table = Table()
 
     def about(self):
-        """Print information about <bioat>
+        """Print information about <bioat>.
         """
         return about
 
     def list(self):
-        return "all cmds"
+        """Print commands and subcommands.
+        """
+        for att in dir(self):
+            if not att.startswith('_'):
+                print(f'\t{att}')
+
+                for sub_att in dir(getattr(self, att)):
+                    if not sub_att.startswith('_'):
+                        print(f'\t  ├── {sub_att}')
 
     def version(self):
+        """Print version information.
+        """
         return __version__
 
 

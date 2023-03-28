@@ -1,25 +1,31 @@
 # BioinformaticAnalysisTools
 
 ## Introduction
-A bioinformatic python toolkit accelerated with rust!
+A python command line toolkit for Bioinformatics and data science!
+
+\<under development\>
 
 - Author: Hua-nan ZHAO @Tsinghua University
 - E-Mail: hermanzhaozzzz@gmail.com
 
 ## Installation
 ```shell
-pip install bioat
+pip install --upgrade bioat
 ```
 
-## unit testing
-```shell
-cd tests
-python -m pytest
-# or
-poetry run pytest
-```
+
 ## usage
+```shell
+# list commands
+bioat list
+# check version
+bioat version
+# check information about bioat
+bioat about
 
+# example usage
+bioat 
+```
 
 ## history
 
