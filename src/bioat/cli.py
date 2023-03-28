@@ -30,11 +30,11 @@ class Cli(object):
         """
         for att in dir(self):
             if not att.startswith('_'):
-                print(f'\t{att}')
+                print(f'{att}')
 
                 for sub_att in dir(getattr(self, att)):
                     if not sub_att.startswith('_'):
-                        print(f'\t  ├── {sub_att}')
+                        print(f'  ├── {sub_att}')
 
     def version(self):
         """Print version information.
