@@ -153,44 +153,51 @@ class Bam:
 
     def remove_clip(
             self,
-            input: str = sys.stdin,
-            output: str = sys.stdout,
+            input: str = 'stdin',
+            output: str = 'stdout',
             threads: int = 1,
-            output_format: str = 'SAM',
+            output_fmt: str = 'SAM',
             remove_as_paired: bool = True,
             max_clip: int = 0
     ):
         """Remove softclip reads in BAM file.
 
-        :param input: BAM file sorted by coordinate with soft/hard clip reads
-        :param output: BAM file sorted by coordinate without soft/hard clip reads
+        :param input: BAM file sorted by coordinate with soft/hard clip reads, pipe stdin is supported
+
+                        [samtools view -h foo_sort_name.bam | bioat bam remove_clip <flags>]
+        :param output: BAM file sorted by coordinate without soft/hard clip reads, pipe stdout is supported
+
+                        [bioat bam remove_clip <flags> | wc -l]
+                        [bioat bam remove_clip <flags> | samtools view ....]
         :param threads: threads used by pysam and samtools core
         :param output_format: BAM, SAM
         :param remove_as_paired: True, False. remove single clip(False) / clip and its pair read(True)
         :param max_clip: the maximum clips allowed per read
         """
-        if sys.stdin.isatty():
-            try:
-                bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
-            except ValueError:
-                bam_in = pysam.AlignmentFile(input, "rb", threads=threads, check_sq=False)
-        else:
-            try:
-                bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
-            except ValueError:
-                bam_in = pysam.AlignmentFile("-", "rb", threads=threads, check_sq=False)
+        if sys.stdin.isatty():  # not stdin
+            bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
+        else:  # stdin
+            bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
+
+        # fix output
+        if output == 'stdout':
+            output = sys.stdout
 
         try:
             so = bam_in.header['HD']['SO']
         except KeyError:
             so = None
 
-        if so != "queryname" or so == "coordinate" or so is None:
-            logging.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                          f"your header: [SO:{so}]\n")
-            exit(1)
+        if so:
+            if so != "queryname":
+                logging.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                              f"your header: [SO:{so}]\n")
+                exit(1)
+        else:
+            logging.warning(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                            "your bam file does not have a header\n")
 
-        write_mode = 'wb' if output_format == "BAM" else 'w'
+        write_mode = 'wb' if output_fmt.upper() == "BAM" else 'w'
         bam_out = pysam.AlignmentFile(output, write_mode, template=bam_in)
 
         # Iterate through reads.
@@ -230,14 +237,10 @@ class Bam:
                         bam_out.write(read1)
                     if softclip2 <= max_clip:
                         bam_out.write(read2)
-                elif remove_as_paired:
+                else:
                     if softclip1 <= max_clip and softclip2 <= max_clip:
                         bam_out.write(read1)
                         bam_out.write(read2)
-                    else:
-                        pass
-                else:
-                    pass
             else:
                 logging.fatal(
                     'something wrong with read1/2 pairs, they may have different read id or there is None in them')
