@@ -6,6 +6,7 @@ import os
 import sys
 import string
 import random
+import pysam
 from multiprocessing import Process
 from bioat.logger import set_logging_level
 
@@ -22,7 +23,7 @@ class Bam:
             mutation_number_threshold: int = None,
             temp_dir: str = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}",
             remove_temp: bool = True,
-            log_level:str = 'INFO'
+            log_level: str = 'INFO'
     ):
         """Convert mpileup file to info file.
 
@@ -149,6 +150,103 @@ class Bam:
         logging.debug("Merging files...")
         _merge_out_bmat(temp_filename_list=temp_filename_list, output=output, remove_temp=remove_temp)
         logging.debug("Done!...")
+
+    def remove_clip(
+            self,
+            input: str = sys.stdin,
+            output: str = sys.stdout,
+            threads: int = 1,
+            output_format: str = 'SAM',
+            remove_as_paired: bool = True,
+            max_clip: int = 0
+    ):
+        """Remove softclip reads in BAM file.
+
+        :param input: BAM file sorted by coordinate with soft/hard clip reads
+        :param output: BAM file sorted by coordinate without soft/hard clip reads
+        :param threads: threads used by pysam and samtools core
+        :param output_format: BAM, SAM
+        :param remove_as_paired: True, False. remove single clip(False) / clip and its pair read(True)
+        :param max_clip: the maximum clips allowed per read
+        """
+        if sys.stdin.isatty():
+            try:
+                bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
+            except ValueError:
+                bam_in = pysam.AlignmentFile(input, "rb", threads=threads, check_sq=False)
+        else:
+            try:
+                bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
+            except ValueError:
+                bam_in = pysam.AlignmentFile("-", "rb", threads=threads, check_sq=False)
+
+        try:
+            so = bam_in.header['HD']['SO']
+        except KeyError:
+            so = None
+
+        if so != "queryname" or so == "coordinate" or so is None:
+            logging.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                          f"your header: [SO:{so}]\n")
+            exit(1)
+
+        write_mode = 'wb' if output_format == "BAM" else 'w'
+        bam_out = pysam.AlignmentFile(output, write_mode, template=bam_in)
+
+        # Iterate through reads.
+        read1, read2 = None, None
+
+        for read in bam_in:
+            if not read.is_paired or read.is_unmapped or read.mate_is_unmapped:
+                # or read.is_duplicate:
+                # only use mapped paired reads
+                continue
+
+            # ------------------------------------------------------------------->>>>>>>>>>
+            # 如果先看到read1，将read1赋给read， 判断是否read1、read2都存在
+            #    不都存在：
+            #        即read2不存在，进入下个循环
+            #    都存在，判断query name是否一致
+            # ------------------------------------------------------------------->>>>>>>>>>
+            if read.is_read2:
+                # if first is read2, then use it to find read2
+                read2 = read
+            else:
+                # if first is read1, then use it to find read1, and next query
+                read1 = read
+                read2 = None
+                continue
+
+            # if read1 not None and read2 not None pass to below
+            if read1 and read2 and read1.query_name == read2.query_name:
+                # print("found a pair!")
+                # print(f'Cigar: Read1-{read1.cigarstring}, Read2-{read1.cigarstring}')
+                # print(read.get_cigar_stats())
+                softclip1 = read1.get_cigar_stats()[0][4]
+                softclip2 = read2.get_cigar_stats()[0][4]
+
+                if not remove_as_paired:
+                    if softclip1 <= max_clip:
+                        bam_out.write(read1)
+                    if softclip2 <= max_clip:
+                        bam_out.write(read2)
+                elif remove_as_paired:
+                    if softclip1 <= max_clip and softclip2 <= max_clip:
+                        bam_out.write(read1)
+                        bam_out.write(read2)
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                logging.fatal(
+                    'something wrong with read1/2 pairs, they may have different read id or there is None in them')
+                logging.fatal(f'read1={read1}, read2={read2}')
+                logging.fatal(f'read1_id={read1.query_name}, read2_id={read2.query_name}')
+                exit(1)
+
+        bam_in.close()
+        bam_out.close()
 
 
 def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
