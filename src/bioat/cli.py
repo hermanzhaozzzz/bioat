@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 import fire
-from bioat import about, Bam, Fastx, HiC, Mgi, System, Table, __version__
+from bioat import about, Bam, Fastx, HiC, Mgi, System, Table, TargetedDeepSequencing, __version__
 
 
 class Cli(object):
@@ -19,6 +19,7 @@ class Cli(object):
         self.mgi = Mgi()
         # self.system = System()
         self.table = Table()
+        self.targeted_deep_sequencing = TargetedDeepSequencing()
 
     def about(self):
         """Print information about <bioat>.

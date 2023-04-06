@@ -10,6 +10,7 @@ from bioat.logger import set_logging_level
 from bioat.mgi import Mgi
 from bioat.system import System
 from bioat.table import Table
+from bioat.targeted_deep_sequencing import TargetedDeepSequencing
 from bioat.version import (__version__, __author__, __doc_format__)
 
 __name__ = "bioat"
