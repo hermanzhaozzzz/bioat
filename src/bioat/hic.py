@@ -5,7 +5,7 @@ import pandas as pd
 from bioat.logger import set_logging_level
 from pandarallel import pandarallel
 import logging
-from bioat._dev_tools import profile
+from bioat.lib._dev_tools import profile
 import gc
 
 
