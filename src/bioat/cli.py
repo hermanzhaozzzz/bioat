@@ -21,6 +21,7 @@ class Cli(object):
         self.table = Table()
         self.targeted_deep_sequencing = TargetedDeepSequencing()
 
+    @classmethod
     def about(self):
         """Print information about <bioat>.
         """
@@ -37,6 +38,7 @@ class Cli(object):
                     if not sub_att.startswith('_'):
                         print(f'  ├── {sub_att}')
 
+    @classmethod
     def version(self):
         """Print version information.
         """
