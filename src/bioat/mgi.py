@@ -20,9 +20,7 @@ class Mgi():
         df.columns = ["md5", "filename"]
         df.md5 = df.md5.map(lambda x: x.lower())
         df.filename = df.filename + ".gz"
-        df.to_csv(
-            file.replace(".txt", "") + ".fix.md5", header=False, index=False, sep="\t"
-        )
+        df.to_csv(file.replace(".txt", "") + ".fix.md5", header=False, index=False, sep="\t")
 
 
 if __name__ == "__main__":
