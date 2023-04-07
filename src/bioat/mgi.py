@@ -5,7 +5,7 @@ class Mgi():
     def __init__(self):
         pass
 
-    def parse_md5(self, file):
+    def parse_md5(self, file: str):
         """Read mgi-like md5 file and convert to a normal md5 file.
 
         :param file: file name of a mgi-like md5 file.
