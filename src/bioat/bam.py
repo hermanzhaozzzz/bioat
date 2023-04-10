@@ -36,10 +36,13 @@ class Bam:
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
         set_logging_level(level=log_level)
-
+        # set logger
+        lib_name = __name__
+        function_name = sys._getframe().f_code.co_name
+        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
         def _temp_split_bam(mpileup, threads, temp_dir):
             # creat temp file name and open file
-            logging.debug("Making temp files...")
+            logger.debug("Making temp files...")
 
             input_file_basename = os.path.basename(mpileup)
 
@@ -60,7 +63,7 @@ class Bam:
                 temp_file_list.append(temp_file)
 
             # counting input file line number
-            logging.debug("Counting input file...")
+            logger.debug("Counting input file...")
 
             total_input_line_num = 0
             input_file = gzip.open(mpileup, "rt") if mpileup.endswith('.gz') else open(mpileup, "rt")
@@ -75,7 +78,7 @@ class Bam:
                 each_file_line_num = (total_input_line_num // threads) + 1
 
             input_file.close()
-            logging.debug("Done!")
+            logger.debug("Done!")
 
             # split temp files
             # write into output filename
@@ -88,7 +91,7 @@ class Bam:
             # close output filename
             input_file.close()
             [temp_file.close() for temp_file in temp_file_list]
-            logging.debug("Make temp files done!")
+            logger.debug("Make temp files done!")
 
             return temp_filename_list
 
@@ -131,7 +134,7 @@ class Bam:
         # make temp files
         temp_filename_list = _temp_split_bam(mpileup=mpileup, threads=threads, temp_dir=temp_dir)
         # multiple processing part
-        logging.debug("Parsing files...")
+        logger.debug("Parsing files...")
 
         procs_list = []
 
@@ -145,11 +148,11 @@ class Bam:
 
         for sub_proc in procs_list:
             sub_proc.join()
-        logging.debug("Done!")
+        logger.debug("Done!")
         # merge output files
-        logging.debug("Merging files...")
+        logger.debug("Merging files...")
         _merge_out_bmat(temp_filename_list=temp_filename_list, output=output, remove_temp=remove_temp)
-        logging.debug("Done!...")
+        logger.debug("Done!...")
 
     def remove_clip(
             self,
@@ -158,7 +161,8 @@ class Bam:
             threads: int = 1,
             output_fmt: str = 'SAM',
             remove_as_paired: bool = True,
-            max_clip: int = 0
+            max_clip: int = 0,
+            log_level: str = 'INFO'
     ):
         """Remove softclip reads in BAM file.
 
@@ -173,7 +177,14 @@ class Bam:
         :param output_format: BAM, SAM
         :param remove_as_paired: True, False. remove single clip(False) / clip and its pair read(True)
         :param max_clip: the maximum clips allowed per read
+        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
+        set_logging_level(level=log_level)
+        # set logger
+        lib_name = __name__
+        function_name = sys._getframe().f_code.co_name
+        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+
         if sys.stdin.isatty():  # not stdin
             bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
         else:  # stdin
@@ -190,11 +201,11 @@ class Bam:
 
         if so:
             if so != "queryname":
-                logging.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                logger.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
                               f"your header: [SO:{so}]\n")
                 exit(1)
         else:
-            logging.warning(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+            logger.warning(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
                             "your bam file does not have a header\n")
 
         write_mode = 'wb' if output_fmt.upper() == "BAM" else 'w'
@@ -242,10 +253,10 @@ class Bam:
                         bam_out.write(read1)
                         bam_out.write(read2)
             else:
-                logging.fatal(
+                logger.fatal(
                     'something wrong with read1/2 pairs, they may have different read id or there is None in them')
-                logging.fatal(f'read1={read1}, read2={read2}')
-                logging.fatal(f'read1_id={read1.query_name}, read2_id={read2.query_name}')
+                logger.fatal(f'read1={read1}, read2={read2}')
+                logger.fatal(f'read1_id={read1.query_name}, read2_id={read2.query_name}')
                 exit(1)
 
         bam_in.close()

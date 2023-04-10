@@ -1,9 +1,9 @@
+import sys
 import logging
 from logging import (CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET)
 
 
 def set_logging_level(level='ERROR'):
-
     level = level.upper()
 
     dt_level = {
@@ -14,9 +14,13 @@ def set_logging_level(level='ERROR'):
         )
     }
     logging.basicConfig(level=dt_level[level])
+    # set logger
+    lib_name = __name__
+    function_name = sys._getframe().f_code.co_name
+    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
 
     if level not in ('NOTSET', 'INFO'):
-        logging.info(f'set logging level = {level}')
+        logger.info(f'set logging level = {level}')
 
 
 if __name__ == '__main__':
@@ -28,10 +32,10 @@ if __name__ == '__main__':
     # set_logging_level('INFO')  # DEBUG 没打印
     # set_logging_level('DEBUG')  # 全打印
     # set_logging_level('NOTSET')  # 全打印
-
+    # CRITICAL > ERROR > WARNING > INFO > DEBUG = NOTSET
+    # 也就是说,如果设置为WARNING,就只打印WARNING及左边,的CRITICAL和ERROR
     logging.debug('Python debug')
     logging.info('Python info')
     logging.warning('Python warning')
     logging.error('Python Error')
     logging.critical('Python critical')
-

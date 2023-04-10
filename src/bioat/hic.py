@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+import sys
 import time
 import pandas as pd
 from bioat.logger import set_logging_level
@@ -7,7 +7,6 @@ from pandarallel import pandarallel
 import logging
 from bioat.lib._dev_tools import profile
 import gc
-
 
 try:
     pandarallel.initialize(
@@ -28,7 +27,13 @@ class HiC:
         pass
 
     @profile
-    def get_effective_resolutions(self, genome_index, valid_pairs, output):
+    def get_effective_resolutions(
+            self,
+            genome_index,
+            valid_pairs,
+            output,
+            log_level: str = 'INFO'
+    ):
         """Get deepest resolution of cis-interation.
 
         输入为result文件，输出为matrix的大致resolution.
@@ -36,8 +41,14 @@ class HiC:
         :param genome_index: genome.fa.fai
         :param valid_pairs: rm_dup_pairs.allValidPairs by HiC-Pro
         :param output: table_output, TSV file
+        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logging.debug('Develop mode is on')
+        set_logging_level(level=log_level)
+        # set logger
+        lib_name = __name__
+        function_name = sys._getframe().f_code.co_name
+        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger.debug('Develop mode is on')
         # load ref genome lengths
         df_chromosome = pd.read_csv(
             genome_index,
@@ -71,11 +82,11 @@ class HiC:
                 chunk = reader.get_chunk(10_000_000)
                 chunks.append(chunk)
             except StopIteration:
-                logging.debug("pandas reader iteration is done.")
+                logger.debug("pandas reader iteration is done.")
                 break
 
         df_valid_pairs = pd.concat(chunks, ignore_index=True)
-        logging.debug(df_valid_pairs.info(memory_usage='deep'))
+        logger.debug(df_valid_pairs.info(memory_usage='deep'))
         # 思路：二分法确认new_bin下线
         output = open(output, 'wt')
         write_lines = 0
@@ -105,7 +116,7 @@ class HiC:
 
             # calculate mapped bin index
             df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.parallel_apply(
-            # df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.apply(
+                # df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.apply(
                 get_bin_index,
                 axis=1,
                 result_type='expand'
@@ -140,7 +151,6 @@ class HiC:
 
 
 if __name__ == '__main__':
-    set_logging_level(level='DEBUG')
     a = time.time()
     hic = HiC()
     hic.get_effective_resolutions(
