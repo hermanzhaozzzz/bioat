@@ -10,6 +10,7 @@ A python command line toolkit for Bioinformatics and data science!
 
 ## Installation
 ```shell
+# supported platform: Linux / MacOS / WSL on Windows
 pip install --upgrade bioat
 ```
 
