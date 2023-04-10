@@ -1,11 +1,30 @@
-TARGET_REGIONS_LIB = {
-    "EMX1": "GAGTCCGAGCAGAAGAAGAA$GGG$",
-    "HEK3": "GGCCCAGACTGAGCACGTGA$TGG$",
-    "HEK4": "GGCACTGCGGCTGGAGGTGG$GGG$",
-    "RNF2": "GTCATCTTAGTCATTACCTG$AGG$",
-    "VEGFA": "GACCCCCTCCACCCCGCCTC$CGG$",
-    "CDKN2A": "$TTTA$GCCCCAATAATCCCCACATGTCA",
-    "DYRK1A": "$TTTA$GAAGCACATCAAGGACATTCTAA",
+from __future__ import absolute_import
+import logging
+import sys
+from Bio.Seq import Seq
+from Bio.Align import PairwiseAligner
+from Bio.Align import Alignment
+from bioat.lib.libalignment import parse_alignment_str
+
+"""TARGET_REGIONS_LIB.
+
+bioat targeted_deep_sequencing region_heatmap test_sorted.mpileup.info.tsv test.pdf --get_built_in_target_region
+
+INFO:root:You can use <key> in built-in <target_regions> to represent your target_region:
+        <key>   <target_region>
+        EMX1    GAGTCCGAGCAGAAGAAGAA^GGG^
+        HEK3    GGCCCAGACTGAGCACGTGA^TGG^
+        HEK4    GGCACTGCGGCTGGAGGTGG^GGG^
+        ...
+"""
+TARGET_SEQ_LIB = {
+    "EMX1": "GAGTCCGAGCAGAAGAAGAA^GGG^",
+    "HEK3": "GGCCCAGACTGAGCACGTGA^TGG^",
+    "HEK4": "GGCACTGCGGCTGGAGGTGG^GGG^",
+    "RNF2": "GTCATCTTAGTCATTACCTG^AGG^",
+    "VEGFA": "GACCCCCTCCACCCCGCCTC^CGG^",
+    "CDKN2A": "^TTTA^GCCCCAATAATCCCCACATGTCA",
+    "DYRK1A": "^TTTA^GAAGCACATCAAGGACATTCTAA",
     "ND4": "TGCTAGTAACCACGTTCTCCTGATCAAATATCACTCTCCTACTTACAGGA",
     "ND5.1": "TAGCATTAGCAGGAATACCTTTCCTCACAGGTTTCTACTCCAAAGA",
     "ND6": "TGACCCCCATGCCTCAGGATACTCCTCAATAGCCATCG",
@@ -13,13 +32,10 @@ TARGET_REGIONS_LIB = {
 
 
 def find_seq_PAM_index(query_seq):
-    """
-    <INPUT>
-        query_seq
+    """Find seq PAM index.
 
-    <HELP>
-        e.g. query_seq = "AAAGAGAG"
-        return index list = [1,3,5], which means search NAG, NGG at the same time
+    :param query_seq: e.g. query_seq = "AAAGAGAG"
+    :return: index list = [1,3,5], which means search NAG, NGG at the same time
     """
     pam_index_list = []
 
@@ -33,20 +49,17 @@ def find_seq_PAM_index(query_seq):
     return (pam_index_list)
 
 
-def analysis_align_obj(alignment, reverse_state=False):
+def analysis_alignment_obj(alignment: Alignment, reverse_state=False):
     """
-    INPUT:
-        <alignment obj>
 
-    OUTPUT:
-        <info>
+    :param alignment: Bio.Align.Alignment object
+    :param reverse_state:
+    :return:
             1. match count
             2. mismatch count
             3. gap count
             4. alignment.score
-
-    HELP:
-        2019-11-15 fix-1
+    :doc:
             The gap count should be the num of gap contain in sgRNA alignment region.
 
             e.g.
@@ -57,7 +70,6 @@ def analysis_align_obj(alignment, reverse_state=False):
 
             gap count should be 4, rather than 10.
 
-        2019-11-15 fix-2
             add return info, start_index, end_index, now the retrun list will be
 
             return_list = [
@@ -70,9 +82,7 @@ def analysis_align_obj(alignment, reverse_state=False):
             ]
 
             The <start_index> and <end_index> are index related to sgRNA alignment string
-
     """
-
     # define params
     match_count = 0
     mismatch_count = 0
@@ -125,16 +135,15 @@ def analysis_align_obj(alignment, reverse_state=False):
             ref_align_end_index = index
             break
 
-    return_list = [
-        match_count,
-        mismatch_count,
-        gap_count,
-        alignment.score,
-        ref_align_start_index,
-        ref_align_end_index
-    ]
-
-    return (return_list)
+    res = dict(
+        match_count=match_count,
+        mismatch_count=mismatch_count,
+        gap_count=gap_count,
+        alignment_score=alignment.score,
+        ref_align_start_index=ref_align_start_index,
+        ref_align_end_index=ref_align_end_index
+    )
+    return res
 
 
 def sign_value(x):
@@ -167,9 +176,13 @@ def cmp_align_list(align_a, align_b):
             continue
         else:
             if sort_rev_state_list[order_index]:
-                return (-1 * sign_value(align_a[align_index] - align_b[align_index]))
+                return (-1 *
+                        sign_value(align_a[align_index] - align_b[align_index]))
             else:
-                return (sign_value(align_a[align_index] - align_b[align_index]))
+                return (
+                    sign_value(
+                        align_a[align_index] -
+                        align_b[align_index]))
 
     for index, char_a in enumerate(align_a[7]):
         if index <= (len(align_b[7]) - 1):
@@ -184,10 +197,10 @@ def cmp_align_list(align_a, align_b):
     return 0
 
 
-def run_sgRNA_alignment(align_ref_seq, align_sgRNA, sgRNA_aligner, extend_len=3):
+def run_sgRNA_alignment(align_ref_seq, align_sgRNA, aligner, extend_len=3):
     """
     INPUT
-        <align_ref_seq>
+        <ref_seq>
 
         <align_sgRNA>
             sgRNA seq without PAM
@@ -219,15 +232,17 @@ def run_sgRNA_alignment(align_ref_seq, align_sgRNA, sgRNA_aligner, extend_len=3)
 
         # alignment part
         region_seq = align_ref_seq[region_seq_start: PAM_start_idx]
-        align_res = sgRNA_aligner.align(region_seq[::-1], align_sgRNA_rev)
+        alignments = aligner.align(region_seq[::-1], align_sgRNA_rev)
 
         # parse alignment
-        ## if contain multiple alignment result with the same score, keep the best one;
-        ## sort reason score -> gap -> mismatch -> match
+        # if contain multiple alignment result with the same score, keep the best one;
+        # sort reason score -> gap -> mismatch -> match
         align_res_list = []
-        for align in align_res:
-            align_analysis_res = analysis_align_obj(align, reverse_state=True)
-            align_info_list = [x[::-1] for x in str(align).strip().split("\n")]
+        for alignment in alignments:
+            align_analysis_res = analysis_alignment_obj(
+                alignment, reverse_state=True)
+            align_info_list = [x[::-1]
+                               for x in str(alignment).strip().split("\n")]
             align_analysis_res += align_info_list
             align_analysis_res += [PAM_start_idx, PAM_type]
             align_res_list.append(align_analysis_res)
@@ -245,42 +260,67 @@ def run_sgRNA_alignment(align_ref_seq, align_sgRNA, sgRNA_aligner, extend_len=3)
     return (final_align_res_list)
 
 
-def run_no_PAM_sgRNA_alignment_no_chop(align_ref_seq, align_sgRNA_full, no_PAM_sgRNA_aligner):
+def run_no_PAM_sgRNA_alignment_no_chop(
+        ref_seq: Seq,
+        target_seq: Seq,
+        aligner: PairwiseAligner
+) -> list:
+    """global alignment for target_seq
+
+    :param ref_seq: a Seq object from BioPython, reference sequence for the targeted deep sequencing
+    :param target_seq: a Seq object from BioPython, target region sequence for the editing window, usually the sgRNA
+        sequencing without PAM
+    :param aligner: an obj from BioPython pairwise alignment
+    :return: a list: list contains some dict, each one is an alignment result.
+    [
+        {
+            'match_count': 2,
+            'mismatch_count': 0,
+            'gap_count': 56,
+            'alignment_score': 37.0,
+            'ref_align_start_index': 0,
+            'ref_align_end_index': 265,
+            'alignment': {
+                'aligned_reference_seq': 'GTCACCTGCCTCTGGAGAGGGAGGAGGGGCCTCT',
+                'aligned_seq_info':      '-------|.|.|||..|..|||||.||-------',
+                'aligned_target_seq':    '-------GGCACTGCGGCTGGAGGTGG-------'
+            },
+            'PAM_start_index': None,
+            'PAM_type': None
+        },
+        ...
+    ]
+
     """
-    INPUT
-        <align_ref_seq>
-
-        <align_sgRNA>
-            sgRNA seq without PAM
-
-        <no_PAM_sgRNA_aligner>
-            An obj from BioPython pairwise alignment
-
-    RETURN
-        <final_align_res_list>
-    """
+    # set logger
+    lib_name = __name__
+    function_name = sys._getframe().f_code.co_name
+    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
 
     # alignment part
-    align_res = no_PAM_sgRNA_aligner.align(align_ref_seq, align_sgRNA_full)
-
+    alignments = aligner.align(ref_seq, target_seq)
     # parse alignment
-    ## if contain multiple alignment result with the same score, keep the best one;
-    ## sort reason score -> gap -> mismatch -> match
-    align_res_list = []
-    for align in align_res:
-        align_analysis_res_temp = analysis_align_obj(align, reverse_state=False)
-        align_analysis_res = align_analysis_res_temp[:]
-        align_analysis_res += str(align).strip().split("\n")
+    # if contain multiple alignment result with the same score, keep the best one;
+    # sort reason score -> gap -> mismatch -> match
+    alignment_results = []
 
-        PAM_start_index = align_analysis_res[5] - 2
-        PAM_type = ref_seq[PAM_start_index: PAM_start_index + 3]
+    for alignment in alignments:
+        # logging.debug(type(align))  # Bio.Align.Alignment object
+        alignment_analysis_result = analysis_alignment_obj(
+            alignment, reverse_state=False)
 
-        align_analysis_res += [PAM_start_index, PAM_type]
-        align_res_list.append(align_analysis_res)
+        alignment_analysis_result['alignment'] = parse_alignment_str(alignment)
+        logger.debug(f'alignment_analysis_result:\n{alignment_analysis_result}')
 
-    if len(align_res_list) == 1:
-        return (align_res_list)
+        alignment_analysis_result['PAM_start_index'] = None
+        alignment_analysis_result['PAM_type'] = None
+        alignment_results.append(alignment_analysis_result)
+
+        if len(alignment_results) == 1:
+            logger.debug(f'find 1 alignment result:\n{alignment_results}')
+        return alignment_results
 
     else:
-        align_res_list.sort(cmp=cmp_align_list)
-        return (align_res_list)
+        alignment_results.sort(cmp=cmp_align_list)
+        logger.debug(f'find more than 1 alignment results:\n{alignment_results}')
+        return alignment_results
