@@ -3,8 +3,7 @@ import logging
 import sys
 from Bio.Seq import Seq
 from Bio.Align import PairwiseAligner
-from Bio.Align import Alignment
-from bioat.lib.libalignment import parse_alignment_str
+from bioat.lib.libalignment import get_alignment_info
 
 """TARGET_REGIONS_LIB.
 
@@ -47,103 +46,6 @@ def find_seq_PAM_index(query_seq):
             pam_index_list.append((index, "NGG"))
 
     return (pam_index_list)
-
-
-def analysis_alignment_obj(alignment: Alignment, reverse_state=False):
-    """
-
-    :param alignment: Bio.Align.Alignment object
-    :param reverse_state:
-    :return:
-            1. match count
-            2. mismatch count
-            3. gap count
-            4. alignment.score
-    :doc:
-            The gap count should be the num of gap contain in sgRNA alignment region.
-
-            e.g.
-
-            AGTGGTAAGAAGAAGACGAGACATAATGAG
-            ------||||||||||||||X|----||||
-            ------AAGAAGAAGACGAGCC----TGAG
-
-            gap count should be 4, rather than 10.
-
-            add return info, start_index, end_index, now the retrun list will be
-
-            return_list = [
-                match_count,
-                mismatch_count,
-                gap_count,
-                alignment.score,
-                start_index,
-                end_index
-            ]
-
-            The <start_index> and <end_index> are index related to sgRNA alignment string
-    """
-    # define params
-    match_count = 0
-    mismatch_count = 0
-    gap_count = 0
-
-    alignment_list = str(alignment).split("\n")
-    query_length = len(alignment.query)
-
-    if reverse_state:
-        target_list = alignment_list[0][::-1]
-        info_list = alignment_list[1][::-1]
-        query_list = alignment_list[2][::-1]
-
-    else:
-        target_list = alignment_list[0]
-        info_list = alignment_list[1]
-        query_list = alignment_list[2]
-
-    count_state = False
-    count_query_base = 0
-
-    ref_align_start_index = 0
-    ref_align_end_index = len(alignment.target) - 1
-
-    # counting
-    for index, info_base in enumerate(info_list):
-        if not count_state:
-            if query_list[index] != "-":
-                count_state = True
-                ref_align_start_index = index
-
-        if not count_state:
-            continue
-
-        else:
-            if info_base == "|":
-                match_count += 1
-                count_query_base += 1
-
-            elif info_base == "X":
-                mismatch_count += 1
-                count_query_base += 1
-
-            elif info_base == "-":
-                gap_count += 1
-                if query_list[index] != "-":
-                    count_query_base += 1
-
-        if count_query_base >= query_length:
-            ref_align_end_index = index
-            break
-
-    res = dict(
-        match_count=match_count,
-        mismatch_count=mismatch_count,
-        gap_count=gap_count,
-        alignment_score=alignment.score,
-        ref_align_start_index=ref_align_start_index,
-        ref_align_end_index=ref_align_end_index
-    )
-    return res
 
 
 def sign_value(x):
@@ -239,10 +141,8 @@ def run_sgRNA_alignment(align_ref_seq, align_sgRNA, aligner, extend_len=3):
         # sort reason score -> gap -> mismatch -> match
         align_res_list = []
         for alignment in alignments:
-            align_analysis_res = analysis_alignment_obj(
-                alignment, reverse_state=True)
-            align_info_list = [x[::-1]
-                               for x in str(alignment).strip().split("\n")]
+            align_analysis_res = get_alignment_info(alignment, reverse=True)
+            align_info_list = [x[::-1] for x in str(alignment).strip().split("\n")]
             align_analysis_res += align_info_list
             align_analysis_res += [PAM_start_idx, PAM_type]
             align_res_list.append(align_analysis_res)
@@ -274,16 +174,16 @@ def run_no_PAM_sgRNA_alignment_no_chop(
     :return: a list: list contains some dict, each one is an alignment result.
     [
         {
-            'match_count': 2,
-            'mismatch_count': 0,
-            'gap_count': 56,
-            'alignment_score': 37.0,
+            'match_count': 26,
+            'mismatch_count': 3,
+            'gap_count': 4,
+            'alignment_score': 96.0,
             'ref_align_start_index': 0,
-            'ref_align_end_index': 265,
+            'ref_align_end_index': 32,
             'alignment': {
-                'aligned_reference_seq': 'GTCACCTGCCTCTGGAGAGGGAGGAGGGGCCTCT',
-                'aligned_seq_info':      '-------|.|.|||..|..|||||.||-------',
-                'aligned_target_seq':    '-------GGCACTGCGGCTGGAGGTGG-------'
+                'aligned_reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT',
+                'aligned_seq_info':      '--..|.|||||||||||||||||||||||--||',
+                'aligned_target_seq':    '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'
             },
             'PAM_start_index': None,
             'PAM_type': None
@@ -306,14 +206,8 @@ def run_no_PAM_sgRNA_alignment_no_chop(
 
     for alignment in alignments:
         # logging.debug(type(align))  # Bio.Align.Alignment object
-        alignment_analysis_result = analysis_alignment_obj(
-            alignment, reverse_state=False)
-
-        alignment_analysis_result['alignment'] = parse_alignment_str(alignment)
+        alignment_analysis_result = get_alignment_info(alignment, reverse=False)
         logger.debug(f'alignment_analysis_result:\n{alignment_analysis_result}')
-
-        alignment_analysis_result['PAM_start_index'] = None
-        alignment_analysis_result['PAM_type'] = None
         alignment_results.append(alignment_analysis_result)
 
         if len(alignment_results) == 1:

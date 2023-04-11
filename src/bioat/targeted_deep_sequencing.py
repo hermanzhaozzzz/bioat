@@ -137,7 +137,7 @@ class TargetedDeepSequencing:
         aligner.query_left_gap_score = 0
         aligner.query_right_gap_score = 0
         aligner.mode = "global"
-        logger.debug(aligner)
+        logger.info(aligner)
 
         # load mpileup.info.tsv
         if input_table_header:
@@ -150,10 +150,10 @@ class TargetedDeepSequencing:
         # ref_seq & ref_seq_rc
         if reference_seq:
             ref_seq = Seq(reference_seq)
-            logger.debug(f'ref_seq from parameter:\n{ref_seq}')
+            logger.debug(f'load ref_seq from parameter:\n{ref_seq}')
         else:
             ref_seq = Seq("".join(df_bases.ref_base))
-            logger.debug(f'ref_seq from df_bases.ref_base:\n{ref_seq}')
+            logger.debug(f'load ref_seq from df_bases.ref_base:\n{ref_seq}')
 
         ref_seq = Seq(ref_seq)
         logger.debug(f'Seq object for ref_seq:\n{ref_seq}')
@@ -178,9 +178,10 @@ class TargetedDeepSequencing:
             target_seq = Seq(target_seq)
             PAM_seq = None
 
-        logger.debug(f'parse target_seq: target_seq={target_seq}, PAM_seq={PAM_seq}')
+        logger.info(f'parse target_seq: target_seq={target_seq}, PAM_seq={PAM_seq}')
 
         # fwd alignment & rev alignment
+        # 为了判断target_seq (sgRNA) 是设计在fwd还是rev链上
         final_align_forward = run_no_PAM_sgRNA_alignment_no_chop(ref_seq, target_seq, aligner)
         logger.debug(f'final_align_forward:\n{final_align_forward}')
         final_align_reverse = run_no_PAM_sgRNA_alignment_no_chop(ref_seq_rc, target_seq, aligner)
@@ -189,98 +190,125 @@ class TargetedDeepSequencing:
         fwd = final_align_forward[0]
         rev = final_align_reverse[0]
 
-        logger.info(f"""Forward best alignment:
-reference  : {fwd['alignment']['aligned_reference_seq'][fwd['ref_align_start_index']: fwd['ref_align_end_index'] + 1]}
-align_info : {fwd['alignment']['aligned_seq_info'][fwd['ref_align_start_index']: fwd['ref_align_end_index'] + 1]}
-target_seq : {fwd['alignment']['aligned_target_seq'][fwd['ref_align_start_index']: fwd['ref_align_end_index'] + 1]}
-align_score: {fwd['alignment_score']}""")
+        # get fwd alignment info
+        reference_seq = fwd['alignment']['reference_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
+        align_info = fwd['alignment']['aln_info'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
+        target_seq = fwd['alignment']['target_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
+        aln_score = fwd['aln_score']
+        logger.info(
+            f"Forward best alignment:\n"
+            f"reference  : {reference_seq}\n"
+            f"align_info : {align_info}\n"
+            f"target_seq : {target_seq}\n"
+            f"align_score: {aln_score}"
+        )
+        # get rev alignment info
+        reference_seq_rev = rev['alignment']['reference_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
+        align_info_rev = rev['alignment']['aln_info'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
+        target_seq_rev = rev['alignment']['target_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
+        aln_score_rev = rev['aln_score']
+        logger.info(
+            f"Reverse best alignment:\n"
+            f"reference  : {reference_seq_rev}\n"
+            f"align_info : {align_info_rev}\n"
+            f"target_seq : {target_seq_rev}\n"
+            f"align_score: {aln_score_rev}"
+        )
 
-        # rev alignment
-        logger.info(f"""Reverse best alignment:
-reference  : {rev['alignment']['aligned_reference_seq'][rev['ref_align_start_index']: rev['ref_align_end_index'] + 1]}
-align_info : {rev['alignment']['aligned_seq_info'][rev['ref_align_start_index']: rev['ref_align_end_index'] + 1]}
-target_seq : {rev['alignment']['aligned_target_seq'][rev['ref_align_start_index']: rev['ref_align_end_index'] + 1]}
-align_score: {rev['alignment_score']}""")
-
+        # define align direction and final align res
         # make alignment info
-        sgRNA_align = [""] * len(ref_seq)
-        sgRNA_align_insert = [""] * len(ref_seq)
+        if any([x >= local_alignment_min_score for x in (fwd['aln_score'], rev['aln_score'])]):
+            if fwd['aln_score'] >= rev['aln_score']:
+                aln_direction = "Forward Alignment"
+                aln = fwd
+            else:
+                aln_direction = "Reverse Alignment"
+                aln = rev
+                reference_seq = reference_seq_rev
+                align_info = align_info_rev
+                target_seq = target_seq_rev
+                aln_score = aln_score_rev
+        else:
+            logger.critical("Alignment Error!")
+            exit(1)
 
+        # mark aligned all bases in target_seq
+        ref_seq_length = len(ref_seq)
+        target_seq_aln = [""] * ref_seq_length
+        # mark inserted bases in target_seq
+        target_seq_aln_insert = [""] * ref_seq_length
         DNA_rev_cmp_dict = {
             "A": "T",
             "T": "A",
             "C": "G",
             "G": "C",
             "N": "N",
-            "-": "-"}
+            "-": "-"
+        }
 
-        # define align direction and final align res
-        if any([x >= local_alignment_min_score for x in (fwd['alignment_score'], rev['alignment_score'])]):
-            if fwd['alignment_score'] >= rev['alignment_score']:
-                final_align_direction = "Forward Alignment"
-                final_align = fwd
-            else:
-                final_align_direction = "Reverse Alignment"
-                final_align = rev
-        else:
-            logger.critical("Alignment Error!")
-            exit(1)
+        reference_gap_count = reference_seq.count("-")
+        target_seq_gap_count = target_seq.count("-")
 
-        # make sgRNA alignment info
-        final_align_info = final_align[7][final_align[4]: final_align[5] + 1]
-        final_align_ref = final_align[6][final_align[4]: final_align[5] + 1]
-        final_align_sgRNA = final_align[8][final_align[4]: final_align[5] + 1]
-
-        final_align_ref_gap_count = final_align_ref.count("-")
-        final_align_sgRNA_gap_count = final_align_sgRNA.count("-")
-
-        ref_align_gap_count = 0
+        ref_gap_count = 0
         ref_del_str = ""
 
-        # select bmat file
-        if (final_align_direction == "Forward Alignment") or (
-                final_align_direction == "Reverse Alignment"):
-            sgRNA_start = final_align[4]
+        aln_start = aln['ref_aln_start']
+        aln_end = aln['ref_aln_end']
 
-            for align_index, align_ref in enumerate(final_align_ref):
-                if align_ref != "-":
-                    sgRNA_align[sgRNA_start + align_index -
-                                ref_align_gap_count] = ref_del_str + final_align_sgRNA[align_index]
-                    ref_del_str = ""
-                else:
-                    ref_align_gap_count += 1
-                    ref_del_str += final_align_sgRNA[align_index]
-                    sgRNA_align_insert[sgRNA_start +
-                                       align_index] = final_align_sgRNA[align_index]
+        # update target_seq_aln
+        logger.debug(f'target_seq_aln = {target_seq_aln}')
+        logger.debug("update target_seq_aln: show ''.join(target_seq_aln)")
+        for idx, ref_base in enumerate(reference_seq):
 
-            # add PAM info
-            if final_align_direction == "Reverse Alignment":
-                sgRNA_align = sgRNA_align[::-1]
-                sgRNA_align_insert = sgRNA_align_insert[::-1]
+            # reference  : GCCTCTGGAGAGGGAGGAGGG
+            # align_info : |.|.|||..|..|||||.||-
+            # target_seq : GGCACTGCGGCTGGAGGTGG-
+            if ref_base != "-":
+                ref_gap_count += 0
+                ref_del_str = ""
+                target_seq_aln[aln_start + idx - ref_gap_count] = ref_del_str + target_seq[idx]
+            else:
+                ref_gap_count += 1
+                ref_del_str += target_seq[idx]  # for continuous gap
+                target_seq_aln_insert[aln_start + idx] = target_seq[idx]
+            logger.debug(f"{''.join(target_seq_aln)}")
+        logger.debug("update target_seq_aln: Done")
+        logger.debug(f'target_seq_aln = {target_seq_aln}')
+        logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
+        # if reverse alignment
+        if aln_direction == "Reverse Alignment":
+            # illustrate reverse alignment as forward alignment
+            target_seq_aln = target_seq_aln[::-1]
+            target_seq_aln_insert = target_seq_aln_insert[::-1]
+            logger.debug("use reverse alignment")
+            logger.debug(f'target_seq_aln = {target_seq_aln}')
+            logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
 
-        # set possible_sgRNA_region
-        sgRNA_align_start = final_align[4]
-        sgRNA_align_end = final_align[5]
+        # add PAM info# TODO
 
-        possible_sgRNA_region_start = max(
-            sgRNA_align_start - region_extend_length, 0)
-        possible_sgRNA_region_end = min(
-            sgRNA_align_end + region_extend_length,
-            len(ref_seq) - 1)
-        possible_sgRNA_region = [
-            possible_sgRNA_region_start,
-            possible_sgRNA_region_end]
+        # print(target_seq_aln)
+        # print(target_seq_aln_insert)
+        # target_seq_aln
+        # ['-','-','G','G','C','A','G','C','G','G','C','T','G','G','A','A','A','A','A','A','A','A','A','A','A','A',
+        # 'A','A','A','G','T','','']
+        # target_seq_aln_insert
+        # ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','A','G','','']
 
-        # select df_bases
-        bmat_table_select = df_bases[possible_sgRNA_region[0]: possible_sgRNA_region[1]]
+        # set plot_region
+        # print(aln_start, aln_end, region_extend_length, ref_seq_length)
+        # 56 76 25 266
+        # print(aln_start - region_extend_length)
+        # 31
+        # print(aln_end + region_extend_length)
+        # 101
+        possible_target_region_start = max(aln_start - region_extend_length, 0)
+        possible_target_region_end = min(aln_end + region_extend_length, ref_seq_length)  # 266: 0~255 266 - 1
+        plot_region = (possible_target_region_start, possible_target_region_end)
+        df_bases_select = df_bases.iloc[plot_region[0]: plot_region[1], :]
+        logger.debug('df_bases_select:\n' + tabulate(df_bases_select, headers='keys', tablefmt='psql'))
 
-        # ---------------------------------------------------------------->>>>>
         # make plot
-        # ---------------------------------------------------------------->>>>>
-
-        # --------------------------------------------------->>>>>
         # set color
-        # --------------------------------------------------->>>>>
         # show indel
         indel_plot_state = show_indel
         index_plot_state = show_index
@@ -293,98 +321,94 @@ align_score: {rev['alignment_score']}""")
         panel_box_space = box_space
 
         # color part
-        base_color_dict = {
-            "A": "#04E3E3",
-            "T": "#F9B874",
-            "C": "#B9E76B",
-            "G": "#F53798",
-            "N": "#AAAAAA",
-            "-": "#AAAAAA"}
+        base_colors = {"A": "#04E3E3", "T": "#F9B874", "C": "#B9E76B", "G": "#F53798", "N": "#AAAAAA", "-": "#AAAAAA"}
 
         # make color breaks
         color_break_num = 20
         break_step = 1.0 / color_break_num
+        # mutation ratio of box lower than min_ratio will show as white
         min_color_value = min_ratio
+        # mutation ratio of box lower than max_ratio will show as white
         max_color_value = max_ratio
-        color_break = np.round(
-            np.arange(
-                min_color_value,
-                max_color_value,
-                break_step),
-            5)
-
-        try:
-            color_list = make_color_list(
-                min_color, max_color, len(color_break) - 1, "Hex")
-            color_list = ["#FFFFFF"] + color_list
-        except BaseException:
-            print
-            min_color, max_color
-            print
-            color_break
+        color_break = np.round(np.arange(min_color_value, max_color_value, break_step), 5)
+        # min_color: min color to plot heatmap with RGB format
+        # max_color: max color to plot heatmap with RGB format
+        color_list = make_color_list(min_color, max_color, len(color_break) - 1, "HEX")
+        color_list = ["#FFFFFF"] + color_list
+        logger.debug(f'color_list = {color_list}')
 
         # get plot info
-        total_box_count = possible_sgRNA_region[1] - possible_sgRNA_region[0]
+        total_box_count = plot_region[1] - plot_region[0]
 
         # calculate base info and fix zero
-        base_sum_count = bmat_table_select[["A", "G", "C", "T"]].apply(
-            lambda x: x.sum(), axis=1)
-        total_sum_count = bmat_table_select[[
-            "A", "G", "C", "T", "del_count", "insert_count"]].apply(lambda x: x.sum(), axis=1)
-        base_sum_count[np.where(base_sum_count == 0)[0]] = 1
-        total_sum_count[np.where(total_sum_count == 0)[0]] = 1
+        base_sum_count = df_bases_select.loc[:, ["A", "G", "C", "T"]].sum(axis=1).astype(int)
+        logger.debug(f'base_sum_count =\n{base_sum_count.values}')
+        total_sum_count = df_bases_select[["A", "G", "C", "T", "del_count", "insert_count"]].sum(axis=1).astype(int)
+        logger.debug(f'total_sum_count =\n{total_sum_count.values}')
+        # print(base_sum_count[base_sum_count == 7997])
+        # idx = base_sum_count[base_sum_count == 7997].index
+        # base_sum_count[base_sum_count == 7997] = 1
+        # print(base_sum_count[idx])
+
+        # fix 0 -> ["A.ratio", list(df_bases_select["A"] / base_sum_count)]
+        base_sum_count[base_sum_count == 0] = 1
+        total_sum_count[total_sum_count == 0] = 1
 
         # make plot size
-        plot_data_list = None
-        panel_space_coef = None
-        panel_height_coef = None
-
+        logger.debug(f'aln = {aln}')
+        # print(aln['alignment']['target_seq'][plot_region[0]: plot_region[1]])
+        # print(target_seq_aln[plot_region[0]: plot_region[1]])
+        # exit()
         if indel_plot_state:
-            panel_height_coef = [0.5, 0.9, 0.9] + [0.5] * 6 + [0.5] * 6
-            panel_space_coef = [1, 1, 1] + [0.3] * \
-                               3 + [1, 0.3, 1] + [0.3] * 3 + [1, 0.3]
+            panel_height_coef = [.5, .9, .9] + [.5] * 6 + [.5] * 6
+            panel_space_coef = [1.] * 3 + [.3] * 3 + [1., .3, 1.] + [.3] * 3 + [1., .3]
             plot_data_list = [
-                ["Index", bmat_table_select.chr_index],
-                ["On-target", sgRNA_align[possible_sgRNA_region[0]: possible_sgRNA_region[1]]],
-                ["Ref", bmat_table_select.ref_base],
-                ["A", np.array(bmat_table_select["A"])],
-                ["G", np.array(bmat_table_select["G"])],
-                ["C", np.array(bmat_table_select["C"])],
-                ["T", np.array(bmat_table_select["T"])],
-                ["Del", np.array(bmat_table_select["del_count"])],
-                ["Ins", np.array(bmat_table_select["insert_count"])],
-                ["A.ratio", list(bmat_table_select["A"] / base_sum_count)],
-                ["G.ratio", list(bmat_table_select["G"] / base_sum_count)],
-                ["C.ratio", list(bmat_table_select["C"] / base_sum_count)],
-                ["T.ratio", list(bmat_table_select["T"] / base_sum_count)],
-                ["Del.ratio", list(bmat_table_select["del_count"] / total_sum_count)],
-                ["Ins.ratio", list(bmat_table_select["insert_count"] / total_sum_count)]
+                ["Index", df_bases_select.chr_index],
+                ["Target_seq", target_seq_aln[plot_region[0]: plot_region[1]]],
+                ["Ref_seq", df_bases_select.ref_base],
+                ["A", np.array(df_bases_select["A"])],
+                ["G", np.array(df_bases_select["G"])],
+                ["C", np.array(df_bases_select["C"])],
+                ["T", np.array(df_bases_select["T"])],
+                ["Del", np.array(df_bases_select["del_count"])],
+                ["Ins", np.array(df_bases_select["insert_count"])],
+                ["A.ratio", list(df_bases_select["A"] / base_sum_count)],
+                ["G.ratio", list(df_bases_select["G"] / base_sum_count)],
+                ["C.ratio", list(df_bases_select["C"] / base_sum_count)],
+                ["T.ratio", list(df_bases_select["T"] / base_sum_count)],
+                ["Del.ratio", list(df_bases_select["del_count"] / total_sum_count)],
+                ["Ins.ratio", list(df_bases_select["insert_count"] / total_sum_count)]
             ]
         else:
-            panel_height_coef = [0.5, 0.9, 0.9] + [0.5] * 4 + [0.5] * 4
-            panel_space_coef = [1, 1, 1] + [0.3] * 3 + [1] + [0.3] * 3
+            panel_height_coef = [.5, .9, .9] + [.5] * 4 + [.5] * 4
+            panel_space_coef = [1.] * 3 + [0.3] * 3 + [1.] + [0.3] * 3
             plot_data_list = [
-                ["Index", bmat_table_select.chr_index],
-                ["On-target", sgRNA_align[possible_sgRNA_region[0]: possible_sgRNA_region[1]]],
-                ["Ref", bmat_table_select.ref_base],
-                ["A", np.array(bmat_table_select["A"])],
-                ["G", np.array(bmat_table_select["G"])],
-                ["C", np.array(bmat_table_select["C"])],
-                ["T", np.array(bmat_table_select["T"])],
-                ["A.ratio", list(bmat_table_select["A"] / base_sum_count)],
-                ["G.ratio", list(bmat_table_select["G"] / base_sum_count)],
-                ["C.ratio", list(bmat_table_select["C"] / base_sum_count)],
-                ["T.ratio", list(bmat_table_select["T"] / base_sum_count)]
+                ["Index", df_bases_select.chr_index],
+                ["Target_seq", target_seq_aln[plot_region[0]: plot_region[1]]],
+                ["Ref_seq", df_bases_select.ref_base],
+                ["A", np.array(df_bases_select["A"])],
+                ["G", np.array(df_bases_select["G"])],
+                ["C", np.array(df_bases_select["C"])],
+                ["T", np.array(df_bases_select["T"])],
+                ["A.ratio", list(df_bases_select["A"] / base_sum_count)],
+                ["G.ratio", list(df_bases_select["G"] / base_sum_count)],
+                ["C.ratio", list(df_bases_select["C"] / base_sum_count)],
+                ["T.ratio", list(df_bases_select["T"] / base_sum_count)]
             ]
 
         # get box and space info
         box_height_list = np.array(panel_height_coef) * panel_box_heigth
         panel_space_list = np.array(panel_space_coef) * panel_space
+        logger.debug(f'box_height_list = {box_height_list}')
+        logger.debug(f'panel_space_list = {panel_space_list}')
 
         # calculate figure total width and height
         figure_width = total_box_count * panel_box_width + \
                        (total_box_count - 1) * panel_box_space + panel_box_width * 2
         figure_height = sum(box_height_list) + sum(panel_space_list)
+
+        logger.debug(f'figure_width = {figure_width}')
+        logger.debug(f'figure_height = {figure_height}')
 
         # make all box_x
         box_x_vec = np.arange(
@@ -394,27 +418,41 @@ align_score: {rev['alignment_score']}""")
             panel_box_width +
             panel_box_space)
         box_x_vec = box_x_vec[:(len(ref_seq) + 1)]
+        logger.debug(f'box_x_vec =\n{box_x_vec}')
 
         # make box border
         if box_border_plot_state:
             box_edgecolor = "#AAAAAA"
             box_linestyle = "-"
             box_linewidth = 2
+            logger.debug(f'box_border_plot_state = {box_border_plot_state}')
+            logger.debug(f'box_edgecolor = {box_edgecolor}')
+            logger.debug(f'box_linestyle = {box_linestyle}')
+            logger.debug(f'box_linewidth = {box_linewidth}')
         else:
             box_edgecolor = "#FFFFFF"
             box_linestyle = "None"
             box_linewidth = 0
+            logger.debug(f'box_border_plot_state = {box_border_plot_state}')
+            logger.debug(f'box_edgecolor = {box_edgecolor}')
+            logger.debug(f'box_linestyle = {box_linestyle}')
+            logger.debug(f'box_linewidth = {box_linewidth}')
 
         # make box_y initialize
         current_y = 0
 
-        # plot region
-        # set new figure
+        logger.debug('start to plot')
         fig = plt.figure(figsize=(figure_width * 1.1, figure_height * 1.1))
+        logger.debug(f'set new figure, figsize = ({figure_width * 1.1}, {figure_height * 1.1})')
+        # will show matplotlib debug log with logging
         ax = fig.add_subplot(111, aspect="equal")
+        # will show matplotlib debug log with logging
         plt.xlim([0, figure_width])
         plt.ylim([-figure_height, 0])
         plt.axis("off")
+        logger.debug(f'plt.xlim([0, {figure_width}])')
+        logger.debug(f'plt.ylim([-{figure_height}, 0])')
+        logger.debug('plt.axis("off")')
 
         # make plot
         text_list = []
@@ -435,38 +473,33 @@ align_score: {rev['alignment_score']}""")
                         plot_data_list[panel_index][1]):
                     box_x = box_x_vec[index + 1]
                     text_list.append(
-                        (box_x +
-                         panel_box_width *
-                         0.5,
-                         current_y -
-                         box_height_list[panel_index] *
-                         0.5,
-                         str(box_value),
-                         7))
+                        (
+                            box_x + panel_box_width * 0.5, current_y - box_height_list[panel_index] * 0.5,
+                            str(box_value),
+                            7
+                        )
+                    )
 
                 # make next panel_y
-                current_y = current_y - \
-                            (box_height_list[panel_index] + panel_space_list[panel_index])
+                current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
-            elif panel_name in ["On-target", "Ref"]:
-                for index, box_value in enumerate(
-                        plot_data_list[panel_index][1]):
+            elif panel_name in ["Target_seq", "Ref_seq"]:
+                for index, box_value in enumerate(plot_data_list[panel_index][1]):
                     if box_value == "":
                         box_fill = False
                         box_color = "#FFFFFF"
 
                     else:
-                        if "Reverse" in final_align_direction:
-                            if panel_name == "Ref":
-                                box_value = "".join(
-                                    [DNA_rev_cmp_dict.get(x) for x in box_value])
+                        if "Reverse" in aln_direction:
+                            if panel_name == "Ref_seq":
+                                box_value = "".join([DNA_rev_cmp_dict.get(x) for x in box_value])
                             else:
                                 pass
 
-                            box_color = base_color_dict.get(box_value[0])
+                            box_color = base_colors.get(box_value[0])
 
                         else:
-                            box_color = base_color_dict.get(box_value[-1])
+                            box_color = base_colors.get(box_value[-1])
 
                         if not box_color:
                             box_fill = False
@@ -476,115 +509,108 @@ align_score: {rev['alignment_score']}""")
 
                     box_x = box_x_vec[index + 1]
 
-                    patches.append(Rectangle(
-                        xy=(box_x, current_y - box_height_list[panel_index]),
-                        width=panel_box_width,
-                        height=box_height_list[panel_index],
-                        fill=box_fill,
-                        alpha=1,
-                        linestyle=box_linestyle,
-                        linewidth=box_linewidth,
-                        edgecolor=box_edgecolor,
-                        facecolor=box_color)
+                    patches.append(
+                        Rectangle(
+                            xy=(box_x, current_y - box_height_list[panel_index]),
+                            width=panel_box_width,
+                            height=box_height_list[panel_index],
+                            fill=box_fill,
+                            alpha=1,
+                            linestyle=box_linestyle,
+                            linewidth=box_linewidth,
+                            edgecolor=box_edgecolor,
+                            facecolor=box_color
+                        )
                     )
 
                     # text
                     text_list.append(
-                        (box_x +
-                         0.5 *
-                         panel_box_width,
-                         current_y -
-                         0.5 *
-                         box_height_list[panel_index],
-                         str(box_value),
-                         16))
+                        (
+                            box_x + 0.5 * panel_box_width, current_y - 0.5 * box_height_list[panel_index],
+                            str(box_value),
+                            16
+                        )
+                    )
 
                 # make next panel_y
-                current_y = current_y - \
-                            (box_height_list[panel_index] + panel_space_list[panel_index])
+                current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
             elif panel_name in ["A", "G", "C", "T", "Del", "Ins"]:
                 if panel_name in ["Del", "Ins"]:
-                    box_ratio = plot_data_list[panel_index][1] / \
-                                total_sum_count
+                    box_ratio = plot_data_list[panel_index][1] / total_sum_count
                 else:
                     box_ratio = plot_data_list[panel_index][1] / base_sum_count
 
                 box_color_list = map_color(box_ratio, color_break, color_list)
-                for index, box_value in enumerate(
-                        plot_data_list[panel_index][1]):
+                logger.debug(f'box_color_list = {box_color_list}')
+
+                for index, box_value in enumerate(plot_data_list[panel_index][1]):
                     box_color = box_color_list[index]
                     box_x = box_x_vec[index + 1]
 
-                    patches.append(Rectangle(
-                        xy=(box_x, current_y - box_height_list[panel_index]),
-                        width=panel_box_width,
-                        height=box_height_list[panel_index],
-                        fill=True,
-                        alpha=1,
-                        linestyle=box_linestyle,
-                        linewidth=box_linewidth,
-                        edgecolor=box_edgecolor,
-                        facecolor=box_color)
+                    patches.append(
+                        Rectangle(
+                            xy=(box_x, current_y - box_height_list[panel_index]),
+                            width=panel_box_width,
+                            height=box_height_list[panel_index],
+                            fill=True,
+                            alpha=1,
+                            linestyle=box_linestyle,
+                            linewidth=box_linewidth,
+                            edgecolor=box_edgecolor,
+                            facecolor=box_color
+                        )
                     )
 
                     # text
                     text_list.append(
-                        (box_x +
-                         0.5 *
-                         panel_box_width,
-                         current_y -
-                         0.5 *
-                         box_height_list[panel_index],
-                         str(box_value),
-                         6))
+                        (
+                            box_x + 0.5 * panel_box_width, current_y - 0.5 * box_height_list[panel_index],
+                            str(box_value),
+                            6
+                        )
+                    )
 
                 # make next panel_y
-                current_y = current_y - \
-                            (box_height_list[panel_index] + panel_space_list[panel_index])
+                current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
             else:
-                box_color_list = map_color(
-                    plot_data_list[panel_index][1], color_break, color_list)
-                for index, box_value in enumerate(
-                        plot_data_list[panel_index][1]):
+                box_color_list = map_color(plot_data_list[panel_index][1], color_break, color_list)
+                for index, box_value in enumerate(plot_data_list[panel_index][1]):
                     box_color = box_color_list[index]
                     box_x = box_x_vec[index + 1]
 
-                    patches.append(Rectangle(
-                        xy=(box_x, current_y - box_height_list[panel_index]),
-                        width=panel_box_width,
-                        height=box_height_list[panel_index],
-                        fill=True,
-                        alpha=1,
-                        linestyle=box_linestyle,
-                        linewidth=box_linewidth,
-                        edgecolor=box_edgecolor,
-                        facecolor=box_color)
+                    patches.append(
+                        Rectangle(
+                            xy=(box_x, current_y - box_height_list[panel_index]),
+                            width=panel_box_width,
+                            height=box_height_list[panel_index],
+                            fill=True,
+                            alpha=1,
+                            linestyle=box_linestyle,
+                            linewidth=box_linewidth,
+                            edgecolor=box_edgecolor,
+                            facecolor=box_color
+                        )
                     )
 
                     # text
                     text_list.append(
-                        (box_x +
-                         0.5 *
-                         panel_box_width,
-                         current_y -
-                         0.5 *
-                         box_height_list[panel_index],
-                         round(
-                             box_value *
-                             100,
-                             4),
-                         6))
+                        (
+                            box_x + 0.5 * panel_box_width, current_y - 0.5 * box_height_list[panel_index],
+                            round(box_value * 100, 4),
+                            6
+                        )
+                    )
 
                 # make next panel_y
                 if panel_index < len(panel_space_list):
-                    current_y = current_y - \
-                                (box_height_list[panel_index] + panel_space_list[panel_index])
+                    current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
-                    # plot box
+        # plot box
+        logger.debug(f'plot patches = {patches}')
         ax.add_collection(PatchCollection(patches, match_original=True))
-
+        logger.debug(f'plot text:\n{text_list}')
         # add text
         for text_x, text_y, text_info, text_fontsize in text_list:
             plt.text(
@@ -596,18 +622,12 @@ align_score: {rev['alignment_score']}""")
                 fontsize=text_fontsize,
                 fontname="Arial"
             )
-
         # output plot
-        fig.savefig(
-            fname=output_fig,
-            bbox_inches='tight',
-            dpi=output_fig_dpi,
-            format=output_fig_fmt)
+        fig.savefig(fname=output_fig, bbox_inches='tight', dpi=output_fig_dpi, format=output_fig_fmt)
 
     # def region_heatmap_merge(self):
     #     pass
 
 
 if __name__ == '__main__':
-    TargetedDeepSequencing.region_heatmap()
     pass

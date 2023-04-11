@@ -1,5 +1,6 @@
 import numpy as np
-
+import sys
+import logging
 
 def convert_hex_to_rgb(hex_color: str) -> tuple:
     """Convert HEX color to RGB color.
@@ -55,7 +56,7 @@ def map_color(value_vec, breaks, color_list):
     return tuple(color_list[col_idx] for col_idx in value_idx_list)
 
 
-def make_color_list(low_color_RGB, high_color_RGB, length_out=20, back_format="Hex"):
+def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HEX"):
     """
     INPUT
         <low_color_RGB> <high_color_RGB>
@@ -67,13 +68,25 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, back_format="H
     RETURN
         <color_list>
     """
+    # set logger
+    lib_name = __name__
+    function_name = sys._getframe().f_code.co_name
+    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+
+    supported_fmt = ('HEX', 'RGB')
+    return_fmt = return_fmt.upper()
+    if return_fmt not in supported_fmt:
+        logger.critical(
+            f'not supported color format: {return_fmt}\n'
+            f'supported_fmt = {supported_fmt}'
+        )
     low_color = np.array(low_color_RGB)
     high_color = np.array(high_color_RGB)
 
     color_list = []
     for index in range(0, length_out + 1):
         rgb_color = low_color + (high_color - low_color) // length_out * index
-        if back_format == "Hex":
+        if return_fmt == "HEX":
             color_list.append(convert_rgb_to_hex(tuple(rgb_color)))
         else:
             color_list.append(tuple(rgb_color))
