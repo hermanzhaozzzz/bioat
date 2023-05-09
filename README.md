@@ -1,12 +1,16 @@
 # BioinformaticAnalysisTools
+## about author
+
+> author: [赵华男 | ZHAO Hua-nan](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
+>
+> email: hermanzhaozzzz@gmail.com
+>
+> [Zhihu](https://www.zhihu.com/people/hymanzhaozzzz) | [BLOG](http://zhaohuanan.cc)
 
 ## Introduction
 A python command line toolkit for Bioinformatics and data science!
 
-\<under development\>
-
-- Author: Hua-nan ZHAO @Tsinghua University
-- E-Mail: hermanzhaozzzz@gmail.com
+**\<under development\>**
 
 ## Installation
 ```shell
