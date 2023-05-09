@@ -1,12 +1,10 @@
-from tests import bioat
+import bioat
 
+def test_version_info():
+    assert bioat.__version__ == '0.1.5.3'
+    assert bioat.__author__ == 'Hua-nan ZHAO @ Tsinghua University'
+    assert bioat.__doc_format__ == "restructuredtext"
 
-def test_version():
-    assert bioat.__pysamstats_version__ >= '1.1.2'
-    assert bioat.__pysam_version__ >= '0.19.1'
-    assert bioat.__version__ == '0.1.1.5'
-
-
-def test_author():
-    assert bioat.__author__ is not None
-    assert bioat.__email__ is not None
+def test_import():
+    from bioat import about, set_logging_level
+    from bioat import Bam, Fastx, HiC, Mgi, System, Table, TargetedDeepSequencing
