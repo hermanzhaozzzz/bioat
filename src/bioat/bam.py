@@ -20,7 +20,7 @@ class Bam:
             mpileup: str,
             output: str = sys.stdout,
             threads: int = os.cpu_count() - 1,
-            mutation_number_threshold: int = None,
+            mutation_number_threshold: int = 0,
             temp_dir: str = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}",
             remove_temp: bool = True,
             log_level: str = 'INFO'
@@ -40,6 +40,7 @@ class Bam:
         lib_name = __name__
         function_name = sys._getframe().f_code.co_name
         logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+
         def _temp_split_bam(mpileup, threads, temp_dir):
             # creat temp file name and open file
             logger.debug("Making temp files...")
@@ -202,11 +203,11 @@ class Bam:
         if so:
             if so != "queryname":
                 logger.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                              f"your header: [SO:{so}]\n")
+                             f"your header: [SO:{so}]\n")
                 exit(1)
         else:
             logger.warning(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                            "your bam file does not have a header\n")
+                           "your bam file does not have a header\n")
 
         write_mode = 'wb' if output_fmt.upper() == "BAM" else 'w'
         bam_out = pysam.AlignmentFile(output, write_mode, template=bam_in)

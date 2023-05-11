@@ -30,14 +30,15 @@ class Cli(object):
     def list(self):
         """Print commands and subcommands.
         """
+        out = ""
         for att in dir(self):
             if not att.startswith('_'):
-                print(f'{att}')
+                out += f'{att}\n'
 
                 for sub_att in dir(getattr(self, att)):
                     if not sub_att.startswith('_'):
-                        print(f'  ├── {sub_att}')
-
+                        out += f'  ├── {sub_att}\n'
+        return out
     @classmethod
     def version(self):
         """Print version information.

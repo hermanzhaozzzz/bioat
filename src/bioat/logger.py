@@ -13,7 +13,13 @@ def set_logging_level(level='ERROR'):
             [CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET]
         )
     }
-    logging.basicConfig(level=dt_level[level])
+    logging.basicConfig(
+        level=dt_level[level],
+        format='%(levelname)-5s @ %(asctime)s: %(message)s ',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        stream=sys.stderr,
+        filemode="w"
+    )
     # set logger
     lib_name = __name__
     function_name = sys._getframe().f_code.co_name

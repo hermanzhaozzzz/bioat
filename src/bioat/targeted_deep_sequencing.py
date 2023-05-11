@@ -1,31 +1,19 @@
+from __future__ import absolute_import
 from bioat.logger import set_logging_level
-from bioat.lib.libcrispr import (
-    TARGET_SEQ_LIB,
-    run_no_PAM_sgRNA_alignment_no_chop,
-    run_sgRNA_alignment
-)
-from bioat.lib.libcolor import (
-    convert_hex_to_rgb,
-    convert_rgb_to_hex,
-    map_color,
-    make_color_list
-)
-
-from Bio.Align import PairwiseAligner
+from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
+from bioat.lib.libcolor import map_color, make_color_list
+from bioat.lib.libalignment import instantiate_pairwise_aligner
 from Bio.Seq import Seq
-
+from tabulate import tabulate
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
 from matplotlib import pyplot as plt
-from tabulate import tabulate
+import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib
+
 import logging
 import sys
-
-matplotlib.use('Agg')
-np.set_printoptions(suppress=True)
 
 
 class TargetedDeepSequencing:
@@ -52,6 +40,7 @@ class TargetedDeepSequencing:
             region_extend_length: int = 25,
             local_alignment_scoring_matrix: tuple = (5, -4, -24, -8),
             local_alignment_min_score: int = 15,
+            PAM_priority_weight: float = 1.0,
             get_built_in_target_seq: bool = False,
             log_level: str = 'INFO'
     ):
@@ -84,6 +73,8 @@ class TargetedDeepSequencing:
         :param local_alignment_scoring_matrix: set <align_match_score>  <align_mismatch_score>
                                                 <align_gap_open_score> <align_gap_extension_score>
         :param local_alignment_min_score: If alignment score lower than this, consider as no appropriate alignment
+        :param PAM_priority_weight: PAM alignment score will multiply by this weight.
+
         :param get_built_in_target_seq: specify to True to return built-in target_seq sequence.
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
 
@@ -127,17 +118,7 @@ class TargetedDeepSequencing:
                 exit(1)
 
         # set alignment
-        align_match, align_mismatch, align_gap_open, align_gap_extension = local_alignment_scoring_matrix
-
-        aligner = PairwiseAligner()
-        aligner.match = align_match
-        aligner.mismatch = align_mismatch
-        aligner.open_gap_score = align_gap_open
-        aligner.extend_gap_score = align_gap_extension
-        aligner.query_left_gap_score = 0
-        aligner.query_right_gap_score = 0
-        aligner.mode = "global"
-        logger.info(aligner)
+        aligner = instantiate_pairwise_aligner(*local_alignment_scoring_matrix)
 
         # load mpileup.info.tsv
         if input_table_header:
@@ -163,32 +144,38 @@ class TargetedDeepSequencing:
         # target_seq
         if target_seq is None:
             target_seq = ref_seq
-            PAM_seq = None
+            PAM = None
         elif '^' in target_seq:
             if target_seq.find('^') == 0:
-                _, PAM_seq, target_seq = target_seq.strip().split('^')
+                _, PAM, target_seq = target_seq.strip().split('^')
                 target_seq = Seq(target_seq.upper())
-                PAM_seq = 'left_' + PAM_seq
+                PAM = {'PAM': PAM, 'position': 0, 'weight': PAM_priority_weight}
             else:
-                target_seq, PAM_seq, _ = target_seq.strip().split('^')
+                target_seq, PAM, _ = target_seq.strip().split('^')
                 target_seq = Seq(target_seq.upper())
-                PAM_seq = 'right_' + PAM_seq
+                PAM = {'PAM': PAM, 'position': len(target_seq), 'weight': PAM_priority_weight}
         else:
             logger.debug(f'no PAM sequence is defined from target_seq = {target_seq}')
             target_seq = Seq(target_seq)
-            PAM_seq = None
+            PAM = None
 
-        logger.info(f'parse target_seq: target_seq={target_seq}, PAM_seq={PAM_seq}')
+        logger.info(f'parse target_seq: target_seq={target_seq}, PAM={PAM}')
 
         # fwd alignment & rev alignment
         # 为了判断target_seq (sgRNA) 是设计在fwd还是rev链上
-        final_align_forward = run_no_PAM_sgRNA_alignment_no_chop(ref_seq, target_seq, aligner)
-        logger.debug(f'final_align_forward:\n{final_align_forward}')
-        final_align_reverse = run_no_PAM_sgRNA_alignment_no_chop(ref_seq_rc, target_seq, aligner)
-        logger.debug(f'final_align_reverse:\n{final_align_reverse}')
-
-        fwd = final_align_forward[0]
-        rev = final_align_reverse[0]
+        if not PAM:
+            logger.info('use PAMless mode to align')
+            fwd = run_target_seq_align(ref_seq, target_seq, aligner)
+            logger.debug(f'final_align_forward:\n{fwd}')
+            rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
+            logger.debug(f'final_align_reverse:\n{rev}')
+        else:
+            logger.info('use PAM mode to align')
+            # TODO
+            fwd = run_target_seq_align(ref_seq, target_seq, aligner, PAM=PAM)
+            logger.debug(f'final_align_forward:\n{fwd}')
+            rev = run_target_seq_align(ref_seq_rc, target_seq, aligner, PAM=PAM)
+            logger.debug(f'final_align_reverse:\n{rev}')
 
         # get fwd alignment info
         reference_seq = fwd['alignment']['reference_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
@@ -203,6 +190,7 @@ class TargetedDeepSequencing:
             f"align_score: {aln_score}"
         )
         # get rev alignment info
+        print(rev)
         reference_seq_rev = rev['alignment']['reference_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         align_info_rev = rev['alignment']['aln_info'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         target_seq_rev = rev['alignment']['target_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
@@ -256,8 +244,9 @@ class TargetedDeepSequencing:
         aln_end = aln['ref_aln_end']
 
         # update target_seq_aln
-        logger.debug(f'target_seq_aln = {target_seq_aln}')
-        logger.debug("update target_seq_aln: show ''.join(target_seq_aln)")
+        logger.debug(f'target_seq_aln (before update) = {target_seq_aln}')
+        logger.debug(f'target_seq_aln_insert (before update) = {target_seq_aln_insert}')
+
         for idx, ref_base in enumerate(reference_seq):
 
             # reference  : GCCTCTGGAGAGGGAGGAGGG
@@ -271,10 +260,15 @@ class TargetedDeepSequencing:
                 ref_gap_count += 1
                 ref_del_str += target_seq[idx]  # for continuous gap
                 target_seq_aln_insert[aln_start + idx] = target_seq[idx]
-            logger.debug(f"{''.join(target_seq_aln)}")
+        logger.debug(
+            "update target_seq_aln: show ''.join(target_seq_aln)\n"
+            f"target_seq_aln = {''.join(target_seq_aln)}\n"
+            f"target_seq     = {target_seq}"
+        )
         logger.debug("update target_seq_aln: Done")
-        logger.debug(f'target_seq_aln = {target_seq_aln}')
-        logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
+        logger.debug(f'target_seq_aln (after update) = {target_seq_aln}')
+        logger.debug(f'target_seq_aln_insert (after update) = {target_seq_aln_insert}')
+
         # if reverse alignment
         if aln_direction == "Reverse Alignment":
             # illustrate reverse alignment as forward alignment
@@ -310,6 +304,9 @@ class TargetedDeepSequencing:
         # make plot
         # set color
         # show indel
+        matplotlib.use('Agg')
+        np.set_printoptions(suppress=True)
+
         indel_plot_state = show_indel
         index_plot_state = show_index
         box_border_plot_state = box_border
@@ -345,25 +342,18 @@ class TargetedDeepSequencing:
         logger.debug(f'base_sum_count =\n{base_sum_count.values}')
         total_sum_count = df_bases_select[["A", "G", "C", "T", "del_count", "insert_count"]].sum(axis=1).astype(int)
         logger.debug(f'total_sum_count =\n{total_sum_count.values}')
-        # print(base_sum_count[base_sum_count == 7997])
-        # idx = base_sum_count[base_sum_count == 7997].index
-        # base_sum_count[base_sum_count == 7997] = 1
-        # print(base_sum_count[idx])
-
         # fix 0 -> ["A.ratio", list(df_bases_select["A"] / base_sum_count)]
         base_sum_count[base_sum_count == 0] = 1
         total_sum_count[total_sum_count == 0] = 1
 
         # make plot size
-        logger.debug(f'aln = {aln}')
-        # print(aln['alignment']['target_seq'][plot_region[0]: plot_region[1]])
-        # print(target_seq_aln[plot_region[0]: plot_region[1]])
-        # exit()
+        logger.debug(f'aln =\n{aln}')
+
         if indel_plot_state:
             panel_height_coef = [.5, .9, .9] + [.5] * 6 + [.5] * 6
             panel_space_coef = [1.] * 3 + [.3] * 3 + [1., .3, 1.] + [.3] * 3 + [1., .3]
             plot_data_list = [
-                ["Index", df_bases_select.chr_index],
+                ["Ref_index", df_bases_select.chr_index],
                 ["Target_seq", target_seq_aln[plot_region[0]: plot_region[1]]],
                 ["Ref_seq", df_bases_select.ref_base],
                 ["A", np.array(df_bases_select["A"])],
@@ -372,28 +362,28 @@ class TargetedDeepSequencing:
                 ["T", np.array(df_bases_select["T"])],
                 ["Del", np.array(df_bases_select["del_count"])],
                 ["Ins", np.array(df_bases_select["insert_count"])],
-                ["A.ratio", list(df_bases_select["A"] / base_sum_count)],
-                ["G.ratio", list(df_bases_select["G"] / base_sum_count)],
-                ["C.ratio", list(df_bases_select["C"] / base_sum_count)],
-                ["T.ratio", list(df_bases_select["T"] / base_sum_count)],
-                ["Del.ratio", list(df_bases_select["del_count"] / total_sum_count)],
-                ["Ins.ratio", list(df_bases_select["insert_count"] / total_sum_count)]
+                ["A %", list(df_bases_select["A"] / base_sum_count)],
+                ["G %", list(df_bases_select["G"] / base_sum_count)],
+                ["C %", list(df_bases_select["C"] / base_sum_count)],
+                ["T %", list(df_bases_select["T"] / base_sum_count)],
+                ["Del %", list(df_bases_select["del_count"] / total_sum_count)],
+                ["Ins %", list(df_bases_select["insert_count"] / total_sum_count)]
             ]
         else:
             panel_height_coef = [.5, .9, .9] + [.5] * 4 + [.5] * 4
             panel_space_coef = [1.] * 3 + [0.3] * 3 + [1.] + [0.3] * 3
             plot_data_list = [
-                ["Index", df_bases_select.chr_index],
+                ["Ref_index", df_bases_select.chr_index],
                 ["Target_seq", target_seq_aln[plot_region[0]: plot_region[1]]],
                 ["Ref_seq", df_bases_select.ref_base],
                 ["A", np.array(df_bases_select["A"])],
                 ["G", np.array(df_bases_select["G"])],
                 ["C", np.array(df_bases_select["C"])],
                 ["T", np.array(df_bases_select["T"])],
-                ["A.ratio", list(df_bases_select["A"] / base_sum_count)],
-                ["G.ratio", list(df_bases_select["G"] / base_sum_count)],
-                ["C.ratio", list(df_bases_select["C"] / base_sum_count)],
-                ["T.ratio", list(df_bases_select["T"] / base_sum_count)]
+                ["A %", list(df_bases_select["A"] / base_sum_count)],
+                ["G %", list(df_bases_select["G"] / base_sum_count)],
+                ["C %", list(df_bases_select["C"] / base_sum_count)],
+                ["T %", list(df_bases_select["T"] / base_sum_count)]
             ]
 
         # get box and space info
@@ -411,14 +401,9 @@ class TargetedDeepSequencing:
         logger.debug(f'figure_height = {figure_height}')
 
         # make all box_x
-        box_x_vec = np.arange(
-            0,
-            figure_width +
-            panel_box_width,
-            panel_box_width +
-            panel_box_space)
+        box_x_vec = np.arange(0, figure_width + panel_box_width, panel_box_width + panel_box_space)
         box_x_vec = box_x_vec[:(len(ref_seq) + 1)]
-        logger.debug(f'box_x_vec =\n{box_x_vec}')
+        # logger.debug(f'box_x_vec (x for each column) =\n{box_x_vec}')
 
         # make box border
         if box_border_plot_state:
@@ -444,6 +429,8 @@ class TargetedDeepSequencing:
         logger.debug('start to plot')
         fig = plt.figure(figsize=(figure_width * 1.1, figure_height * 1.1))
         logger.debug(f'set new figure, figsize = ({figure_width * 1.1}, {figure_height * 1.1})')
+
+        plt.set_loglevel("info")
         # will show matplotlib debug log with logging
         ax = fig.add_subplot(111, aspect="equal")
         # will show matplotlib debug log with logging
@@ -467,7 +454,7 @@ class TargetedDeepSequencing:
             text_list.append((panel_name_x, panel_name_y, panel_name, 10))
 
             # plot panel box
-            if panel_name == "Index":
+            if panel_name == "Ref_index":
                 # don't draw box, only add text
                 for index, box_value in enumerate(
                         plot_data_list[panel_index][1]):
@@ -542,7 +529,7 @@ class TargetedDeepSequencing:
                     box_ratio = plot_data_list[panel_index][1] / base_sum_count
 
                 box_color_list = map_color(box_ratio, color_break, color_list)
-                logger.debug(f'box_color_list = {box_color_list}')
+                logger.debug(f'get box_color_list for {panel_name}')
 
                 for index, box_value in enumerate(plot_data_list[panel_index][1]):
                     box_color = box_color_list[index]
@@ -608,19 +595,14 @@ class TargetedDeepSequencing:
                     current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
         # plot box
-        logger.debug(f'plot patches = {patches}')
+        logger.debug(f'plot rectangles')
         ax.add_collection(PatchCollection(patches, match_original=True))
-        logger.debug(f'plot text:\n{text_list}')
-        # add text
+
+        logger.debug(f'plot text on each rectangle')
         for text_x, text_y, text_info, text_fontsize in text_list:
             plt.text(
-                x=text_x,
-                y=text_y,
-                s=text_info,
-                horizontalalignment='center',
-                verticalalignment='center',
-                fontsize=text_fontsize,
-                fontname="Arial"
+                x=text_x, y=text_y, s=text_info, horizontalalignment='center', verticalalignment='center',
+                fontsize=text_fontsize, fontname="Arial"
             )
         # output plot
         fig.savefig(fname=output_fig, bbox_inches='tight', dpi=output_fig_dpi, format=output_fig_fmt)

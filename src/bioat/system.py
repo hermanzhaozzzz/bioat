@@ -1,11 +1,12 @@
-# import os
-# import time
-#
-#
+from __future__ import absolute_import
+# from bioat.api.internet_speed import main as speedtest
+
+
 class System():
     def __init__(self):
+        # self.test_internet_speed = speedtest()
         pass
-#
+
 #     def __convert_size(self, size, mode='b') -> float:
 #         """将单位为Byte的数字转为其它单位
 #

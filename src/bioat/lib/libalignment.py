@@ -1,7 +1,31 @@
-from Bio.Align import Alignment
+from Bio.Align import Alignment, PairwiseAligner
 import sys
 import logging
 
+
+def instantiate_pairwise_aligner(
+        scoring_match,
+        penalty_mismatch,
+        penalty_gap_open,
+        penalty_gap_extension,
+        # penalty_query_left_gap
+        mode='global'
+):
+    # set logger
+    lib_name = __name__
+    function_name = sys._getframe().f_code.co_name
+    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+
+    aligner = PairwiseAligner()
+    aligner.match = scoring_match
+    aligner.mismatch = penalty_mismatch
+    aligner.open_gap_score = penalty_gap_open
+    aligner.extend_gap_score = penalty_gap_extension
+    aligner.query_left_gap_score = 0
+    aligner.query_right_gap_score = 0
+    aligner.mode = mode
+    logger.info(aligner)
+    return aligner
 
 def get_aligned_seq(alignment: Alignment, reverse: bool = False) -> dict:
     """Get_aligned_seq.
