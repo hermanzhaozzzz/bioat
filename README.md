@@ -8,7 +8,7 @@
 > [Zhihu](https://www.zhihu.com/people/hymanzhaozzzz) | [BLOG](http://zhaohuanan.cc)
 
 ## Introduction
-A python command line toolkit for Bioinformatics and data science!
+A python \<package\> & \<command line toolkit\> for Bioinformatics and data science!
 
 **\<under development\>**
 
@@ -32,6 +32,7 @@ bioat about
 bioat bam remove_clip --help
 samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 ```
+[circos plot](docs/demo_circos-plot.ipynb)
 
 ## known trouble
 - sometimes, pysam dependent foo.lib can be absent, just `brew install foo.lib` to fix it.
