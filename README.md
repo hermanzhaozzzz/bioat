@@ -8,9 +8,9 @@
 > [Zhihu](https://www.zhihu.com/people/hymanzhaozzzz) | [BLOG](http://zhaohuanan.cc)
 
 ## Introduction
-A python \<package\> & \<command line toolkit\> for Bioinformatics and data science!
+A python **package** & **command line toolkit** for Bioinformatics and data science!
 
-**\<under development\>**
+**\<under development\>!!**
 
 ## Installation
 ```shell
