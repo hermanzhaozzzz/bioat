@@ -11,3 +11,5 @@ __version__ = "0.1.5.4"
 __author__ = 'Hua-nan ZHAO @ Tsinghua University'
 __email__ = 'hermanzhaozzzz@gmail.com'
 __doc_format__ = "restructuredtext"
+__doc_address__ = "https://github.com/hermanzhaozzzz/bioat/tree/master/docs"
+__repo_address__ = "https://github.com/hermanzhaozzzz/bioat"
