@@ -38,3 +38,8 @@ class Fastq:
         # 判断是Phred33还是Phred64
         # https://www.jianshu.com/p/248308513e2e
         pass
+
+
+@dataclasses.dataclass
+class VCF:
+    pass
