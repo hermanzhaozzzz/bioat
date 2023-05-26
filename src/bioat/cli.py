@@ -15,13 +15,19 @@ from bioat import (
 
 
 class Cli(object):
-    """Cli interface of python package <bioat>
+    """Cli interface of bioat
 
-    - <bioat> is a commandline tool and a python package, which is short for
-        Bioinformatic Analysis Tools.
-    - <bioat> has many subcommand to deal with different bio-format:
+    - `bioat` short for "Bioinformatic Analysis Tools", is a commandline toolkit and a python package.
+    - `bioat` has many subcommand to deal with different bio-format:
         BED, BAM, FASTA, FASTQ, VCF, et al.
+
     """
+    # - Citation:
+    #     - Citation is not forcible and I would be appreciated if you wann to do this.
+    #     - citation reference format:
+    #         [1] Huanan ZHAO. bioat, a Bioinformatic Analysis Tool kit (2023), https://github.com/hermanzhaozzzz/bioat
+
+    # """
 
     def __init__(self):
         self.bam = BamTools()
