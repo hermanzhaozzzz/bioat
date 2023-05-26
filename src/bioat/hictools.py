@@ -22,7 +22,7 @@ except SystemError:
     )
 
 
-class HiC:
+class HiCTools:
     def __init__(self):
         pass
 
@@ -39,7 +39,7 @@ class HiC:
         输入为result文件，输出为matrix的大致resolution.
 
         :param genome_index: genome.fa.fai
-        :param valid_pairs: rm_dup_pairs.allValidPairs by HiC-Pro
+        :param valid_pairs: rm_dup_pairs.allValidPairs by HiCTools-Pro
         :param output: table_output, TSV file
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
@@ -57,7 +57,7 @@ class HiC:
             names=['chromosome', 'length'],
             index_col='chromosome',
         )
-        # load sample valid pairs by HiC-Pro after remove duplication and filter.
+        # load sample valid pairs by HiCTools-Pro after remove duplication and filter.
         reader = pd.read_csv(
             valid_pairs,
             sep='\t',
@@ -152,7 +152,7 @@ class HiC:
 
 if __name__ == '__main__':
     a = time.time()
-    hic = HiC()
+    hic = HiCTools()
     hic.get_effective_resolutions(
         genome_index="/Volumes/zhaohn_HD/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa.fai",
         valid_pairs="../../data/hic/test.rm_dup_pairs.allValidPairs",

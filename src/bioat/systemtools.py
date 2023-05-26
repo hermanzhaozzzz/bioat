@@ -2,7 +2,7 @@ from __future__ import absolute_import
 # from bioat.api.internet_speed import main as speedtest
 
 
-class System():
+class SystemTools:
     def __init__(self):
         # self.test_internet_speed = speedtest()
         pass

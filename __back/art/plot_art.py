@@ -30,7 +30,7 @@ Version-01:
         Make plot for DdCBE TALE sequence
 
     2019-12-05 
-        Plot Alignment Result Table (.art) files
+        Plot Alignment Result TableTools (.art) files
 
 E-Mail: meng_howard@126.com
 

@@ -1,6 +1,17 @@
 from __future__ import absolute_import
 import fire
-from bioat import about, Bam, Fastx, HiC, Mgi, System, Table, TargetedDeepSequencing, __version__
+from bioat import (
+    __version__,
+    about,
+    BamTools,
+    BedTools,
+    FastxTools,
+    HiCTools,
+    MgiTools,
+    SystemTools,
+    TableTools,
+    TargetedDeepSequencing
+)
 
 
 class Cli(object):
@@ -13,12 +24,13 @@ class Cli(object):
     """
 
     def __init__(self):
-        self.bam = Bam()
-        # self.fastx = Fastx()
-        self.hic = HiC()
-        self.mgi = Mgi()
-        # self.system = System()
-        self.table = Table()
+        self.bam = BamTools()
+        self.bed = BedTools()
+        # self.fastx = FastxTools()
+        self.hic = HiCTools()
+        self.mgi = MgiTools()
+        # self.system = SystemTools()
+        self.table = TableTools()
         self.targeted_deep_sequencing = TargetedDeepSequencing()
 
     @classmethod

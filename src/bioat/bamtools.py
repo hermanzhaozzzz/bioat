@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import dataclasses
 import logging
 import gzip
 import os
@@ -9,9 +10,10 @@ import random
 import pysam
 from multiprocessing import Process
 from bioat.logger import set_logging_level
+from bioat.lib.libdataclasses import Bam
 
 
-class Bam:
+class BamTools:
     def __init__(self):
         pass
 

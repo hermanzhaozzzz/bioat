@@ -12,7 +12,7 @@ import sys
 from Bio import SeqIO
 from tqdm import tqdm
 
-class Fastx():
+class FastxTools:
     def __init__(self, file=None, iterable=True):
         self.file = file
         self.iterable = iterable
@@ -299,5 +299,5 @@ class Fastx():
 
 
 if __name__ == '__main__':
-    # fastx = Fastx(file='../../data/random_l-180_n-100_hg38_minus-test.fa')
+    # fastx = FastxTools(file='../../data/random_l-180_n-100_hg38_minus-test.fa')
     pass

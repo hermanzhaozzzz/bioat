@@ -1053,7 +1053,7 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------------>>>>>>>
     # make aligner
     # ------------------------------------------------------------------------>>>>>>>
-    # reference Table 6.1: Meta-attributes of the pairwise aligner objects.
+    # reference TableTools 6.1: Meta-attributes of the pairwise aligner objects.
     # http://biopython.org/DIST/docs/tutorial/Tutorial.html#sec118
     TALE_aligner = Bio.Align.PairwiseAligner()
     TALE_aligner.substitution_matrix = align_score_matrix

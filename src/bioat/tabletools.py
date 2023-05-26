@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 
 
-class Table():
+class TableTools:
     def __init__(self):
         pass
 

@@ -7,4 +7,4 @@ def test_version_info():
 
 def test_import():
     from bioat import about, set_logging_level
-    from bioat import Bam, Fastx, HiC, Mgi, System, Table, TargetedDeepSequencing
+    from bioat import BamTools, FastxTools, HiCTools, MgiTools, SystemTools, TableTools, TargetedDeepSequencing

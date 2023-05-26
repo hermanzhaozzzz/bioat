@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class Mgi():
+class MgiTools():
     def __init__(self):
         pass
 
