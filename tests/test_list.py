@@ -12,4 +12,4 @@ def test_list():
 
 def test_cli_list():
     args = ['bioat', 'list']
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0

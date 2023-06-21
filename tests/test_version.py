@@ -12,4 +12,4 @@ def test_version():
 
 def test_cli_version():
     args = ['bioat', 'version']
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0

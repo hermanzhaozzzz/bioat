@@ -58,7 +58,7 @@ def test_cli_region_heatmap():
         '--reference_seq', f_refseq,
         '--log_level', 'WARNING'
     ]
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0
 
 # f"""{PYTHON} ./program/multiplot-targetseq-bmat-heatmap-V3.py \
 #     -i \

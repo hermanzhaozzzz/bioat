@@ -38,7 +38,7 @@ def test_cli_mpileup_to_table():
         '--remove_temp', 'True',
         '--log_level', 'WARNING'
     ]
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0
 
 
 def test_remove_clip():
@@ -53,7 +53,7 @@ def test_remove_clip():
     )
 
 
-def test_cli_remove_clip():
+def test_cli_remove_clip_1():
     args = [
         'bioat', 'bam', 'remove_clip',
         '--input', f_bam_sortn,
@@ -64,4 +64,28 @@ def test_cli_remove_clip():
         '--max_clip', '0',
         '--log_level', 'WARNING'
     ]
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0
+
+
+def test_cli_remove_clip_2():
+    # test pipe
+    args = ['samtools', 'view', '-h', f_bam_sortn]
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    args = ['bioat', 'bam', 'remove_clip']
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    args = ['head']
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    _ = p3.communicate()[0]  # output str
+    assert p3.returncode == 0
+
+
+def test_cli_remove_clip_3():
+    # test pipe
+    args = ['samtools', 'view', '-h', f_bam_sortn]
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    args = ['bioat', 'bam', 'remove_clip']
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    args = ['tail']
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    _ = p3.communicate()[0]  # output str
+    assert p3.returncode == 0

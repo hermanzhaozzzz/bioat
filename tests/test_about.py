@@ -17,4 +17,4 @@ def test_about():
 
 def test_cli_about():
     args = ['bioat', 'about']
-    assert subprocess.check_call(args) == 0
+    assert subprocess.run(args).returncode == 0
