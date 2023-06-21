@@ -1,27 +1,28 @@
 from __future__ import absolute_import
-import fire
 from bioat import (
     __version__,
     about,
     BamTools,
     BedTools,
-    FastxTools,
+    # FastxTools,
     HiCTools,
     MgiTools,
-    SystemTools,
+    # SystemTools,
     TableTools,
-    TargetedDeepSequencing
+    TargetSeq
 )
 
 
 class Cli(object):
     """Cli interface of bioat
 
-    - `bioat` short for "Bioinformatic Analysis Tools", is a commandline toolkit and a python package.
+    - `bioat` is short for "Bioinformatic Analysis Tools" and is a commandline toolkit and a python package.
+        It can be used through this cli interface in terminal or the `import` way in python codes.
     - `bioat` has many subcommand to deal with different bio-format:
         BED, BAM, FASTA, FASTQ, VCF, et al.
 
     """
+
     # - Citation:
     #     - Citation is not forcible and I would be appreciated if you wann to do this.
     #     - citation reference format:
@@ -37,17 +38,15 @@ class Cli(object):
         self.mgi = MgiTools()
         # self.system = SystemTools()
         self.table = TableTools()
-        self.targeted_deep_sequencing = TargetedDeepSequencing()
+        self.target_seq = TargetSeq()
 
     @classmethod
     def about(self):
-        """Print information about <bioat>.
-        """
+        """Print information about `bioat`."""
         return about
 
-    def list(self):
-        """Print commands and subcommands.
-        """
+    def list(self):  # not class method because some attr and methods do exit when obj instantiation
+        """Print commands and subcommands."""
         out = ""
         for att in dir(self):
             if not att.startswith('_'):
@@ -57,17 +56,8 @@ class Cli(object):
                     if not sub_att.startswith('_'):
                         out += f'  ├── {sub_att}\n'
         return out
+
     @classmethod
     def version(self):
-        """Print version information.
-        """
+        """Print version information."""
         return __version__
-
-
-def main() -> int:
-    calculator = Cli()
-    fire.Fire(calculator, name='bioat')
-
-
-if __name__ == '__main__':
-    main()

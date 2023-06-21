@@ -3,6 +3,8 @@ import pandas as pd
 
 
 class TableTools:
+    """To integrate tables."""
+
     def __init__(self):
         pass
 

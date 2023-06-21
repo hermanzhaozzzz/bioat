@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import dataclasses
 import logging
 import gzip
 import os
@@ -8,12 +7,19 @@ import sys
 import string
 import random
 import pysam
+from io import TextIOWrapper
 from multiprocessing import Process
+from signal import signal, SIGPIPE, SIG_DFL
 from bioat.logger import set_logging_level
-from bioat.lib.libdataclasses import Bam
+
+# from bioat.lib.libdataclasses import Bam
+
+signal(SIGPIPE, SIG_DFL)
 
 
 class BamTools:
+    """Bam toolbox."""
+
     def __init__(self):
         pass
 
@@ -159,8 +165,8 @@ class BamTools:
 
     def remove_clip(
             self,
-            input: str = 'stdin',
-            output: str = 'stdout',
+            input: str = sys.stdin,
+            output: str = sys.stdout,
             threads: int = 1,
             output_fmt: str = 'SAM',
             remove_as_paired: bool = True,
@@ -169,10 +175,10 @@ class BamTools:
     ):
         """Remove softclip reads in BAM file.
 
-        :param input: BAM file sorted by coordinate with soft/hard clip reads, pipe stdin is supported
+        :param input: BAM file sorted by queryname with soft/hard clip reads, pipe stdin is supported
 
                         [samtools view -h foo_sort_name.bam | bioat bam remove_clip <flags>]
-        :param output: BAM file sorted by coordinate without soft/hard clip reads, pipe stdout is supported
+        :param output: BAM file sorted by queryname without soft/hard clip reads, pipe stdout is supported
 
                         [bioat bam remove_clip <flags> | wc -l]
                         [bioat bam remove_clip <flags> | samtools view ....]
@@ -188,14 +194,15 @@ class BamTools:
         function_name = sys._getframe().f_code.co_name
         logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
 
-        if sys.stdin.isatty():  # not stdin
-            bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
-        else:  # stdin
-            bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
+        save = pysam.set_verbosity(0)  # https://github.com/pysam-developers/pysam/issues/939
 
-        # fix output
-        if output == 'stdout':
-            output = sys.stdout
+        if isinstance(input, str):  # not stdin
+            bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
+        elif isinstance(input, TextIOWrapper):  # stdin
+            bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
+        else:
+            exit(1)
+        pysam.set_verbosity(save)
 
         try:
             so = bam_in.header['HD']['SO']

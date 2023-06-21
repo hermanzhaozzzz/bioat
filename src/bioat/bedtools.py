@@ -10,6 +10,8 @@ from bioat.lib.libdataclasses import Bed
 
 
 class BedTools:
+    """Bed toolbox."""
+
     def __init__(self):
         pass
 

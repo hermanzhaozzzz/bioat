@@ -2,6 +2,8 @@ import pandas as pd
 
 
 class MgiTools():
+    """Raw MGI sequencing data toolbox."""
+
     def __init__(self):
         pass
 

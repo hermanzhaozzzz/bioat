@@ -7,17 +7,18 @@ from Bio.Seq import Seq
 from Bio.Align import PairwiseAligner
 from bioat.lib.libalignment import get_alignment_info
 
-"""TARGET_REGIONS_LIB.
+# TARGET_REGIONS_LIB
+#     for target_seq alignment
+#
+# bioat target_seq region_heatmap test_sorted.mpileup.info.tsv test.pdf --get_built_in_target_region
+#
+# INFO:root:You can use <key> in built-in <target_regions> to represent your target_region:
+#         <key>   <target_region>
+#         EMX1    GAGTCCGAGCAGAAGAAGAA^NGG^
+#         HEK3    GGCCCAGACTGAGCACGTGA^NGG^
+#         HEK4    GGCACTGCGGCTGGAGGTGG^NGG^
+#         ...
 
-bioat targeted_deep_sequencing region_heatmap test_sorted.mpileup.info.tsv test.pdf --get_built_in_target_region
-
-INFO:root:You can use <key> in built-in <target_regions> to represent your target_region:
-        <key>   <target_region>
-        EMX1    GAGTCCGAGCAGAAGAAGAA^NGG^
-        HEK3    GGCCCAGACTGAGCACGTGA^NGG^
-        HEK4    GGCACTGCGGCTGGAGGTGG^NGG^
-        ...
-"""
 TARGET_SEQ_LIB = {
     "EMX1": "GAGTCCGAGCAGAAGAAGAA^NGG^",
     "HEK3": "GGCCCAGACTGAGCACGTGA^NGG^",

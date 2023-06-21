@@ -23,6 +23,8 @@ except SystemError:
 
 
 class HiCTools:
+    """Hi-C toolbox."""
+
     def __init__(self):
         pass
 

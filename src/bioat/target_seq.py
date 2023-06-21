@@ -1,4 +1,9 @@
 from __future__ import absolute_import
+
+import gzip
+import os.path
+
+from bioat import BioatFileFormatError
 from bioat.logger import set_logging_level
 from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
 from bioat.lib.libcolor import map_color, make_color_list
@@ -16,7 +21,9 @@ import logging
 import sys
 
 
-class TargetedDeepSequencing:
+class TargetSeq:
+    """Target Deep Sequencing toolbox."""
+
     def __init__(self):
         pass
 
@@ -37,7 +44,7 @@ class TargetedDeepSequencing:
             max_color: tuple = (154, 104, 57),
             min_ratio: float = 0.001,
             max_ratio: float = 0.99,
-            region_extend_length: int = 25,
+            region_extend_length: int = 5,
             local_alignment_scoring_matrix: tuple = (5, -4, -24, -8),
             local_alignment_min_score: int = 15,
             PAM_priority_weight: float = 1.0,
@@ -58,6 +65,10 @@ class TargetedDeepSequencing:
         'GAGTCCGAGCAGAAGAAGAA^GGG^', ^GGG^ refers to PAM of SpCas9-BE on `EMX1` site;\n
         '^TTTA^GCCCCAATAATCCCCACATGTCA', ^TTTA^ refers to PAM of cpf1-BE on `CDKN2A` site;\n
         'TGCTAGTAACCACGTTCTCCTGATCAAATATCACTCTCCTACTTACAGGA' refers to no PAM on `ND4` site.
+        :param reference_seq: The program will attempt to align the sequence information specified by <target_seq> to
+        the reference sequence of mpileup.table. If <reference_seq> is defined manually, the manually <reference_seq>
+        will overwrite the reference sequence of mpileup.table. a single fasta file or DNA sequence would be suitable
+        for this parameter.
         :param input_table_header: whether input_table has header or not
         :param output_fig_fmt: pdf | png
         :param output_fig_dpi: output figure dpi
@@ -130,6 +141,13 @@ class TargetedDeepSequencing:
 
         # ref_seq & ref_seq_rc
         if reference_seq:
+            # fa file or seq str     to seq str
+            if os.path.isfile(reference_seq):
+                f = open(reference_seq, 'rt') if not reference_seq.endswith('.gz') else gzip.open(reference_seq, 'rt')
+                reference_seq = ''.join([i.rstrip() for i in f.readlines()[1:]])
+                if reference_seq.count('>') > 0:
+                    raise BioatFileFormatError
+
             ref_seq = Seq(reference_seq)
             logger.debug(f'load ref_seq from parameter:\n{ref_seq}')
         else:

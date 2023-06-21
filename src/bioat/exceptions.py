@@ -1,6 +1,6 @@
-class TestA(Exception):
+class BioatFileFormatError(Exception):
     pass
 
 
-class TestB(TestA):
+class TestB(BioatFileFormatError):
     pass
