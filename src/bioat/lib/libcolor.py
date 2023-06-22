@@ -123,8 +123,9 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
     function_name = sys._getframe().f_code.co_name
     logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
 
-    supported_fmt = ('HEX', 'RGB')
     return_fmt = return_fmt.upper()
+    supported_fmt = ('HEX', 'RGB')
+
     if return_fmt not in supported_fmt:
         logger.critical(
             f'not supported color format: {return_fmt}\n'
@@ -135,7 +136,7 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
 
     color_list = []
     for index in range(0, length_out + 1):
-        rgb_color = low_color + (high_color - low_color) // length_out * index
+        rgb_color = [abs(i) for i in low_color + (high_color - low_color) // length_out * index]
         if return_fmt == "HEX":
             color_list.append(convert_rgb_to_hex(tuple(rgb_color)))
         else:
