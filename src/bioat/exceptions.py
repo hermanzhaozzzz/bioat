@@ -2,5 +2,9 @@ class BioatFileFormatError(Exception):
     pass
 
 
-class TestB(BioatFileFormatError):
+class BioatParameterFormatError(Exception):
+    pass
+
+
+class BioatFileNameError(Exception):
     pass
