@@ -1,7 +1,5 @@
-import bioat
-
-MODULE_PATH = f'{bioat.__path__[0]}'
-DATA_PATH = f'{bioat.__path__[0]}/../../data'
+MODULE_PATH = f'src'
+DATA_PATH = f'data'
 TESTOUT_PATH = '/Users/zhaohuanan/Downloads'
 
 print(MODULE_PATH)
