@@ -155,4 +155,4 @@ if __name__ == '__main':
               '#FF958C',
               '#883677']
     plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])
-    plt.show()
+    # plt.show()
