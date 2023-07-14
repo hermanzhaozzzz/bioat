@@ -13,6 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
+import pandas as pd
 from Bio import SeqIO
 from Bio import Phylo
 import Bio
@@ -1768,6 +1769,13 @@ class Tcircle(Gcircle):
         None
         """
         self._garc_dict[tarc_id]._plot_highlight(self.ax, highlight_dict=highlight_dict)
+
+
+def table_hg38_chromosome_length():
+    return pd.read_csv('circos/hg38/chromosome_length_hg38.csv')
+
+def table_hg38_cytoband():
+    return pd.read_csv('circos/hg38/cytoBand_hg38.csv')
 
 
 if __name__ == "__main__":
