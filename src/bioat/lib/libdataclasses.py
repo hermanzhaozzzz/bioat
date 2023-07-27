@@ -7,7 +7,7 @@ class Bed:
     start: int
     end: int
     name: str
-    score: int | str
+    score: int
     strand: str
 
 
