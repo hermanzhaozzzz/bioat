@@ -1776,7 +1776,7 @@ def table_hg38_chromosome_length():
     return pd.read_csv(os.path.join(DATAPATH, 'chromosome_length_hg38.csv'))
 
 def table_hg38_cytoband():
-    return pd.read_csv(os.path.join(DATAPATH, 'chromosome_length_hg38.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, 'cytoBand_hg38.csv'))
 
 
 if __name__ == "__main__":
