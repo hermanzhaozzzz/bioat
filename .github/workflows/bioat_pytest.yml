@@ -32,7 +32,7 @@ jobs:
         cd bioat
         poetry run bash
         poetry install
-        python -m pip install -e .
+        ## python -m pip install -e .
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
