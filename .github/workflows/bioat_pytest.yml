@@ -29,3 +29,7 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: View poetry --help
         run: poetry --help
+      - name: poetry install
+        run: poetry install
+      - name: pytest
+        run: poetry run pytest -v
