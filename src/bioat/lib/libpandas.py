@@ -4,9 +4,11 @@ import logging
 import sys
 from bioat.logger import set_logging_level
 
+__all__ = ['set_option']
+
 
 def set_option(max_colwidth: int = 40, display_width: int = 120, display_max_columns: int = None,
-               display_max_rows: int = 50, log_level: str='INFO',**kwargs):
+               display_max_rows: int = 50, log_level: str = 'INFO', **kwargs):
     # set logger
     if log_level in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET']:
         set_logging_level(level=log_level)
