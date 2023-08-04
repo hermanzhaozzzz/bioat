@@ -1,6 +1,10 @@
-MODULE_PATH = f'src'
-DATA_PATH = f'data'
-TESTOUT_PATH = '/Users/zhaohuanan/Downloads'
+import os
 
-print(MODULE_PATH)
-print(DATA_PATH)
+
+HOME = os.path.expanduser('~')
+MODULE_PATH = 'src'
+DATA_PATH = 'data'
+TESTOUT_PATH = HOME
+
+# print(MODULE_PATH)
+# print(DATA_PATH)

@@ -1,11 +1,7 @@
-import bioat
 import os
-import sys
-import random
-import string
 import subprocess
 from bioat.cli import Cli
-from settings import DATA_PATH, TESTOUT_PATH
+from .settings import DATA_PATH, TESTOUT_PATH
 
 cli = Cli()
 
