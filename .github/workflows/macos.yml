@@ -16,7 +16,7 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10"]
         poetry-version: ["1.5"]
-        os: [ubuntu-18.04, macos-latest, windows-latest]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -33,3 +33,11 @@ jobs:
         run: poetry install
       - name: pytest
         run: poetry run pytest -v
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json
