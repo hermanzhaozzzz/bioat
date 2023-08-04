@@ -15,18 +15,18 @@ def set_logging_level(level='ERROR'):
     }
     logging.basicConfig(
         level=dt_level[level],
-        format='%(levelname)-5s @ %(asctime)s: %(message)s ',
+        format='%(levelname)-5s @ %(asctime)s <fn>: %(name)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         stream=sys.stderr,
         filemode="w"
     )
-    # set logger
-    lib_name = __name__
-    function_name = sys._getframe().f_code.co_name
-    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+    # set logger in sub modules
+        # lib_name = __name__
+        # function_name = sys._getframe().f_code.co_name
+        # logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
 
     if level not in ('NOTSET', 'INFO'):
-        logger.info(f'set logging level = {level}')
+        logging.info(f'set logging level = {level}')
 
 
 if __name__ == '__main__':
