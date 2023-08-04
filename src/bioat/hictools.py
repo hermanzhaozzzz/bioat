@@ -2,11 +2,12 @@ from __future__ import absolute_import
 import sys
 import time
 import pandas as pd
-from bioat.logger import set_logging_level
+from bioat import get_logger
 from pandarallel import pandarallel
-import logging
 from bioat.lib._dev_tools import profile
 import gc
+
+__module_name__ = 'bioat.hictools'
 
 try:
     pandarallel.initialize(
@@ -45,11 +46,7 @@ class HiCTools:
         :param output: table_output, TSV file
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        set_logging_level(level=log_level)
-        # set logger
-        lib_name = __name__
-        function_name = sys._getframe().f_code.co_name
-        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         logger.debug('Develop mode is on')
         # load ref genome lengths
         df_chromosome = pd.read_csv(

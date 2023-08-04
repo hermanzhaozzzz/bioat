@@ -1,5 +1,9 @@
+from __future__ import absolute_import
 import sys
 import pandas as pd
+from bioat import get_logger
+
+__module_name__ = 'bioat.tabletools'
 
 
 class TableTools:
@@ -16,7 +20,8 @@ class TableTools:
             input_fmt='tsv',
             output_fmt='tsv',
             input_header=False,
-            output_header=False
+            output_header=False,
+            log_level='WARNING'
     ):
         """A simple tool to merge same formatted tables from different sample.
 
@@ -28,10 +33,18 @@ class TableTools:
         :param output_fmt: tsv | csv
         :param input_header: True | False, input table has header or not
         :param output_header: True | False, output table has header or not
+        :param log_level: log status
         """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         # fix params
         inputs = list(inputs) if isinstance(inputs, tuple) else inputs.split(',')
         tags = list(tags) if isinstance(tags, tuple) else tags.split(',')
+
+        logger.debug(f'input_fmt={input_fmt}')
+        logger.debug(f'output_fmt={output_fmt}')
+        logger.debug(f'input_header={input_header}')
+        logger.debug(f'output_header={output_header}')
+
         input_header = 0 if input_header else None
         output = sys.stdout if output == sys.stdout.name else output
         dt_sep = {'csv': ',', 'tsv': '\t'}
@@ -58,7 +71,8 @@ class TableTools:
             output_fmt='tsv',
             input_header=False,
             output_header=False,
-            compress=False
+            compress=False,
+            log_level='WARNING'
     ):
         """A simple tool to split table into parts.
 
@@ -71,7 +85,13 @@ class TableTools:
         :param input_header: True | False, input table has header or not
         :param output_header: True | False, output table has header or not
         :param compress: True | False, gzip the output table or not
+        :param log_level: log status
         """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger.debug(f'input_fmt={input_fmt}')
+        logger.debug(f'output_fmt={output_fmt}')
+        logger.debug(f'input_header={input_header}')
+        logger.debug(f'output_header={output_header}')
         # fix params
         input_header = 0 if input_header else None
         output_prefix = output_prefix if output_prefix else f'{input}_'

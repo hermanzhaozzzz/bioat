@@ -1,11 +1,10 @@
 from __future__ import absolute_import
 
 import dataclasses
-import logging
 import gzip
 import os
 import sys
-from bioat.logger import set_logging_level
+from bioat import get_logger
 from bioat.lib.libdataclasses import Bed
 
 

@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import logging
 import gzip
 import os
 import sys
@@ -10,9 +9,10 @@ import pysam
 from io import TextIOWrapper
 from multiprocessing import Process
 from signal import signal, SIGPIPE, SIG_DFL
-from bioat.logger import set_logging_level
+from bioat import get_logger
 
 # from bioat.lib.libdataclasses import Bam
+__module_name__ = 'bioat.bamtools'
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -43,11 +43,7 @@ class BamTools:
         :param remove_temp: Where to keep temp files, default is /tmp
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        set_logging_level(level=log_level)
-        # set logger
-        lib_name = __name__
-        function_name = sys._getframe().f_code.co_name
-        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         def _temp_split_bam(mpileup, threads, temp_dir):
             # creat temp file name and open file
@@ -188,11 +184,7 @@ class BamTools:
         :param max_clip: the maximum clips allowed per read
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        set_logging_level(level=log_level)
-        # set logger
-        lib_name = __name__
-        function_name = sys._getframe().f_code.co_name
-        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         save = pysam.set_verbosity(0)  # https://github.com/pysam-developers/pysam/issues/939
 

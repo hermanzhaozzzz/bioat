@@ -1,11 +1,13 @@
 from __future__ import absolute_import
-import logging
 import sys
 
 import pandas as pd
 from Bio.Seq import Seq
 from Bio.Align import PairwiseAligner
 from bioat.lib.libalignment import get_alignment_info
+from bioat import get_logger
+
+__module_name__ = 'bioat.lib.libcrispr'
 
 # TARGET_REGIONS_LIB
 #     for target_seq alignment
@@ -96,7 +98,8 @@ def run_target_seq_align(
         ref_seq: Seq,
         target_seq: Seq,
         aligner: PairwiseAligner,
-        PAM: dict = None
+        PAM: dict = None,
+        log_level='WARNING'
 ) -> list:
     """global alignment for target_seq
 
@@ -127,9 +130,7 @@ def run_target_seq_align(
 
     """
     # set logger
-    lib_name = __name__
-    function_name = sys._getframe().f_code.co_name
-    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
     if PAM:
         # considering PAM

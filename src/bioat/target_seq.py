@@ -2,12 +2,12 @@ from __future__ import absolute_import
 
 import gzip
 import os.path
-
+import sys
 from bioat import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
-from bioat.logger import set_logging_level
 from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
 from bioat.lib.libcolor import map_color, make_color_list, convert_hex_to_rgb
 from bioat.lib.libalignment import instantiate_pairwise_aligner
+from bioat import get_logger
 from Bio.Seq import Seq
 from tabulate import tabulate
 from matplotlib.collections import PatchCollection
@@ -17,8 +17,7 @@ import matplotlib
 import numpy as np
 import pandas as pd
 
-import logging
-import sys
+__module_name__ = 'bioat.target_seq'
 
 
 class TargetSeq:
@@ -96,11 +95,7 @@ class TargetSeq:
             --input_table test_sorted.mpileup.info.tsv \
             --output_fig test_sorted.mpileup.info.pdf\n
         """
-        set_logging_level(level=log_level)
-        # set logger
-        lib_name = __name__
-        function_name = sys._getframe().f_code.co_name
-        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         if get_built_in_target_seq:
             logger.info(
@@ -719,12 +714,7 @@ class TargetSeq:
             --labels condition1,condition2,condition3 \
             --target_seq HEK4 \n
         """
-
-        set_logging_level(level=log_level)
-        # set logger
-        lib_name = __name__
-        function_name = sys._getframe().f_code.co_name
-        logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         base_color_dict = {"A": "#04E3E3", "T": "#F9B874", "C": "#B9E76B", "G": "#F53798", "N": "#DDEAF6"}
 
@@ -1391,7 +1381,7 @@ class TargetSeq:
 
             # export heatmap values
             logger.debug("export heatmap reference table...")
-            logging.debug(f'df_plot_rec: \n{df_plot_rec.index}')
+            logger.debug(f'df_plot_rec: \n{df_plot_rec.index}')
             # exit()
             for row in range(df_plot_rec.shape[0]):
                 row_name = df_plot_rec.index[row]
@@ -1734,6 +1724,7 @@ class TargetSeq:
                 df_bases_select.to_csv(output_table_count_ratio, sep=',')
             elif output_table_count_ratio.endswith('.tsv'):
                 df_bases_select.to_csv(output_table_count_ratio, sep='\t')
+
 
 if __name__ == '__main__':
     pass

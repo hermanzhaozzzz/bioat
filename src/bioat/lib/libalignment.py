@@ -1,6 +1,9 @@
+from __future__ import absolute_import
 from Bio.Align import Alignment, PairwiseAligner
 import sys
-import logging
+from bioat import get_logger
+
+__module_name__ = 'bioat.lib.libalignment'
 
 
 def instantiate_pairwise_aligner(
@@ -9,12 +12,10 @@ def instantiate_pairwise_aligner(
         penalty_gap_open,
         penalty_gap_extension,
         # penalty_query_left_gap
-        mode='global'
+        mode='global',
+        log_level='DEBUG'
 ):
-    # set logger
-    lib_name = __name__
-    function_name = sys._getframe().f_code.co_name
-    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
     aligner = PairwiseAligner()
     aligner.match = scoring_match
@@ -26,6 +27,7 @@ def instantiate_pairwise_aligner(
     aligner.mode = mode
     logger.info(aligner)
     return aligner
+
 
 def get_aligned_seq(alignment: Alignment, reverse: bool = False) -> dict:
     """Get_aligned_seq.
@@ -59,7 +61,7 @@ def get_aligned_seq(alignment: Alignment, reverse: bool = False) -> dict:
     return res
 
 
-def get_alignment_info(alignment: Alignment, reverse: bool = False):
+def get_alignment_info(alignment: Alignment, reverse: bool = False, log_level='WARNING'):
     """
 
     :param alignment: Bio.Align.Alignment object
@@ -94,9 +96,7 @@ def get_alignment_info(alignment: Alignment, reverse: bool = False):
             The <start_index> and <end_index> are index related to sgRNA alignment string
     """
     # set logger
-    lib_name = __name__
-    function_name = sys._getframe().f_code.co_name
-    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
     if reverse:
         aln_res = get_aligned_seq(alignment, reverse=True)

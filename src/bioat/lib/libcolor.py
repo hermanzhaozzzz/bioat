@@ -1,9 +1,12 @@
+from __future__ import absolute_import
 import numpy as np
 import sys
-import logging
 import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from bioat import get_logger
+
+__module_name__ = 'bioat.lib.libcolor'
 
 def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
 
@@ -106,7 +109,7 @@ def map_color(value_vec, breaks, color_list):
     return tuple(color_list[col_idx] for col_idx in value_idx_list)
 
 
-def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HEX"):
+def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HEX", log_level='DEBUG'):
     """
     INPUT
         <low_color_RGB> <high_color_RGB>
@@ -119,9 +122,7 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
         <color_list>
     """
     # set logger
-    lib_name = __name__
-    function_name = sys._getframe().f_code.co_name
-    logger = logging.getLogger(f'{lib_name}.{function_name} ==> ')
+    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
     return_fmt = return_fmt.upper()
     supported_fmt = ('HEX', 'RGB')
