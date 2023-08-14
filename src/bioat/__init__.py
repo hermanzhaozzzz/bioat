@@ -10,7 +10,6 @@ from bioat.exceptions import BioatFileFormatError, BioatFileNameError, BioatPara
 from bioat.fastxtools import FastxTools
 from bioat.hictools import HiCTools
 from bioat.mgitools import MgiTools
-from bioat.searchtools import SearchTools
 from bioat.systemtools import SystemTools
 from bioat.tabletools import TableTools
 from bioat.target_seq import TargetSeq
