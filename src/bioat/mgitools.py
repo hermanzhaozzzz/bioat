@@ -1,4 +1,8 @@
+from __future__ import absolute_import
+from bioat.logger import get_logger
 import pandas as pd
+
+__module_name__ = 'bioat.mgitools'
 
 
 class MgiTools():
@@ -7,11 +11,13 @@ class MgiTools():
     def __init__(self):
         pass
 
-    def parse_md5(self, file: str):
+    def parse_md5(self, file: str, log_level='WARNING'):
         """Read mgi-like md5 file and convert to a normal md5 file.
 
         :param file: file name of a mgi-like md5 file.
+        :param log_level: INFO/DEBUG/WARNING/ERROR, default is WARNING.
         """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         df = pd.read_csv(
             file,
             header=None,

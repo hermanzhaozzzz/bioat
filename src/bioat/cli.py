@@ -4,9 +4,10 @@ from bioat import (
     about,
     BamTools,
     BedTools,
-    # FastxTools,
+    FastxTools,
     HiCTools,
     MgiTools,
+    SearchTools,
     # SystemTools,
     TableTools,
     TargetSeq
@@ -33,9 +34,10 @@ class Cli(object):
     def __init__(self):
         self.bam = BamTools()
         self.bed = BedTools()
-        # self.fastx = FastxTools()
+        self.fastx = FastxTools()
         self.hic = HiCTools()
         self.mgi = MgiTools()
+        self.search = SearchTools()
         # self.system = SystemTools()
         self.table = TableTools()
         self.target_seq = TargetSeq()
