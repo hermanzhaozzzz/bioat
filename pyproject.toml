@@ -32,6 +32,9 @@ selenium = "^4.11.2"
 sphinx = "^7.1.2"
 sphinx-autobuild = "^2021.3.14"
 sphinx-rtd-theme = "^1.2.2"
+recommonmark = "^0.7.1"
+sphinx-markdown-tables = "^0.0.17"
+sphinxemoji = "^0.2.0"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"

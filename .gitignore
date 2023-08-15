@@ -2,6 +2,8 @@
 # this project
 ##############
 test_outfiles/
+docs/html/
+docs/doctrees/
 
 ##############
 # common project
