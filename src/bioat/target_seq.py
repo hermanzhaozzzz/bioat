@@ -984,7 +984,8 @@ class TargetSeq:
         bmat_table = ls_bmat_table[0]
 
         for df_bmat in ls_bmat_table[1:]:
-            df_tmp = pd.merge(df_tmp, df_bmat, on='chr_index', how='outer')
+            suffixes = (f'_{df_tmp.iloc[0, -1]}', f'_{df_bmat.iloc[0, -1]}')
+            df_tmp = pd.merge(df_tmp, df_bmat, on='chr_index', how='outer', suffixes=suffixes)
 
         ls_columns = ['chr_index']
         for label in label_panel:
