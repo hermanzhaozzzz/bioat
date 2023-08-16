@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.4.3"
+version = "0.4.4"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -29,8 +29,6 @@ ipython = ">=8.14.0"
 requests = "^2.31.0"
 bs4 = "^0.0.1"
 selenium = "^4.11.2"
-sphinx-markdown-tables = "^0.0.17"
-sphinxemoji = "^0.2.0"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
