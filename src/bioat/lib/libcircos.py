@@ -32,7 +32,7 @@ matplotlib.rcParams['xtick.major.pad'] = 6
 matplotlib.rcParams['ytick.major.pad'] = 6
 matplotlib.rcParams['xtick.major.size'] = 6
 matplotlib.rcParams['ytick.major.size'] = 6
-DATAPATH = os.path.join(os.path.dirname(__file__), 'circos', 'hg38')
+DATAPATH = os.path.join(os.path.dirname(__file__), 'circos')
 
 
 class Garc:
@@ -1773,10 +1773,16 @@ class Tcircle(Gcircle):
 
 
 def table_hg38_chromosome_length():
-    return pd.read_csv(os.path.join(DATAPATH, 'chromosome_length_hg38.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, 'hg38_chromosome_length.csv'))
 
 def table_hg38_cytoband():
-    return pd.read_csv(os.path.join(DATAPATH, 'cytoBand_hg38.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, 'hg38_cytoBand.csv'))
+
+def table_mm10_chromosome_length():
+    return pd.read_csv(os.path.join(DATAPATH, 'mm10_chromosome_length.csv'))
+
+def table_mm10_cytoband():
+    return pd.read_csv(os.path.join(DATAPATH, 'mm10_cytoBand.csv'))
 
 
 if __name__ == "__main__":
