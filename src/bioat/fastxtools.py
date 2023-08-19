@@ -39,7 +39,7 @@ class FastxTools:
         df.to_csv(to_path, header=False, index=False, sep="\t")
 
     @staticmethod
-    def _load_fastx_generator(fx, log_level='WARNING'):
+    def _load_fastx_generator(file, log_level='WARNING'):
         """
 
         :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
@@ -48,11 +48,11 @@ class FastxTools:
         :rtype: generator
         """
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        f = open(fx, 'rt') if not fx.endswith('.gz') else gzip.open(fx, 'rt')
+        f = open(file, 'rt') if not file.endswith('.gz') else gzip.open(file, 'rt')
         # FASTQ @  | FASTA >
         symbol = f.read(1)
         f.close()
-        f = open(fx, 'rt') if not fx.endswith('.gz') in fx else gzip.open(fx, 'rt')
+        f = open(file, 'rt') if not file.endswith('.gz') else gzip.open(file, 'rt')
 
         if symbol == '@':
             logger.debug('detect FASTQ file')
@@ -184,7 +184,7 @@ class FastxTools:
         :param output: FASTA | FASTQ file name file, stdout if not assigned, format as input.
         """
         if self.fastx is None:
-            self.fastx = self._load_fastx_generator()
+            self.fastx = self._load_fastx_generator(file)
 
         self.file = file
         output = sys.stdout if output == sys.stdout.name else output
@@ -194,7 +194,7 @@ class FastxTools:
         else:
             f = output
 
-        fx = self._load_fastx_generator()
+        fx = self._load_fastx_generator(file)
 
         for read in fx:
             seq = read[1]
