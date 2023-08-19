@@ -6,7 +6,6 @@ from bioat import (
     BedTools,
     FastxTools,
     HiCTools,
-    MgiTools,
     SearchTools,
     # SystemTools,
     TableTools,
@@ -36,7 +35,6 @@ class Cli(object):
         self.bed = BedTools()
         self.fastx = FastxTools()
         self.hic = HiCTools()
-        self.mgi = MgiTools()
         self.search = SearchTools()
         # self.system = SystemTools()
         self.table = TableTools()

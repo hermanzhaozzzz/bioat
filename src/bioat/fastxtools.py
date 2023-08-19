@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 import gzip
 import sys
+import pandas as pd
+from bioat.exceptions import BioatFileFormatError, BioatFileNotCompleteError
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.fastxtools"
@@ -9,6 +11,31 @@ __module_name__ = "bioat.fastxtools"
 class FastxTools:
     def __init__(self):
         pass
+
+    def mgi_parse_md5(self, file: str, log_level='WARNING'):
+        """Read mgi-like md5 file and convert to a normal md5 file.
+
+        :param file: file name of a mgi-like md5 file.
+        :param log_level: INFO/DEBUG/WARNING/ERROR, default is WARNING.
+        """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        try:
+            df = pd.read_csv(
+                file,
+                header=None,
+                index_col=False,
+                sep="  ",
+                engine="python",
+            )
+            df.columns = ["md5", "filename"]
+            df.md5 = df.md5.map(lambda x: x.lower())
+        except ValueError as e:
+            logger.error(BioatFileFormatError(e))
+            exit(1)
+        df.filename = df.filename + ".gz"
+        to_path = file.replace(".txt", "") + ".fix.md5"
+        logger.info(f'write to {to_path}')
+        df.to_csv(to_path, header=False, index=False, sep="\t")
 
     @staticmethod
     def _load_fastx_generator(fx, log_level='WARNING'):
@@ -27,37 +54,34 @@ class FastxTools:
         f = open(fx, 'rt') if not fx.endswith('.gz') in fx else gzip.open(fx, 'rt')
 
         if symbol == '@':
-            # FASTQ
-            logger.debug('is fastq!')
+            logger.debug('detect FASTQ file')
             read = []
             line = f.readline().rstrip()
-            # TODO
 
             while True:
                 if not line:
                     break
                 else:
                     if line.startswith('@'):
+                        # header or not complete
                         n = len(read)
                         if n == 0:
-                            # read == []
-                            # 第一次循环开始
+                            # header, 第一次循环开始
                             read.append(line)  # add header!
-                            line = f.readline().rstrip()
+                            line = f.readline().rstrip()  # next line
+                            continue
                         elif n == 4:
                             # read == ['header', 'seq', 'info', 'quality']
-                            # ls.append(read)
                             yield read
                             read = []
                             read.append(line)
                             line = f.readline().rstrip()
                         elif n == 3:
-                            # TODO
                             """
                             @@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6 # line! 期望它是 header！现在它是 quality
                             [
-                                '@Beta12AdemL1C001R00100001768/1',
-                                'ATCCCCGTATCTTCACCCCACCACAAACTATTAG',
+                                '@Beta12AdemL1C001R00100001768/1', 
+                                'ATCCCCGTATCTTCACCCCACCACAAACTATTAG', 
                                 '+',
                             ]'@@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6'
 
@@ -82,18 +106,17 @@ class FastxTools:
             yield read
             f.close()
             # return ls
+
+
         elif symbol == '>':
-            # FASTA
-            # print('is fastx!')
-            ls = []
+            logger.debug('detect FASTA file')
             read = []
             seq = ''
-            # raw_info = [i.rstrip() for i in f.readlines()]
             line = f.readline().rstrip()
-            # print(raw_info)
 
             while True:
                 if not line:
+                    f.close()
                     break
                 else:
                     if line.startswith('>'):
@@ -115,7 +138,8 @@ class FastxTools:
                             seq = ''  # 重置 seq 这个 str
                         else:
                             f.close()
-                            raise ValueError('The file may be incomplete!')
+                            logger.error(BioatFileNotCompleteError('The file may be incomplete!'))
+                            exit(1)
                     else:
                         # 读取并添加 seq
                         seq += line
@@ -127,30 +151,25 @@ class FastxTools:
             # return ls
         else:
             f.close()
-            raise ValueError('Input line one must starts with @ for FQ or > for FA!')
+            logger.error(BioatFileFormatError('Input line one must starts with `@` for FASTQ or `>` for FASTA!'))
+            exit(1)
         f.close()
-
-    def _load_fastx(self):
-        if self.iterable:
-            return self.__load_fastx_generator()
-        else:
-            return self.__load_fastx_list()
 
     def get_headers(self):
         # if self.fastx is None:
-        self.fastx = self._load_fastx()
+        self.fastx = self._load_fastx_generator()
 
         return [i[0][1:] for i in self.fastx]
 
     def get_sequence(self):
         # if self.fastx is None:
-        self.fastx = self._load_fastx()
+        self.fastx = self._load_fastx_generator()
 
         return [i[1] for i in self.fastx]
 
     def get_record_dict(self):
         # if self.fastx is None:
-        self.fastx = self._load_fastx()
+        self.fastx = self._load_fastx_generator()
 
         return {i[0][1:]: i[1] for i in self.fastx}
 
@@ -164,7 +183,7 @@ class FastxTools:
         :param output: FASTA | FASTQ file name file, stdout if not assigned, format as input.
         """
         if self.fastx is None:
-            self.fastx = self._load_fastx()
+            self.fastx = self._load_fastx_generator()
 
         self.file = file
         output = sys.stdout if output == sys.stdout.name else output
@@ -174,7 +193,7 @@ class FastxTools:
         else:
             f = output
 
-        fx = self._load_fastx()
+        fx = self._load_fastx_generator()
 
         for read in fx:
             seq = read[1]

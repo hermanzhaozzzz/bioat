@@ -1,7 +1,7 @@
-import dataclasses
+from dataclasses import dataclass
 
 
-@dataclasses.dataclass
+@dataclass
 class Bed:
     chromosome: str
     start: int
@@ -11,22 +11,24 @@ class Bed:
     strand: str
 
 
-@dataclasses.dataclass
+@dataclass
 class Bam:
     pass
 
 
-@dataclasses.dataclass
+@dataclass
 class Fasta:
     header: str
     sequence: str
 
-    def format_fasta(self, length: 80):
-        # 格式化输出fasta的sequence
-        pass
+    def __init__(self):
+
+    # def format_fasta(self, length: 80):
+    #     # 格式化输出fasta的sequence
+    #     pass
 
 
-@dataclasses.dataclass
+@dataclass
 class Fastq:
     # https://upload-images.jianshu.io/upload_images/7976641-18ceaafbce3d93d7.png?imageMogr2/auto-orient/strip|imageView2/2/w/1199/format/webp
     header: str
@@ -34,12 +36,12 @@ class Fastq:
     extras: str
     quality: str
 
-    def get_phread_info(self):
-        # 判断是Phred33还是Phred64
-        # https://www.jianshu.com/p/248308513e2e
-        pass
+    # def get_phread_info(self):
+    #     # 判断是Phred33还是Phred64
+    #     # https://www.jianshu.com/p/248308513e2e
+    #     pass
 
 
-@dataclasses.dataclass
+@dataclass
 class VCF:
     pass
