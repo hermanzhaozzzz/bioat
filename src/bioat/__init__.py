@@ -9,7 +9,6 @@ from bioat.bedtools import BedTools
 from bioat.exceptions import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
 from bioat.fastxtools import FastxTools
 from bioat.hictools import HiCTools
-from bioat.mgitools import MgiTools
 from bioat.searchtools import SearchTools
 from bioat.systemtools import SystemTools
 from bioat.tabletools import TableTools
