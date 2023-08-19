@@ -10,6 +10,7 @@ __module_name__ = "bioat.fastxtools"
 
 class FastxTools:
     def __init__(self):
+        self.fastx = None
         pass
 
     def mgi_parse_md5(self, file: str, log_level='WARNING'):
