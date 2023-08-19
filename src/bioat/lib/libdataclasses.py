@@ -22,7 +22,7 @@ class Fasta:
     sequence: str
 
     def __init__(self):
-
+        pass
     # def format_fasta(self, length: 80):
     #     # 格式化输出fasta的sequence
     #     pass
