@@ -47,7 +47,7 @@ class SearchTools:
                 keyword. Example: "'exact keyword'"
         :param sort_by: Column to be sorted by. Default is by the columns "Citations",
                 i.e., it will be sorted by the number of citations.
-                If you want to sort by citations per year, use --sortby "cit/year"
+                If you want to sort by citations per year, use --sort_by "cit/year"
         :param n_results: Number of articles to search on Google Scholar.
                 Default is 100. (be careful with robot checking if value is too high)
         :param csv_path: Path to save the exported csv file. By default it is the current folder
