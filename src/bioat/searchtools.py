@@ -23,16 +23,16 @@ class SearchTools:
     def google_scholar(
             self,
             keyword: str = 'CRISPR',
-            sort_by: str = 'Citations',
+            sort_by: str = 'cit/year',
             n_results: int = 100,
             csv_path: str = '.',
-            save_table: bool = False,
+            save_table: bool = True,
             plot: bool = False,
             start_year: int = None,
             end_year: int = datetime.now().year,
             log_level: str = 'WARNING'
     ):
-        """Return a table with a list of publications from google scholar.
+        """Return a table with a list of publications from google scholar, sort_by cit/year.
 
         This code creates a database with a list of publications data from Google
         Scholar.
@@ -48,6 +48,7 @@ class SearchTools:
         :param sort_by: Column to be sorted by. Default is by the columns "Citations",
                 i.e., it will be sorted by the number of citations.
                 If you want to sort by citations per year, use --sort_by "cit/year"
+                Or --sort_by "Citations" to sort by citations totally
         :param n_results: Number of articles to search on Google Scholar.
                 Default is 100. (be careful with robot checking if value is too high)
         :param csv_path: Path to save the exported csv file. By default it is the current folder
@@ -249,7 +250,8 @@ class SearchTools:
             print('Column name to be sorted not found. Sorting by the number of citations...')
             data_ranked = data.sort_values(by='Citations', ascending=False)
             print(e)
-
+        # fix index
+        data_ranked.reset_index(drop=True, inplace=True)
         # Print data
         print(data_ranked)
 
