@@ -38,6 +38,17 @@ class FastxTools:
         logger.info(f'write to {to_path}')
         df.to_csv(to_path, header=False, index=False, sep="\t")
 
+    def check_completeness(self, file: str, fmt='FASTQ',log_level='WARNING'):
+        """正在开发中
+
+        :param file: :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
+        :param fmt: FASTQ | FASTA
+        :param log_level:
+        :return: str, PASS | FAIL
+        """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        pass
+
     @staticmethod
     def _load_fastx_generator(file, log_level='WARNING'):
         """
