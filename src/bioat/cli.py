@@ -4,6 +4,7 @@ from bioat import (
     about,
     BamTools,
     BedTools,
+    CrisprTools,
     FastxTools,
     HiCTools,
     SearchTools,
@@ -33,6 +34,7 @@ class Cli(object):
     def __init__(self):
         self.bam = BamTools()
         self.bed = BedTools()
+        self.crispr = CrisprTools()
         self.fastx = FastxTools()
         self.hic = HiCTools()
         self.search = SearchTools()
