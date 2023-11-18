@@ -7,6 +7,7 @@ from bioat import (
     CrisprTools,
     FastxTools,
     HiCTools,
+    MetaTools,
     SearchTools,
     # SystemTools,
     TableTools,
@@ -37,6 +38,7 @@ class Cli(object):
         self.crispr = CrisprTools()
         self.fastx = FastxTools()
         self.hic = HiCTools()
+        self.meta = MetaTools()
         self.search = SearchTools()
         # self.system = SystemTools()
         self.table = TableTools()
