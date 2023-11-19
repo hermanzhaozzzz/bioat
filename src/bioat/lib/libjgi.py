@@ -1,65 +1,71 @@
-# Categories to store in default config file
-DEFAULT_CATEGORIES = ["ESTs",
-                      "EST Clusters",
-                      "Assembled scaffolds (unmasked)",
-                      "Assembled scaffolds (masked)",
-                      "Transcripts",
-                      "Genes",
-                      "CDS",
-                      "Proteins",
-                      "Additional Files"]
-# BLURBS
-usage_example_blurb = """\
-This script will retrieve files from JGI using the cURL api. It will
-return a list of possible files for downloading.
+import tarfile
+import gzip
+import time
+import textwrap
+from collections import defaultdict
+from hashlib import md5
 
-* This script depends upon cURL - it can be downloaded here:
-http://curl.haxx.se/
 
-# USAGE ///////////////////////////////////////////////////////////////////////
-
-$ jgi-query.py [<jgi_address>, <jgi_abbreviation>] [[-xml [<your_xml>]], -f]
-
-To get <jgi_address>, go to: http://genome.jgi.doe.gov/ and search for your
-species of interest. Click through until you are at the "Info" page. For
-\x1B[3mNematostella vectensis\x1B[23m, the appropriate page is
-"http://genome.jgi.doe.gov/Nemve1/Nemve1.info.html".
-
-To query using only the name simply requires the specific JGI organism
-abbreviation, as referenced in the full url.
-
-For the above example, the proper input syntax for this script would be:
-
-$ jgi-query.py http://genome.jgi.doe.gov/Nemve1/Nemve1.info.html
-
-                         -or-
-
-$ jgi-query.py Nemve1
-
-If you already have the XML file for the query in the directory, you may use
-the --xml flag to avoid redownloading it (particularly useful if querying
-large, top-level groups with many sub-species, such as "fungi"):
-
-$ jgi-query.py --xml <your_xml_index>
-
-If the XML filename is omitted when using the --xml flag, it is assumed that
-the XML file is named '<jgi_abbreviation>_jgi_index.xml'. In such cases, the
-organism name is required.
-
-# /USAGE //////////////////////////////////////////////////////////////////////
-"""
-
-select_blurb = (
-    "\\n"
-    "\t# SYNTAX //////////////////////////////////////////////////////////////////////\n\n"
-    "\t\tSelect one or more of the following to download, using the following format:\n\n"
-    "\t\t<category number>:<i>[,<i>, <i>];<category number>:<i>-<i>;...\n\n"
-    "\t\tIndices (<i>) may be a mixture of comma-separated values and hyphen-\n"
-    "\t\tseparated ranges.\n\n"
-    "\t\tExample: '3:4,5; 7:1-10,13' will select elements 4 and 5 from category 3, and\n\n"
-    "\t\t1-10 plus 13 from category 7.\n\n"
-    "\t# /SYNTAX /////////////////////////////////////////////////////////////////////\n"
-)
+class JGIDoc:
+    DEFAULT_CATEGORIES = ["ESTs",
+                          "EST Clusters",
+                          "Assembled scaffolds (unmasked)",
+                          "Assembled scaffolds (masked)",
+                          "Transcripts",
+                          "Genes",
+                          "CDS",
+                          "Proteins",
+                          "Additional Files"]
+    usage_example_blurb = """\
+        This script will retrieve files from JGI using the cURL api. It will
+        return a list of possible files for downloading.
+    
+        * This script depends upon cURL - it can be downloaded here:
+        http://curl.haxx.se/
+    
+        # USAGE ///////////////////////////////////////////////////////////////////////
+    
+        $ jgi-query.py [<jgi_address>, <jgi_abbreviation>] [[-xml [<your_xml>]], -f]
+    
+        To get <jgi_address>, go to: http://genome.jgi.doe.gov/ and search for your
+        species of interest. Click through until you are at the "Info" page. For
+        \x1B[3mNematostella vectensis\x1B[23m, the appropriate page is
+        "http://genome.jgi.doe.gov/Nemve1/Nemve1.info.html".
+    
+        To query using only the name simply requires the specific JGI organism
+        abbreviation, as referenced in the full url.
+    
+        For the above example, the proper input syntax for this script would be:
+    
+        $ jgi-query.py http://genome.jgi.doe.gov/Nemve1/Nemve1.info.html
+    
+                                 -or-
+    
+        $ jgi-query.py Nemve1
+    
+        If you already have the XML file for the query in the directory, you may use
+        the --xml flag to avoid redownloading it (particularly useful if querying
+        large, top-level groups with many sub-species, such as "fungi"):
+    
+        $ jgi-query.py --xml <your_xml_index>
+    
+        If the XML filename is omitted when using the --xml flag, it is assumed that
+        the XML file is named '<jgi_abbreviation>_jgi_index.xml'. In such cases, the
+        organism name is required.
+    
+        # /USAGE //////////////////////////////////////////////////////////////////////
+        """
+    select_blurb = """\
+        Select one or more of the following to download, using the following format:
+            <category number>:<i>[,<i>, <i>];<category number>:<i>-<i>;...
+        
+        Indices (<i>) may be a mixture of comma-separated values and hyphen-separated 
+        ranges. 
+        
+        Example:
+            '3:4,5; 7:1-10,13' will select elements 4 and 5 from category 3, and 1-10 
+            plus 13 from category 7.
+        """
 
 
 class JGIConfig:

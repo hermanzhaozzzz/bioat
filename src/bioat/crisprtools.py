@@ -1,4 +1,5 @@
 class CrisprTools:
+    """CRISPR mining toolbox."""
     def crispr_repeats_finder(self):
         pass
     def cas12_finder(self):
