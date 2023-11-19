@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 # from bioat.api.internet_speed import main as speedtest
 
 

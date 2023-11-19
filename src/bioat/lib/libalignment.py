@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from Bio.Align import Alignment, PairwiseAligner
 import sys
 from bioat import get_logger

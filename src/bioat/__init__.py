@@ -1,7 +1,6 @@
 """Doc of bioat.
 
 """
-from __future__ import annotations, absolute_import
 from bioat.logger import get_logger  # must be the first
 from bioat.about import about
 from bioat.bamtools import BamTools

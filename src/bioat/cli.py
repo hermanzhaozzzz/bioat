@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from bioat import (
     __version__,
     about,
@@ -18,11 +17,10 @@ from bioat import (
 class Cli(object):
     """Cli interface of bioat
 
-    - `bioat` is short for "Bioinformatic Analysis Tools" and is a commandline toolkit and a python package.
-        It can be used through this cli interface in terminal or the `import` way in python codes.
-    - `bioat` has many subcommand to deal with different bio-format:
-        BED, BAM, FASTA, FASTQ, VCF, et al.
-
+    - "bioat" is short for "Bioinformatic Analysis Tools" and is a commandline toolkit and a python package. It can be used through this cli interface in terminal or the `import` way in python codes.
+    - "bioat" has many subcommand to deal with different bio-format: BED, BAM, FASTA, FASTQ, VCF, et al.
+    - "bioat" can be used for mining CRISPRs, downloading metagenome and even report a Google Scholar search result!
+    - for more information, run `bioat about`
     """
 
     # - Citation:

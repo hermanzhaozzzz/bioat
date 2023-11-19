@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import gzip
 import sys
 import pandas as pd
@@ -9,6 +8,7 @@ __module_name__ = "bioat.fastxtools"
 
 
 class FastxTools:
+    """FASTA & FASTQ toolbox."""
     def __init__(self):
         self.fastx = None
         pass

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import os
 import sys
 from time import sleep
@@ -59,8 +57,7 @@ class SearchTools:
                 Default is False
         :param start_year: Start year when searching. Default is None
         :param end_year: End year when searching. Default is current year
-        :param log_level:
-        :return:
+        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 

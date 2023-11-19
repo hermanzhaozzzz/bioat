@@ -3,7 +3,6 @@
 The cli interface of bioat.
     - `python -m bioat -h` or `bioat -h` to see the exposed interface.
 """
-from __future__ import absolute_import
 import fire
 from bioat.cli import Cli
 
@@ -12,6 +11,7 @@ def main() -> int:
     calculator = Cli()
     # print in shell stdout instead of view in `less`
     fire.core.Display = lambda lines, out: print(*lines, file=out)
+    #
     fire.Fire(calculator, name='bioat')
 
 
