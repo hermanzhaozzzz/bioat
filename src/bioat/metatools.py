@@ -6,8 +6,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 from bioat import get_logger
-from bioat.lib.libjgi import JGIDoc
-from bioat.lib.libpath import HOME
+from bioat.lib.libjgi import JGIDoc, JGIConfig
 
 __module_name__ = 'bioat.metatools'
 
@@ -19,7 +18,7 @@ class MetaTools:
             self,
             organism_abbreviation: str | None = None,
             xml: str | None = None,
-            configure: bool = False,
+            overwrite_conf: bool = False,
             syntax_help: bool = False,
             filter_files: bool = False,
             usage: bool = False,
@@ -27,7 +26,7 @@ class MetaTools:
             load_failed: str | None = None,
             regex: str | None = None,
             get_all: bool = False,
-            log_level: str = 'INFO'
+            log_level: str = 'WARNING'
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 
@@ -42,7 +41,7 @@ class MetaTools:
             the name used in the URL of the 'Info' page for that organism is the correct abbreviation.
             The full URL may also be used for this argument.
         :param xml: specify a local xml file for the query instead of retrieving a new copy from JGI
-        :param configure: initiate configuration dialog to overwrite existing user/password configuration (interactive)
+        :param overwrite_conf: initiate configuration dialog to overwrite existing user/password configuration (interactive)
         :param syntax_help: syntax_help (no interactive)
         :param filter_files: filter organism results by config categories instead of reporting all files listed by JGI
             for the query (work in progress)
@@ -60,46 +59,19 @@ class MetaTools:
         # doc mode
         # ------------------------------------------------------------------->>>>>>>>>>
         if run_docs:
-            logger.info('user choose no interactive mode')
+            logger.info('doc mode is selected')
             # Check if user wants query help
             if syntax_help:
-                logger.info(f'\n[syntax_help]:\n{JGIDoc.select_blurb}')
+                print(f'\n[syntax_help]:\n{JGIDoc.select_blurb}')
             if usage:
-                logger.info(f'\n[usage]:\n{JGIDoc.usage_example_blurb}')
+                print(f'\n[usage]:\n{JGIDoc.usage_example_blurb}')
             sys.exit('Done. exit.')
         # finally exit
         # ------------------------------------------------------------------->>>>>>>>>>
         # no interactive mode
         # ------------------------------------------------------------------->>>>>>>>>>
-
-
-        # ------------------------------------------------------------------->>>>>>>>>>
-        # interactive mode
-        # ------------------------------------------------------------------->>>>>>>>>>
-
-
-        # CONFIG
-
-        # Get script location info
-        script_path = os.path.realpath(sys.argv[0])
-        script_home = os.path.dirname(script_path)
-
-        # Config should be in same directory as script
-        config_filename = "jgi-query.config"
-        config_filepath = script_home + "/{}".format(config_filename)
-
-        # Does config file exist?
-        if os.path.isfile(config_filepath) and not configure:  # use config file
-            config_info = read_config(config_filepath)
-        else:  # no config present or configure flag used; run config dialog
-            config_info = get_user_info()
-            config_info["categories"] = DEFAULT_CATEGORIES
-            make_config(config_filepath, config_info)
-
-        # Get user information for sign-on
-        USER = config_info["user"]
-        PASSWORD = config_info["password"]
-
+        # load or create JGI account info
+        config = JGIConfig(overwrite_conf=overwrite_conf)
         # Set curl login string using user and password as per https://goo.gl/oppZ2a
 
         # Old syntax
@@ -115,10 +87,20 @@ class MetaTools:
             "--data-urlencode 'password={}' "
             "-s "  # suppress status output
             "-c cookies > /dev/null"
-            .format(USER, PASSWORD)
+            .format(config.info["user"], config.info["password"])
         )
 
         LOCAL_XML = False
+
+        # ------------------------------------------------------------------->>>>>>>>>>
+        # interactive mode
+        # ------------------------------------------------------------------->>>>>>>>>>
+
+
+
+
+
+
 
         # pull info from log file if provided
         if load_failed:
