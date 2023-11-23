@@ -50,7 +50,7 @@ class MetaTools:
         :param get_all: (no interactive) Auto-select and download all files for query
         :param overwrite_conf: (interactive) initiate configuration dialog to overwrite existing user/password
             configuration
-        :param filter_files: (work in progress)filter organism results by config categories instead of reporting all
+        :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
             files listed by JGI for the query
         :param syntax_help: (doc mode) syntax_help
         :param usage: (doc mode) print verbose usage information and exit
@@ -82,5 +82,6 @@ class MetaTools:
         operator.query()
         # parse xml to json
         operator.parse_xml()
+        # get_file_list 1147
         # start to download; calculate and display total size of selected data
         operator.download()

@@ -4,6 +4,7 @@ import time
 import os
 import sys
 import re
+import json
 import subprocess
 import textwrap
 import requests
@@ -11,8 +12,11 @@ from collections import defaultdict
 from hashlib import md5
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
-from xml.etree import ElementTree
-from http.cookiejar import MozillaCookieJar
+import xml.etree.ElementTree as ET
+from requests import HTTPError
+from requests.utils import cookiejar_from_dict
+
+# https://blog.csdn.net/m0_49960764/article/details/119460979
 
 __module_name__ = 'bioat.lib.libjgi'
 
@@ -82,6 +86,11 @@ class JGIDoc:
 class JGIConfig:
     # url home for jgi-img database
     URL_JGI_MAIN = "https://genome.jgi.doe.gov"
+    # url login
+    URL_JGI_LOGIN = 'https://signon.jgi.doe.gov/signon/create'
+    # url fetch xml
+    # https://genome.jgi.doe.gov/portal/ext-api/downloads/get-directory?organism=GuaBasSediGuay16
+    URL_JGI_FETCH_XML = "https://genome.jgi.doe.gov/portal/ext-api/downloads/get-directory"
     # remote XML file should be
     URL_TEMPLATE_XML_FILE = "https://genome.jgi.doe.gov/portal/ext-api/downloads/get-directory?organism={}"
     # see https://genome.jgi.doe.gov/portal/help/download.jsf#/api for CMD_TEMPLATE_LOGIN_JGI
@@ -144,7 +153,7 @@ class JGIConfig:
                     self.info["categories"] = [e.strip() for e in cats.split(",")]
 
         if not all([self.info["user"], self.info["password"]]):
-            logger.critical(f"Config file present ({self.path}), but user and/or password not found.")
+            logger.critical(f"Config file present ({self.FILENAME_CONFIG_PATH}), but user and/or password not found.")
             sys.exit(1)
 
         logger.debug('loading JGI account info done')
@@ -341,10 +350,14 @@ class JGIOperator:
             _org_line = None
             with open(self.xml, 'rt') as f:
                 for line in f:
-                    if "organismDownloads" in line:  # standardized name indicator
+                    if "organismDownloads" in line:
+                        # standardized name indicator
+                        # <organismDownloads name="Nemve1">
                         _org_line = line.strip()
                         break  # don't keep looking, already found
             try:
+                # DEBUG
+                print(f'_org_line = {_org_line}')
                 self.query_info = re.search(name_pattern, _org_line).group(1)
             except TypeError:  # org_line still None
                 logger.critical('the xml file seems wrong')
@@ -356,81 +369,77 @@ class JGIOperator:
     # step 03 login
     def login(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        # cookie file
-        cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-        # format cmd to login jgi
-        cmd_login_jgi = JGIConfig.CMD_TEMPLATE_LOGIN_JGI.format(
-            self.config.info["user"], self.config.info["password"], cookie_file
-        )
-        # run login
-        logger.debug('run login...')
-        try:
-            # fails if unable to contact server
-            logger.info(textwrap.dedent(cmd_login_jgi))
-            subprocess.check_output(cmd_login_jgi, shell=True)
-            print(f'\nsuccessfully login, write cookie @ {cookie_file}\n')
-        except subprocess.CalledProcessError as error:
-            logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
-            logger.critical(f"error detail: {error}")
-            self._clean_exit()
 
-        # cookie file
-        try:
-            # fails if unable to contact server
-            logger.info(textwrap.dedent(cmd_login_jgi))
-            subprocess.check_output(cmd_login_jgi, shell=True)
-            print(f'\nsuccessfully login, write cookie @ {cookie_file}\n')
-        except subprocess.CalledProcessError as error:
+        # prepare info
+        url = self.config.URL_JGI_LOGIN
+        cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+        }
+        data = {
+            'login': self.config.info['user'],
+            'password': self.config.info['password'],
+            'commit': 'Sign In'
+        }
+        # set session
+        s = requests.session()
+        # get response
+        response = s.post(url, headers=headers, data=data)
+
+        # check response status code
+        logger.debug(f'check response status code: {response.status_code}')
+        if response.status_code == 200:
+            logger.debug('login successes, get cookie...')
+            # save cookie to file
+            logger.debug(f'save cookie to {cookie_file}')
+            cookies_dict = requests.utils.dict_from_cookiejar(s.cookies)
+            cookies_str = json.dumps(cookies_dict)
+
+            with open(cookie_file, 'wt') as f:
+                f.write(cookies_str)
+            logger.info(f'successfully login, write cookie @ {cookie_file}')
+        else:
             logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
-            logger.critical(f"error detail: {error}")
             self._clean_exit()
-        # logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        # url = 'https://signon.jgi.doe.gov/signon/create'
-        # data = {
-        #     'login': self.config.info['user'],
-        #     'password': self.config.info['password']
-        # }
-        # cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-        # logger.debug('run login...')
-        # # 发送 POST 请求
-        # response = requests.post(url, data=data)
-        # # 检查响应状态码
-        # if response.status_code == 200:
-        #     # 从响应中提取 Set-Cookie 头
-        #     cookie = response.headers.get("Set-Cookie")
-        #
-        #     # 保存 cookie 到文件
-        #     with open(cookie_file, "wt") as f:
-        #         f.write(cookie)
-        # else:
-        #     print("登录失败")
 
         # step 04 query xml info
 
     def query(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        # run query
-        logger.debug('run query...')
-
-        # TODO 改写成断点续传的部分
-        url = self.config.URL_TEMPLATE_XML_FILE.format(self.query_info)
-        xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+        # prepare info
+        url = self.config.URL_JGI_FETCH_XML
         cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+        }
+        params = {"organism": self.query_info}
 
-        # format cmd to fetch XML file from JGI
-        cmd_get_xml = f"curl '{url}' -L -b '{cookie_file}' > {xml_file}"
+        with open(cookie_file, 'rt') as f:
+            cookies_dict = json.loads(f.read())
+        cookies = requests.utils.cookiejar_from_dict(cookies_dict)
+        # logger.debug(f'requests.get: url={url}, params={params}, header={headers}')
+        response = requests.get(
+            url,
+            params=params,
+            cookies=cookies,
+            allow_redirects=True,
+            stream=True,
+            # headers=headers,
+        )
+        try:
+            response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+        except HTTPError:
+            logger.critical(f'response status: {response.status_code}')
+            logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
 
-        logger.info(f"Retrieving information from JGI for query '{self.query_info}' using command '{cmd_get_xml}'\n")
-        # 从JGI检索信息
-        logger.info(cmd_get_xml)
-        subprocess.run(cmd_get_xml, shell=True)
-
-        print(f'\nsuccessfully query, write xml @ {xml_file}\n\n')
-
-        logger.debug('parse xml_file for content to download')
+        xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+        with open(xml_file, "wb") as f:
+            # 使用二进制写入模式（"wb"）来保存结果文件，因为response.content返回的是一个字节字符串
+            logger.info(f'successfully query, write xml @ {xml_file}')
+            f.write(response.content)
 
     # step 05 parse xml info to update url
-    def parse_xml(self, filter_categories=False):
+    def parse_xml(self):
         """
         Moves through the xml document <xml_file> and returns information
         about matches to elements in <DESIRED_CATEGORIES> if
@@ -455,14 +464,19 @@ class JGIOperator:
         #                     f"following address:\n{self.config.URL_TEMPLATE_XML_FILE.format(self.query_info)}")
         #     self.clean_exit()
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        logger.debug(f'start to parse_xml using parameter filter_categories = {filter_categories}')
+
+        # Parse xml file for content to download
+
+        xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+
+        logger.debug(f'start to parse_xml using parameter filter_categories = {self.filter_files}')
         display_cats = ['filename', 'url', 'size', 'label', 'sizeInBytes', 'timestamp', 'md5']
         # Choose between different XML parsers
         # Will only be used if --filter_files flag
         # if filter_files, user wants only those files in <_desired_categories>
-        xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+        logger.debug('_xml_hunt...')
         found = self._xml_hunt(xml_file)
-        found = self._format_found(found, filter_categories)
+        found = self._format_found(found, self.filter_files)
 
         if not list(found.values()):
             return None
@@ -1156,7 +1170,7 @@ class JGIOperator:
         """
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         logger.debug('xml_hunt...')
-        root = ElementTree.iterparse(xml_file, events=("start", "end"))
+        root = ET.iterparse(xml_file, events=("start", "end"))
         parents = []
         matches = {}
         for event, element in root:
