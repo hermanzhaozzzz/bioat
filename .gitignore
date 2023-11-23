@@ -20,6 +20,7 @@ docs/doctrees/
 
 # pycharm meta
 **/.idea/
+**/.run/
 
 # vscode
 **/.vscode/

@@ -44,7 +44,7 @@ class FastxTools:
         :param file: :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
         :param fmt: FASTQ | FASTA
         :param log_level:
-        :return: str, PASS | FAIL
+        :return: str, PASS | FILENAME_LOG_FAIL
         """
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         pass

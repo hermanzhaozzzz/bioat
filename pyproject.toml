@@ -4,15 +4,15 @@ version = "0.4.11"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
-repository = "https://github.com/hermanzhaozzzz/BioinformaticAnalysisTools"
-homepage = "https://github.com/hermanzhaozzzz/BioinformaticAnalysisTools"
+repository = "https://github.com/hermanzhaozzzz/bioat"
+homepage = "https://github.com/hermanzhaozzzz/bioat"
 # README file(s) are used as the package description
 readme = "README.md"
 
 
 [tool.poetry.dependencies]
 # Compatible Python versions
-python = ">=3.9.0,<3.11"
+python = ">=3.9.0,<=3.11"
 pandas = ">=1.5"
 numpy = ">=1.24.1"
 tqdm = ">=4.64.1"

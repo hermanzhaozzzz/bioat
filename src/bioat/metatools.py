@@ -3,7 +3,7 @@ import os
 import re
 
 from bioat import get_logger
-from bioat.lib.libjgi import JGIDoc, JGIConfig, JGIOperator
+from bioat.lib.libjgi import JGIOperator
 
 __module_name__ = 'bioat.metatools'
 
@@ -13,17 +13,22 @@ class MetaTools:
 
     def JGI_query(
             self,
+            # pick one from three
             query_info: str | None = None,
             xml: str | None = None,
-            overwrite_conf: bool = False,
-            syntax_help: bool = False,
-            filter_files: bool = False,
-            usage: bool = False,
-            retry: int = 0,
-            load_failed_log: str | None = None,
+            failed_log: str | None = None,
+            # runtime params
+            retry: int = 5,
+            timeout: int = -1,
             regex: str | None = None,
             get_all: bool = False,
-            log_level: str = 'WARNING'
+            overwrite_conf: bool = False,
+            filter_files: bool = False,
+            # doc helper
+            syntax_help: bool = False,
+            usage: bool = False,
+            # log
+            log_level: str = 'INFO'
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 
@@ -32,105 +37,50 @@ class MetaTools:
 
         The source code is adapted from https://github.com/glarue/jgi-query
 
-        :param query_info: organism name formatted per JGI's abbreviation.
+        :param query_info: (input) organism name formatted per JGI's abbreviation.
             For example, 'Nematostella vectensis' is abbreviated by JGI as 'Nemve1'.
             The appropriate abbreviation may be found by searching for the organism on JGI;
             the name used in the URL of the 'Info' page for that organism is the correct abbreviation.
             The full URL may also be used for this argument.
-        :param xml: specify a local xml file for the query instead of retrieving a new copy from JGI
-        :param overwrite_conf: initiate configuration dialog to overwrite existing user/password configuration (interactive)
-        :param syntax_help: (doc mode) syntax_help
-        :param filter_files: filter organism results by config categories instead of reporting all files listed by JGI
-            for the query (work in progress)
-        :param usage: (doc mode) print verbose usage information and exit
+        :param xml: (input) specify a local xml file for the query instead of retrieving a new copy from JGI
+        :param failed_log: (input) retry downloading from URLs listed in log file
         :param retry: number of times to retry downloading files with errors (0 to skip such files)
-        :param load_failed_log: retry downloading from URLs listed in log file
+        :param timeout: timeout (seconds) for downloading, set -1 to disable this
         :param regex: (no interactive) Regex pattern to use to auto-select and download files
         :param get_all: (no interactive) Auto-select and download all files for query
+        :param overwrite_conf: (interactive) initiate configuration dialog to overwrite existing user/password
+            configuration
+        :param filter_files: (work in progress)filter organism results by config categories instead of reporting all
+            files listed by JGI for the query
+        :param syntax_help: (doc mode) syntax_help
+        :param usage: (doc mode) print verbose usage information and exit
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-
-        run_docs = any([syntax_help, usage])
-        # ------------------------------------------------------------------->>>>>>>>>>
-        # doc mode
-        # ------------------------------------------------------------------->>>>>>>>>>
-        if run_docs:
-            logger.info('doc mode is selected')
-            # Check if user wants query help
-            if syntax_help:
-                print(f'\n[syntax_help]:\n{JGIDoc.select_blurb}')
-            if usage:
-                print(f'\n[usage]:\n{JGIDoc.usage_example_blurb}')
-            sys.exit('Done. exit.')
-        # finally exit
-        # ------------------------------------------------------------------->>>>>>>>>>
-        # load or create JGI account info
-        # ------------------------------------------------------------------->>>>>>>>>>
-        # check if it needs exit
-        if overwrite_conf and not any([query_info, xml, load_failed_log]):
-            # exit
-            logger.info("Configuration complete. Script may now be used to query JGI. ")
-            sys.exit('Done. exit.')
-        else:
-            # go on
-            logger.info("Select to run interactive mode")
-
-        # param checker
-        if sum(map(bool, [query_info, xml, load_failed_log])) != 1:
-            logger.error("ONLY ONE of the parameters ('query_info', 'xml' and 'load_failed_log') can be specified!")
-            sys.exit('Done. exit.')
-        else:
-            logger.debug("pass param checker: 'query_info', 'xml' and 'load_failed_log'")
-        # ------------------------------------------------------------------->>>>>>>>>>
-        # interactive mode
-        # ------------------------------------------------------------------->>>>>>>>>>
-        interactive = True
-        # start to run main pipeline
-        failed_logs = None
-
-        if load_failed_log:
-            # pull failed info from log file if provided
-            query_info = os.path.basename(load_failed_log).split('.')[0]  # TODO 错误路径，记得修正
-
-            with open(load_failed_log) as f:
-                failed_logs = f.read().splitlines()
-        elif xml:  # Get xml index of files, using existing local file or curl API
-            pass  # TODO ????
-        elif query_info:
-            try:
-                # if query_info is a URL
-                logger.debug('attempt to parse query_info as a url')
-                query_regex = re.compile(r'\.jgi.+\.(?:gov|org).*\/(.+)\/(?!\/)')
-                query_info = query_regex.search(query_info).group(1)
-            except AttributeError:
-                # if query_info is an organism name
-                logger.debug('not a url, try to define query_info as an organism name abbreviation')
-                pass
-        else:
-            logger.error("one of the parameters 'query_info' and 'xml' should be specified")
-            sys.exit('Done. exit.')
-
-        # get JGI operator obj
+        # load or create JGI account info &
+        # auto check if you need overwrite user info
         operator = JGIOperator(
             query_info=query_info,
-            overwrite_conf=overwrite_conf,
             xml=xml,
-            get_all=get_all,
-            regex=regex,
-            failed_logs=failed_logs,
+            failed_log=failed_log,
             retry=retry,
-            interactive=interactive,
+            timeout=timeout,
+            regex=regex,
+            get_all=get_all,
+            overwrite_conf=overwrite_conf,
+            filter_files=filter_files,
+            syntax_help=syntax_help,
+            usage=usage,
+            log_level=log_level
         )
-        operator.login()  # run login
-        operator.query()  # run query
-        # Moves through the xml document <xml_file> and returns information
-        #         about matches to elements in <DESIRED_CATEGORIES> if
-        #         <filter_categories> is True, or all files otherwise
-        desired_categories = operator.get_file_list(filter_categories=filter_files)
-        # Check if file has any categories of interest
-        operator.category_picker(desired_categories)
-        # start to download
-        # Calculate and display total size of selected data
-        operator.download(desired_categories)
-
+        # checker for doc mode
+        operator.run_doc()
+        # checker for input
+        operator.parse_input()
+        # run login
+        operator.login()
+        # run query
+        operator.query()
+        # parse xml to json
+        operator.parse_xml()
+        # start to download; calculate and display total size of selected data
+        operator.download()

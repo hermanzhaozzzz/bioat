@@ -39,6 +39,3 @@ bioat bam remove_clip --help
 samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 ```
 [circos plot](docs/demo_circos-plot.ipynb)
-
-## known trouble
-- sometimes, pysam dependent foo.lib can be absent, just `brew install foo.lib` to fix it.
