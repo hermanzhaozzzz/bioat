@@ -103,7 +103,7 @@ class JGIConfig:
     FILENAME_TEMPLATE_LOG_FAIL = "jgi-xml-query.failed_{}.log"
     FILENAME_CONFIG_PATH = os.path.join(HOME, '.bioat', 'JGI', "account.conf")
 
-    def __init__(self, overwrite_conf: bool = False, log_level='DEBUG'):
+    def __init__(self, overwrite_conf: bool = False, log_level='INFO'):
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         self.log_level = log_level
         self.info: dict = {"user": None, "password": None, "categories": None}
@@ -268,8 +268,8 @@ class JGIOperator:
         self.failed_log = failed_log
         self.retry = retry
         self.timeout = timeout
-        self.regex = regex,
-        self.get_all = get_all,
+        self.regex = regex
+        self.get_all = get_all
         self.overwrite_conf = overwrite_conf
         self.filter_files = filter_files  # TODO 搞清楚用法
         self.syntax_help = syntax_help
@@ -285,7 +285,7 @@ class JGIOperator:
         self._desired_categories = dict()
         # From other obj #
         # load configs; auto check if you need overwrite user info or not
-        self.config = JGIConfig(overwrite_conf=overwrite_conf)
+        self.config = JGIConfig(overwrite_conf=overwrite_conf, log_level=log_level)
         # load docs;
         self.docs = JGIDoc
         # / From other obj
@@ -404,6 +404,7 @@ class JGIOperator:
 
         # step 04 query xml info
 
+    # step 04 query
     def query(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         # prepare info
@@ -424,7 +425,7 @@ class JGIOperator:
             cookies=cookies,
             allow_redirects=True,
             stream=True,
-            # headers=headers,
+            headers=headers,
         )
         try:
             response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
@@ -446,23 +447,6 @@ class JGIOperator:
         <filter_categories> is True, or all files otherwise
 
         """
-        # update _dict_to_get, _url_to_validate
-        # # xml_root = None  # TODO how to use?
-        # if os.path.getsize(xml_file) == 0:
-        #     # happens if user and/or password wrong
-        #     logger.critical("Invalid username/password combination (or other issue).\n"
-        #                     "Restart script with flag '--overwrite_conf' to reconfigure credentials.")
-        #     self.clean_exit()
-        # try:
-        #     # TODO how to use?
-        #     xml_in = ElementTree.ElementTree(file=self.config.FILENAME_TEMPLATE_XML.format(self.query_info))
-        #     xml_root = xml_in.getroot()
-        # except ElementTree.ParseError:
-        #     # organism not found/xml file contains errors
-        #     logger.critical("Cannot parse XML file or no organism match found.\n"
-        #                     "Ensure remote file exists and has content at the "
-        #                     f"following address:\n{self.config.URL_TEMPLATE_XML_FILE.format(self.query_info)}")
-        #     self.clean_exit()
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         # Parse xml file for content to download
@@ -507,7 +491,7 @@ class JGIOperator:
                             continue
                     uid += 1
 
-        logger.debug('successfully update file_list')
+        logger.debug(f'successfully update self._desired_categories = {self._desired_categories}')
 
         # Check if file has any categories of interest
         if not any(v["results"] for v in list(self._desired_categories.values())):
@@ -521,21 +505,21 @@ class JGIOperator:
         # Decision tree depending on if non-interactive options given
         regex_filter = None
         user_choice = None
-        display_info = True
+        interactive_and_display_info = True
 
         if self.get_all:
             # non-interactive
             user_choice = "get_all mode"
-            display_info = False
+            interactive_and_display_info = False
         elif self.regex:
             # non-interactive
             user_choice = "regex mode"
             regex_filter = self.regex
-            display_info = False
+            interactive_and_display_info = False
             # non-interactive
         elif self.failed_log is not None:
             user_choice = "re-download failed_log mode"
-            display_info = False
+            interactive_and_display_info = False
         # """
         # Prints info from dictionary data in a specific format.
         # Returns a dict with url information for every file
@@ -543,7 +527,10 @@ class JGIOperator:
         # each file (keyed by file URL).
         #
         # """
-        print(f"\nQUERY RESULTS FOR '{self._desired_categories}'\n")
+        logger.debug(f'regex_filter = {regex_filter}')
+        logger.debug(f'user_choice = {user_choice}')
+        logger.debug(f'interactive_and_display_info = {interactive_and_display_info}')
+        logger.debug(f"\nQUERY RESULTS FOR '{self._desired_categories}'\n")
 
         for query_cat, v in sorted(iter(self._desired_categories.items()), key=lambda k_v: k_v[1]["catID"]):
             print_list = []
@@ -578,7 +565,7 @@ class JGIOperator:
                     margin = 80 - (len(size_date) + len(print_index))
                     file_info = filename.ljust(margin, "-")
                     print_list.append("".join([print_index, file_info, size_date]))
-            if display_info:
+            if interactive_and_display_info:
                 print('\n'.join(print_list))
                 print()  # padding
 
@@ -608,9 +595,9 @@ class JGIOperator:
                 for i in v:
                     self._urls_to_get.add(self._dict_to_get[k][i])
 
-        # print(self._urls_to_get)
-        # print(self._dict_to_get)
-        # update _dict_to_get, _url_to_validate
+        logger.debug('update self._dict_to_get, self._url_to_validate')
+        logger.debug(f'self._urls_to_get = {self._urls_to_get}')
+        logger.debug(f'self._dict_to_get = {self._dict_to_get}')
 
     # step 06 download from url
     def download(self):
@@ -816,6 +803,9 @@ class JGIOperator:
             #    subprocess.call(login, shell=True)
             logger.info(cmd_download)
             status = subprocess.run(cmd_download, shell=True).returncode
+
+            logger.debug('!!!!!!cmd_download = {cmd_download}')
+
             if status != 0 or self._is_broken(
                     filename, min_file_bytes, md5_hash=md5_hash, sizeInBytes=sizeInBytes
             ):

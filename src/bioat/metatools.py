@@ -82,6 +82,5 @@ class MetaTools:
         operator.query()
         # parse xml to json
         operator.parse_xml()
-        # get_file_list 1147
         # start to download; calculate and display total size of selected data
         operator.download()
