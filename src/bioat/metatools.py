@@ -28,7 +28,7 @@ class MetaTools:
             syntax_help: bool = False,
             usage: bool = False,
             # log
-            log_level: str = 'DEBUG'
+            log_level: str = 'ERROR'
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 
