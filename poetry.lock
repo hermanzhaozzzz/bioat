@@ -1324,6 +1324,16 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "progressbar"
+version = "2.5"
+description = "Text progress bar library for Python."
+optional = false
+python-versions = "*"
+files = [
+    {file = "progressbar-2.5.tar.gz", hash = "sha256:5d81cb529da2e223b53962afd6c8ca0f05c6670e40309a7219eacc36af9b6c63"},
+]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.41"
 description = "Library for building powerful interactive command lines in Python"
@@ -1933,4 +1943,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.0,<=3.11"
-content-hash = "0a446cbb7b24a86679ef0aa443c9f05d603f00048343dbd8ee0eb2a8618b5380"
+content-hash = "294d39359c8810346321640432d05d94847d10c3c224c978736378a5146159bb"

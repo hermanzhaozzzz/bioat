@@ -18,7 +18,7 @@ class MetaTools:
             xml: str | None = None,
             failed_log: str | None = None,
             # runtime params
-            retry: int = 5,
+            retry: int = 2,
             timeout: int = -1,
             regex: str | None = None,
             get_all: bool = False,
@@ -28,7 +28,7 @@ class MetaTools:
             syntax_help: bool = False,
             usage: bool = False,
             # log
-            log_level: str = 'INFO'
+            log_level: str = 'DEBUG'
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 

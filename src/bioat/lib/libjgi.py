@@ -5,8 +5,9 @@ import os
 import sys
 import re
 import json
-import subprocess
 import textwrap
+
+import progressbar
 import requests
 from collections import defaultdict
 from hashlib import md5
@@ -286,6 +287,7 @@ class JGIOperator:
         # From other obj #
         # load configs; auto check if you need overwrite user info or not
         self.config = JGIConfig(overwrite_conf=overwrite_conf, log_level=log_level)
+        self.interactive = False
         # load docs;
         self.docs = JGIDoc
         # / From other obj
@@ -505,21 +507,21 @@ class JGIOperator:
         # Decision tree depending on if non-interactive options given
         regex_filter = None
         user_choice = None
-        interactive_and_display_info = True
+        self.interactive = True
 
         if self.get_all:
             # non-interactive
             user_choice = "get_all mode"
-            interactive_and_display_info = False
+            self.interactive = False
         elif self.regex:
             # non-interactive
             user_choice = "regex mode"
             regex_filter = self.regex
-            interactive_and_display_info = False
+            self.interactive = False
             # non-interactive
         elif self.failed_log is not None:
             user_choice = "re-download failed_log mode"
-            interactive_and_display_info = False
+            self.interactive = False
         # """
         # Prints info from dictionary data in a specific format.
         # Returns a dict with url information for every file
@@ -529,7 +531,7 @@ class JGIOperator:
         # """
         logger.debug(f'regex_filter = {regex_filter}')
         logger.debug(f'user_choice = {user_choice}')
-        logger.debug(f'interactive_and_display_info = {interactive_and_display_info}')
+        logger.debug(f'interactive_and_display_info = {self.interactive}')
         logger.debug(f"\nQUERY RESULTS FOR '{self._desired_categories}'\n")
 
         for query_cat, v in sorted(iter(self._desired_categories.items()), key=lambda k_v: k_v[1]["catID"]):
@@ -555,7 +557,7 @@ class JGIOperator:
                         self._url_to_validate[url]["md5"] = i["md5"]
                     # the following elif takes care of MD5 > sizeInBytes rank-order
                     # in downstream processing
-                    elif "sizeInBytes" in i:
+                    if "sizeInBytes" in i:
                         self._url_to_validate[url]["sizeInBytes"] = int(i["sizeInBytes"])
                     print_index = " {}:[{}] ".format(str(catID), str(index))
                     date = self._format_timestamp(i["timestamp"])
@@ -565,7 +567,7 @@ class JGIOperator:
                     margin = 80 - (len(size_date) + len(print_index))
                     file_info = filename.ljust(margin, "-")
                     print_list.append("".join([print_index, file_info, size_date]))
-            if interactive_and_display_info:
+            if self.interactive:
                 print('\n'.join(print_list))
                 print()  # padding
 
@@ -597,14 +599,17 @@ class JGIOperator:
 
         logger.debug('update self._dict_to_get, self._url_to_validate')
         logger.debug(f'self._urls_to_get = {self._urls_to_get}')
-        logger.debug(f'self._dict_to_get = {self._dict_to_get}')
+        logger.debug(f'self._dict_to_get = {str(self._dict_to_get)[:1000]}...(omit)...')
 
     # step 06 download from url
     def download(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         self._urls_to_get = sorted(self._urls_to_get)
         filenames = [u.split("/")[-1] for u in self._urls_to_get]
+
+        logger.debug(f'self._desired_categories = {self._desired_categories}')
         file_sizes = self._get_sizes(self._desired_categories, sizes_by_url={})
+        logger.debug(f'file_sizes = {file_sizes}')
         total_size = sum(filter(None, [file_sizes[url] for url in self._urls_to_get]))
         size_string = self._byte_convert(total_size)
         num_files = len(self._urls_to_get)
@@ -723,44 +728,35 @@ class JGIOperator:
         logger.info(base_message)
         sys.exit(exit_code)
 
-    def _check_md5(self, filename, md5_hash, print_message=True):
+    def _check_md5(self, filename, md5_hash):
+        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         if not md5_hash:
-            message = "INFO: No MD5 hash listed for {}; skipping check".format(filename)
+            logger.info(f"No MD5 hash listed for {filename}; skipping check")
             ret_val = True
         else:
             file_md5 = self._get_md5(filename)
             if file_md5 == md5_hash:
-                message = (
-                    "SUCCESS: MD5 hashes match for {} ({})".format(filename, md5_hash))
+                logger.info(f"MD5 hashes match for {filename} ({md5_hash})")
                 ret_val = True
             else:
-                message = ("ERROR: MD5 hash mismatch for {} (local: {}, remote: {})"
-                           .format(filename, file_md5, md5_hash))
+                logger.error(f"MD5 hash mismatch for {filename} (local: {file_md5}, remote: {md5_hash})")
                 ret_val = False
-
-        if print_message is True:
-            print(message)
-
         return ret_val
 
-    def _check_sizeInBytes(self, filename, sizeInBytes, print_message=True):
+    def _check_sizeInBytes(self, filename, sizeInBytes):
+        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         if not sizeInBytes:
-            message = "INFO: No sizeInBytes listed for {}; skipping check".format(filename)
+            logger.info(f'No sizeInBytes listed for {filename}; skipping check')
             ret_val = True
         else:
-            file_sizeInBytes = self._get_sizeInBytes(filename)
-            if file_sizeInBytes == sizeInBytes:
-                message = (
-                    "SUCCESS: sizeInBytes match for {} ({})".format(filename, sizeInBytes))
+            file_size_in_bytes = self._get_sizeInBytes(filename)
+            if file_size_in_bytes == sizeInBytes:
+                logger.info(f'sizeInBytes match for {filename} ({sizeInBytes})')
                 ret_val = True
             else:
-                message = ("ERROR: sizeInBytes mismatch for {} (local: {}, remote: {})"
-                           .format(filename, file_sizeInBytes, sizeInBytes))
+                logger.error(
+                    f'sizeInBytes mismatch for {filename} (local: {file_size_in_bytes}, remote: {sizeInBytes})')
                 ret_val = False
-
-        if print_message is True:
-            print(message)
-
         return ret_val
 
     def _decompress_files(self, local_file_list, keep_original=False):
@@ -773,7 +769,7 @@ class JGIOperator:
         for f in local_file_list:
             self._extract_file(f, keep_original)
 
-    def _download_from_url(self, url, timeout=None, min_file_bytes=20):
+    def _download_from_url(self, url):
         """
         Attempts to download a file from JGI servers using cURL.
 
@@ -781,63 +777,169 @@ class JGIOperator:
 
         """
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        success = True
-        md5_hash = self._url_to_validate[url].get("md5", None)
-        sizeInBytes = self._url_to_validate[url].get("sizeInBytes", None)
-        url = url.replace("&amp;", "&")
+        url_no_prefix = url.replace("&amp;", "&")  # for query local xml info
 
+        # get md5 value for this file from xml
+        logger.debug(f'self._url_to_validate = {self._url_to_validate}')
+        md5_hash = self._url_to_validate[url_no_prefix].get("md5", None)  # local xml
+        # get sizeInBytes (local xml) and file_size (internet) for size checking
+        sizeInBytes = self._url_to_validate[url_no_prefix].get("sizeInBytes", None)  # local xml
+        # counter
+        error_counter = 0
+        # download status
+        loop = True
+        success = False
+        # filename to write in, parse from last of url
         filename = re.search('.+/(.+$)', url).group(1)
-        timeout = '' if timeout is None else f'-m {timeout}'
 
-        cmd_download = (f"curl {timeout} '{self.config.URL_JGI_MAIN}{url}' "
-                        f"-b {self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)} "
-                        f"> {filename}")
+        while True:  # pass when loop == False
+            if not loop:
+                break
 
-        if not self._is_broken(filename, md5_hash=md5_hash, sizeInBytes=sizeInBytes):
-            success = True
-            print("Skipping existing file {}".format(filename))
-        else:
-            print("Downloading '{}' using command:\n{}"
-                  .format(filename, cmd_download))
-            # The next line doesn't appear to be needed to refresh the cookies.
-            #    subprocess.call(login, shell=True)
-            logger.info(cmd_download)
-            status = subprocess.run(cmd_download, shell=True).returncode
-
-            logger.debug('!!!!!!cmd_download = {cmd_download}')
-
-            if status != 0 or self._is_broken(
-                    filename, min_file_bytes, md5_hash=md5_hash, sizeInBytes=sizeInBytes
-            ):
+            if error_counter >= self.retry:
+                logger.critical(f'error_counter is reaching to max size [self.retry ({self.retry})]')
+                logger.warning('you can rerun your command and the unfinished file is needed for continuing download')
                 success = False
-                if self.retry > 0:
-                    # success = False
-                    # this may be needed if initial download fails
-                    alt_cmd = cmd_download.replace(
-                        "blocking=true", "blocking=false")
-                    current_retry = 1
-                    while current_retry <= self.retry:
-                        if current_retry % 2 == 1:
-                            retry_cmd = alt_cmd
-                        else:
-                            retry_cmd = cmd_download
-                        print(
-                            "Trying '{}' again due to download error ({}/{}):\n{}"
-                            .format(filename, current_retry, self.retry, retry_cmd)
-                        )
-                        logger.info(retry_cmd)
-                        status = subprocess.run(retry_cmd, shell=True).returncode
-                        if status == 0 and not self._is_broken(
-                                filename, min_file_bytes, md5_hash=md5_hash, sizeInBytes=sizeInBytes
-                        ):
+                loop = False
+                break
+
+            time.sleep(5)
+            temp_size = 0  # 获取已写入的字节 temp_size
+
+            if os.path.exists(filename):  # filename exists
+                # check md5 for filename
+                if not self._is_broken(filename, md5_hash=md5_hash, sizeInBytes=sizeInBytes):
+                    logger.info(f'File {filename} passed md5 checking!')
+                    success = True
+                    loop = False
+                    continue
+                else:  # failed
+                    if os.path.exists(filename + '.tmp'):  # filename.tmp exists at the sametime!
+                        if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=sizeInBytes):
+                            logger.info(f'File {filename}.tmp passed md5 checking! Renaming')
+                            os.remove(filename)
+                            os.rename(filename + '.tmp', filename)
+                            logger.info(f'File {filename} passed md5 checking!')
                             success = True
-                            break
-                        current_retry += 1
-                        time.sleep(10)
+                            loop = False
+                            continue
+                        else:
+                            logger.info(f'File {filename} exists but is broken, file {filename}.tmp exists but is '
+                                        f'broken too. File {filename} is removed now.')
+                            os.remove(filename)
+                            temp_size = os.path.getsize(filename + '.tmp')
+                            logger.info(f'Try continuing download using {filename}.tmp. temp_size = {temp_size}')
+                            success = False
+                            loop = True
+                            continue
+                    else:
+                        logger.info(f'File {filename} exists but is broken, file {filename}.tmp does not exists.'
+                                    f'File {filename} is removed now.')
+                        os.remove(filename)
+                        logger.info(f'Try to start a new download task.')
+                        success = False
+                        loop = True
+                        continue
+            else:  # filename don't exist
+                if os.path.exists(filename + '.tmp'):  # filename.tmp exists
+                    # 如果.tmp文件已存在，则打开文件并获取已写入的字节 temp_size
+                    temp_size = os.path.getsize(filename + '.tmp')
 
-        return filename, cmd_download, success
+            # set requests
+            url = f'{self.config.URL_JGI_MAIN}{url}'
+            logger.debug(f'download aim file from url = {url}')
+            cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+            }
+            with open(cookie_file, 'rt') as f:
+                cookies_dict = json.loads(f.read())
+            cookies = requests.utils.cookiejar_from_dict(cookies_dict)
 
-    def _download_list(self, url_list, timeout=None):
+            # 想在Python中在不下载文件的情况下获取文件大小，可以使用requests库发送HEAD请求
+            # HEAD请求不会下载文件，而是仅获取关于文件的一些元数据，如文件大小
+            response = requests.head(url, cookies=cookies, stream=True, headers=headers)
+
+            # check response status
+            try:
+                response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+            except HTTPError:
+                error_counter += 1
+                logger.warning(
+                    'encounter HTTPError;'
+                    f'error_counter = {error_counter}; response.status_code = {response.status_code}; '
+                    'could not connect with server. Retry after 10s...'
+                )
+                time.sleep(10)
+                logger.info('start next loop')
+                loop = True
+                continue  # next try
+            except Exception as e:
+                error_counter += 1
+                logger.warning(
+                    f'encounter {e} (error);'
+                    f'error_counter = {error_counter}; response.status_code = {response.status_code}; '
+                    'unexpected error. Retry after 10s...'
+                )
+                time.sleep(10)
+                logger.info('start next loop')
+                loop = True
+                continue  # next try
+
+            # get file size, if response.header do not have it, replace it from sizeInBytes in xml file
+            remote_file_size = int(response.headers.get("Content-Length", 0))
+            remote_file_size = remote_file_size if remote_file_size != 0 else sizeInBytes
+
+            if temp_size > remote_file_size:
+                # error
+                logger.error('local size = {temp_size} > remote_file_size = {remote_file_size}, retry...')
+                os.remove(filename='.tmp')
+                success = False
+                loop = True
+                continue
+
+            # core part for download
+            # re-request use fixed headers
+            headers["Range"] = "bytes=%s-%s" % (temp_size, remote_file_size)
+
+            # set progress bar
+            pbar = progressbar.ProgressBar(
+                widgets=['Process:',
+                         progressbar.Percentage(), ' ',
+                         progressbar.Bar('='), ' ',
+                         progressbar.Timer()],
+                maxval=remote_file_size
+            ).start()
+            each_iter_percentage = 8192 / remote_file_size
+            response = requests.get(url, cookies=cookies, stream=True, headers=headers)  # 分段下载
+            # ################### core ########################
+            with(open(filename + '.tmp', 'ab')) as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        print('!', end='')
+                        f.write(chunk)
+                        pbar.update(each_iter_percentage)
+            # ################### /core ########################
+            # finish download
+            # start check
+            logger.info(f'File {filename}.tmp seems done, checking md5 value')
+            # 如果filename md5通过则删除tmp
+            if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size):
+                logger.info(f'File {filename}.tmp passed md5 checking! Renaming')
+                os.rename(filename + '.tmp', filename)
+                success = True
+                loop = False
+                continue  # next task
+            else:
+                error_counter += 1
+                logger.info(f'File {filename}.tmp is broken! Removing and retry')
+                os.remove(filename + '.tmp')
+                success = False
+                loop = True
+                continue  # next try
+        return filename, success
+
+    def _download_list(self, url_list):
         """
         Attempts download command on a list of partial file
         URLs (completed by download_from_url()).
@@ -852,31 +954,25 @@ class JGIOperator:
 
         broken_urls = []
         broken_files = []
-
-        cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-        cmd_login_jgi = JGIConfig.CMD_TEMPLATE_LOGIN_JGI.format(
-            self.config.info["user"], self.config.info["password"], cookie_file
-        )
-        subprocess.run(cmd_login_jgi, shell=True)
         start_time = time.time()
         for url in url_list:
             current_time = time.time()
             # refresh the session cookie every 5 minutes
             if current_time - start_time > 300:
-                subprocess.run(cmd_login_jgi, shell=True)
+                logger.info('refresh the session cookie every 5 minutes')
+                logger.info('run self.login.')
+                self.login()
+                logger.info('login succeed.')
                 start_time = time.time()
-            fn, cmd, success = self._download_from_url(url, timeout=timeout)
+            fn, success = self._download_from_url(url)
             if not success:
+                logger.warning(f'File {fn} failed to download, appending to the file @ {self.failed_log}'
+                               f'You can use parameter --failed_log to re-download these failed files'
+                               f'after this run finish.')
                 broken_urls.append(url)
                 broken_files.append(fn)
             else:
                 self._downloaded_files.append(fn)
-        # in cases where multiple files with same name are present and any of them
-        # succeed, we can remove corresponding URLs from the list of broken URLs
-        # (otherwise, they would just overwrite one another).
-        # TODO we could also rename any files with identical names, although then
-        # we would need to differentiate between files with different content and
-        # files that are just broken versions of the same file...
         broken_urls = [
             u for u, f in zip(broken_urls, broken_files)
             if f not in self._downloaded_files
@@ -978,12 +1074,11 @@ class JGIOperator:
         and returns a string of the form "2014".
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         # Remove platform-dependent timezone substring
         # of the general form "xxT"
         tz_pattern = re.compile("\s[A-Z]{3}\s")
         time_string = tz_pattern.sub(" ", time_string)
-        logger.debug('get the desired time info')
+        # get the desired time info
         time_info = time.strptime(time_string, "%a %b %d %H:%M:%S %Y")
         # year = str(time_info.tm_year)
         return time_info
@@ -1021,11 +1116,11 @@ class JGIOperator:
 
     def _get_sizeInBytes(self, filename):
         try:
-            file_sizeInBytes = os.path.getsize(filename)
+            file_size_in_bytes = os.path.getsize(filename)
         except:
-            file_sizeInBytes = 0
+            file_size_in_bytes = 0
 
-        return file_sizeInBytes
+        return file_size_in_bytes
 
     def _get_regex(self):
         """
@@ -1071,7 +1166,9 @@ class JGIOperator:
         """
         Rudimentary check to see if a file appears to be broken.
 
+        filename without ".tmp"
         """
+        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         def _check_for_xml(filename):
             """
@@ -1085,8 +1182,6 @@ class JGIOperator:
             Adapted from http://stackoverflow.com/a/13044946/3076552
 
             """
-            logger = get_logger(level=self.log_level, module_name=__module_name__,
-                                func_name=sys._getframe().f_code.co_name)
             logger.debug('cheker for xml')
             xml_hex = "\x3c"  # hex code at beginning of XML file
             read_length = len(xml_hex)
@@ -1099,13 +1194,12 @@ class JGIOperator:
                         logger.debug('cheker for xml: XML file')
                         return True
                     else:  # hopefully all other file types
-                        logger.warning('cheker for xml: hopefully all other file types')
+                        logger.debug('cheker for xml: hopefully all other file types')
                         return False
                 except UnicodeDecodeError:  # compressed file
                     logger.critical('cheker for xml: compressed file')
                     return False
 
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         if (
                 not os.path.isfile(filename) or
                 os.path.getsize(filename) < min_size_bytes or
@@ -1113,10 +1207,10 @@ class JGIOperator:
                 (not self._check_md5(filename, md5_hash) or
                  not self._check_sizeInBytes(filename, sizeInBytes))
         ):
-            logger.warning('is broken!')
+            logger.warning('File is broken!')
             return True
         else:
-            logger.error('is intact!')
+            logger.debug('File is intact!')
             return False
 
     def _parse_selection(self, user_input):
