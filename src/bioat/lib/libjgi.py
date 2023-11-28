@@ -1,22 +1,24 @@
-import tarfile
 import gzip
-import time
-import os
-import sys
-import re
 import json
+import os
+import re
+import sys
+import tarfile
 import textwrap
-import requests
+import time
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from hashlib import md5
+
+import requests
+from requests import HTTPError
+from requests.exceptions import ChunkedEncodingError
+from requests.utils import cookiejar_from_dict
+from tqdm import tqdm
+from urllib3.exceptions import InvalidChunkLength, ProtocolError
+
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
-import xml.etree.ElementTree as ET
-from requests import HTTPError
-from requests.utils import cookiejar_from_dict
-from urllib3.exceptions import InvalidChunkLength, ProtocolError
-from requests.exceptions import ChunkedEncodingError
-from tqdm import tqdm
 
 __module_name__ = 'bioat.lib.libjgi'
 
@@ -378,7 +380,7 @@ class JGIOperator:
 
             with open(cookie_file, 'wt') as f:
                 f.write(cookies_str)
-            logger.info(f'successfully login, write cookie @ {cookie_file}')
+            logger.debug(f'successfully login, write cookie @ {cookie_file}')
         else:
             logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
             self._clean_exit(logger=logger)
@@ -418,7 +420,7 @@ class JGIOperator:
         xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
         with open(xml_file, "wb") as f:
             # 使用二进制写入模式（"wb"）来保存结果文件，因为response.content返回的是一个字节字符串
-            logger.info(f'successfully query, write xml @ {xml_file}')
+            logger.debug(f'successfully query, write xml @ {xml_file}')
             f.write(response.content)
 
     # step 05 parse xml info to update url
@@ -486,7 +488,7 @@ class JGIOperator:
             self._clean_exit(logger=logger)
 
     # step 06 download from url
-    def download(self):
+    def download(self, logger=None):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         self._decision_tree(logger=logger)
 
@@ -512,15 +514,15 @@ class JGIOperator:
             elif select == "b":
                 logger.info('back to select files...')
                 self.interactive = True
-                logger.debug('!!!re-call self.download position1')
-                self.download()
+                logger.debug('!!! re-call self.download position1')
+                self.download(logger=logger)
             elif select == 'y' or select == '':
                 self._download_list(self._urls_to_get, logger=logger)
             else:
                 logger.info('illegal selection, back to select files...')
                 self.interactive = True
-                logger.debug('!!!re-call self.download position2')
-                self.download()
+                logger.debug('!!! re-call self.download position2')
+                self.download(logger=logger)
         else:  # non interactive
             if self.regex or self.all_get:
                 self._download_list(self._urls_to_get, logger=logger)
@@ -537,7 +539,7 @@ class JGIOperator:
         # Kindly offer to unpack files, if files remain after error check
         if self._downloaded_files and self.interactive:
             decompress = input(("Decompress all downloaded files? "
-                                "(y/n/k=decompress and keep original): "))
+                                "(y/n/k, k=decompress and keep original): "))
             if decompress != "n":
                 if decompress == "k":
                     keep_original = True
@@ -893,7 +895,7 @@ class JGIOperator:
                             continue
                     else:
                         logger.warning(f'File {filename} exists but is broken, file {filename}.tmp does not exists.'
-                                     f'File {filename} is removed now.')
+                                       f'File {filename} is removed now.')
                         os.remove(filename)
                         logger.debug(f'Try to start a new download task.')
                         success = False
@@ -1009,7 +1011,6 @@ class JGIOperator:
             # start check
             logger.debug(f'File {filename}.tmp seems done, checking md5 value')
             # 如果filename md5通过则删除tmp
-            logger.debug('position3')
             if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size, logger=logger):
                 logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
                 os.rename(filename + '.tmp', filename)
@@ -1081,7 +1082,9 @@ class JGIOperator:
         TODO: implement .zip decompression
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         tar_pattern = "tar.gz$"  # matches tar.gz
         gz_pattern = "(?<!tar)\.gz$"  # excludes tar.gz
         endings_map = {"tar": (tarfile, "r:gz", ".tar.gz"),
@@ -1089,7 +1092,7 @@ class JGIOperator:
                        }
         relative_name = os.path.basename(file_path)
         if re.search(tar_pattern, file_path):
-            logger.info('find .tar.gz file')
+            logger.info(f'tar.gz file decompression for {file_path}')
             opener, mode, ext = endings_map["tar"]
             with opener.open(file_path) as f:
                 file_count = len(f.getmembers())
@@ -1123,7 +1126,7 @@ class JGIOperator:
 
                 safe_extract(f, destination)
         elif re.search(gz_pattern, file_path):
-            logger.info('find .gz file')
+            logger.info(f'gz file decompression for {file_path}')
             opener, mode, ext = endings_map["gz"]
             # out_name = file_path.rstrip(ext)
             out_name = relative_name.rstrip(ext)
