@@ -1,12 +1,12 @@
 """Doc of bioat.
 
 """
-from bioat.logger import get_logger  # must be the first
+from bioat.exceptions import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError # must be the first
+from bioat.logger import get_logger # must be the first
 from bioat.about import about
 from bioat.bamtools import BamTools
 from bioat.bedtools import BedTools
 from bioat.crisprtools import CrisprTools
-from bioat.exceptions import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
 from bioat.fastxtools import FastxTools
 from bioat.hictools import HiCTools
 from bioat.metatools import MetaTools

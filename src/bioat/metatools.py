@@ -1,7 +1,4 @@
 import sys
-import os
-import re
-
 from bioat import get_logger
 from bioat.lib.libjgi import JGIOperator
 
@@ -16,19 +13,19 @@ class MetaTools:
             # pick one from three
             query_info: str | None = None,
             xml: str | None = None,
-            failed_log: str | None = None,
+            log_fails: str | None = None,
             # runtime params
-            retry: int = 2,
-            timeout: int = -1,
+            nretry: int = 4,
+            timeout: int = 60,
             regex: str | None = None,
-            get_all: bool = False,
+            all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,
             # log
-            log_level: str = 'ERROR'
+            log_level: str = 'INFO'
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 
@@ -43,11 +40,11 @@ class MetaTools:
             the name used in the URL of the 'Info' page for that organism is the correct abbreviation.
             The full URL may also be used for this argument.
         :param xml: (input) specify a local xml file for the query instead of retrieving a new copy from JGI
-        :param failed_log: (input) retry downloading from URLs listed in log file
-        :param retry: number of times to retry downloading files with errors (0 to skip such files)
+        :param log_fails: (input) nretry downloading from URLs listed in log file
+        :param nretry: number of times to nretry downloading files with errors (0 to skip such files)
         :param timeout: timeout (seconds) for downloading, set -1 to disable this
         :param regex: (no interactive) Regex pattern to use to auto-select and download files
-        :param get_all: (no interactive) Auto-select and download all files for query
+        :param all_get: (no interactive) Auto-select and download all files for query
         :param overwrite_conf: (interactive) initiate configuration dialog to overwrite existing user/password
             configuration
         :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
@@ -61,26 +58,27 @@ class MetaTools:
         operator = JGIOperator(
             query_info=query_info,
             xml=xml,
-            failed_log=failed_log,
-            retry=retry,
+            log_fails=log_fails,
+            nretry=nretry,
             timeout=timeout,
             regex=regex,
-            get_all=get_all,
+            all_get=all_get,
             overwrite_conf=overwrite_conf,
             filter_files=filter_files,
             syntax_help=syntax_help,
             usage=usage,
             log_level=log_level
         )
-        # checker for doc mode
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger.debug('checker for doc mode')
         operator.run_doc()
-        # checker for input
+        logger.debug('checker for input')
         operator.parse_input()
-        # run login
+        logger.debug('run login')
         operator.login()
-        # run query
+        logger.debug('run query')
         operator.query()
-        # parse xml to json
+        logger.debug('parse xml to json')
         operator.parse_xml()
-        # start to download; calculate and display total size of selected data
+        logger.debug('start to download; calculate and display total size of selected data')
         operator.download()

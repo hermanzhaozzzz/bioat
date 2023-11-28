@@ -14,6 +14,8 @@ from bioat.logger import get_logger
 import xml.etree.ElementTree as ET
 from requests import HTTPError
 from requests.utils import cookiejar_from_dict
+from urllib3.exceptions import InvalidChunkLength, ProtocolError
+from requests.exceptions import ChunkedEncodingError
 from tqdm import tqdm
 
 __module_name__ = 'bioat.lib.libjgi'
@@ -83,20 +85,24 @@ class JGIConfig:
     FILENAME_TEMPLATE_LOG_FAIL = "jgi-xml-query.failed_{}.log"
     FILENAME_CONFIG_PATH = os.path.join(HOME, '.bioat', 'JGI', "account.conf")
 
-    def __init__(self, overwrite_conf: bool = False, log_level='INFO'):
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        self.log_level = log_level
+    def __init__(self, overwrite_conf: bool = False, logger=None):
+        if not logger:
+            self.logger = get_logger(level='DEBUG', module_name=__module_name__,
+                                     func_name=sys._getframe().f_code.co_name)
+        else:
+            self.logger = logger
+
         self.info: dict = {"user": None, "password": None, "categories": None}
 
-        logger.debug('start to set / load user info...')
+        self.logger.debug('start to set / load user info...')
         if overwrite_conf:
             # 只要指定重写参数就重写，无需判断其他
             self.input_user_info()  # 从终端手动输入JGI用户信息
             self.save_config()  # 保存用户信息
             # 然后直接退出
-            logger.info("Configuration complete.\n"
-                        "Script may now be used to query JGI.\n"
-                        "You need re-run your command without parameter `--overwrite_conf`\n")
+            self.logger.info("Configuration complete.\n"
+                             "Script may now be used to query JGI.\n"
+                             "You need re-run your command without parameter `--overwrite_conf`\n")
             # self.load_config()  # 从文件加载用户信息
         else:
             if os.path.isfile(self.FILENAME_CONFIG_PATH) and os.path.getsize(self.FILENAME_CONFIG_PATH) > 0:
@@ -104,12 +110,12 @@ class JGIConfig:
                 self.load_config()
             else:
                 # 配置信息保存文件异常
-                logger.warning(f'errors occur when loading file: {self.FILENAME_CONFIG_PATH}!\n'
-                               f'try to get user info by manual inputting...')
+                self.logger.warning(f'errors occur when loading file: {self.FILENAME_CONFIG_PATH}!\n'
+                                    f'try to get user info by manual inputting...')
                 self.input_user_info()  # 从终端手动输入JGI用户信息
                 self.save_config()  # 保存用户信息
                 self.load_config()  # 从文件加载用户信息
-        logger.debug('set / load user info success!')
+        self.logger.debug('set / load user info success!')
 
     def load_config(self):
         """
@@ -117,9 +123,7 @@ class JGIConfig:
         from config file.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-
-        logger.debug('loading JGI account info...')
+        self.logger.debug('loading JGI account info...')
 
         with open(self.FILENAME_CONFIG_PATH, 'rt') as f:
             for line in f:
@@ -133,10 +137,11 @@ class JGIConfig:
                     self.info["categories"] = [e.strip() for e in cats.split(",")]
 
         if not all([self.info["user"], self.info["password"]]):
-            logger.critical(f"Config file present ({self.FILENAME_CONFIG_PATH}), but user and/or password not found.")
+            self.logger.critical(
+                f"Config file present ({self.FILENAME_CONFIG_PATH}), but user and/or password not found.")
             sys.exit(1)
 
-        logger.debug('loading JGI account info done')
+        self.logger.debug('loading JGI account info done')
 
     def input_user_info(self):
         """
@@ -144,8 +149,6 @@ class JGIConfig:
         use with the curl query. Returns a dict.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-
         blurb = """
         === USER SETUP ===
 
@@ -176,7 +179,7 @@ class JGIConfig:
             sys.exit("Exiting now.")
 
         if self.info["user"].strip() == '' or self.info["password"] == '':
-            logger.warning('user and password can not be None!')
+            self.logger.warning('user and password can not be None!')
             self.input_user_info()
 
         input_blurb = (
@@ -202,9 +205,7 @@ class JGIConfig:
         credentials from dict <config_info>.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-
-        logger.debug('saving JGI account info...')
+        self.logger.debug('saving JGI account info...')
         u = self.info["user"]
         p = self.info["password"]
         c = self.info["categories"]
@@ -219,7 +220,7 @@ class JGIConfig:
             f.write(header)
             f.write(info)
 
-        logger.debug('saving JGI account info done')
+        self.logger.debug('saving JGI account info done')
 
 
 class JGIOperator:
@@ -228,12 +229,12 @@ class JGIOperator:
             # pick one from three
             query_info: str | None = None,
             xml: str | None = None,
-            failed_log: str | None = None,
+            log_fails: str | None = None,
             # runtime params
-            retry: int = 5,
+            nretry: int = 5,
             timeout: int = -1,
             regex: str | None = None,
-            get_all: bool = False,
+            all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
             # doc helper
@@ -245,11 +246,11 @@ class JGIOperator:
         # from cmd parameters
         self.query_info = query_info
         self.xml = xml
-        self.failed_log = failed_log
-        self.retry = retry
-        self.timeout = timeout
+        self.log_fails = log_fails
+        self.nretry = nretry
+        self.timeout = None if timeout == -1 else timeout
         self.regex = regex
-        self.get_all = get_all
+        self.all_get = all_get
         self.overwrite_conf = overwrite_conf
         self.filter_files = filter_files  # TODO 搞清楚用法
         self.syntax_help = syntax_help
@@ -265,7 +266,8 @@ class JGIOperator:
         self._desired_categories = dict()
         # From other obj #
         # load configs; auto check if you need overwrite user info or not
-        self.config = JGIConfig(overwrite_conf=overwrite_conf, log_level=log_level)
+        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name='class: JGIConfig')
+        self.config = JGIConfig(overwrite_conf=overwrite_conf, logger=logger)
         self.interactive = False
         # load docs;
         self.docs = JGIDoc
@@ -289,24 +291,24 @@ class JGIOperator:
             sys.exit('Done. exit.')
             # finally exit
 
-    # step 02 update self.query_info and self.failed_log and followed by self.login
+    # step 02 update self.query_info and self.log_fails and followed by self.login
     def parse_input(self):
         """Checker for input.
 
-        A checker for this rule: ONLY ONE of the parameters ('query_info', 'xml' and 'failed_log') can be specified;
-        Parse query_info/xml/failed_log to update self.query_info and self.failed_log.
+        A checker for this rule: ONLY ONE of the parameters ('query_info', 'xml' and 'log_fails') can be specified;
+        Parse query_info/xml/log_fails to update self.query_info and self.log_fails.
         After this method, you should call self.login method and then self.query method
         """
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        logger.debug("update JGIOperator obj.query_info and obj.failed_log using parameters:"
-                     " 'query_info', 'xml' and 'failed_log'")
+        logger.debug("update JGIOperator obj.query_info and obj.log_fails using parameters:"
+                     " 'query_info', 'xml' and 'log_fails'")
 
-        if sum(map(bool, [self.query_info, self.xml, self.failed_log])) != 1:
+        if sum(map(bool, [self.query_info, self.xml, self.log_fails])) != 1:
             # 这三个参数只可以指定一个！
-            logger.error("ONLY ONE of the parameters ('query_info', 'xml' and 'failed_log') can be specified!")
+            logger.error("ONLY ONE of the parameters ('query_info', 'xml' and 'log_fails') can be specified!")
             sys.exit('Done. exit.')
         else:
-            logger.debug("pass param checker: 'query_info', 'xml' and 'failed_log'")
+            logger.debug("pass param checker: 'query_info', 'xml' and 'log_fails'")
 
         if self.query_info:
             try:
@@ -318,13 +320,13 @@ class JGIOperator:
                 # if query_info is an organism name
                 logger.debug('not a url, try to define query_info as an organism name abbreviation')
                 # query_info = query_info
-        elif self.failed_log:
+        elif self.log_fails:
             # load failed info from log file if provided
             # filename see: class JGIConfig.FILENAME_TEMPLATE_LOG_FAIL
-            self.query_info = os.path.basename(self.failed_log).split('.')[1].split('_')[0]
+            self.query_info = os.path.basename(self.log_fails).split('.')[1].split('_')[0]
 
-            with open(self.failed_log, 'rt') as f:
-                self.failed_log = f.read().splitlines()
+            with open(self.log_fails, 'rt') as f:
+                self.log_fails = f.read().splitlines()
         elif self.xml:
             # parse query_info from xml file content
             name_pattern = r"name=\"(.+)\""
@@ -363,7 +365,7 @@ class JGIOperator:
         # set session
         s = requests.session()
         # get response
-        response = s.post(url, headers=headers, data=data)
+        response = s.post(url, headers=headers, data=data, timeout=self.timeout)
 
         # check response status code
         logger.debug(f'check response status code: {response.status_code}')
@@ -378,8 +380,8 @@ class JGIOperator:
                 f.write(cookies_str)
             logger.info(f'successfully login, write cookie @ {cookie_file}')
         else:
-            logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
-            self._clean_exit()
+            logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
+            self._clean_exit(logger=logger)
 
         # step 04 query xml info
 
@@ -405,12 +407,13 @@ class JGIOperator:
             allow_redirects=True,
             stream=True,
             headers=headers,
+            timeout=self.timeout,
         )
         try:
             response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
         except HTTPError:
             logger.critical(f'response status: {response.status_code}')
-            logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
+            logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
 
         xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
         with open(xml_file, "wb") as f:
@@ -438,8 +441,8 @@ class JGIOperator:
         # Will only be used if --filter_files flag
         # if filter_files, user wants only those files in <_desired_categories>
         logger.debug('_xml_hunt...')
-        found = self._xml_hunt(xml_file)
-        found = self._format_found(found, self.filter_files)
+        found = self._xml_hunt(xml_file, logger=logger)
+        found = self._format_found(found, self.filter_files, logger=logger)
 
         if not list(found.values()):
             return None
@@ -470,7 +473,8 @@ class JGIOperator:
                             continue
                     uid += 1
 
-        logger.debug(f'successfully update self._desired_categories = {self._desired_categories}')
+        logger.debug(
+            f'successfully update self._desired_categories = {str(self._desired_categories)[:400]}...(omit)...')
 
         # Check if file has any categories of interest
         if not any(v["results"] for v in list(self._desired_categories.values())):
@@ -479,128 +483,23 @@ class JGIOperator:
                 "categories:\n---\n{}\n---"
                 .format(self.query_info, "\n".join(self.config.info['categories']))
             )
-            self._clean_exit()
-
-    def _decision_tree(self):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        # Decision tree depending on if non-interactive options given
-        regex_filter = None
-        user_choice = None
-        self.interactive = True
-
-        if self.get_all:  # 参数指定get all
-            # non-interactive
-            user_choice = "a"  # "get_all mode"
-            self.interactive = False
-        elif self.regex:  # 参数指定regex
-            # non-interactive
-            user_choice = "r"  # "regex mode"
-            regex_filter = self.regex
-            self.interactive = False
-            # non-interactive
-        elif self.failed_log is not None:  # 参数指定
-            user_choice = "l"  # "re-download failed_log mode"
-            self.interactive = False
-
-        logger.debug(f'regex_filter = {regex_filter}')
-        logger.debug(f'user_choice = {user_choice}')
-        logger.debug(f'interactive_and_display_info = {self.interactive}')
-        logger.debug(f"\nQUERY RESULTS FOR '{self._desired_categories}'\n")
-
-        for query_cat, v in sorted(iter(self._desired_categories.items()), key=lambda k_v: k_v[1]["catID"]):
-            print_list = []
-
-            if not v["results"]:
-                continue
-
-            catID = v["catID"]
-
-            self._dict_to_get[catID] = {}
-            print_list.append(f" {catID}: {query_cat} ".center(80, "="))
-            results = v["results"]
-
-            for sub_cat, items in sorted(iter(results.items()),
-                                         key=lambda sub_cat_items: (sub_cat_items[0], sub_cat_items[1])):
-                print_list.append("{}:".format(sub_cat))
-                for index, i in sorted(items.items()):
-                    integrity_tag = ""
-                    url = i["url"]
-                    self._dict_to_get[catID][index] = url
-                    if "md5" in i:
-                        self._url_to_validate[url]["md5"] = i["md5"]
-                    # the following elif takes care of MD5 > sizeInBytes rank-order
-                    # in downstream processing
-                    if "sizeInBytes" in i:
-                        self._url_to_validate[url]["sizeInBytes"] = int(i["sizeInBytes"])
-                    print_index = " {}:[{}] ".format(str(catID), str(index))
-                    date = self._format_timestamp(i["timestamp"])
-                    date_string = "{:02d}/{}".format(date.tm_mon, date.tm_year)
-                    size_date = "[{}|{}]".format(i["size"], date_string)
-                    filename = i["filename"]
-                    margin = 80 - (len(size_date) + len(print_index))
-                    file_info = filename.ljust(margin, "-")
-                    print_list.append("".join([print_index, file_info, size_date]))
-            if self.interactive:
-                print('\n'.join(print_list))
-                print()  # padding
-
-        if not user_choice:
-            # Ask user which files to download from xml
-            user_choice = self._get_user_choice()
-
-        if user_choice == "r":  # regex-based filename matching
-            regex_filter = self._get_regex()
-        # special case for downloading all available files
-        # or filtering with a regular expression
-        if user_choice in (  # non interactive
-                "a",  # get_all mode
-                "r",  # regex mode
-                "l",  # re-download failed_log mode
-        ):
-            for k, v in sorted(self._dict_to_get.items()):
-                for u in v.values():
-                    if regex_filter:
-                        fn = re.search(r".+/([^\/]+$)", u).group(1)
-                        match = regex_filter.search(fn)
-                        if not match:
-                            # 匹配失败
-                            self._urls_to_get = set(self._urls_to_get)
-                            self._urls_to_get.discard(u)
-                            continue  # 进入下一个文件进行判断
-                    elif user_choice == "l" and u not in self.failed_log:
-                        continue  # 无需添加此文件，进入下一个文件进行判断
-                    # final add to download
-                    logger.debug(f'self._urls_to_get = {self._urls_to_get}')
-                    self._urls_to_get = set(self._urls_to_get)
-                    self._urls_to_get.add(u)  # self._urls_to_get is a set()
-        else:
-            # interactive
-            # 选2:3-5这种
-            # Retrieve user-selected file urls from dict
-            self._parse_selection(user_choice)  # update self._selections
-            for k, v in sorted(self._selections.items()):
-                for i in v:
-                    self._urls_to_get.add(self._dict_to_get[k][i])
-
-        logger.debug('update self._dict_to_get, self._url_to_validate')
-        logger.debug(f'self._urls_to_get = {self._urls_to_get}')
-        logger.debug(f'self._dict_to_get = {str(self._dict_to_get)[:1000]}...(omit)...')
+            self._clean_exit(logger=logger)
 
     # step 06 download from url
     def download(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        self._decision_tree()
+        self._decision_tree(logger=logger)
 
         self._urls_to_get = sorted(self._urls_to_get)
         filenames = [u.split("/")[-1] for u in self._urls_to_get]
 
-        logger.debug(f'self._desired_categories = {self._desired_categories}')
+        # logger.debug(f'self._desired_categories = {self._desired_categories}')
         file_sizes = self._get_sizes(self._desired_categories, sizes_by_url={})
-        logger.debug(f'file_sizes = {file_sizes}')
+        # logger.debug(f'file_sizes = {file_sizes}')
         total_size = sum(filter(None, [file_sizes[url] for url in self._urls_to_get]))
         size_string = self._byte_convert(total_size)
         num_files = len(self._urls_to_get)
-        print(("Total download size for {} files: {}".format(num_files, size_string)))
+        logger.info("Total download size for {} files: {}".format(num_files, size_string))
 
         if self.interactive:
             select = input("Continue? (y/n/b/p for yes/no/back/preview files): ").lower()
@@ -609,26 +508,31 @@ class JGIOperator:
                     print('\n'.join(filenames))
                     select = input("Continue? (y/n/b/p for yes/no/back/preview files): ").lower()
             if select == "n":
-                self._clean_exit("ABORTING DOWNLOAD")
+                self._clean_exit("ABORTING DOWNLOAD", logger=logger)
             elif select == "b":
                 logger.info('back to select files...')
                 self.interactive = True
+                logger.debug('!!!re-call self.download position1')
                 self.download()
             elif select == 'y' or select == '':
-                self._download_list(self._urls_to_get)
+                self._download_list(self._urls_to_get, logger=logger)
             else:
                 logger.info('illegal selection, back to select files...')
                 self.interactive = True
+                logger.debug('!!!re-call self.download position2')
                 self.download()
+        else:  # non interactive
+            if self.regex or self.all_get:
+                self._download_list(self._urls_to_get, logger=logger)
 
-        print("Finished downloading {} files.".format(len(self._downloaded_files)))
+        logger.info("Finished downloading {} files.".format(len(self._downloaded_files)))
 
         if self._failed_urls and self.interactive:
             n_broken = len(self._failed_urls)
-            retry_broken = input(
-                "{} files failed to download; retry them? (y/n): ".format(n_broken))
-            if retry_broken.lower() in ("yes", "y"):
-                self._download_list(self._failed_urls)
+            nretry_broken = input(
+                "{} files failed to download; nretry them? (y/n): ".format(n_broken))
+            if nretry_broken.lower() in ("yes", "y"):
+                self._download_list(self._failed_urls, logger=logger)
 
         # Kindly offer to unpack files, if files remain after error check
         if self._downloaded_files and self.interactive:
@@ -639,8 +543,8 @@ class JGIOperator:
                     keep_original = True
                 else:
                     keep_original = False
-                self._decompress_files(self._downloaded_files, keep_original)
-                print("Finished decompressing all files.")
+                self._decompress_files(self._downloaded_files, keep_original, logger=logger)
+                logger.info("Finished decompressing all files.")
 
         if self._failed_urls:
             """
@@ -648,7 +552,7 @@ class JGIOperator:
 
             """
             fail_log = self.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
-            print(
+            logger.info(
                 "{} failed downloads logged to {}".format(len(self._failed_urls), fail_log))
             # write failed URLs to local file
             with open(fail_log, 'w') as f:
@@ -673,7 +577,7 @@ class JGIOperator:
 
         exit_code = 1 if failed_happen else 0
 
-        self._clean_exit(exit_message=exit_message, exit_code=exit_code, remove_temp=remove_temp)
+        self._clean_exit(exit_message=exit_message, exit_code=exit_code, remove_temp=remove_temp, logger=logger)
 
     def _byte_convert(self, byte_size):
         """
@@ -694,13 +598,15 @@ class JGIOperator:
         size_string = "{:.2f} {}".format(adjusted, unit)
         return size_string
 
-    def _clean_exit(self, exit_message=None, exit_code=0, remove_temp=True):
+    def _clean_exit(self, exit_message=None, exit_code=0, remove_temp=True, logger=None):
         """
         Perform a sys.exit() while removing temporary files and
         informing the user.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         to_remove = [self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)]
 
         # don't delete xml file if supplied by user
@@ -723,10 +629,43 @@ class JGIOperator:
         logger.info(base_message)
         sys.exit(exit_code)
 
-    def _check_md5(self, filename, md5_hash):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    def _check_for_xml(self, filename, logger=None):
+        """
+        Uses hex code at the beginning of a file to try to determine if it's an
+        XML file or not. This seems to be occasionally necessary; if pulling
+        files from JGI tape archives, the server may error out and provide an
+        XML error document instead of the intended file. This function should
+        return False on all downloaded files, although false positives have not
+        been thoroughly investigated.
+
+        Adapted from http://stackoverflow.com/a/13044946/3076552
+
+        """
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
+        xml_hex = "\x3c"  # hex code at beginning of XML file
+        read_length = len(xml_hex)
+        with open(filename) as f:
+            try:
+                file_start = f.read(read_length)
+
+                if file_start.startswith(xml_hex):  # XML file
+                    logger.debug('cheker for xml: XML file')
+                    return True
+                else:  # hopefully all other file types
+                    logger.debug('cheker for xml: hopefully all other file types')
+                    return False
+            except UnicodeDecodeError:  # compressed file
+                logger.debug('cheker for xml: compressed file')
+                return False
+
+    def _check_md5(self, filename, md5_hash, logger=None):
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         if not md5_hash:
-            logger.info(f"No MD5 hash listed for {filename}; skipping check")
+            logger.warning(f"No MD5 hash listed for {filename}; skipping check")
             ret_val = True
         else:
             file_md5 = self._get_md5(filename)
@@ -738,8 +677,10 @@ class JGIOperator:
                 ret_val = False
         return ret_val
 
-    def _check_sizeInBytes(self, filename, sizeInBytes):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    def _check_sizeInBytes(self, filename, sizeInBytes, logger=None):
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         if not sizeInBytes:
             logger.info(f'No sizeInBytes listed for {filename}; skipping check')
             ret_val = True
@@ -754,28 +695,139 @@ class JGIOperator:
                 ret_val = False
         return ret_val
 
-    def _decompress_files(self, local_file_list, keep_original=False):
+    def _decision_tree(self, logger=None):
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
+        # Decision tree depending on if non-interactive options given
+        regex_filter = None
+        user_choice = None
+        self.interactive = True
+
+        if self.all_get:  # 参数指定get all
+            # non-interactive
+            user_choice = "a"  # "all_get mode"
+            self.interactive = False
+        elif self.regex:  # 参数指定regex
+            # non-interactive
+            user_choice = "r"  # "regex mode"
+            regex_filter = self.regex
+            self.interactive = False
+            # non-interactive
+        elif self.log_fails is not None:  # 参数指定
+            user_choice = "l"  # "re-download log_fails mode"
+            self.interactive = False
+
+        logger.debug(f'regex_filter = {regex_filter}')
+        logger.debug(f'user_choice = {user_choice}')
+        logger.debug(f'interactive_and_display_info = {self.interactive}')
+        logger.debug(f"QUERY RESULTS FOR '{str(self._desired_categories)[:400]}...(omit)...'\n")
+
+        for query_cat, v in sorted(iter(self._desired_categories.items()), key=lambda k_v: k_v[1]["catID"]):
+            print_list = []
+
+            if not v["results"]:
+                continue
+
+            catID = v["catID"]
+
+            self._dict_to_get[catID] = {}
+            print_list.append(f" {catID}: {query_cat} ".center(80, "="))
+            results = v["results"]
+
+            for sub_cat, items in sorted(iter(results.items()),
+                                         key=lambda sub_cat_items: (sub_cat_items[0], sub_cat_items[1])):
+                print_list.append("{}:".format(sub_cat))
+                for index, i in sorted(items.items()):
+                    url = i["url"]
+                    self._dict_to_get[catID][index] = url
+                    if "md5" in i:
+                        self._url_to_validate[url]["md5"] = i["md5"]
+                    # the following elif takes care of MD5 > sizeInBytes rank-order
+                    # in downstream processing
+                    if "sizeInBytes" in i:
+                        self._url_to_validate[url]["sizeInBytes"] = int(i["sizeInBytes"])
+                    print_index = " {}:[{}] ".format(str(catID), str(index))
+                    date = self._format_timestamp(i["timestamp"])
+                    date_string = "{:02d}/{}".format(date.tm_mon, date.tm_year)
+                    size_date = "[{}|{}]".format(i["size"], date_string)
+                    filename = i["filename"]
+                    margin = 80 - (len(size_date) + len(print_index))
+                    file_info = filename.ljust(margin, "-")
+                    print_list.append("".join([print_index, file_info, size_date]))
+            if self.interactive:
+                print('\n'.join(print_list))
+                print()  # padding
+
+        if not user_choice:
+            # Ask user which files to download from xml
+            user_choice = self._get_user_choice(logger=logger)
+
+        if user_choice == "r":  # regex-based filename matching
+            regex_filter = self._get_regex()
+        # special case for downloading all available files
+        # or filtering with a regular expression
+        if user_choice in (  # non interactive
+                "a",  # all_get mode
+                "r",  # regex mode
+                "l",  # re-download log_fails mode
+        ):
+            for k, v in sorted(self._dict_to_get.items()):
+                for u in v.values():
+                    if regex_filter:
+                        fn = re.search(r".+/([^\/]+$)", u).group(1)
+                        match = regex_filter.search(fn)
+                        if not match:
+                            # 匹配失败
+                            self._urls_to_get = set(self._urls_to_get)
+                            self._urls_to_get.discard(u)
+                            continue  # 进入下一个文件进行判断
+                    elif user_choice == "l" and u not in self.log_fails:
+                        continue  # 无需添加此文件，进入下一个文件进行判断
+                    # final add to download
+                    # logger.debug(f'self._urls_to_get = {self._urls_to_get}')
+                    self._urls_to_get = set(self._urls_to_get)
+                    self._urls_to_get.add(u)  # self._urls_to_get is a set()
+        else:
+            # interactive
+            # 选2:3-5这种
+            # Retrieve user-selected file urls from dict
+            self._parse_selection(user_choice, logger=logger)  # update self._selections
+            for k, v in sorted(self._selections.items()):
+                for i in v:
+                    self._urls_to_get.add(self._dict_to_get[k][i])
+
+        # logger.debug('update self._dict_to_get, self._url_to_validate')
+        # logger.debug(f'self._urls_to_get = {str(self._urls_to_get)[:1000]}...(omit)...')
+        # logger.debug(f'self._dict_to_get = {str(self._dict_to_get)[:1000]}...(omit)...')
+
+    def _decompress_files(self, local_file_list, keep_original=False, logger=None):
         """
         Decompresses list of files, and deletes compressed
         copies unless <keep_original> is True.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
+        logger.debug('decompress_files...')
         for f in local_file_list:
-            self._extract_file(f, keep_original)
+            self._extract_file(f, keep_original, logger=logger)
 
-    def _download_from_url(self, url):
+    def _download_from_url(self, url, logger=None):
         """
         Attempts to download a file from JGI servers using cURL.
 
         Returns a tuple of (filename, cURL command used, success boolean)
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         url_no_prefix = url.replace("&amp;", "&")  # for query local xml info
 
         # get md5 value for this file from xml
-        logger.debug(f'self._url_to_validate = {self._url_to_validate}')
+        # logger.debug(f'self._url_to_validate = {self._url_to_validate}')
         md5_hash = self._url_to_validate[url_no_prefix].get("md5", None)  # local xml
         # get sizeInBytes (local xml) and file_size (internet) for size checking
         sizeInBytes = self._url_to_validate[url_no_prefix].get("sizeInBytes", None)  # local xml
@@ -791,62 +843,80 @@ class JGIOperator:
             if not loop:
                 break
 
-            if error_counter >= self.retry:
-                logger.critical(f'error_counter is reaching to max size [self.retry ({self.retry})]')
-                logger.warning('you can rerun your command and the unfinished file is needed for continuing download')
+            if error_counter >= self.nretry:
+                logger.critical(f'error_counter is reaching to max size -> self.nretry ={self.nretry}')
+                # FUTURE, 支持了断点续传再改回来
+                # logger.warning(
+                #     'you can rerun your command and the unfinished file is needed for continuing download')
                 success = False
                 loop = False
                 continue
 
-            time.sleep(1)
-            temp_size = 0  # 获取已写入的字节 temp_size
-
+            # temp_stemp_sizeize = 0  # 获取已写入的字节 temp_size
             if os.path.exists(filename):  # filename exists
                 # check md5 for filename
-                if not self._is_broken(filename, md5_hash=md5_hash, sizeInBytes=sizeInBytes):
-                    logger.info(f'File {filename} exists and passed md5 checking. Go on next task. '
-                                f'error_counter = {error_counter}')
+                if not self._is_broken(filename, md5_hash=md5_hash, sizeInBytes=sizeInBytes, logger=logger):
+                    logger.debug(f'File {filename} exists and passed md5 checking. Go on next task.')
                     success = True
                     loop = False
                     continue
                 else:  # failed
                     if os.path.exists(filename + '.tmp'):  # filename.tmp exists at the sametime!
-                        if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=sizeInBytes):
-                            logger.info(f'File {filename}.tmp passed md5 checking! Renaming')
+                        if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=sizeInBytes,
+                                               logger=logger):
+                            logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
                             os.remove(filename)
                             os.rename(filename + '.tmp', filename)
-                            logger.info(f'File {filename} passed md5 checking. Go on next task.')
+                            logger.debug(f'File {filename} passed md5 checking. Go on next task.')
                             success = True
                             loop = False
                             continue
                         else:
-                            logger.error(f'File {filename} exists but is broken, file {filename}.tmp exists but is '
-                                        f'broken too. File {filename} is removed now.')
+                            # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+                            # logger.error(f'File {filename} exists but is broken, file {filename}.tmp exists but is '
+                            #              f'broken too. File {filename} is removed now.')
+                            # os.remove(filename)
+                            # temp_size = os.path.getsize(filename + '.tmp')
+                            # logger.info(f'Try continuing download using {filename}.tmp. temp_size = {temp_size}')
+                            # /FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+                            logger.warning(
+                                f'File {filename} exists but is broken, file {filename}.tmp exists but is '
+                                f'broken too.')
+                            logger.info(
+                                'Because JGI does not support continuing download now, the two files will be removed')
                             os.remove(filename)
-                            temp_size = os.path.getsize(filename + '.tmp')
-                            logger.info(f'Try continuing download using {filename}.tmp. temp_size = {temp_size}')
+                            logger.debug(f'File {filename} is removed now.')
+                            os.remove(filename + '.tmp')
+                            logger.debug(f'File {filename}.tmp is removed now.')
                             success = False
                             loop = True
                             continue
                     else:
-                        logger.error(f'File {filename} exists but is broken, file {filename}.tmp does not exists.'
-                                    f'File {filename} is removed now.')
+                        logger.warning(f'File {filename} exists but is broken, file {filename}.tmp does not exists.'
+                                     f'File {filename} is removed now.')
                         os.remove(filename)
-                        logger.info(f'Try to start a new download task.')
+                        logger.debug(f'Try to start a new download task.')
                         success = False
                         loop = True
                         continue
             else:  # filename don't exist
                 if os.path.exists(filename + '.tmp'):  # filename.tmp exists
                     # 如果.tmp文件已存在，则打开文件并获取已写入的字节 temp_size
-                    temp_size = os.path.getsize(filename + '.tmp')
+                    # print(f'found tmp file for {filename}, attempt to continuing download')
+                    # temp_size = os.path.getsize(filename + '.tmp')
 
+                    logger.warning(
+                        'Because JGI does not support continuing download now, the tmp file will be removed')
+                    os.remove(filename + '.tmp')
+                    logger.debug(f'File {filename}.tmp is removed now.')
             # set requests
-            url = f'{self.config.URL_JGI_MAIN}{url}'
+            # https://dabing1022.github.io/2016/12/24/%E8%81%8A%E4%B8%80%E8%81%8AHTTP%E7%9A%84Range,%20Content-Range/
+            if not url.startswith('http'):
+                url = f'{self.config.URL_JGI_MAIN}{url}'
             logger.debug(f'download aim file from url = {url}')
             cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36',
             }
             with open(cookie_file, 'rt') as f:
                 cookies_dict = json.loads(f.read())
@@ -854,83 +924,111 @@ class JGIOperator:
 
             # 想在Python中在不下载文件的情况下获取文件大小，可以使用requests库发送HEAD请求
             # HEAD请求不会下载文件，而是仅获取关于文件的一些元数据，如文件大小
-            response = requests.head(url, cookies=cookies, stream=True, headers=headers)
-
+            pre_response = requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout)
             # check response status
             try:
-                response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+                pre_response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
             except HTTPError:
                 error_counter += 1
                 logger.warning(
                     'encounter HTTPError;'
-                    f'error_counter = {error_counter}; response.status_code = {response.status_code}; '
+                    f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
                     'could not connect with server. Retry after 10s...'
                 )
                 time.sleep(10)
                 logger.info('start next loop')
                 loop = True
+                pre_response.close()
                 continue  # next try
             except Exception as e:
                 error_counter += 1
                 logger.warning(
                     f'encounter {e} (error);'
-                    f'error_counter = {error_counter}; response.status_code = {response.status_code}; '
+                    f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
                     'unexpected error. Retry after 10s...'
                 )
                 time.sleep(10)
                 logger.info('start next loop')
-                loop = True
-                continue  # next try
-
-            # get file size, if response.header do not have it, replace it from sizeInBytes in xml file
-            remote_file_size = int(response.headers.get("Content-Length", 0))
-            remote_file_size = remote_file_size if remote_file_size != 0 else sizeInBytes
-
-            if temp_size > remote_file_size:
-                # error
-                logger.error('local size = {temp_size} > remote_file_size = {remote_file_size}, retry...')
-                error_counter += 1
-                os.remove(filename='.tmp')
                 success = False
                 loop = True
-                continue
+                pre_response.close()
+                continue  # next try
+
+            # get file size, if pre_response.header do not have it, replace it from sizeInBytes in xml file
+            remote_file_size = int(pre_response.headers.get("Content-Length", 0))
+            remote_file_size = remote_file_size if remote_file_size != 0 else sizeInBytes
+            pre_response.close()
+            # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+            # if temp_size > remote_file_size:
+            #     # error
+            #     logger.error('local size = {temp_size} > remote_file_size = {remote_file_size}, nretry...')
+            #     error_counter += 1
+            #     os.remove(filename + '.tmp')
+            #     success = False
+            #     loop = True
+            #     pre_response.close()
+            #     continue
 
             # core part for download
             # re-request use fixed headers
-            headers["Range"] = "bytes=%s-%s" % (temp_size, remote_file_size)
-            response = requests.get(url, cookies=cookies, stream=True, headers=headers)  # 分段下载
+            # https://cizixs.com/2015/10/06/http-resume-download/
+            # headers["Range"] = f"bytes={temp_size}-"
+            # /FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+            file_response = requests.get(
+                url,
+                cookies=cookies,
+                stream=True,  # 如果要下载大文件的话，就将steam设置为True，慢慢下载，而不是等整个文件下载完才返回。
+                headers=headers,
+                timeout=self.timeout,
+            )  # 分段下载
+            # FUTURE: 由于JGI不支持断点续传，代码以后再测试
+            # print(file_response.headers)
+            # print(file_response.status_code)
             # ################### core ########################
             with(open(filename + '.tmp', 'ab')) as f, tqdm(
                     desc=filename,
                     total=remote_file_size,
+                    # initial=temp_size,  # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
                     unit='iB',
                     unit_scale=True,
                     unit_divisor=1024,
             ) as pbar:
-                for data in response.iter_content(chunk_size=8192):
-                    data_size = f.write(data)
-                    pbar.update(data_size)
+                try:
+                    for data in file_response.iter_content(chunk_size=1024):
+                        data_size = f.write(data)
+                        pbar.update(data_size)
+                    file_response.close()
+                except InvalidChunkLength or ProtocolError or ChunkedEncodingError as e:
+                    logger.error(f"Invalid chunk encoding {e}")
+                    success = False
+                    loop = True
+                    file_response.close()
+                    continue
             # ################### /core ########################
             # finish download
             # start check
-            logger.info(f'File {filename}.tmp seems done, checking md5 value')
+            logger.debug(f'File {filename}.tmp seems done, checking md5 value')
             # 如果filename md5通过则删除tmp
-            if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size):
-                logger.info(f'File {filename}.tmp passed md5 checking! Renaming')
+            logger.debug('position3')
+            if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size, logger=logger):
+                logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
                 os.rename(filename + '.tmp', filename)
+                logger.debug(f'File {filename} passed md5 checking. Go on next task.')
                 success = True
                 loop = False
+                file_response.close()
                 continue  # next task
             else:
                 error_counter += 1
-                logger.info(f'File {filename}.tmp is broken! Removing and retry')
+                logger.info(f'File {filename}.tmp is broken! Removing and nretry')
                 os.remove(filename + '.tmp')
                 success = False
                 loop = True
+                file_response.close()
                 continue  # next try
         return filename, success
 
-    def _download_list(self, url_list):
+    def _download_list(self, url_list, logger=None):
         """
         Attempts download command on a list of partial file
         URLs (completed by download_from_url()).
@@ -939,7 +1037,9 @@ class JGIOperator:
         list of unsuccessful URLs
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         # Run curl commands to retrieve selected files
         # Make sure the URL formats conforms to the Genome Portal format
 
@@ -955,10 +1055,13 @@ class JGIOperator:
                 self.login()
                 logger.info('login succeed.')
                 start_time = time.time()
-            fn, success = self._download_from_url(url)
+
+            fn, success = self._download_from_url(url, logger=logger)
+
             if not success:
-                logger.warning(f'File {fn} failed to download, appending to the file @ {self.failed_log}'
-                               f'You can use parameter --failed_log to re-download these failed files'
+                logger.warning(f'File {fn} failed to download, appending to the file '
+                               f'@ {self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)}. '
+                               f'You can use parameter --log_fails to re-download these failed files'
                                f'after this run finish.')
                 broken_urls.append(url)
                 broken_files.append(fn)
@@ -971,7 +1074,7 @@ class JGIOperator:
 
         return broken_urls
 
-    def _extract_file(self, file_path, keep_compressed=False):
+    def _extract_file(self, file_path, keep_compressed=False, logger=None):
         """
         Native Python file decompression for tar.gz and .gz files.
 
@@ -986,6 +1089,7 @@ class JGIOperator:
                        }
         relative_name = os.path.basename(file_path)
         if re.search(tar_pattern, file_path):
+            logger.info('find .tar.gz file')
             opener, mode, ext = endings_map["tar"]
             with opener.open(file_path) as f:
                 file_count = len(f.getmembers())
@@ -1019,6 +1123,7 @@ class JGIOperator:
 
                 safe_extract(f, destination)
         elif re.search(gz_pattern, file_path):
+            logger.info('find .gz file')
             opener, mode, ext = endings_map["gz"]
             # out_name = file_path.rstrip(ext)
             out_name = relative_name.rstrip(ext)
@@ -1026,18 +1131,20 @@ class JGIOperator:
                 for l in f:
                     out.write(l)
         else:
-            print("Skipped decompression for '{}'"
-                  .format(file_path))
+            logger.info(f"Skipped decompression for '{file_path}'")
             return
         if not keep_compressed:
+            logger.info('remove compressed files')
             os.remove(file_path)
 
-    def _format_found(self, d, filter_found=False):
+    def _format_found(self, d, filter_found=False, logger=None):
         """
         Reformats the output from xml_hunt()
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         logger.debug('get categories from config (including possible user additions)')
         output = {}
         for p, c in sorted(d.items()):
@@ -1121,8 +1228,12 @@ class JGIOperator:
         # TODO make this exit gracefully if user can't
         # manage to get a working regex
         compile_success = False
+        pattern = ''
         while compile_success is False:
-            pattern = input("Regex pattern: ")
+            if self.interactive and not self.regex:
+                pattern = input("Regex pattern: ")
+            else:
+                pattern = self.regex
             try:
                 pattern = re.compile(pattern)
                 compile_success = True
@@ -1132,21 +1243,24 @@ class JGIOperator:
 
         return re.compile(pattern)
 
-    def _get_user_choice(self):
+    def _get_user_choice(self, logger=None):
         """
         Get user file selection choice(s)
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         choice = input(
             "Enter file selection ('q' to quit, "
             "'u' to review syntax/usage, 'a' for all, "
             "'r' for regex-based filename matching):\n> ")
+        logger.debug(f'choice = {choice}')
         if choice == "u":
             print()
             print(JGIDoc.select_blurb)
             print()
-            return self._get_user_choice()
+            return self._get_user_choice(logger=logger)
         elif choice == 'a':
             return choice
         elif choice == 'r':
@@ -1154,75 +1268,48 @@ class JGIOperator:
         elif choice == 'q':
             remove_temp = input("Remove index file? (y/n): ")
             remove_temp = remove_temp.lower() in ('y', 'yes', '')
-            self._clean_exit(remove_temp=remove_temp)
+            self._clean_exit(remove_temp=remove_temp, logger=logger)
         else:
             return choice
 
-    def _is_broken(self, filename, min_size_bytes=20, md5_hash=None, sizeInBytes=None):
+    def _is_broken(self, filename, min_size_bytes=20, md5_hash=None, sizeInBytes=None, logger=None):
         """
         Rudimentary check to see if a file appears to be broken.
 
         filename without ".tmp"
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-
-        def _check_for_xml(filename):
-            """
-            Uses hex code at the beginning of a file to try to determine if it's an
-            XML file or not. This seems to be occasionally necessary; if pulling
-            files from JGI tape archives, the server may error out and provide an
-            XML error document instead of the intended file. This function should
-            return False on all downloaded files, although false positives have not
-            been thoroughly investigated.
-
-            Adapted from http://stackoverflow.com/a/13044946/3076552
-
-            """
-            logger.debug('cheker for xml')
-            xml_hex = "\x3c"  # hex code at beginning of XML file
-            read_length = len(xml_hex)
-
-            with open(filename) as f:
-                try:
-                    file_start = f.read(read_length)
-
-                    if file_start.startswith(xml_hex):  # XML file
-                        logger.debug('cheker for xml: XML file')
-                        return True
-                    else:  # hopefully all other file types
-                        logger.debug('cheker for xml: hopefully all other file types')
-                        return False
-                except UnicodeDecodeError:  # compressed file
-                    logger.debug('cheker for xml: compressed file')
-                    return False
-
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         if (
                 not os.path.isfile(filename) or
                 os.path.getsize(filename) < min_size_bytes or
-                (_check_for_xml(filename) and not filename.lower().endswith("xml")) or
-                (not self._check_md5(filename, md5_hash) or
-                 not self._check_sizeInBytes(filename, sizeInBytes))
+                (self._check_for_xml(filename, logger=logger) and not filename.lower().endswith("xml")) or
+                (not self._check_md5(filename, md5_hash, logger=logger) or
+                 not self._check_sizeInBytes(filename, sizeInBytes, logger=logger))
         ):
-            logger.warning('File is broken!')
+            logger.debug('File is broken.')
             return True
         else:
-            logger.debug('File is intact!')
+            logger.debug('File is intact.')
             return False
 
-    def _parse_selection(self, user_input):
+    def _parse_selection(self, user_input, logger=None):
         """
         Parses the user choice string and returns a dictionary
         of categories (keys) and choices within each category
         (values).
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         parts = user_input.split(";")
         for p in parts:
             if len(p.split(":")) > 2 or p.count(':') == 0:
                 logger.error(f"Can't parse desired input\n?-->'{p}'")
                 user_choice = self._get_user_choice()
-                self._parse_selection(user_choice)
+                self._parse_selection(user_choice, logger=logger)
             category, indices = p.split(":")
             category = int(category)
             self._selections[category] = []
@@ -1235,21 +1322,23 @@ class JGIOperator:
                         start, stop = list(map(int, i.split("-")))
                     except:
                         logger.critical(f"can't parse desired input\n?-->'{i}'")
-                        self._clean_exit()
+                        self._clean_exit(logger=logger)
 
                     add_range = list(range(start, stop + 1))
 
                     for e in add_range:
                         self._selections[category].append(e)
 
-    def _xml_hunt(self, xml_file):
+    def _xml_hunt(self, xml_file, logger=None):
         """
         Gets list of all XML entries with "filename" attribute,
         and returns a dictionary of the file attributes keyed
         by a ":"-joined string of parent names.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         logger.debug('xml_hunt...')
         root = ET.iterparse(xml_file, events=("start", "end"))
         parents = []
@@ -1271,8 +1360,8 @@ class JGIOperator:
                     except KeyError:
                         matches[parent_string] = [element.attrib]
         except ET.ParseError as e:
-            print('Parsing xml file failed! Maybe the username / password is wrong? '
-                  'Try to use --overwrite_conf parameter to re-login')
+            logger.critical('Parsing xml file failed! Maybe the username / password is wrong? '
+                            'Try to use --overwrite_conf parameter to re-login')
             sys.exit(f'Exit with error {e}')
         return matches
 
