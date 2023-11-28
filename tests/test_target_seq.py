@@ -1,5 +1,6 @@
 import os
 import subprocess
+
 from bioat.cli import Cli
 from .settings import DATA_PATH, TESTOUT_PATH
 
@@ -12,6 +13,13 @@ f_output_fig_count_ratio = os.path.join(TESTOUT_PATH, 'test_target_seq_compare_c
 f_output_table_count_ratio = os.path.join(TESTOUT_PATH, 'test_target_seq_compare_count-ratio.csv')
 f_output_fig_heatmap = os.path.join(TESTOUT_PATH, 'test_target_seq_compare_heatmap.pdf')
 f_output_table_heatmap = os.path.join(TESTOUT_PATH, 'test_target_seq_compare_heatmap.csv')
+output_files = [
+    f_output_fig,
+    f_output_fig_count_ratio,
+    f_output_table_count_ratio,
+    f_output_fig_heatmap,
+    f_output_table_heatmap,
+]
 
 
 def test_region_heatmap_1():
@@ -177,3 +185,10 @@ def test_cli_region_heatmap_compare_3():
         '--log_level', 'WARNING'
     ]
     assert subprocess.run(args).returncode == 0
+
+
+for i in output_files:
+    try:
+        os.remove(i)
+    except:
+        pass
