@@ -1021,7 +1021,8 @@ class JGIOperator:
                 continue  # next task
             else:
                 error_counter += 1
-                logger.info(f'File {filename}.tmp is broken! Removing and nretry')
+                logger.info(f'File {filename}.tmp is broken! Removing and retry after 5 seconds...')
+                time.sleep(5)
                 os.remove(filename + '.tmp')
                 success = False
                 loop = True
