@@ -15,7 +15,7 @@ class MetaTools:
             xml: str | None = None,
             log_fails: str | None = None,
             # runtime params
-            nretry: int = 1,
+            nretry: int = 4,
             timeout: int = 60,
             regex: str | None = None,
             all_get: bool = False,

@@ -17,6 +17,7 @@ from requests.utils import cookiejar_from_dict
 from tqdm import tqdm
 from urllib3.exceptions import InvalidChunkLength, ProtocolError
 from bioat.lib.libspider import get_random_user_agents, ProxyPool
+from bioat.exceptions import BioatParameterFormatError
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
 
@@ -233,7 +234,7 @@ class JGIOperator:
             xml: str | None = None,
             log_fails: str | None = None,
             # runtime params
-            nretry: int = 5,
+            nretry: int = 4,
             timeout: int = -1,
             regex: str | None = None,
             all_get: bool = False,
@@ -266,6 +267,7 @@ class JGIOperator:
         self._selections = dict()
         self._downloaded_files = list()
         self._failed_urls = list()
+        self._log_fails_loaded = list()
         self._desired_categories = dict()
         self._cookie = None
         self._user_agent = get_random_user_agents()
@@ -336,7 +338,8 @@ class JGIOperator:
             try:
                 # if query_info is a URL
                 logger.debug('attempt to parse query_info as a url')
-                query_regex = re.compile(r'\.jgi.+\.(?:gov|org).*\/(.+)\/(?!\/)')
+                # query_regex = re.compile(r'\.jgi.+\.(?:gov|org).*\/(.+)\/(?!\/)')
+                query_regex = re.compile(r'\.jgi.+\.(?:gov|org).*/(.+)/(?!/)')
                 self.query_info = query_regex.search(self.query_info).group(1)
             except AttributeError:
                 # if query_info is an organism name
@@ -349,7 +352,10 @@ class JGIOperator:
 
             logger.debug(f'get self.query_info = {self.query_info} from self.log_fails = {self.log_fails}')
             with open(self.log_fails, 'rt') as f:
-                self.log_fails = f.read().splitlines()
+                self._log_fails_loaded = f.read().splitlines()
+            logger.debug(
+                f'get self._log_fails_loaded = {self._log_fails_loaded} from self.log_fails = {self.log_fails}')
+
         elif self.xml:
             # parse query_info from xml file content
             name_pattern = r"name=\"(.+)\""
@@ -383,70 +389,65 @@ class JGIOperator:
             with open(cookie_file, 'rt') as f:
                 cookies_dict = json.loads(f.read())
             self._cookie = requests.utils.cookiejar_from_dict(cookies_dict)
-            logger.debug(f'update self._cookie from local, self._cookie = {self._cookie}')
+            logger.debug(f'update self._cookie from [local], self._cookie = {self._cookie}')
         else:
-            logger.debug(f'update self._cookie from JGI website, trying...')
+            logger.debug(f'update self._cookie from [JGI website], trying...')
             headers = {'User-Agent': self._user_agent}
             data = {
                 'login': self.config.info['user'],
                 'password': self.config.info['password'],
                 'commit': 'Sign In'
             }
-            # set session
-            s = requests.session()
-            # get response
-            if self._proxy_ip:
-                retry_count = 0
-                while True:
+
+            retry_count = 0
+            while True:
+                with requests.session() as s:  # set session
+                    # requests.session和直接访问的主要区别在于会话的保持和请求效率。
+                    # - 会话保持, 会话能让我们在跨请求的时候保持某些参数，比如在同一个session实例发出的所有请求之间保持cookie信息。
+                    #            这对于需要登录状态的请求特别有用，因为登录信息可以在整个会话期间保持，而不需要每次请求时都重新输入。
+                    # - 请求效率: 使用requests.session可以避免在每次发送请求时都将cookie信息放到请求内容中，因为session对象能够
+                    #            自动获取到cookie并且可以在下一次请求时自动带上。这可以提高请求效率。
                     if retry_count > self.nretry:
-                        logger.error('proxy seems error...')
-                        s.close()
-                        self._clean_exit(
+                        logger.error(f'retry_count ({retry_count}) reaching max of self.nretry ({self.nretry})...')
+                        self._clean_exit(  # exit
                             exit_message='exit with error',
                             exit_code=1,
                             rm_cookie=True,
                             rm_xml=False if self.xml else False,
                             logger=logger
-                        )
-
+                        )  # exit
                     try:
-                        response = s.post(url, headers=headers, data=data, timeout=self.timeout,
-                                          proxies=self._proxies)
-                        logger.debug('request.post seems success')
-                        break
+                        with s.post(url, headers=headers, data=data, timeout=self.timeout,
+                                    proxies=self._proxies) as response:
+                            logger.debug('request.post seems success')
+                            # check response status code
+                            logger.debug(f'check response status code: {response.status_code}')
+                            if response.status_code == 200:
+                                logger.debug('login successes, get cookie...')
+                                # save cookie to file
+                                logger.debug(f'save cookie to {cookie_file}')
+                                cookies_dict = requests.utils.dict_from_cookiejar(s.cookies)
+                                cookies_str = json.dumps(cookies_dict)
+
+                                with open(cookie_file, 'wt') as f:
+                                    f.write(cookies_str)
+                                logger.debug(f'successfully login, write cookie @ {cookie_file}')
+                                break  # 跳出循环进入
+                            else:
+                                logger.critical(
+                                    "Couldn't connect with server. Please check Internet connection and retry.")
+                                self._clean_exit(
+                                    exit_message='exit with error',
+                                    exit_code=1,
+                                    rm_cookie=True,
+                                    rm_xml=False if self.xml else False,
+                                    logger=logger
+                                )
                     except Exception:
                         # 删除代理池中代理 if self._proxy_ip not None
                         logger.debug(f'request.post seems fail, remove proxy ({self._proxy_ip}) in pool')
                         self._proxy_pool.delete_proxy(self._proxy_ip)
                         retry_count += 1
-            else:
-                response = s.post(url, headers=headers, data=data, timeout=self.timeout)
-
-            # check response status code
-            logger.debug(f'check response status code: {response.status_code}')
-            if response.status_code == 200:
-                logger.debug('login successes, get cookie...')
-                # save cookie to file
-                logger.debug(f'save cookie to {cookie_file}')
-                cookies_dict = requests.utils.dict_from_cookiejar(s.cookies)
-                cookies_str = json.dumps(cookies_dict)
-
-                with open(cookie_file, 'wt') as f:
-                    f.write(cookies_str)
-                logger.debug(f'successfully login, write cookie @ {cookie_file}')
-            else:
-                logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
-                s.close()
-                self._clean_exit(
-                    exit_message='exit with error',
-                    exit_code=1,
-                    rm_cookie=True,
-                    rm_xml=False if self.xml else False,
-                    logger=logger
-                )
-            s.close()
-
-        # step 04 query xml info
 
     # step 04 query
     def query(self):
@@ -460,30 +461,36 @@ class JGIOperator:
         with open(cookie_file, 'rt') as f:
             cookies_dict = json.loads(f.read())
         cookies = requests.utils.cookiejar_from_dict(cookies_dict)
-        # logger.debug(f'requests.get: url={url}, params={params}, header={headers}')
-        response = requests.get(
-            url,
-            params=params,
-            cookies=cookies,
-            allow_redirects=True,
-            stream=True,
-            headers=headers,
-            timeout=self.timeout,
-            proxies=self._proxies
-        )
-        if self._proxies:
-            logger.debug(f'query using IP: {self._proxy_ip}')
-        try:
-            response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
-        except HTTPError:
-            logger.critical(f'response status: {response.status_code}')
-            logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
+        with requests.get(
+                url,
+                params=params,
+                cookies=cookies,
+                allow_redirects=True,
+                stream=True,
+                headers=headers,
+                timeout=self.timeout,
+                proxies=self._proxies
+        ) as response:
+            if self._proxies:
+                logger.debug(f'query using IP: {self._proxy_ip}')
+            try:
+                response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+            except HTTPError:
+                logger.critical(f'response status: {response.status_code}')
+                logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
+                self._clean_exit(
+                    exit_message='exit with HTTPError',
+                    exit_code=1,
+                    rm_cookie=False,
+                    rm_xml=True,
+                    logger=logger
+                )
 
-        xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
-        with open(xml_file, "wb") as f:
-            # 使用二进制写入模式（"wb"）来保存结果文件，因为response.content返回的是一个字节字符串
-            logger.debug(f'successfully query, write xml @ {xml_file}')
-            f.write(response.content)
+            xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+            with open(xml_file, "wb") as f:
+                # 使用二进制写入模式（"wb"）来保存结果文件，因为response.content返回的是一个字节字符串
+                logger.debug(f'successfully query, write xml @ {xml_file}')
+                f.write(response.content)
 
     # step 05 parse xml info to update url
     def parse_xml(self):
@@ -565,13 +572,12 @@ class JGIOperator:
         self._urls_to_get = sorted(self._urls_to_get)
         filenames = [u.split("/")[-1] for u in self._urls_to_get]
 
-        # logger.debug(f'self._desired_categories = {self._desired_categories}')
+        logger.debug(f'self._desired_categories = {str(self._desired_categories)[:400]}...(omit)...')
         file_sizes = self._get_sizes(self._desired_categories, sizes_by_url={})
         # logger.debug(f'file_sizes = {file_sizes}')
         total_size = sum(filter(None, [file_sizes[url] for url in self._urls_to_get]))
         size_string = self._byte_convert(total_size)
-        num_files = len(self._urls_to_get)
-        logger.info("Total download size for {} files: {}".format(num_files, size_string))
+        logger.info(f"Total download size for {len(self._urls_to_get)} files: {size_string}")
 
         if self.interactive:
             select = input("Continue? (y/n/b/p for yes/no/back/preview files): ").lower()
@@ -600,8 +606,10 @@ class JGIOperator:
                 logger.debug('!!! re-call self.download position2')
                 self.download(logger=logger)
         else:  # non interactive
-            if self.regex or self.all_get:
+            if self.regex or self.all_get or self.log_fails:
                 self._failed_urls, _ = self._download_list(self._urls_to_get, logger=logger)
+            else:
+                raise BioatParameterFormatError
 
         logger.info("Finished downloading {} files.".format(len(self._downloaded_files)))
 
@@ -861,21 +869,22 @@ class JGIOperator:
                 "l",  # re-download log_fails mode
         ):
             for k, v in sorted(self._dict_to_get.items()):
-                for u in v.values():
+                for url in v.values():
+                    # logger.debug(f'deal with v.values() = {str(v.values())[:200]}...(omit)...')
                     if regex_filter:
-                        fn = re.search(r".+/([^\/]+$)", u).group(1)
+                        # fn = re.search(r".+/([^\/]+$)", u).group(1)
+                        fn = re.search(r".+/([^/]+$)", url).group(1)
                         match = regex_filter.search(fn)
                         if not match:
                             # 匹配失败
                             self._urls_to_get = set(self._urls_to_get)
-                            self._urls_to_get.discard(u)
+                            self._urls_to_get.discard(url)
                             continue  # 进入下一个文件进行判断
-                    elif user_choice == "l" and u not in self.log_fails:
+                    elif user_choice == "l" and url not in self._log_fails_loaded:
                         continue  # 无需添加此文件，进入下一个文件进行判断
                     # final add to download
-                    # logger.debug(f'self._urls_to_get = {self._urls_to_get}')
                     self._urls_to_get = set(self._urls_to_get)
-                    self._urls_to_get.add(u)  # self._urls_to_get is a set()
+                    self._urls_to_get.add(url)  # self._urls_to_get is a set()
         else:
             # interactive
             # 选2:3-5这种
@@ -931,7 +940,7 @@ class JGIOperator:
             if not loop:
                 break
 
-            if error_counter >= self.nretry:
+            if error_counter > self.nretry:
                 logger.critical(f'error_counter is reaching to max size -> self.nretry ={self.nretry}')
                 # FUTURE, 支持了断点续传再改回来
                 # logger.warning(
@@ -944,7 +953,7 @@ class JGIOperator:
             if os.path.exists(filename):  # filename exists
                 # check md5 for filename
                 if not self._is_broken(filename, md5_hash=md5_hash, sizeInBytes=sizeInBytes, logger=logger):
-                    logger.debug(f'File {filename} exists and passed md5 checking. Go on next task.')
+                    logger.info(f'File {filename} exists and passed md5 checking. Go on next task.')
                     success = True
                     loop = False
                     continue
@@ -955,7 +964,7 @@ class JGIOperator:
                             logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
                             os.remove(filename)
                             os.rename(filename + '.tmp', filename)
-                            logger.debug(f'File {filename} passed md5 checking. Go on next task.')
+                            logger.debug(f'File {filename} exists and passed md5 checking. Go on next task.')
                             success = True
                             loop = False
                             continue
@@ -1010,115 +1019,108 @@ class JGIOperator:
 
             # 想在Python中在不下载文件的情况下获取文件大小，可以使用requests库发送HEAD请求
             # HEAD请求不会下载文件，而是仅获取关于文件的一些元数据，如文件大小
-            pre_response = requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout,
-                                         proxies=self._proxies)
-            if self._proxies:
-                logger.debug(f'requests.head using IP: {self._proxy_ip}')
-            # check response status
-            try:
-                pre_response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
-            except HTTPError:
-                error_counter += 1
-                logger.warning(
-                    'encounter HTTPError;'
-                    f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
-                    'could not connect with server. Retry after 10s...'
-                )
-                time.sleep(10)
-                logger.info('start next loop')
-                loop = True
-                pre_response.close()
-                continue  # next try
-            except Exception as e:
-                error_counter += 1
-                logger.warning(
-                    f'encounter {e} (error);'
-                    f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
-                    'unexpected error. Retry after 10s...'
-                )
-                time.sleep(10)
-                logger.info('start next loop')
-                success = False
-                loop = True
-                pre_response.close()
-                continue  # next try
+            with requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout,
+                               proxies=self._proxies) as pre_response:
+                if self._proxies:
+                    logger.debug(f'requests.head using IP: {self._proxy_ip}')
+                # check response status
+                try:
+                    pre_response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+                except HTTPError:
+                    error_counter += 1
+                    logger.warning(
+                        'encounter HTTPError;'
+                        f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
+                        'could not connect with server. Retry after 10s...'
+                    )
+                    time.sleep(10)
+                    logger.info('start next loop')
+                    loop = True
+                    continue  # next try
+                except Exception as e:
+                    error_counter += 1
+                    logger.warning(
+                        f'encounter {e} (error);'
+                        f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
+                        'unexpected error. Retry after 10s...'
+                    )
+                    time.sleep(10)
+                    logger.info('start next loop')
+                    success = False
+                    loop = True
+                    continue  # next try
 
-            # get file size, if pre_response.header do not have it, replace it from sizeInBytes in xml file
-            remote_file_size = int(pre_response.headers.get("Content-Length", 0))
-            remote_file_size = remote_file_size if remote_file_size != 0 else sizeInBytes
-            pre_response.close()
-            # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
-            # if temp_size > remote_file_size:
-            #     # error
-            #     logger.error('local size = {temp_size} > remote_file_size = {remote_file_size}, nretry...')
-            #     error_counter += 1
-            #     os.remove(filename + '.tmp')
-            #     success = False
-            #     loop = True
-            #     pre_response.close()
-            #     continue
+                # get file size, if pre_response.header do not have it, replace it from sizeInBytes in xml file
+                remote_file_size = int(pre_response.headers.get("Content-Length", 0))
+                remote_file_size = remote_file_size if remote_file_size != 0 else sizeInBytes
+                # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+                # if temp_size > remote_file_size:
+                #     # error
+                #     logger.error('local size = {temp_size} > remote_file_size = {remote_file_size}, nretry...')
+                #     error_counter += 1
+                #     os.remove(filename + '.tmp')
+                #     success = False
+                #     loop = True
+                #     continue
 
             # core part for download
             # re-request use fixed headers
             # https://cizixs.com/2015/10/06/http-resume-download/
             # headers["Range"] = f"bytes={temp_size}-"
             # /FUTURE: 由于JGI不支持断点续传，这个代码以后再用
-            file_response = requests.get(
-                url,
-                cookies=cookies,
-                stream=True,  # 如果要下载大文件的话，就将steam设置为True，慢慢下载，而不是等整个文件下载完才返回。
-                headers=headers,
-                timeout=self.timeout,
-                proxies=self._proxies
-            )
-            if self._proxies:
-                logger.debug(f'requests.get using IP: {self._proxy_ip}')
-            # 分段下载
-            # FUTURE: 由于JGI不支持断点续传，代码以后再测试
-            # print(file_response.headers)
-            # print(file_response.status_code)
-            # ################### core ########################
-            with(open(filename + '.tmp', 'ab')) as f, tqdm(
-                    desc=filename,
-                    total=remote_file_size,
-                    # initial=temp_size,  # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
-                    unit='iB',
-                    unit_scale=True,
-                    unit_divisor=1024,
-            ) as pbar:
-                try:
-                    for data in file_response.iter_content(chunk_size=1024):
-                        data_size = f.write(data)
-                        pbar.update(data_size)
-                    file_response.close()
-                except InvalidChunkLength or ProtocolError or ChunkedEncodingError as e:
-                    logger.error(f"Invalid chunk encoding {e}")
+            with requests.get(
+                    url,
+                    cookies=cookies,
+                    stream=True,  # 如果要下载大文件的话，就将steam设置为True，慢慢下载，而不是等整个文件下载完才返回。
+                    headers=headers,
+                    timeout=self.timeout,
+                    proxies=self._proxies
+            ) as file_response:
+                if self._proxies:
+                    logger.debug(f'requests.get using IP: {self._proxy_ip}')
+                # 分段下载
+                # FUTURE: 由于JGI不支持断点续传，代码以后再测试
+                # print(file_response.headers)
+                # print(file_response.status_code)
+                # ################### core ########################
+                with(open(filename + '.tmp', 'ab')) as f, tqdm(
+                        desc=filename,
+                        total=remote_file_size,
+                        # initial=temp_size,  # FUTURE: 由于JGI不支持断点续传，这个代码以后再用
+                        unit='iB',
+                        unit_scale=True,
+                        unit_divisor=1024,
+                ) as pbar:
+                    try:
+                        for data in file_response.iter_content(chunk_size=1024):
+                            data_size = f.write(data)
+                            pbar.update(data_size)
+                    except InvalidChunkLength or ProtocolError or ChunkedEncodingError as e:
+                        logger.error(f"Invalid chunk encoding {e}")
+                        success = False
+                        loop = True
+                        continue
+                # ################### /core ########################
+                # finish download
+                # start check
+                logger.debug(f'File {filename}.tmp seems done, checking md5 value')
+                # 如果filename md5通过则删除tmp
+                if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size,
+                                       logger=logger):
+                    logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
+                    os.rename(filename + '.tmp', filename)
+                    logger.debug(f'File {filename} passed md5 checking. Go on next task.')
+                    success = True
+                    loop = False
+                    continue  # next task
+                else:
+                    error_counter += 1
+                    logger.info(f'File {filename}.tmp is broken! Removing and retry after 2 seconds...')
+                    time.sleep(2)
+                    os.remove(filename + '.tmp')
                     success = False
                     loop = True
-                    file_response.close()
-                    continue
-            # ################### /core ########################
-            # finish download
-            # start check
-            logger.debug(f'File {filename}.tmp seems done, checking md5 value')
-            # 如果filename md5通过则删除tmp
-            if not self._is_broken(filename + '.tmp', md5_hash=md5_hash, sizeInBytes=remote_file_size, logger=logger):
-                logger.debug(f'File {filename}.tmp passed md5 checking! Renaming')
-                os.rename(filename + '.tmp', filename)
-                logger.debug(f'File {filename} passed md5 checking. Go on next task.')
-                success = True
-                loop = False
-                file_response.close()
-                continue  # next task
-            else:
-                error_counter += 1
-                logger.info(f'File {filename}.tmp is broken! Removing and retry after 5 seconds...')
-                time.sleep(5)
-                os.remove(filename + '.tmp')
-                success = False
-                loop = True
-                file_response.close()
-                continue  # next try
+                    continue  # next try
         return filename, success
 
     def _download_list(self, url_list, logger=None):
@@ -1154,8 +1156,10 @@ class JGIOperator:
             if not success:
                 logger.warning(f'File {fn} failed to download, appending to the file '
                                f'@ {self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)}. '
-                               f'You can use parameter --log_fails to re-download these failed files'
+                               f'You can use parameter --log_fails to re-download these failed files '
                                f'after this run finish.')
+                logger.warning('tips: it is possible that the md5 value on JGI is wrong. If retry failed too, you can '
+                               'download it from the website manually!')
                 broken_urls.append(url)
                 broken_files.append(fn)
             else:
