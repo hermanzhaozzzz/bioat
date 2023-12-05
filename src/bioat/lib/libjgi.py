@@ -345,8 +345,9 @@ class JGIOperator:
         elif self.log_fails:
             # load failed info from log file if provided
             # filename see: class JGIConfig.FILENAME_TEMPLATE_LOG_FAIL
-            self.query_info = os.path.basename(self.log_fails).split('.')[1].split('_')[0]
+            self.query_info = os.path.basename(self.log_fails).split('.')[1].replace('failed_', '')
 
+            logger.debug(f'get self.query_info = {self.query_info} from self.log_fails = {self.log_fails}')
             with open(self.log_fails, 'rt') as f:
                 self.log_fails = f.read().splitlines()
         elif self.xml:
