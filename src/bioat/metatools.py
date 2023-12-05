@@ -21,6 +21,8 @@ class MetaTools:
             all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
+            # proxy_pool: str | None = None,
+            proxy_pool = "http://zhaohuanan.cc:5010",
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,
@@ -49,6 +51,7 @@ class MetaTools:
             configuration
         :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
             files listed by JGI for the query
+        :param proxy_pool: str | None = None, http://zhaohuanan.cc:5010
         :param syntax_help: (doc mode) syntax_help
         :param usage: (doc mode) print verbose usage information and exit
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
@@ -65,17 +68,12 @@ class MetaTools:
             all_get=all_get,
             overwrite_conf=overwrite_conf,
             filter_files=filter_files,
+            proxy_pool=proxy_pool,
             syntax_help=syntax_help,
             usage=usage,
             log_level=log_level
         )
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        logger.debug('checker for doc mode')
-        operator.run_doc()
-        logger.debug('checker for input')
-        operator.parse_input()
-        logger.debug('run login')
-        operator.login()
         logger.debug('run query')
         operator.query()
         logger.debug('parse xml to json')

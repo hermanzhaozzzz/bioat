@@ -16,7 +16,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.utils import cookiejar_from_dict
 from tqdm import tqdm
 from urllib3.exceptions import InvalidChunkLength, ProtocolError
-
+from bioat.lib.libspider import get_random_user_agents, ProxyPool
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
 
@@ -82,9 +82,9 @@ class JGIConfig:
     URL_JGI_MAIN = "https://genome.jgi.doe.gov"  # url home for jgi-img database
     URL_JGI_LOGIN = 'https://signon.jgi.doe.gov/signon/create'  # url login
     URL_JGI_FETCH_XML = "https://genome.jgi.doe.gov/portal/ext-api/downloads/get-directory"  # url fetch xml
-    FILENAME_TEMPLATE_COOKIE = "jgi-xml-query.cookie_{}.cookie"
     FILENAME_TEMPLATE_XML = "jgi-xml-query.result_{}.xml"
     FILENAME_TEMPLATE_LOG_FAIL = "jgi-xml-query.failed_{}.log"
+    FILENAME_COOKIE = os.path.join(HOME, '.bioat', 'JGI', "cookie")
     FILENAME_CONFIG_PATH = os.path.join(HOME, '.bioat', 'JGI', "account.conf")
 
     def __init__(self, overwrite_conf: bool = False, logger=None):
@@ -239,6 +239,7 @@ class JGIOperator:
             all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
+            proxy_pool: str | None = None,
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,
@@ -266,6 +267,8 @@ class JGIOperator:
         self._downloaded_files = list()
         self._failed_urls = list()
         self._desired_categories = dict()
+        self._cookie = None
+        self._user_agent = get_random_user_agents()
         # From other obj #
         # load configs; auto check if you need overwrite user info or not
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name='class: JGIConfig')
@@ -273,10 +276,25 @@ class JGIOperator:
         self.interactive = False
         # load docs;
         self.docs = JGIDoc
+        # load proxy
+        if proxy_pool:
+            self._proxy_pool = ProxyPool(url=proxy_pool)
+            self._proxy_ip = self._proxy_pool.get_proxy().get('proxy')
+            logger.info(f'use proxy mode! proxy_pool = {proxy_pool}')
+            logger.info(f'now proxy IP = {self._proxy_ip}')
+        else:
+            self._proxy_pool = None
+            self._proxy_ip = None
         # / From other obj
+        logger.debug('checker for doc mode')
+        self._run_doc()
+        logger.debug('checker for input')
+        self._parse_input()
+        logger.debug('run login')
+        self._load_cookie()
 
     # step 01 print and exit
-    def run_doc(self):
+    def _run_doc(self):
         """Checker for doc mode.
 
         print syntax_help and/or usage if these parameters are defined. And then, exit progress.
@@ -294,7 +312,7 @@ class JGIOperator:
             # finally exit
 
     # step 02 update self.query_info and self.log_fails and followed by self.login
-    def parse_input(self):
+    def _parse_input(self):
         """Checker for input.
 
         A checker for this rule: ONLY ONE of the parameters ('query_info', 'xml' and 'log_fails') can be specified;
@@ -350,40 +368,66 @@ class JGIOperator:
             sys.exit('Done. exit.')
 
     # step 03 login
-    def login(self):
+    def _load_cookie(self):
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
 
         # prepare info
         url = self.config.URL_JGI_LOGIN
-        cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
-        }
-        data = {
-            'login': self.config.info['user'],
-            'password': self.config.info['password'],
-            'commit': 'Sign In'
-        }
-        # set session
-        s = requests.session()
-        # get response
-        response = s.post(url, headers=headers, data=data, timeout=self.timeout)
+        cookie_file = self.config.FILENAME_COOKIE
 
-        # check response status code
-        logger.debug(f'check response status code: {response.status_code}')
-        if response.status_code == 200:
-            logger.debug('login successes, get cookie...')
-            # save cookie to file
-            logger.debug(f'save cookie to {cookie_file}')
-            cookies_dict = requests.utils.dict_from_cookiejar(s.cookies)
-            cookies_str = json.dumps(cookies_dict)
-
-            with open(cookie_file, 'wt') as f:
-                f.write(cookies_str)
-            logger.debug(f'successfully login, write cookie @ {cookie_file}')
+        if os.path.exists(cookie_file):
+            # if local
+            with open(cookie_file, 'rt') as f:
+                cookies_dict = json.loads(f.read())
+            self._cookie = requests.utils.cookiejar_from_dict(cookies_dict)
+            logger.debug(f'update self._cookie from local, self._cookie = {self._cookie}')
         else:
-            logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
-            self._clean_exit(logger=logger)
+            logger.debug(f'update self._cookie from JGI website, trying...')
+            headers = {'User-Agent': self._user_agent}
+            data = {
+                'login': self.config.info['user'],
+                'password': self.config.info['password'],
+                'commit': 'Sign In'
+            }
+            # set session
+            s = requests.session()
+            # get response
+            if self._proxy_ip:
+                retry_count = 0
+                while True:
+                    if retry_count > self.nretry:
+                        logger.error('proxy seems error...')
+                        s.close()
+                        self._clean_exit()
+
+                    try:
+                        response = s.post(url, headers=headers, data=data, timeout=self.timeout,
+                                          proxies={"http": f"http://{self._proxy_ip}"})
+                        break
+                    except Exception:
+                        # # 删除代理池中代理 if self._proxy_ip not None
+                        self._proxy_pool.delete_proxy(self._proxy_ip)
+                        retry_count += 1
+            else:
+                response = s.post(url, headers=headers, data=data, timeout=self.timeout)
+
+            # check response status code
+            logger.debug(f'check response status code: {response.status_code}')
+            if response.status_code == 200:
+                logger.debug('login successes, get cookie...')
+                # save cookie to file
+                logger.debug(f'save cookie to {cookie_file}')
+                cookies_dict = requests.utils.dict_from_cookiejar(s.cookies)
+                cookies_str = json.dumps(cookies_dict)
+
+                with open(cookie_file, 'wt') as f:
+                    f.write(cookies_str)
+                logger.debug(f'successfully login, write cookie @ {cookie_file}')
+            else:
+                logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
+                s.close()
+                self._clean_exit(logger=logger)
+            s.close()
 
         # step 04 query xml info
 
@@ -392,10 +436,8 @@ class JGIOperator:
         logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
         # prepare info
         url = self.config.URL_JGI_FETCH_XML
-        cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
-        }
+        cookie_file = self.config.FILENAME_COOKIE
+        headers = {'User-Agent': self._user_agent}
         params = {"organism": self.query_info}
 
         with open(cookie_file, 'rt') as f:
@@ -569,7 +611,7 @@ class JGIOperator:
         remove_temp = True
         if self.interactive:
             keep_temp = input(f"Keep temporary files ('{self.config.FILENAME_TEMPLATE_XML.format(self.query_info)}' "
-                              f"and '{self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)}')? (y/n): ")
+                              f"and '{self.config.FILENAME_COOKIE}')? (y/n): ")
             if keep_temp.lower() in "y, yes":
                 remove_temp = False
         elif failed_happen:  # failed files in non-interactive mode
@@ -609,7 +651,7 @@ class JGIOperator:
         if not logger:
             logger = get_logger(level=self.log_level, module_name=__module_name__,
                                 func_name=sys._getframe().f_code.co_name)
-        to_remove = [self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)]
+        to_remove = [self.config.FILENAME_COOKIE]
 
         # don't delete xml file if supplied by user
         if not self.xml and remove_temp is True:
@@ -916,10 +958,8 @@ class JGIOperator:
             if not url.startswith('http'):
                 url = f'{self.config.URL_JGI_MAIN}{url}'
             logger.debug(f'download aim file from url = {url}')
-            cookie_file = self.config.FILENAME_TEMPLATE_COOKIE.format(self.query_info)
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36',
-            }
+            cookie_file = self.config.FILENAME_COOKIE
+            headers = {'User-Agent': self._user_agent}
             with open(cookie_file, 'rt') as f:
                 cookies_dict = json.loads(f.read())
             cookies = requests.utils.cookiejar_from_dict(cookies_dict)
@@ -1054,7 +1094,7 @@ class JGIOperator:
             if current_time - start_time > 300:
                 logger.info('refresh the session cookie every 5 minutes')
                 logger.info('run self.login.')
-                self.login()
+                self._load_cookie()
                 logger.info('login succeed.')
                 start_time = time.time()
 
