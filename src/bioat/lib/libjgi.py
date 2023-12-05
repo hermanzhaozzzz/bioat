@@ -557,7 +557,9 @@ class JGIOperator:
 
     # step 06 download from url
     def download(self, logger=None):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        if not logger:
+            logger = get_logger(level=self.log_level, module_name=__module_name__,
+                                func_name=sys._getframe().f_code.co_name)
         self._decision_tree(logger=logger)
 
         self._urls_to_get = sorted(self._urls_to_get)
@@ -591,7 +593,7 @@ class JGIOperator:
                 logger.debug('!!! re-call self.download position1')
                 self.download(logger=logger)
             elif select == 'y' or select == '':
-                self._download_list(self._urls_to_get, logger=logger)
+                self._failed_urls, _ = self._download_list(self._urls_to_get, logger=logger)
             else:
                 logger.info('illegal selection, back to select files...')
                 self.interactive = True
@@ -599,17 +601,18 @@ class JGIOperator:
                 self.download(logger=logger)
         else:  # non interactive
             if self.regex or self.all_get:
-                self._download_list(self._urls_to_get, logger=logger)
+                self._failed_urls, _ = self._download_list(self._urls_to_get, logger=logger)
 
         logger.info("Finished downloading {} files.".format(len(self._downloaded_files)))
 
+        failed_happen = False
         if self.interactive:
             if self._failed_urls:
                 n_broken = len(self._failed_urls)
                 nretry_broken = input(
                     "{} files failed to download; nretry them? (y/n): ".format(n_broken))
                 if nretry_broken.lower() in ("yes", "y"):
-                    self._download_list(self._failed_urls, logger=logger)
+                    self._failed_urls, _ = self._download_list(self._failed_urls, logger=logger)
             # Kindly offer to unpack files, if files remain after error check
             if self._downloaded_files:
                 decompress = input(("Decompress all downloaded files? "
@@ -626,7 +629,7 @@ class JGIOperator:
             if self._failed_urls:
                 # Write failed URLs to a local log file.
                 fail_log_file = self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
-                logger.info(f"{len(self._failed_urls)} failed downloads logged to {fail_log_file}")
+                logger.info(f"{len(self._failed_urls)} failed downloads record into {fail_log_file}")
                 # write failed URLs to local file
                 with open(fail_log_file, 'wt') as f:
                     f.write('\n'.join(self._failed_urls))
@@ -635,6 +638,7 @@ class JGIOperator:
                 failed_happen = False
 
         # Clean up and exit
+
         if self.interactive:
             # interactive
             keep_temp = input(f"Keep temporary files ('{self.config.FILENAME_TEMPLATE_XML.format(self.query_info)}' "
@@ -1160,8 +1164,8 @@ class JGIOperator:
             u for u, f in zip(broken_urls, broken_files)
             if f not in self._downloaded_files
         ]
-
-        return broken_urls
+        logger.debug(f' self._download_list return broken_urls = {broken_urls}, broken_files = {broken_files}')
+        return broken_urls, broken_files
 
     def _extract_file(self, file_path, keep_compressed=False, logger=None):
         """
