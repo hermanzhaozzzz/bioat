@@ -15,14 +15,14 @@ class MetaTools:
             xml: str | None = None,
             log_fails: str | None = None,
             # runtime params
-            nretry: int = 4,
+            nretry: int = 2,
             timeout: int = 60,
             regex: str | None = None,
             all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
             # proxy_pool: str | None = None,
-            proxy_pool = "http://zhaohuanan.cc:5010",
+            proxy_pool="http://zhaohuanan.cc:5010",  # TODO for test
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,

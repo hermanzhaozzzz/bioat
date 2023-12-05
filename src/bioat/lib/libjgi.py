@@ -280,11 +280,13 @@ class JGIOperator:
         if proxy_pool:
             self._proxy_pool = ProxyPool(url=proxy_pool)
             self._proxy_ip = self._proxy_pool.get_proxy().get('proxy')
+            self._proxies = {"http": f"http://{self._proxy_ip}"}
             logger.info(f'use proxy mode! proxy_pool = {proxy_pool}')
             logger.info(f'now proxy IP = {self._proxy_ip}')
         else:
             self._proxy_pool = None
             self._proxy_ip = None
+            self._proxies = None
         # / From other obj
         logger.debug('checker for doc mode')
         self._run_doc()
@@ -398,14 +400,22 @@ class JGIOperator:
                     if retry_count > self.nretry:
                         logger.error('proxy seems error...')
                         s.close()
-                        self._clean_exit()
+                        self._clean_exit(
+                            exit_message='exit with error',
+                            exit_code=1,
+                            rm_cookie=True,
+                            rm_xml=False if self.xml else False,
+                            logger=logger
+                        )
 
                     try:
                         response = s.post(url, headers=headers, data=data, timeout=self.timeout,
-                                          proxies={"http": f"http://{self._proxy_ip}"})
+                                          proxies=self._proxies)
+                        logger.debug('request.post seems success')
                         break
                     except Exception:
-                        # # 删除代理池中代理 if self._proxy_ip not None
+                        # 删除代理池中代理 if self._proxy_ip not None
+                        logger.debug(f'request.post seems fail, remove proxy ({self._proxy_ip}) in pool')
                         self._proxy_pool.delete_proxy(self._proxy_ip)
                         retry_count += 1
             else:
@@ -426,7 +436,13 @@ class JGIOperator:
             else:
                 logger.critical("Couldn't connect with server. Please check Internet connection and nretry.")
                 s.close()
-                self._clean_exit(logger=logger)
+                self._clean_exit(
+                    exit_message='exit with error',
+                    exit_code=1,
+                    rm_cookie=True,
+                    rm_xml=False if self.xml else False,
+                    logger=logger
+                )
             s.close()
 
         # step 04 query xml info
@@ -452,6 +468,7 @@ class JGIOperator:
             stream=True,
             headers=headers,
             timeout=self.timeout,
+            proxies=self._proxies
         )
         try:
             response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
@@ -527,7 +544,13 @@ class JGIOperator:
                 "categories:\n---\n{}\n---"
                 .format(self.query_info, "\n".join(self.config.info['categories']))
             )
-            self._clean_exit(logger=logger)
+            self._clean_exit(
+                exit_message='exit with error',
+                exit_code=1,
+                rm_cookie=False,
+                rm_xml=False if self.xml else False,
+                logger=logger
+            )
 
     # step 06 download from url
     def download(self, logger=None):
@@ -552,7 +575,13 @@ class JGIOperator:
                     print('\n'.join(filenames))
                     select = input("Continue? (y/n/b/p for yes/no/back/preview files): ").lower()
             if select == "n":
-                self._clean_exit("ABORTING DOWNLOAD", logger=logger)
+                self._clean_exit(
+                    exit_message="ABORTING DOWNLOAD",
+                    exit_code=0,
+                    rm_cookie=False,
+                    rm_xml=False if self.xml else False,
+                    logger=logger
+                )
             elif select == "b":
                 logger.info('back to select files...')
                 self.interactive = True
@@ -595,33 +624,46 @@ class JGIOperator:
             Write failed URLs to a local log file.
 
             """
-            fail_log = self.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
-            logger.info(
-                "{} failed downloads logged to {}".format(len(self._failed_urls), fail_log))
+            fail_log = self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
+            logger.info(f"{len(self._failed_urls)} failed downloads logged to {fail_log}")
             # write failed URLs to local file
-            with open(fail_log, 'w') as f:
+            with open(fail_log, 'wt') as f:
                 f.write('\n'.join(self._failed_urls))
             failed_happen = True
         else:
             failed_happen = False
 
         # Clean up and exit
-        # "cookies" file is always created
-        exit_message = None
-        remove_temp = True
         if self.interactive:
+            # interactive
             keep_temp = input(f"Keep temporary files ('{self.config.FILENAME_TEMPLATE_XML.format(self.query_info)}' "
                               f"and '{self.config.FILENAME_COOKIE}')? (y/n): ")
+            exit_message = 'User choose to exit'
             if keep_temp.lower() in "y, yes":
-                remove_temp = False
-        elif failed_happen:  # failed files in non-interactive mode
-            exit_message = (
-                'Some files failed downloading')
-            remove_temp = False
+                rm_cookie = False
+                rm_xml = False
+            else:
+                rm_cookie = True
+                rm_xml = True
+        else:
+            # non-interactive
+            rm_xml = False if self.xml else True
+            if failed_happen:  # failed files in non-interactive mode
+                exit_message = 'Some files failed downloading'
+                rm_cookie = True
+            else:
+                exit_message = 'Exit.'
+                rm_cookie = False
 
         exit_code = 1 if failed_happen else 0
 
-        self._clean_exit(exit_message=exit_message, exit_code=exit_code, remove_temp=remove_temp, logger=logger)
+        self._clean_exit(
+            exit_message=exit_message,
+            exit_code=exit_code,
+            rm_cookie=rm_cookie,
+            rm_xml=rm_xml,
+            logger=logger
+        )
 
     def _byte_convert(self, byte_size):
         """
@@ -642,7 +684,7 @@ class JGIOperator:
         size_string = "{:.2f} {}".format(adjusted, unit)
         return size_string
 
-    def _clean_exit(self, exit_message=None, exit_code=0, remove_temp=True, logger=None):
+    def _clean_exit(self, exit_message=None, exit_code=0, rm_cookie=False, rm_xml=False, logger=None):
         """
         Perform a sys.exit() while removing temporary files and
         informing the user.
@@ -651,26 +693,23 @@ class JGIOperator:
         if not logger:
             logger = get_logger(level=self.log_level, module_name=__module_name__,
                                 func_name=sys._getframe().f_code.co_name)
-        to_remove = [self.config.FILENAME_COOKIE]
+        to_remove = []
 
-        # don't delete xml file if supplied by user
-        if not self.xml and remove_temp is True:
-            try:
-                to_remove.append(self.config.FILENAME_TEMPLATE_XML.format(self.query_info))
-            except NameError:
-                pass
+        if rm_xml:
+            xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
+            to_remove.append(xml_file)
+            logger.info(f'Removing xml @ {xml_file}')
+        if rm_cookie:
+            to_remove.append(self.config.FILENAME_COOKIE)
+            logger.info(f'Removing cookie @ {self.config.FILENAME_COOKIE}')
         for f in to_remove:
             try:
                 os.remove(f)
             except OSError:
                 continue
-        if remove_temp is True:
-            base_message = "Removing temp files and exiting"
-        else:
-            base_message = "Keeping temp files and exiting"
+
         if exit_message:
             logger.info(exit_message)
-        logger.info(base_message)
         sys.exit(exit_code)
 
     def _check_for_xml(self, filename, logger=None):
@@ -966,7 +1005,8 @@ class JGIOperator:
 
             # 想在Python中在不下载文件的情况下获取文件大小，可以使用requests库发送HEAD请求
             # HEAD请求不会下载文件，而是仅获取关于文件的一些元数据，如文件大小
-            pre_response = requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout)
+            pre_response = requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout,
+                                         proxies=self._proxies)
             # check response status
             try:
                 pre_response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
@@ -1022,6 +1062,7 @@ class JGIOperator:
                 stream=True,  # 如果要下载大文件的话，就将steam设置为True，慢慢下载，而不是等整个文件下载完才返回。
                 headers=headers,
                 timeout=self.timeout,
+                proxies=self._proxies
             )  # 分段下载
             # FUTURE: 由于JGI不支持断点续传，代码以后再测试
             # print(file_response.headers)
@@ -1310,9 +1351,21 @@ class JGIOperator:
         elif choice == 'r':
             return choice
         elif choice == 'q':
-            remove_temp = input("Remove index file? (y/n): ")
-            remove_temp = remove_temp.lower() in ('y', 'yes', '')
-            self._clean_exit(remove_temp=remove_temp, logger=logger)
+            keep_temp = input(f"Keep temporary files ('{self.config.FILENAME_TEMPLATE_XML.format(self.query_info)}' "
+                              f"and '{self.config.FILENAME_COOKIE}')? (y/n): ")
+            if keep_temp.lower() in ('y', 'yes'):
+                rm_cookie = False
+                rm_xml = False
+            else:
+                rm_cookie = True
+                rm_xml = True
+            self._clean_exit(
+                exit_message='User choose to exit',
+                exit_code=0,
+                rm_cookie=rm_cookie,
+                rm_xml=rm_xml,
+                logger=logger
+            )
         else:
             return choice
 
@@ -1366,7 +1419,13 @@ class JGIOperator:
                         start, stop = list(map(int, i.split("-")))
                     except:
                         logger.critical(f"can't parse desired input\n?-->'{i}'")
-                        self._clean_exit(logger=logger)
+                        self._clean_exit(
+                            exit_message='exit with error',
+                            exit_code=1,
+                            rm_cookie=False,
+                            rm_xml=False if self.xml else True,
+                            logger=logger
+                        )
 
                     add_range = list(range(start, stop + 1))
 
