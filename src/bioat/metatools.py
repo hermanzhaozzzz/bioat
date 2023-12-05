@@ -22,7 +22,6 @@ class MetaTools:
             overwrite_conf: bool = False,
             filter_files: bool = False,
             proxy_pool: str | None = None,
-            # proxy_pool="http://zhaohuanan.cc:5010",
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,
@@ -51,7 +50,7 @@ class MetaTools:
             configuration
         :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
             files listed by JGI for the query
-        :param proxy_pool: str | None = None, http://zhaohuanan.cc:5010
+        :param proxy_pool: str | None = None, http://abc.com:port, see https://github.com/hermanzhaozzzz/proxy_pool
         :param syntax_help: (doc mode) syntax_help
         :param usage: (doc mode) print verbose usage information and exit
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
