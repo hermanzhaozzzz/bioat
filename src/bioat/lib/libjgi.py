@@ -603,38 +603,36 @@ class JGIOperator:
 
         logger.info("Finished downloading {} files.".format(len(self._downloaded_files)))
 
-        if self._failed_urls and self.interactive:
-            n_broken = len(self._failed_urls)
-            nretry_broken = input(
-                "{} files failed to download; nretry them? (y/n): ".format(n_broken))
-            if nretry_broken.lower() in ("yes", "y"):
-                self._download_list(self._failed_urls, logger=logger)
-
-        # Kindly offer to unpack files, if files remain after error check
-        if self._downloaded_files and self.interactive:
-            decompress = input(("Decompress all downloaded files? "
-                                "(y/n/k, k=decompress and keep original): "))
-            if decompress != "n":
-                if decompress == "k":
-                    keep_original = True
-                else:
-                    keep_original = False
-                self._decompress_files(self._downloaded_files, keep_original, logger=logger)
-                logger.info("Finished decompressing all files.")
-
-        if self._failed_urls:
-            """
-            Write failed URLs to a local log file.
-
-            """
-            fail_log = self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
-            logger.info(f"{len(self._failed_urls)} failed downloads logged to {fail_log}")
-            # write failed URLs to local file
-            with open(fail_log, 'wt') as f:
-                f.write('\n'.join(self._failed_urls))
-            failed_happen = True
+        if self.interactive:
+            if self._failed_urls:
+                n_broken = len(self._failed_urls)
+                nretry_broken = input(
+                    "{} files failed to download; nretry them? (y/n): ".format(n_broken))
+                if nretry_broken.lower() in ("yes", "y"):
+                    self._download_list(self._failed_urls, logger=logger)
+            # Kindly offer to unpack files, if files remain after error check
+            if self._downloaded_files:
+                decompress = input(("Decompress all downloaded files? "
+                                    "(y/n/k, k=decompress and keep original): "))
+                if decompress != "n":
+                    if decompress == "k":
+                        keep_original = True
+                    else:
+                        keep_original = False
+                    self._decompress_files(self._downloaded_files, keep_original, logger=logger)
+                    logger.info("Finished decompressing all files.")
         else:
-            failed_happen = False
+            # non-interactive
+            if self._failed_urls:
+                # Write failed URLs to a local log file.
+                fail_log_file = self.config.FILENAME_TEMPLATE_LOG_FAIL.format(self.query_info)
+                logger.info(f"{len(self._failed_urls)} failed downloads logged to {fail_log_file}")
+                # write failed URLs to local file
+                with open(fail_log_file, 'wt') as f:
+                    f.write('\n'.join(self._failed_urls))
+                failed_happen = True
+            else:
+                failed_happen = False
 
         # Clean up and exit
         if self.interactive:
