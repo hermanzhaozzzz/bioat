@@ -470,6 +470,8 @@ class JGIOperator:
             timeout=self.timeout,
             proxies=self._proxies
         )
+        if self._proxies:
+            logger.debug(f'query using IP: {self._proxy_ip}')
         try:
             response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
         except HTTPError:
@@ -1007,6 +1009,8 @@ class JGIOperator:
             # HEAD请求不会下载文件，而是仅获取关于文件的一些元数据，如文件大小
             pre_response = requests.head(url, cookies=cookies, stream=True, headers=headers, timeout=self.timeout,
                                          proxies=self._proxies)
+            if self._proxies:
+                logger.debug(f'requests.head using IP: {self._proxy_ip}')
             # check response status
             try:
                 pre_response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
@@ -1063,7 +1067,10 @@ class JGIOperator:
                 headers=headers,
                 timeout=self.timeout,
                 proxies=self._proxies
-            )  # 分段下载
+            )
+            if self._proxies:
+                logger.debug(f'requests.get using IP: {self._proxy_ip}')
+            # 分段下载
             # FUTURE: 由于JGI不支持断点续传，代码以后再测试
             # print(file_response.headers)
             # print(file_response.status_code)

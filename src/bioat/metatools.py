@@ -21,8 +21,8 @@ class MetaTools:
             all_get: bool = False,
             overwrite_conf: bool = False,
             filter_files: bool = False,
-            # proxy_pool: str | None = None,
-            proxy_pool="http://zhaohuanan.cc:5010",  # TODO for test
+            proxy_pool: str | None = None,
+            # proxy_pool="http://zhaohuanan.cc:5010",
             # doc helper
             syntax_help: bool = False,
             usage: bool = False,
