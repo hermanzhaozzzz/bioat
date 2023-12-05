@@ -1147,6 +1147,10 @@ class JGIOperator:
             if current_time - start_time > 300:
                 logger.info('refresh the session cookie every 5 minutes')
                 logger.info('run self.login.')
+                try:
+                    os.remove(self.config.FILENAME_COOKIE)
+                except Exception:
+                    pass
                 self._load_cookie()
                 logger.info('login succeed.')
                 start_time = time.time()
