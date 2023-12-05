@@ -407,7 +407,7 @@ class JGIOperator:
                     #            这对于需要登录状态的请求特别有用，因为登录信息可以在整个会话期间保持，而不需要每次请求时都重新输入。
                     # - 请求效率: 使用requests.session可以避免在每次发送请求时都将cookie信息放到请求内容中，因为session对象能够
                     #            自动获取到cookie并且可以在下一次请求时自动带上。这可以提高请求效率。
-                    if retry_count > self.nretry:
+                    if retry_count >= self.nretry:
                         logger.error(f'retry_count ({retry_count}) reaching max of self.nretry ({self.nretry})...')
                         self._clean_exit(  # exit
                             exit_message='exit with error',
@@ -940,8 +940,8 @@ class JGIOperator:
             if not loop:
                 break
 
-            if error_counter > self.nretry:
-                logger.critical(f'error_counter is reaching to max size -> self.nretry ={self.nretry}')
+            if error_counter >= self.nretry:
+                logger.critical(f'error_counter is reaching to max size -> self.nretry = {self.nretry}')
                 # FUTURE, 支持了断点续传再改回来
                 # logger.warning(
                 #     'you can rerun your command and the unfinished file is needed for continuing download')
@@ -1031,9 +1031,9 @@ class JGIOperator:
                     logger.warning(
                         'encounter HTTPError;'
                         f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
-                        'could not connect with server. Retry after 10s...'
+                        'could not connect with server. Retry after 5s...'
                     )
-                    time.sleep(10)
+                    time.sleep(5)
                     logger.info('start next loop')
                     loop = True
                     continue  # next try
@@ -1042,9 +1042,9 @@ class JGIOperator:
                     logger.warning(
                         f'encounter {e} (error);'
                         f'error_counter = {error_counter}; pre_response.status_code = {pre_response.status_code}; '
-                        'unexpected error. Retry after 10s...'
+                        'unexpected error. Retry after 5s...'
                     )
-                    time.sleep(10)
+                    time.sleep(5)
                     logger.info('start next loop')
                     success = False
                     loop = True
