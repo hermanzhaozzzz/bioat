@@ -147,7 +147,14 @@ class Fastq(Fasta):
     #     # https://www.jianshu.com/p/248308513e2e
     #     pass
 
+@dataclass(frozen=True)
+class Assembly(object):
+    contigs: list[Fasta]
+    length: int
+    path: str
 
+    def __init__(self, path: str):
+        pass
 
 @dataclass
 class VCF:

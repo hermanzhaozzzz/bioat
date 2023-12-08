@@ -469,8 +469,9 @@ class JGIOperator:
                 stream=True,
                 headers=headers,
                 timeout=self.timeout,
-                proxies=self._proxies
+                # proxies=self._proxies
         ) as response:
+            logger.debug(f'login url requests.get: {response.url}')
             if self._proxies:
                 logger.debug(f'query using IP: {self._proxy_ip}')
             try:
@@ -478,10 +479,11 @@ class JGIOperator:
             except HTTPError:
                 logger.critical(f'response status: {response.status_code}')
                 logger.critical("Couldn't connect with server. Please check Internet connection and retry.")
+                logger.critical(f'response.text = {response.text}')
                 self._clean_exit(
                     exit_message='exit with HTTPError',
                     exit_code=1,
-                    rm_cookie=False,
+                    rm_cookie=True,
                     rm_xml=True,
                     logger=logger
                 )
@@ -1481,8 +1483,13 @@ class JGIOperator:
                     except KeyError:
                         matches[parent_string] = [element.attrib]
         except ET.ParseError as e:
-            logger.critical('Parsing xml file failed! Maybe the username / password is wrong? '
+            logger.critical('Query or parse xml failed, start to remove cookie. Please try again. '
+                            'If it is still failed, maybe the username / password is wrong? '
                             'Try to use --overwrite_conf parameter to re-login')
+            try:
+                os.remove(self.config.FILENAME_COOKIE)
+            except Exception:
+                pass
             sys.exit(f'Exit with error {e}')
         return matches
 
