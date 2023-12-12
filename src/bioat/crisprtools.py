@@ -1,34 +1,38 @@
-from Bio import SeqIO
+from bioat.lib.libfastx import casfinder
 
 
 class CrisprTools:
     """CRISPR mining toolbox."""
-    def crispr_repeats_finder(
+
+    def casfinder(
             self,
 
     ):
-        pass
-    def cas12_finder(self):
-        """Cas12 mining toolbox.
+        casfinder(
+            input_fa="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
+            output_faa=None,
+            lmin=3001,  # 3001 in Nature Methods paper
+            lmax=None
+        )
 
-        Under development!
-        """
-        pass
-    def cas13_finder(self):
-        """Cas13 mining toolbox
-        Under development!
-        """
-        pass
+    # def cas12_finder(self):
+    #     """Cas12 mining toolbox.
+    #
+    #     Under development!
+    #     """
+    #     pass
+    # def cas13_finder(self):
+    #     """Cas13 mining toolbox
+    #     Under development!
+    #     """
+    #     pass
 
-"""
-alias lipercr=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/pilercr
-alias prodigal=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/prodigal
-alias bedtools=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/bedtools
-"""
+
+# """
+# alias lipercr=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/pilercr
+# alias prodigal=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/prodigal
+# alias bedtools=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/bedtools
+# """
 
 if __name__ == "__main__":
-    cli = CrisprTools()
-    cli.crispr_repeats_finder()
-
-
-
+    pass
