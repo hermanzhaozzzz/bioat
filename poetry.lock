@@ -1174,6 +1174,21 @@ files = [
 test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
 
 [[package]]
+name = "pybedtools"
+version = "0.9.1"
+description = "Wrapper around BEDTools for bioinformatics work"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pybedtools-0.9.1.tar.gz", hash = "sha256:586a626895b1b7215aef877e985c03fd8a908fd6c636e5b9ff8a1a1d09a1d514"},
+]
+
+[package.dependencies]
+numpy = "*"
+pysam = "*"
+six = "*"
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -1656,4 +1671,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.0"
-content-hash = "fb26deb429c4b2652758d134f27324cbd40f11bd2b67f1657c7a67738f459a3d"
+content-hash = "5b6a97fdae8b5c16f1b8dce735b915d756e22d19540aa351012d1b9a4ccb0fff"

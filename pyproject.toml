@@ -30,6 +30,7 @@ selenium = ">=4.11.2"
 lxml = ">=4.9.3"
 coloredlogs = ">=15.0.1"
 pickleshare = "^0.7.5"
+pybedtools = "^0.9.1"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
