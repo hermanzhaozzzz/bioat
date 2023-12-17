@@ -1,21 +1,24 @@
+"""Doc.
+TODO
+"""
 import sys
 import re
 import os
 import subprocess
 from Bio import SeqIO
-from bioat.logger import get_logger
 from pybedtools import BedTool
+from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libfastx"
 
 
 def casfinder(
-        input_fa: str,
-        output_faa: str | None = None,
-        lmin: int | None = None,
-        lmax: int | None = None,
-        extend: int = 10_000,
-        log_level="DEBUG",
+    input_fa: str,
+    output_faa: str | None = None,
+    lmin: int | None = None,
+    lmax: int | None = None,
+    extend: int = 10_000,
+    log_level="DEBUG",
 ) -> None:
     # set logger
     logger = get_logger(
@@ -45,12 +48,12 @@ def casfinder(
     f_bed_crispr_loc = f"{input_fa}.crispr.loc.bed"
     f_fa_crisper_scaffold = f"{input_fa}.crisper.scaffold.fa"
     f_bed_cas_loc = f"{input_fa}.cas.loc.bed"
-    fa_idx = f'{os.path.basename(f_fa_input)}_metacontig'
+    fa_idx = f"{os.path.basename(f_fa_input)}_metacontig"
 
     tests = {
         0: False,  # PASS # 0. filter contigs
         1: False,  # PASS # 1. cas & protein annotation
-        2: True,   # TODO # 2. get cas locs  # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
+        2: True,  # TODO # 2. get cas locs  # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
         3: False,  # PASS # 3. get protein locs
         4: False,  # PASS # 4. cas locs vs protein locs
         5: False,  # PASS # 5. get cas locs protein
@@ -114,7 +117,7 @@ def casfinder(
     logger.info("2.get cas locs")
     if tests[2]:
         with open(f_pilercr_crispr_spacer, "rt") as f_spacer, open(
-                f_bed_crispr_loc, "wt"
+            f_bed_crispr_loc, "wt"
         ) as f_loc:
             lines = f_spacer.readlines()
             lines = [
@@ -211,17 +214,25 @@ def casfinder(
         with open(f_gff, "rt") as f_gff_raw, open(f_bed_pep_loc, "wt") as f_loc:
             lines = f_gff_raw.readlines()
             # skip annotation lines wiht # and blank lines
-            lines = (line.rstrip() for line in lines if len(line.rstrip()) > 0 and not line.startswith("#"))
+            lines = (
+                line.rstrip()
+                for line in lines
+                if len(line.rstrip()) > 0 and not line.startswith("#")
+            )
 
             for line in lines:
                 info = line.split("\t")
-                anno_func, array_index, addition_info = info[2].upper(), info[0], info[8]
-                if anno_func != 'CDS':
+                anno_func, array_index, addition_info = (
+                    info[2].upper(),
+                    info[0],
+                    info[8],
+                )
+                if anno_func != "CDS":
                     continue
 
                 # if CDS line
                 scaffold = f"{fa_idx}__{array_index}"
-                idx = addition_info.split(";")[0].split('_')[-1]
+                idx = addition_info.split(";")[0].split("_")[-1]
                 gene_name = f"{scaffold}_{idx}"
                 start, stop, strand = info[3], info[4], info[6]
                 # write to loc_file
@@ -262,7 +273,7 @@ def casfinder(
     logger.info("5.get cas locs protein")
     if tests[5]:
         with open("temp.pep", "r") as A, open("temp.pep.fasta", "w") as B, open(
-                "temp.pep.filtered.fasta", "w"
+            "temp.pep.filtered.fasta", "w"
         ) as C:
             parse = 0
             for line in A:
