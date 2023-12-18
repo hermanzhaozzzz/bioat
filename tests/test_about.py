@@ -1,4 +1,5 @@
 import subprocess
+
 import bioat
 from bioat.cli import Cli
 
@@ -7,7 +8,7 @@ cli = Cli()
 
 def test_about():
     # test about function
-    assert hasattr(cli, 'about')
+    assert hasattr(cli, "about")
     out = cli.about()
     assert isinstance(out, str)
     # test about text attribute
@@ -16,5 +17,5 @@ def test_about():
 
 
 def test_cli_about():
-    args = ['bioat', 'about']
+    args = ["bioat", "about"]
     assert subprocess.run(args).returncode == 0
