@@ -18,6 +18,9 @@ def casfinder(
     lmin: int | None = None,
     lmax: int | None = None,
     extend: int = 10_000,
+    temp_dir: str | None = None,
+    prodigal: str | None = None,
+    pilercr: str | None = None,
     log_level="DEBUG",
 ) -> None:
     # set logger
@@ -26,15 +29,6 @@ def casfinder(
         module_name=__module_name__,
         func_name=sys._getframe().f_code.co_name,
     )
-    # -----------------------------
-    # FOR TEST
-    # -----------------------------
-    prodigal = "/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
-    pilercr = "/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
-    bedtools = "/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/bedtools"
-    work_path = "/Users/zhaohuanan/Downloads/test"
-
-    # 定义一些常量和变量
     # input
     f_fa_input = input_fa  # input_fa = '202155.assembled.fna'
     # output
@@ -49,6 +43,9 @@ def casfinder(
     f_fa_crisper_scaffold = f"{input_fa}.crisper.scaffold.fa"
     f_bed_cas_loc = f"{input_fa}.cas.loc.bed"
     fa_idx = f"{os.path.basename(f_fa_input)}_metacontig"
+    # set temp_dir
+    if temp_dir is None:
+        temp_dir = os.path.dirname(output_faa)
 
     tests = {
         0: True,  # PASS # 0. filter contigs
