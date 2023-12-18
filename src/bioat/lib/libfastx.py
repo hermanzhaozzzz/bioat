@@ -51,9 +51,9 @@ def casfinder(
     fa_idx = f"{os.path.basename(f_fa_input)}_metacontig"
 
     tests = {
-        0: False,  # PASS # 0. filter contigs
+        0: True,  # PASS # 0. filter contigs
         1: False,  # PASS # 1. cas & protein annotation
-        2: True,  # TODO # 2. get cas locs  # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
+        2: False,  # TODO # 2. get cas locs  # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
         3: False,  # PASS # 3. get protein locs
         4: False,  # PASS # 4. cas locs vs protein locs
         5: False,  # PASS # 5. get cas locs protein
@@ -173,7 +173,7 @@ def casfinder(
                 logger.debug(f"splitted line info is: info = {info}")
 
                 if not info[0].isnumeric():
-                    raise ValueError(f"info = {info}")
+                    raise ValueError(f"info = {info}")  # TODO
                 logger.debug(f"contig = {contig}, info[1] = {info[1]}")
                 # assert contig == info[1]  # check contig name?  # pilercr返回的info[1]可能是contig的name的截短
                 array_index, _, crispr_start, crispr_length = info[:4]
@@ -194,10 +194,9 @@ def casfinder(
                 # extending
                 locus_start = crispr_start - extend if crispr_start > extend else 1
                 locus_end = crispr_end + extend
-                # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
                 # write to loc_file
                 line_out = (
-                    f"{fa_idx}_{contig}\t"  # 202155.assembled.fna_metacontig__Ga0307431_1000033
+                    f"{fa_idx}__{contig}\t"  # 202155.assembled.fna_metacontig__Ga0307431_1000033
                     f"{locus_start}\t{locus_end}\t"  # 50828	72054
                     f"{crispr_start}\t{crispr_end}\t"  # 60828	62054
                     f"{seq}\t"  # GTTT...AC
@@ -210,7 +209,7 @@ def casfinder(
     # -----------------------------
     logger.info("3.get protein locs")
     if tests[3]:
-        dt_loc = dict()
+        dt_all_loc_bed = dict()
         with open(f_gff, "rt") as f_gff_raw, open(f_bed_pep_loc, "wt") as f_loc:
             lines = f_gff_raw.readlines()
             # skip annotation lines wiht # and blank lines
@@ -238,7 +237,9 @@ def casfinder(
                 # write to loc_file
                 line_out = f"{scaffold}\t{start}\t{stop}\t{strand}\t{gene_name}\n"
                 f_loc.write(line_out)
-                dt_loc[gene_name] = f"{scaffold}\t{start}\t{stop}\t{strand}"
+                dt_all_loc_bed[gene_name] = f"{scaffold}\t{start}\t{stop}\t{strand}"
+                # gene_name: 202155.assembled.fna_metacontig__Ga0307431_1000033_55
+                # scaffold: 202155.assembled.fna_metacontig__Ga0307431_1000033
     # -----------------------------
     # 4.cas locs vs protein locs
     # -----------------------------
@@ -257,41 +258,46 @@ def casfinder(
         bed_cas = bed_pep.intersect(bed_crispr, wo=True)
         bed_cas.moveto(f_bed_cas_loc)
         logger.debug(f"generate cas.bed file, check output @ {f_bed_cas_loc}")
-        # 打开并读取temp.bed文件
-        # with open(f_tsv_bed, "rt") as bed:
-        #     bedlines = bed.readlines()
-        #     bedlines = [i.rstrip() for i in bedlines]
-        #     for line in bedlines:
-        #         info = line.split('\t')
-        #         line = line.replace("_metacontig__", "\t")
-        #         ar = line.split()
-        #         good[info[4]] = 1
-        #         cpscaffold[ar[1]] = 1
+
+        pick_this_crispr_scaffold = dict()
+        pick_this_cas = dict()
+        with open(f_bed_cas_loc, "rt") as bed:
+            bedlines = bed.readlines()
+            bedlines = [i.rstrip() for i in bedlines]
+            for line in bedlines:
+                info = line.split("\t")
+                print(f"info = {info}")
+                scaffold, start, stop, strand, gene_name = info[:5]
+                this_gene_name = gene_name.split("_metacontig__")[-1]
+                this_contig = scaffold.split("_metacontig__")[-1]
+                pick_this_cas[this_gene_name] = {
+                    "contig": this_contig,
+                    "gene": this_gene_name,
+                    "start": start,
+                    "stop": stop,
+                    "strand": strand,
+                }
+                # Ga0307431_1000001_1
+                pick_this_crispr_scaffold[this_contig] = True
+                # Ga0307431_1000033
     # -----------------------------
     # 5.get cas locs protein
     # -----------------------------
     logger.info("5.get cas locs protein")
     if tests[5]:
-        with open("temp.pep", "r") as A, open("temp.pep.fasta", "w") as B, open(
-            "temp.pep.filtered.fasta", "w"
-        ) as C:
-            parse = 0
-            for line in A:
-                line = line.rstrip()
-                line = re.sub(r"^>", f">{number}_", line)
-                if line.startswith(">"):
-                    ll = line.replace(">", "")
-                    info = ll.split()
-                    print(f">{info[0]}\t{loc[info[0]]}", file=B)
-                    if info[0] in good:
-                        parse = 1
-                        print(f">{info[0]}\t{loc[info[0]]}", file=C)
-                    else:
-                        parse = 0
-                else:
-                    print(line, file=B)
-                    if parse > 0:
-                        print(line, file=C)
+        assembly_input = SeqIO.parse(f_faa_pep, "fasta")
+        contigs_input = (contig for contig in assembly_input)
+        contigs_output = []
+
+        for contig in contigs_input:
+            print(contig.__dir__())
+            header = contig.id  # header = Ga0307431_1014098_3
+
+            if header in pick_this_cas.keys():
+                info = pick_this_cas[header]
+                contig.id = f"{info['gene']}\t{info['contig']}\t{info['start']}\t{info['stop']}\t{info['strand']}"
+                contigs_output.append(contig)
+        SeqIO.write(contigs_output, f_faa_pep_cas, "fasta")
     # -----------------------------
     # 6.get cas locas scaffold
     # -----------------------------
