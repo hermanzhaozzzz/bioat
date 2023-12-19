@@ -2,7 +2,6 @@
 TODO
 """
 import os
-import re
 import subprocess
 import sys
 
@@ -31,29 +30,36 @@ def casfinder(
         module_name=__module_name__,
         func_name=sys._getframe().f_code.co_name,
     )
-    # where I am
-    # input
-    f_fa_input = input_fa  # input_fa = '202155.assembled.fna'
-    # output
-    f_faa_pep_cas = f"{input_fa}.pep.cas.faa" if output_faa is None else output_faa
-    # others
-    f_fa_filtered = f"{input_fa}.filtered.fa"
-    f_pilercr_crispr_spacer = f"{input_fa}.crispr.spacer.pilercr"
-    f_faa_pep = f"{input_fa}.pep.faa"
-    f_gff = f"{input_fa}.gff"
-    f_bed_pep_loc = f"{input_fa}.pep.loc.bed"
-    f_bed_crispr_loc = f"{input_fa}.crispr.loc.bed"
-    f_fa_crisper_scaffold = f"{input_fa}.crisper.scaffold.fa"
-    f_bed_cas_loc = f"{input_fa}.cas.loc.bed"
-    fa_idx = f"{os.path.basename(f_fa_input)}_metacontig"
-    # set temp_dir
+    workspace = os.getcwd()  # where I am
+
     if temp_dir is None:
-        temp_dir = os.path.dirname(output_faa)
+        dirname = os.path.dirname(input_fa)
+        if dirname in ("", "./"):
+            temp_dir = workspace
+        else:
+            temp_dir = dirname
+    else:
+        pass
+
+    fa_input = input_fa  # input_fa = '202155.assembled.fna'
+    fa_pep_cas = os.path.join(
+        workspace, f"{input_fa}.pep.cas.faa" if output_faa is not None else output_faa
+    )
+    fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
+    f_pilercr = os.path.join(temp_dir, f"{input_fa}.crispr.spacer.pilercr")
+    fa_pep = os.path.join(temp_dir, f"{input_fa}.pep.faa")
+    gff = os.path.join(temp_dir, f"{input_fa}.gff")
+    bed_pep = os.path.join(temp_dir, f"{input_fa}.pep.loc.bed")
+    bed_crispr = os.path.join(temp_dir, f"{input_fa}.crispr.loc.bed")
+    fa_crisper_scaffold = os.path.join(temp_dir, f"{input_fa}.crisper.scaffold.fa")
+    bed_cas = os.path.join(temp_dir, f"{input_fa}.cas.loc.bed")
+    assembly_id = f"{os.path.basename(fa_input)}"
 
     tests = {
-        0: True,  # PASS # 0. filter contigs
+        0: False,  # PASS # 0. filter contigs
         1: False,  # PASS # 1. cas & protein annotation
-        2: False,  # TODO # 2. get cas locs  # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
+        # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
+        2: True,  # TODO # 2. get crispr loci
         3: False,  # PASS # 3. get protein locs
         4: False,  # PASS # 4. cas locs vs protein locs
         5: False,  # PASS # 5. get cas locs protein
@@ -66,22 +72,24 @@ def casfinder(
     logger.info("0. filter contigs")
     if tests[0]:
         # filter length of assembly contigs
-        logger.debug(f"filter length of contigs from file @ {f_fa_input}")
-        assembly_input = SeqIO.parse(f_fa_input, "fasta")
+        logger.debug(f"filter length of contigs from file @ {fa_input}")
+        assembly_input = SeqIO.parse(fa_input, "fasta")
+
         # define filter_func
-        if lmin is None and lmax is not None:
-            filter_func = lambda contig: len(contig) <= lmax
-        elif lmin is not None and lmax is None:
-            filter_func = lambda contig: len(contig) >= lmin
-        else:
-            filter_func = lambda contig: lmin <= len(contig) <= lmax
+        def filter_func(contig, lmin, lmax) -> bool:
+            if lmin is None and lmax is not None:
+                return len(contig) <= lmax
+            elif lmin is not None and lmax is None:
+                return len(contig) >= lmin
+            else:
+                return lmin <= len(contig) <= lmax
 
         contigs_input = (contig for contig in assembly_input)
         contigs_output = (
-            contig for contig in contigs_input if filter_func(contig=contig)
+            contig for contig in contigs_input if filter_func(contig, lmin, lmax)
         )
-        logger.debug(f"writing filtered contigs to file @ {f_fa_filtered}")
-        SeqIO.write(contigs_output, f_fa_filtered, "fasta")
+        logger.debug(f"writing filtered contigs to file @ {fa_filtered}")
+        SeqIO.write(contigs_output, fa_filtered, "fasta")
     # -----------------------------
     # 1. cas & protein annotation
     # -----------------------------
@@ -92,34 +100,32 @@ def casfinder(
             [
                 prodigal,
                 "-a",
-                f_faa_pep,
+                fa_pep,
                 "-i",
-                f_fa_filtered,
+                fa_filtered,
                 "-p",
                 "single",
                 "-f",
                 "gff",
                 "-o",
-                f_gff,
+                gff,
             ],
             stderr=open("/dev/null", "wt"),
         )
-        logger.debug(f"call has returned, check output @ {f_faa_pep}, {f_gff}")
+        logger.debug(f"call has returned, check output @ {fa_pep}, {gff}")
         logger.debug("subprocess call for pilercr")
         subprocess.check_call(
-            [pilercr, "-in", f_fa_filtered, "-out", f_pilercr_crispr_spacer],
+            [pilercr, "-in", fa_filtered, "-out", f_pilercr],
             stderr=open("/dev/null", "wt"),
         )
-        logger.debug(f"call has returned, check output @ {f_pilercr_crispr_spacer}")
+        logger.debug(f"call has returned, check output @ {f_pilercr}")
     # -----------------------------
-    # 2.get cas locs
+    # 2.get crispr loci
     # -----------------------------
-    logger.info("2.get cas locs")
+    logger.info("2.get crispr loci")
     if tests[2]:
-        with open(f_pilercr_crispr_spacer, "rt") as f_spacer, open(
-            f_bed_crispr_loc, "wt"
-        ) as f_loc:
-            lines = f_spacer.readlines()
+        with open(f_pilercr, "rt") as wrapper_i, open(bed_crispr, "wt") as wrapper_o:
+            lines = wrapper_i.readlines()
             lines = [
                 line.rstrip() for line in lines if len(line.rstrip()) > 0
             ]  # skip empty line, drop "\n"
@@ -196,22 +202,28 @@ def casfinder(
                 locus_end = crispr_end + extend
                 # write to loc_file
                 line_out = (
-                    f"{fa_idx}__{contig}\t"  # 202155.assembled.fna_metacontig__Ga0307431_1000033
-                    f"{locus_start}\t{locus_end}\t"  # 50828	72054
-                    f"{crispr_start}\t{crispr_end}\t"  # 60828	62054
-                    f"{seq}\t"  # GTTT...AC
-                    f"{copies}\t{repeat}\t"  # 17	37  # Copies Repeat
-                    f"{spacer}\t{array_index}\n"  # 37	1  # Spacer  Array
+                    f"assembly_id@{assembly_id};contig_id@{contig}\t"  # chrom
+                    f"{locus_start}\t"  # chromStart
+                    f"{locus_end}\t"  # chromEnd
+                    f"crispr_start@{crispr_start};"
+                    f"crispr_end@{crispr_end};"
+                    f"repeat_seq@{seq};"
+                    f"n_copies@{copies};"
+                    f"n_repeats@{repeat};"
+                    f"n_spacers@{spacer};"
+                    f"crispr_loci_id@{array_index}\t"  # name
+                    "0\t"  # score
+                    ".\n"  # strand
                 )
-                f_loc.write(line_out)
+                wrapper_o.write(line_out)
     # -----------------------------
     # 3.get protein locs
     # -----------------------------
     logger.info("3.get protein locs")
     if tests[3]:
         dt_all_loc_bed = dict()
-        with open(f_gff, "rt") as f_gff_raw, open(f_bed_pep_loc, "wt") as f_loc:
-            lines = f_gff_raw.readlines()
+        with open(gff, "rt") as wrapper_i, open(bed_pep, "wt") as wrapper_o:
+            lines = wrapper_i.readlines()
             # skip annotation lines wiht # and blank lines
             lines = (
                 line.rstrip()
@@ -236,7 +248,7 @@ def casfinder(
                 start, stop, strand = info[3], info[4], info[6]
                 # write to loc_file
                 line_out = f"{scaffold}\t{start}\t{stop}\t{strand}\t{gene_name}\n"
-                f_loc.write(line_out)
+                wrapper_o.write(line_out)
                 dt_all_loc_bed[gene_name] = f"{scaffold}\t{start}\t{stop}\t{strand}"
                 # gene_name: 202155.assembled.fna_metacontig__Ga0307431_1000033_55
                 # scaffold: 202155.assembled.fna_metacontig__Ga0307431_1000033
@@ -338,4 +350,3 @@ if __name__ == "__main__":
     #     lmax=None
     # )
     pass
-

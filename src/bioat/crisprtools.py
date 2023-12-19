@@ -37,11 +37,5 @@ class CrisprTools:
     #     pass
 
 
-# """
-# alias lipercr=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/pilercr
-# alias prodigal=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/prodigal
-# alias bedtools=/Users/zhaohuanan/micromamba/envs/snakepipes_Cas-mining/bin/bedtools
-# """
-
 if __name__ == "__main__":
     pass
