@@ -59,10 +59,9 @@ def casfinder(
     tests = {
         0: False,  # PASS # 0. filter contigs
         1: False,  # PASS # 1. cas & protein annotation
-        # TODO 这里和原始代码的计算得出的坐标位置不同，仔细check每行计算哪里出了问题
-        2: True,  # TODO # 2. get crispr loci
+        2: False,  # PASS # 2. get crispr loci
         3: False,  # PASS # 3. get protein locs
-        4: False,  # PASS # 4. cas locs vs protein locs
+        4: True,  # PASS # 4. cas locs vs protein locs
         5: False,  # PASS # 5. get cas locs protein
         6: False,  # PASS # 6. get cas loc as scaffold
         7: False,  # PASS # 7. save result files
@@ -208,6 +207,8 @@ def casfinder(
                     f"{locus_end}\t"  # chromEnd
                     f"crispr_start@{crispr_start};"
                     f"crispr_end@{crispr_end};"
+                    f"crispr_extend_start@{locus_start};"
+                    f"crispr_extend_end@{locus_end};"
                     f"repeat_seq@{seq};"
                     f"n_copies@{copies};"
                     f"n_repeats@{repeat};"
@@ -222,7 +223,6 @@ def casfinder(
     # -----------------------------
     logger.info("3.get protein locs")
     if tests[3]:
-        dt_all_loc_bed = dict()
         with open(gff, "rt") as wrapper_i, open(bed_pep, "wt") as wrapper_o:
             lines = wrapper_i.readlines()
             # skip annotation lines wiht # and blank lines
@@ -234,25 +234,43 @@ def casfinder(
 
             for line in lines:
                 info = line.split("\t")
-                anno_func, array_index, addition_info = (
-                    info[2].upper(),
-                    info[0],
-                    info[8],
-                )
-                if anno_func != "CDS":
+                # TODO 这里的start和stop可能需要+-1？
+                (
+                    contig,
+                    source,
+                    feature,
+                    start,
+                    stop,
+                    score,
+                    strand,
+                    phase,
+                    atributes,
+                ) = info
+                _temp = [i.split("=") for i in atributes.strip().split(";") if i != ""]
+                atributes = {k.strip(): v.strip() for k, v in _temp}
+                atributes_in_bed = "|".join([f"{k}={v}" for k, v in atributes.items()])
+
+                if feature != "CDS":
                     continue
 
-                # if CDS line
-                scaffold = f"{fa_idx}__{array_index}"
-                idx = addition_info.split(";")[0].split("_")[-1]
-                gene_name = f"{scaffold}_{idx}"
+                idx = atributes["ID"].split("_")[-1]
                 start, stop, strand = info[3], info[4], info[6]
                 # write to loc_file
-                line_out = f"{scaffold}\t{start}\t{stop}\t{strand}\t{gene_name}\n"
+                line_out = (
+                    f"assembly_id@{assembly_id};contig_id@{contig}\t"  # chrom
+                    f"{start}\t"  # chromStart
+                    f"{stop}\t"  # chromEnd
+                    f"CDS_id@{assembly_id}_{contig}_{idx};"
+                    f"CDS_start@{start};"
+                    f"CDS_end@{stop};"
+                    f"CDS_predict_score@{score};"
+                    f"CDS_strand@{strand};"
+                    f"CDS_phase@{phase};"
+                    f"Predigal_info@{atributes_in_bed}\t"  # name
+                    f"{score}\t"
+                    f"{strand}\n"
+                )
                 wrapper_o.write(line_out)
-                dt_all_loc_bed[gene_name] = f"{scaffold}\t{start}\t{stop}\t{strand}"
-                # gene_name: 202155.assembled.fna_metacontig__Ga0307431_1000033_55
-                # scaffold: 202155.assembled.fna_metacontig__Ga0307431_1000033
     # -----------------------------
     # 4.cas locs vs protein locs
     # -----------------------------
@@ -266,12 +284,13 @@ def casfinder(
             - Overlaps restricted by -f and -r.
             - Only A features with overlap are reported.
         """
-        bed_pep = BedTool(fn=f_bed_pep_loc)
-        bed_crispr = BedTool(fn=f_bed_crispr_loc)
-        bed_cas = bed_pep.intersect(bed_crispr, wo=True)
-        bed_cas.moveto(f_bed_cas_loc)
-        logger.debug(f"generate cas.bed file, check output @ {f_bed_cas_loc}")
-
+        bed_a = BedTool(fn=bed_pep)
+        bed_b = BedTool(fn=bed_crispr)
+        bed_intersect = bed_a.intersect(bed_b, wo=True)
+        bed_intersect.moveto(bed_cas)
+        logger.debug(f"generate cas.bed file, check output @ {bed_cas}")
+        # bed cas is now ready for fetch fasta of pep cas!
+        exit()  # TODO
         pick_this_crispr_scaffold = dict()
         pick_this_cas = dict()
         with open(f_bed_cas_loc, "rt") as bed:
