@@ -43,7 +43,8 @@ def casfinder(
 
     fa_input = input_fa  # input_fa = '202155.assembled.fna'
     fa_pep_cas = os.path.join(
-        workspace, f"{input_fa}.pep.cas.faa" if output_faa is not None else output_faa
+        workspace,
+        f"{input_fa}.pep.cas.faa" if output_faa is not None else str(output_faa),
     )
     fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
     f_pilercr = os.path.join(temp_dir, f"{input_fa}.crispr.spacer.pilercr")
