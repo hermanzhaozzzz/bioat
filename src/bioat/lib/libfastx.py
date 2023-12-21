@@ -16,12 +16,14 @@ __module_name__ = "bioat.lib.libfastx"
 def casfinder(
     input_fa: str,
     output_faa: str | None = None,
+    output_crispr_scaffold: str | None = None,
     lmin: int | None = None,
     lmax: int | None = None,
     extend: int = 10_000,
     temp_dir: str | None = None,
     prodigal: str | None = None,
     pilercr: str | None = None,
+    rm_temp: bool = True,
     log_level="DEBUG",
 ) -> None:
     # set logger
@@ -44,27 +46,30 @@ def casfinder(
     fa_input = input_fa  # input_fa = '202155.assembled.fna'
     fa_pep_cas = os.path.join(
         workspace,
-        f"{input_fa}.pep.cas.faa" if output_faa is not None else str(output_faa),
+        f"{input_fa}.pep.cas.faa" if output_faa is None else str(output_faa),
     )
-    fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
-    f_pilercr = os.path.join(temp_dir, f"{input_fa}.crispr.spacer.pilercr")
+    dirname = os.path.dirname(fa_pep_cas)
+    os.makedirs(dirname, exist_ok=True)
+    fa_crisper_scaffold = os.path.join(dirname, f"{output_faa}.crisper.scaffold.fa")
+    f_pilercr = os.path.join(dirname, f"{output_faa}.crispr.spacer.pilercr")
+    # temp files
     fa_pep = os.path.join(temp_dir, f"{input_fa}.pep.faa")
+    fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
     gff = os.path.join(temp_dir, f"{input_fa}.gff")
     bed_pep = os.path.join(temp_dir, f"{input_fa}.pep.loc.bed")
     bed_crispr = os.path.join(temp_dir, f"{input_fa}.crispr.loc.bed")
-    fa_crisper_scaffold = os.path.join(temp_dir, f"{input_fa}.crisper.scaffold.fa")
     bed_cas = os.path.join(temp_dir, f"{input_fa}.cas.loc.bed")
+    # info
     assembly_id = f"{os.path.basename(fa_input)}"
 
     tests = {
-        0: False,  # PASS # 0. filter contigs
-        1: False,  # PASS # 1. cas & protein annotation
+        0: True,  # PASS # 0. filter contigs
+        1: True,  # PASS # 1. cas & protein annotation
         2: True,  # PASS # 2. get crispr loci
         3: True,  # PASS # 3. get protein cds
         4: True,  # PASS # 4. cas loci vs protein cds
         5: True,  # PASS # 5. get cas faa
         6: True,  # PASS # 6. get crispr loci as scaffold
-        7: False,  # PASS # 7. save result files
     }
     # -----------------------------
     # 0. filter contigs
@@ -110,13 +115,13 @@ def casfinder(
                 "-o",
                 gff,
             ],
-            stderr=open("/dev/null", "wt"),
+            stderr=open("/dev/null", "wt") if log_level != "DEBUG" else sys.stderr,
         )
         logger.debug(f"call has returned, check output @ {fa_pep}, {gff}")
         logger.debug("subprocess call for pilercr")
         subprocess.check_call(
             [pilercr, "-in", fa_filtered, "-out", f_pilercr],
-            stderr=open("/dev/null", "wt"),
+            stderr=open("/dev/null", "wt") if log_level != "DEBUG" else sys.stderr,
         )
         logger.debug(f"call has returned, check output @ {f_pilercr}")
     # -----------------------------
@@ -359,6 +364,7 @@ def casfinder(
                 contig.id = ";".join([f"{k}@{v}" for k, v in info.items()])
                 contigs_output.append(contig)
         SeqIO.write(contigs_output, fa_pep_cas, "fasta")
+        logger.debug(f"generate cas.faa file, check output @ {fa_pep_cas}")
     # -----------------------------
     # 6.get cas locas scaffold
     # -----------------------------
@@ -371,8 +377,20 @@ def casfinder(
             if contig.id in crispr_ids:
                 contigs_output.append(contig)
         SeqIO.write(contigs_output, fa_crisper_scaffold, "fasta")
+        logger.debug(
+            f"generate crispr_scaffold.fa file, check output @ {fa_crisper_scaffold}"
+        )
 
     logger.info("End, exit.")
+
+    if rm_temp:
+        logger.info(f"removing temp files @ {temp_dir}")
+        os.remove(fa_pep)
+        os.remove(fa_filtered)
+        os.remove(gff)
+        os.remove(bed_pep)
+        os.remove(bed_crispr)
+        os.remove(bed_cas)
 
 
 if __name__ == "__main__":
