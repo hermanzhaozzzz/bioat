@@ -59,11 +59,11 @@ def casfinder(
     tests = {
         0: False,  # PASS # 0. filter contigs
         1: False,  # PASS # 1. cas & protein annotation
-        2: False,  # PASS # 2. get crispr loci
-        3: False,  # PASS # 3. get protein locs
-        4: True,  # PASS # 4. cas locs vs protein locs
-        5: False,  # PASS # 5. get cas locs protein
-        6: False,  # PASS # 6. get cas loc as scaffold
+        2: True,  # PASS # 2. get crispr loci
+        3: True,  # PASS # 3. get protein cds
+        4: True,  # PASS # 4. cas loci vs protein cds
+        5: True,  # PASS # 5. get cas faa
+        6: True,  # PASS # 6. get crispr loci as scaffold
         7: False,  # PASS # 7. save result files
     }
     # -----------------------------
@@ -248,12 +248,13 @@ def casfinder(
                 ) = info
                 _temp = [i.split("=") for i in atributes.strip().split(";") if i != ""]
                 atributes = {k.strip(): v.strip() for k, v in _temp}
+                idx = atributes["ID"].split("_")[-1]
+                atributes["ID"] = idx
                 atributes_in_bed = "|".join([f"{k}={v}" for k, v in atributes.items()])
 
                 if feature != "CDS":
                     continue
 
-                idx = atributes["ID"].split("_")[-1]
                 start, stop, strand = info[3], info[4], info[6]
                 # write to loc_file
                 line_out = (
@@ -276,7 +277,7 @@ def casfinder(
     # -----------------------------
     logger.info("4.cas locs vs protein locs")
     if tests[4]:
-        # 使用bedtools进行交集操作
+        # bedtools intersect
         """
         -wo
         Write the original A and B entries plus the number of base pairs of overlap
@@ -290,74 +291,86 @@ def casfinder(
         bed_intersect.moveto(bed_cas)
         logger.debug(f"generate cas.bed file, check output @ {bed_cas}")
         # bed cas is now ready for fetch fasta of pep cas!
-        exit()  # TODO
-        pick_this_crispr_scaffold = dict()
-        pick_this_cas = dict()
-        with open(f_bed_cas_loc, "rt") as bed:
-            bedlines = bed.readlines()
-            bedlines = [i.rstrip() for i in bedlines]
-            for line in bedlines:
-                info = line.split("\t")
-                print(f"info = {info}")
-                scaffold, start, stop, strand, gene_name = info[:5]
-                this_gene_name = gene_name.split("_metacontig__")[-1]
-                this_contig = scaffold.split("_metacontig__")[-1]
-                pick_this_cas[this_gene_name] = {
-                    "contig": this_contig,
-                    "gene": this_gene_name,
-                    "start": start,
-                    "stop": stop,
-                    "strand": strand,
-                }
-                # Ga0307431_1000001_1
-                pick_this_crispr_scaffold[this_contig] = True
-                # Ga0307431_1000033
+    # -----------------------------
+    # special part for a dict info
+    # -----------------------------
+    # load keys from cas bed
+    with open(bed_cas, "rt") as f:
+        contigs_cas = f.readlines()
+    cas_loc_info = {}
+    for loc_info in contigs_cas:
+        dt_this = {}
+        this_loc_info = loc_info.rstrip().split("\t")
+        assert this_loc_info[0] == this_loc_info[6]
+        for temp in this_loc_info[0].split(";"):
+            k, v = temp.split("@")
+            dt_this[k] = v
+
+        for temp in this_loc_info[3].split(";"):
+            k, v = temp.split("@")
+            dt_this[k] = v
+
+        for temp in this_loc_info[9].split(";"):
+            k, v = temp.split("@")
+            dt_this[k] = v
+
+        dt_this["overlapped_base_count"] = this_loc_info[12]
+        cas_loc_info[dt_this["CDS_id"].split(".fna_")[-1]] = dt_this
+
+    crispr_ids = ["_".join(i.split("_")[:-1]) for i in cas_loc_info.keys()]
+    # cas_loc_info = {
+    #     "assembly_id": "202155.assembled.fna",
+    #     "contig_id": "Ga0307431_1013847",
+    #     "CDS_id": "202155.assembled.fna_Ga0307431_1013847_4",
+    #     "CDS_start": "2469",
+    #     "CDS_end": "3038",
+    #     "CDS_predict_score": "27.5",
+    #     "CDS_strand": "-",
+    #     "CDS_phase": "0",
+    #     "Predigal_info": (
+    #         "ID=4|partial=01|start_type=Edge|rbs_motif=None|"
+    #         "rbs_spacer=None|gc_cont=0.495|conf=99.82|score=27.47|"
+    #         "cscore=24.25|sscore=3.22|rscore=0.00|uscore=0.00|tscore=3.22"
+    #     ),
+    #     "crispr_start": "1412",
+    #     "crispr_end": "2306",
+    #     "repeat_seq": "GCTTCAACGTAGTCCCGGATTGCTCCGGGAGAGTTAC",
+    #     "n_copies": "13",
+    #     "n_repeats": "37",
+    #     "n_spacers": "34",
+    #     "crispr_loci_id": "36",
+    #     "overlapped_base_count": "569",
+    # }
+
     # -----------------------------
     # 5.get cas locs protein
     # -----------------------------
     logger.info("5.get cas locs protein")
     if tests[5]:
-        assembly_input = SeqIO.parse(f_faa_pep, "fasta")
-        contigs_input = (contig for contig in assembly_input)
+        fa_pep_input = SeqIO.parse(fa_pep, "fasta")
+        contigs_input = (contig for contig in fa_pep_input)
         contigs_output = []
 
         for contig in contigs_input:
-            print(contig.__dir__())
             header = contig.id  # header = Ga0307431_1014098_3
 
-            if header in pick_this_cas.keys():
-                info = pick_this_cas[header]
-                contig.id = f"{info['gene']}\t{info['contig']}\t{info['start']}\t{info['stop']}\t{info['strand']}"
+            if header in cas_loc_info.keys():
+                info = cas_loc_info[header]
+                contig.id = ";".join([f"{k}@{v}" for k, v in info.items()])
                 contigs_output.append(contig)
-        SeqIO.write(contigs_output, f_faa_pep_cas, "fasta")
+        SeqIO.write(contigs_output, fa_pep_cas, "fasta")
     # -----------------------------
     # 6.get cas locas scaffold
     # -----------------------------
     logger.info("6.get cas locas scaffold")
     if tests[6]:
-        with open("temp", "r") as A, open("temp-crisper-scaffold.fa", "w") as B:
-            for line in A:
-                ll = line.rstrip()
-                ll = ll.replace(">", "")
-                info = ll.split()
-                try:
-                    line2 = next(A)
-                    if info[0] in cpscaffold:
-                        print(f"{line.rstrip()}{line2}", file=B)
-                except StopIteration:
-                    break
-    # -----------------------------
-    # 7.save result files
-    # -----------------------------
-    logger.info("7.save result files")
-    if tests[7]:
-        os.system(f"cat temp-crisper-scaffold.fa >> {file}.crisper.scaffold.fa")
-        os.system(f"cat temp.pep.fasta >> {file}.pep.fasta")
-        os.system(f"cat temp.pep.filtered.fasta >> {file}.pep.cas.fasta")
-        os.system(f"cat temp.spacer.loc >> {file}.crispr.loc")
-        os.system(f"cat temp.spacer >> {file}.crispr.spacer")
-        os.system("rm temp*")
-        counter = 0
+        assembly_input = SeqIO.parse(fa_input, "fasta")
+        contigs_output = []
+
+        for contig in assembly_input:
+            if contig.id in crispr_ids:
+                contigs_output.append(contig)
+        SeqIO.write(contigs_output, fa_crisper_scaffold, "fasta")
 
     logger.info("End, exit.")
 
