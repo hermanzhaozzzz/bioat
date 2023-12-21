@@ -13,7 +13,7 @@ class CrisprTools:
         casfinder(
             input_fa="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
             output_faa="/Users/zhaohuanan/Downloads/test/final.cas.faa",
-            lmin=3001,  # 3001 in Nature Methods paper
+            lmin=3000,  # 3001 in Nature Methods paper
             lmax=None,
             extend=10_000,
             temp_dir=None,
@@ -39,7 +39,7 @@ class CrisprTools:
         casfinder(
             input_fa="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
             output_faa="/Users/zhaohuanan/Downloads/test/final.cas.faa",
-            lmin=3001,  # 3001 in Nature Methods paper
+            lmin=3000,  # 3001 in Nature Methods paper
             lmax=None,
             extend=10_000,
             temp_dir=None,
