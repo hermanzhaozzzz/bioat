@@ -5,23 +5,33 @@ from bioat.lib.libfastx import cas_finder, cas13_finder
 class CrisprTools:
     """CRISPR mining toolbox."""
 
-    prodigal = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
-    pilercr = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
+    _prodigal = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
+    _pilercr = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
 
-    def casfinder(
+    def cas_finder(
         self,
+        input_fa,
+        output_faa=None,
+        lmin=3000,  # 3001 in Nature Methods paper
+        lmax=None,
+        extend=10_000,
+        temp_dir=None,
+        prodigal=_prodigal,
+        pilercr=_pilercr,
+        rm_temp=True,
+        log_level="INFO",
     ):
         cas_finder(
-            input_fa="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
-            output_faa="/Users/zhaohuanan/Downloads/test/final.cas.faa",
-            lmin=3000,  # 3001 in Nature Methods paper
-            lmax=None,
-            extend=10_000,
-            temp_dir=None,
-            prodigal=self.prodigal,
-            pilercr=self.pilercr,
-            rm_temp=True,
-            log_level="INFO",
+            input_fa=input_fa,
+            output_faa=output_faa,
+            lmin=lmin,
+            lmax=lmax,
+            extend=extend,
+            temp_dir=temp_dir,
+            prodigal=prodigal,
+            pilercr=pilercr,
+            rm_temp=rm_temp,
+            log_level=log_level,
         )
 
     # def cas12_finder(self):
@@ -30,32 +40,18 @@ class CrisprTools:
     #     Under development!
     #     """
     #     pass
-    def cas13_finder(
-        self,
-    ):
-        """Cas13 mining toolbox
-        Under development!
-        """
-        # casfinder(
-        #     input_fa="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
-        #     output_faa="/Users/zhaohuanan/Downloads/test/final.cas.faa",
-        #     lmin=3000,  # 3001 in Nature Methods paper
-        #     lmax=None,
-        #     extend=10_000,
-        #     temp_dir=None,
-        #     prodigal=self.prodigal,
-        #     pilercr=self.pilercr,
-        #     rm_temp=True,
-        #     log_level="INFO",
-        # )
 
+    def cas13_finder(
+        self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
+    ):
+        """Cas13 mining toolbox."""
         # start to test HEPN filter
         cas13_finder(
-            input_faa=f"{HOME}/Downloads/test/final.cas.faa",
-            # output_faa=f"{HOME}/Downloads/test/final.cas.HEPN0.faa",
-            # output_faa=f"{HOME}/Downloads/test/final.cas.HEPN1.faa",
-            output_faa=f"{HOME}/Downloads/test/final.cas.HEPN2.faa",
-            log_level="DEBUG",
+            input_faa=input_faa,
+            output_faa=output_faa,
+            lmin=lmin,
+            lmax=lmax,
+            log_level=log_level,
         )
 
 

@@ -14,6 +14,15 @@ from bioat.logger import get_logger
 __module_name__ = "bioat.lib.libfastx"
 
 
+def filter_fasta_length(contig, lmin, lmax) -> bool:
+    if lmin is None and lmax is not None:
+        return len(contig) <= lmax
+    elif lmin is not None and lmax is None:
+        return len(contig) >= lmin
+    else:
+        return lmin <= len(contig) <= lmax
+
+
 def cas_finder(
     input_fa: str,
     output_faa: str | None = None,
@@ -51,8 +60,8 @@ def cas_finder(
     )
     dirname = os.path.dirname(fa_pep_cas)
     os.makedirs(dirname, exist_ok=True)
-    fa_crisper_scaffold = os.path.join(dirname, f"{output_faa}.crisper.scaffold.fa")
-    f_pilercr = os.path.join(dirname, f"{output_faa}.crispr.spacer.pilercr")
+    fa_crisper_scaffold = os.path.join(dirname, f"{fa_pep_cas}.crisper.scaffold.fa")
+    f_pilercr = os.path.join(dirname, f"{fa_pep_cas}.crispr.spacer.pilercr")
     # temp files
     fa_pep = os.path.join(temp_dir, f"{input_fa}.pep.faa")
     fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
@@ -79,20 +88,11 @@ def cas_finder(
     if tests[0]:
         # filter length of assembly contigs
         logger.debug(f"filter length of contigs from file @ {fa_input}")
-        assembly_input = SeqIO.parse(fa_input, "fasta")
-
-        # define filter_func
-        def filter_func(contig, lmin, lmax) -> bool:
-            if lmin is None and lmax is not None:
-                return len(contig) <= lmax
-            elif lmin is not None and lmax is None:
-                return len(contig) >= lmin
-            else:
-                return lmin <= len(contig) <= lmax
-
-        contigs_input = (contig for contig in assembly_input)
+        contigs_input = SeqIO.parse(fa_input, "fasta")
         contigs_output = (
-            contig for contig in contigs_input if filter_func(contig, lmin, lmax)
+            contig
+            for contig in contigs_input
+            if filter_fasta_length(contig, lmin, lmax)
         )
         logger.debug(f"writing filtered contigs to file @ {fa_filtered}")
         SeqIO.write(contigs_output, fa_filtered, "fasta")
@@ -353,8 +353,7 @@ def cas_finder(
     # -----------------------------
     logger.info("5.get cas locs protein")
     if tests[5]:
-        fa_pep_input = SeqIO.parse(fa_pep, "fasta")
-        contigs_input = (contig for contig in fa_pep_input)
+        contigs_input = SeqIO.parse(fa_pep, "fasta")
         contigs_output = []
 
         for contig in contigs_input:
@@ -397,6 +396,8 @@ def cas_finder(
 def cas13_finder(
     input_faa: str,
     output_faa: str | None = None,
+    lmin: int | None = None,
+    lmax: int | None = None,
     log_level="DEBUG",
 ) -> None:
     # set logger
@@ -405,101 +406,66 @@ def cas13_finder(
         module_name=__module_name__,
         func_name=sys._getframe().f_code.co_name,
     )
-    # workspace = os.getcwd()  # where I am
+    workspace = os.getcwd()  # where I am
 
-    # fa_input = input_faa  # input_fa = '202155.assembled.fna'
-    # fa_pep_cas13 = os.path.join(
-    #     workspace,
-    #     f"{input_faa}.pep.cas.faa" if output_faa is None else str(output_faa),
-    # )
-    # dirname = os.path.dirname(fa_pep_cas13)
-    # os.makedirs(dirname, exist_ok=True)
-    # fa_cases = SeqIO.parse(fa_input, format="fasta")
+    fa_input = input_faa  # input_fa = '202155.assembled.fna'
+    fa_pep_cas13 = os.path.join(
+        workspace,
+        f"{input_faa}.pep.cas.faa" if output_faa is None else str(output_faa),
+    )
+    dirname = os.path.dirname(fa_pep_cas13)
+    os.makedirs(dirname, exist_ok=True)
 
-    pattern = re.compile(r"R[NHQ][A-Z]{3,5}H[FLYNSQ]")
-    string = "AAAAAAABRABCDEHBBBBBBSDADASDRHXXXHADASDASDASDASDASDRNASDHASDASDAXZRABCDEHAARSACDASHSERABCCRNHABCHASDASDASDASDRNHABCHFRNHABCHFRNHABCHFASSSRNHABCHSASDRNHABCHQ"
+    # start to parse HEPN pattern
+    fa_cases = SeqIO.parse(fa_input, format="fasta")
 
-    print(string)
-    matches = pattern.findall(string=string)
-    print(matches)
-    for match in matches:
-        print(match)
-
-        # for fa_cas in fa_cases:
-        # print(f"fa_cas = {fa_cas}")
-        # print(f"fa_cas.id = {fa_cas.id}")
-        # print(f"fa_cas.seq = {fa_cas.seq}")
-        # seq = str(fa_cas.seq)
-        # seq = (
-        #     "AAAAAAABRABCDEHBBBBBBSDADAS"
-        #     "DRHXXXHADASDASDASDASDASDRNASDH"
-        #     "ASDASDAXZRABCDEHAARSACDASHSER"
-        #     "ABCCRNHABCHASDASDASDASD"
-        #     "RNHABCHFRNHABCHFRNHABCHF"
-        #     "ASSSRNHABCHSASD"
-        #     "RNHABCHQ"
-        # )
-        # # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
-        # HEPN1
-        # patterns = [
-        #     r"R....H",  #
-        #     r"RN...H",  # 15 / 19
-        #     r"RH...H",  # 4 / 19
-        #     r"RQ...H",  # 0 / 19
-        #     r"R.....H",
-        #     r"R......H",
-        # ]
-        # pattern = re.compile(r"R[NHQ][A-Z]{3-5}H[FLYNSQ]")
+    pattern = re.compile(
+        # r"R[NHQ][A-Z]{3,5}H[FLYNSQ]"
+        r"R[NHQ][A-Z]{3,5}H"
+        # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
         # 字母以字母 R 开头
         # 第二个字母是 N、H 或 Q 中的一个
         # 接下来是3到5个任意大写字母
         # 然后是字母 H
         # 最后是 F、L、Y、N、S 或 Q 中的一个字母
         # patterns = "|".join(patterns)
+    )
+    fa_cases_filter_length = (
+        cas for cas in fa_cases if filter_fasta_length(cas, lmin, lmax)
+    )
 
-        # matches = re.finditer(pattern=pattern, string=seq)
+    for fa_cas in fa_cases_filter_length:
+        matches = pattern.findall(string=str(fa_cas.seq))
 
-        # matches = pattern.findall(string=seq)
+        if matches:
+            logger.debug(f"fa_cas.id = {fa_cas.id}")
+            logger.debug(f"fa_cas.seq = {fa_cas.seq}")
+            logger.debug(f"fa_cas.length = {len(fa_cas)}")
+            logger.debug(f"matches = {matches}")
 
-        # print(seq)
-        # print(matches)
-        # for match in matches:
-        #     print(match)
-        # print(match.re.pattern)
-        # print(match.start())
-        # if match.re.pattern == patterns[0]:
-        #     logger.debug(f"find pattern = {patterns[0]}")
-        # elif match.re.pattern == patterns[1]:
-        #     logger.debug(f"find pattern = {patterns[1]}")
-        # elif match.re.pattern == patterns[2]:
-        #     logger.debug(f"find pattern = {patterns[2]}")
-        # else:
-        #     logger.debug("find no pattern")
-        break
+            for match in matches:
+                logger.debug(f"find pattern = r'{pattern.pattern}'")
 
-        # while i < len_ll:
-        #     if bb[i] == "R" and bb[i+1] == "H" and bb[i+5] == "H":
-        #         s1 += 1
-        #         if t1 == 0:
-        #             t1 = i
-        #         else:
-        #             t2 = i
-        #     elif bb[i] == "R" and bb[i+1] == "N" and bb[i+5] == "H":
-        #         s2 += 1
-        #     elif bb[i] == "R" and bb[i+1] == "Q" and bb[i+5] == "H":
-        #         s2 += 1
-        #     i += 1
-        # if not (line2 in h) and (s1 + s2) >= 2:  # Python doesn't support exists() method for dictionaries
-        #     if t1 * 2 < len_ll and t2 * 2 > len_ll:  # Python doesn't support $ sigil for variables in list comprehension
-        #         bb.write(line + '_L' + str(len(line2)) + '\n' + line2 + '\n')
-        #         h[line2] = 1  # Python doesn't require declaration of variables before using them
+        # print(match)  # <re.Match object; span=(109, 117), match='RNHABCHF'>
+        # match.start = 148
+        # match.end = 156
+        # match.span = (148, 156)
+        # match.pos = 0
+        # match.re = re.compile('R[NHQ][A-Z]{3,5}H[FLYNSQ]')
+        # match.regs = ((148, 156),)
+        # match.target = RNHABCHQ
+
+        # logger.debug(f"match.start = {match.start()}")
+        # logger.debug(f"match.end = {match.end()}")
+        # logger.debug(f"match.span = {match.span()}")
+        # logger.debug(f"match.pos = {match.pos}")
+        # logger.debug(f"match.re = {match.re}")
+        # logger.debug(f"match.regs = {match.regs}")
+        # logger.debug(f"match.string = {match.string}")
+        # logger.debug(f"match.target = {match.string[match.start(): match.end()]}")
+        # logger.debug(f"match.match = {dir(match)}")
+        # logger.debug("find no pattern")
 
 
 if __name__ == "__main__":
-    # casfinder(
-    #     input="/Users/zhaohuanan/Downloads/test/202155.assembled.fna",
-    #     output="/Users/zhaohuanan/Downloads/test/202155.assembled.fna.filtered.fasta",
-    #     lmin=3001,  # 3001 in Nature Methods paper
-    #     lmax=None
-    # )
     pass
