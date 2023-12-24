@@ -4,6 +4,7 @@ TODO
 import os
 import subprocess
 import sys
+import re
 
 from Bio import SeqIO
 from pybedtools import BedTool
@@ -13,7 +14,7 @@ from bioat.logger import get_logger
 __module_name__ = "bioat.lib.libfastx"
 
 
-def casfinder(
+def cas_finder(
     input_fa: str,
     output_faa: str | None = None,
     output_crispr_scaffold: str | None = None,
@@ -391,6 +392,107 @@ def casfinder(
         os.remove(bed_pep)
         os.remove(bed_crispr)
         os.remove(bed_cas)
+
+
+def cas13_finder(
+    input_faa: str,
+    output_faa: str | None = None,
+    log_level="DEBUG",
+) -> None:
+    # set logger
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
+    # workspace = os.getcwd()  # where I am
+
+    # fa_input = input_faa  # input_fa = '202155.assembled.fna'
+    # fa_pep_cas13 = os.path.join(
+    #     workspace,
+    #     f"{input_faa}.pep.cas.faa" if output_faa is None else str(output_faa),
+    # )
+    # dirname = os.path.dirname(fa_pep_cas13)
+    # os.makedirs(dirname, exist_ok=True)
+    # fa_cases = SeqIO.parse(fa_input, format="fasta")
+
+    pattern = re.compile(r"R[NHQ][A-Z]{3,5}H[FLYNSQ]")
+    string = "AAAAAAABRABCDEHBBBBBBSDADASDRHXXXHADASDASDASDASDASDRNASDHASDASDAXZRABCDEHAARSACDASHSERABCCRNHABCHASDASDASDASDRNHABCHFRNHABCHFRNHABCHFASSSRNHABCHSASDRNHABCHQ"
+
+    print(string)
+    matches = pattern.findall(string=string)
+    print(matches)
+    for match in matches:
+        print(match)
+
+        # for fa_cas in fa_cases:
+        # print(f"fa_cas = {fa_cas}")
+        # print(f"fa_cas.id = {fa_cas.id}")
+        # print(f"fa_cas.seq = {fa_cas.seq}")
+        # seq = str(fa_cas.seq)
+        # seq = (
+        #     "AAAAAAABRABCDEHBBBBBBSDADAS"
+        #     "DRHXXXHADASDASDASDASDASDRNASDH"
+        #     "ASDASDAXZRABCDEHAARSACDASHSER"
+        #     "ABCCRNHABCHASDASDASDASD"
+        #     "RNHABCHFRNHABCHFRNHABCHF"
+        #     "ASSSRNHABCHSASD"
+        #     "RNHABCHQ"
+        # )
+        # # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
+        # HEPN1
+        # patterns = [
+        #     r"R....H",  #
+        #     r"RN...H",  # 15 / 19
+        #     r"RH...H",  # 4 / 19
+        #     r"RQ...H",  # 0 / 19
+        #     r"R.....H",
+        #     r"R......H",
+        # ]
+        # pattern = re.compile(r"R[NHQ][A-Z]{3-5}H[FLYNSQ]")
+        # 字母以字母 R 开头
+        # 第二个字母是 N、H 或 Q 中的一个
+        # 接下来是3到5个任意大写字母
+        # 然后是字母 H
+        # 最后是 F、L、Y、N、S 或 Q 中的一个字母
+        # patterns = "|".join(patterns)
+
+        # matches = re.finditer(pattern=pattern, string=seq)
+
+        # matches = pattern.findall(string=seq)
+
+        # print(seq)
+        # print(matches)
+        # for match in matches:
+        #     print(match)
+        # print(match.re.pattern)
+        # print(match.start())
+        # if match.re.pattern == patterns[0]:
+        #     logger.debug(f"find pattern = {patterns[0]}")
+        # elif match.re.pattern == patterns[1]:
+        #     logger.debug(f"find pattern = {patterns[1]}")
+        # elif match.re.pattern == patterns[2]:
+        #     logger.debug(f"find pattern = {patterns[2]}")
+        # else:
+        #     logger.debug("find no pattern")
+        break
+
+        # while i < len_ll:
+        #     if bb[i] == "R" and bb[i+1] == "H" and bb[i+5] == "H":
+        #         s1 += 1
+        #         if t1 == 0:
+        #             t1 = i
+        #         else:
+        #             t2 = i
+        #     elif bb[i] == "R" and bb[i+1] == "N" and bb[i+5] == "H":
+        #         s2 += 1
+        #     elif bb[i] == "R" and bb[i+1] == "Q" and bb[i+5] == "H":
+        #         s2 += 1
+        #     i += 1
+        # if not (line2 in h) and (s1 + s2) >= 2:  # Python doesn't support exists() method for dictionaries
+        #     if t1 * 2 < len_ll and t2 * 2 > len_ll:  # Python doesn't support $ sigil for variables in list comprehension
+        #         bb.write(line + '_L' + str(len(line2)) + '\n' + line2 + '\n')
+        #         h[line2] = 1  # Python doesn't require declaration of variables before using them
 
 
 if __name__ == "__main__":
