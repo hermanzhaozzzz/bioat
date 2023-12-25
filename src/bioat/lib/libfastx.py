@@ -361,7 +361,11 @@ def cas_finder(
 
             if header in cas_loc_info.keys():
                 info = cas_loc_info[header]
-                contig.id = ";".join([f"{k}@{v}" for k, v in info.items()])
+                contig.id = (
+                    info["CDS_id"]
+                    + " "
+                    + ";".join([f"{k}@{v}" for k, v in info.items()])
+                )
                 contigs_output.append(contig)
         SeqIO.write(contigs_output, fa_pep_cas, "fasta")
         logger.debug(f"generate cas.faa file, check output @ {fa_pep_cas}")
@@ -411,60 +415,52 @@ def cas13_finder(
     fa_input = input_faa  # input_fa = '202155.assembled.fna'
     fa_pep_cas13 = os.path.join(
         workspace,
-        f"{input_faa}.pep.cas.faa" if output_faa is None else str(output_faa),
+        f"{input_faa}.with.HEPNs.faa" if output_faa is None else str(output_faa),
     )
     dirname = os.path.dirname(fa_pep_cas13)
     os.makedirs(dirname, exist_ok=True)
 
     # start to parse HEPN pattern
     fa_cases = SeqIO.parse(fa_input, format="fasta")
-
-    pattern = re.compile(
-        # r"R[NHQ][A-Z]{3,5}H[FLYNSQ]"
-        r"R[NHQ][A-Z]{3,5}H"
-        # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
-        # 字母以字母 R 开头
-        # 第二个字母是 N、H 或 Q 中的一个
-        # 接下来是3到5个任意大写字母
-        # 然后是字母 H
-        # 最后是 F、L、Y、N、S 或 Q 中的一个字母
-        # patterns = "|".join(patterns)
-    )
     fa_cases_filter_length = (
         cas for cas in fa_cases if filter_fasta_length(cas, lmin, lmax)
     )
 
-    for fa_cas in fa_cases_filter_length:
-        matches = pattern.findall(string=str(fa_cas.seq))
+    # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
+    pattern = re.compile(r"R[NHQ][A-Z]{3,5}H")
+    ls_fa_cases_out = []
 
-        if matches:
+    for fa_cas in fa_cases_filter_length:
+        # matches = pattern.findall(string=str(fa_cas.seq))
+        matches = pattern.finditer(string=str(fa_cas.seq))
+
+        ls_span = []
+
+        for match in matches:
+            dt_span = dict()
+            dt_span["span"] = match.span()
+            dt_span["target"] = match.string[match.start() : match.end()]
+            ls_span.append(dt_span)
+
+        if len(ls_span) > 0:
+            logger.debug("↓" * 20)
             logger.debug(f"fa_cas.id = {fa_cas.id}")
+            logger.debug(f"fa_cas.description = {fa_cas.description}")
             logger.debug(f"fa_cas.seq = {fa_cas.seq}")
             logger.debug(f"fa_cas.length = {len(fa_cas)}")
-            logger.debug(f"matches = {matches}")
+            logger.debug(f"find pattern = r'{match.re.pattern}'")
+            logger.debug(f"HEPN info = {ls_span}")
 
-            for match in matches:
-                logger.debug(f"find pattern = r'{pattern.pattern}'")
-
-        # print(match)  # <re.Match object; span=(109, 117), match='RNHABCHF'>
-        # match.start = 148
-        # match.end = 156
-        # match.span = (148, 156)
-        # match.pos = 0
-        # match.re = re.compile('R[NHQ][A-Z]{3,5}H[FLYNSQ]')
-        # match.regs = ((148, 156),)
-        # match.target = RNHABCHQ
-
-        # logger.debug(f"match.start = {match.start()}")
-        # logger.debug(f"match.end = {match.end()}")
-        # logger.debug(f"match.span = {match.span()}")
-        # logger.debug(f"match.pos = {match.pos}")
-        # logger.debug(f"match.re = {match.re}")
-        # logger.debug(f"match.regs = {match.regs}")
-        # logger.debug(f"match.string = {match.string}")
-        # logger.debug(f"match.target = {match.string[match.start(): match.end()]}")
-        # logger.debug(f"match.match = {dir(match)}")
-        # logger.debug("find no pattern")
+            for i, dt in enumerate(ls_span):
+                span = dt["span"]
+                target = dt["target"]
+                s = f";HEPN-{i+1}@[span={span},target={target}]"
+                fa_cas.description += s
+            fa_cas.description += f";HEPN-count@{len(ls_span)}"
+            logger.debug(f"new fa_cas.description = {fa_cas.description}")
+            ls_fa_cases_out.append(fa_cas)
+    SeqIO.write(ls_fa_cases_out, fa_pep_cas13, "fasta")
+    logger.info("End, exit.")
 
 
 if __name__ == "__main__":

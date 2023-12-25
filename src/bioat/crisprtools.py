@@ -21,6 +21,19 @@ class CrisprTools:
         rm_temp=True,
         log_level="INFO",
     ):
+        """De novo annotation for Cas candidates from neighbor of CRISPR loci.
+
+        :param input_fa: metagenome.fa (with many contigs in it)
+        :param output_faa: De novo annotated Cas candidates
+        :param lmin: min length for a contig
+        :param lmax: max length for a contig
+        :param extend: proteins are considered over how far from the start/end of the CRISPR loci
+        :param temp_dir: folder to put temp files in
+        :param prodigal: the executable prodigal path
+        :param pilercr: the executable pilercr path
+        :param rm_temp: set False to keep the temp files
+        :param log_level: set DEBUG to see output from prodigal and pilercr
+        """
         cas_finder(
             input_fa=input_fa,
             output_faa=output_faa,
@@ -44,6 +57,14 @@ class CrisprTools:
     def cas13_finder(
         self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
     ):
+        """De novo annotation for Cas13 candidates from proteins.faa.
+
+        :param input_faa: cas_candidates.faa
+        :param output_faa: cas13_candidates.faa
+        :param lmin: min length for a cas candidate
+        :param lmax: max length for a cas candidate
+        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
+        """
         """Cas13 mining toolbox."""
         # start to test HEPN filter
         cas13_finder(
