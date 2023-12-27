@@ -1,12 +1,22 @@
-from bioat.lib.libpath import HOME
+from bioat.lib.libpath import HOME, exists_in_PATH
 from bioat.lib.libfastx import cas_finder, cas13_finder
 
 
 class CrisprTools:
     """CRISPR mining toolbox."""
 
-    _prodigal = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
-    _pilercr = f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
+    # for development test
+    _prodigal = (
+        "prodigal"
+        if exists_in_PATH("prodigal")
+        else f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
+    )
+    _pilercr = (
+        "pilercr"
+        if exists_in_PATH("pilercr")
+        else f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
+    )
+    # /for development test
 
     def cas_finder(
         self,
