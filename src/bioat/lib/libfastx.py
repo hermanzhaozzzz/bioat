@@ -227,7 +227,7 @@ def cas_finder(
     # -----------------------------
     # 3.get protein locs
     # -----------------------------
-    logger.info("3.get protein locs")
+    logger.info("3.get protein loci")
     if tests[3]:
         with open(gff, "rt") as wrapper_i, open(bed_pep, "wt") as wrapper_o:
             lines = wrapper_i.readlines()
@@ -279,9 +279,9 @@ def cas_finder(
                 )
                 wrapper_o.write(line_out)
     # -----------------------------
-    # 4.cas locs vs protein locs
+    # 4.cas locus vs protein locus
     # -----------------------------
-    logger.info("4.cas locs vs protein locs")
+    logger.info("4.cas locus vs protein locus")
     if tests[4]:
         # bedtools intersect
         """
@@ -349,9 +349,9 @@ def cas_finder(
     # }
 
     # -----------------------------
-    # 5.get cas locs protein
+    # 5.get cas candidate proteins
     # -----------------------------
-    logger.info("5.get cas locs protein")
+    logger.info("5.get cas candidate proteins")
     if tests[5]:
         contigs_input = SeqIO.parse(fa_pep, "fasta")
         contigs_output = []
@@ -370,9 +370,9 @@ def cas_finder(
         SeqIO.write(contigs_output, fa_pep_cas, "fasta")
         logger.debug(f"generate cas.faa file, check output @ {fa_pep_cas}")
     # -----------------------------
-    # 6.get cas locas scaffold
+    # 6.get cas candidate scaffolds
     # -----------------------------
-    logger.info("6.get cas locas scaffold")
+    logger.info("6.get cas candidate scaffolds")
     if tests[6]:
         assembly_input = SeqIO.parse(fa_input, "fasta")
         contigs_output = []
