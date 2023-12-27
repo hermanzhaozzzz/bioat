@@ -9,17 +9,22 @@ __module_name__ = "bioat.fastxtools"
 
 class FastxTools:
     """FASTA & FASTQ toolbox."""
+
     def __init__(self):
         self.fastx = None
         pass
 
-    def mgi_parse_md5(self, file: str, log_level='WARNING'):
+    def mgi_parse_md5(self, file: str, log_level="WARNING"):
         """Read mgi-like md5 file and convert to a normal md5 file.
 
         :param file: file name of a mgi-like md5 file.
         :param log_level: INFO/DEBUG/WARNING/ERROR, default is WARNING.
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name=sys._getframe().f_code.co_name,
+        )
         try:
             df = pd.read_csv(
                 file,
@@ -35,10 +40,10 @@ class FastxTools:
             exit(1)
         df.filename = df.filename + ".gz"
         to_path = file.replace(".txt", "") + ".fix.md5"
-        logger.info(f'write to {to_path}')
+        logger.info(f"write to {to_path}")
         df.to_csv(to_path, header=False, index=False, sep="\t")
 
-    def check_completeness(self, file: str, fmt='FASTQ',log_level='WARNING'):
+    def check_completeness(self, file: str, fmt="FASTQ", log_level="WARNING"):
         """正在开发中
 
         :param file: :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
@@ -46,11 +51,15 @@ class FastxTools:
         :param log_level:
         :return: str, PASS | FILENAME_LOG_FAIL
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name=sys._getframe().f_code.co_name,
+        )
         pass
 
     @staticmethod
-    def _load_fastx_generator(file, log_level='WARNING'):
+    def _load_fastx_generator(file, log_level="WARNING"):
         """
 
         :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
@@ -58,15 +67,19 @@ class FastxTools:
             i.e. print(next(obj)) -> ['header', 'seq', 'info', 'quality']
         :rtype: generator
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        f = open(file, 'rt') if not file.endswith('.gz') else gzip.open(file, 'rt')
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name=sys._getframe().f_code.co_name,
+        )
+        f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
         # FASTQ @  | FASTA >
         symbol = f.read(1)
         f.close()
-        f = open(file, 'rt') if not file.endswith('.gz') else gzip.open(file, 'rt')
+        f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
 
-        if symbol == '@':
-            logger.debug('detect FASTQ file')
+        if symbol == "@":
+            logger.debug("detect FASTQ file")
             read = []
             line = f.readline().rstrip()
 
@@ -74,7 +87,7 @@ class FastxTools:
                 if not line:
                     break
                 else:
-                    if line.startswith('@'):
+                    if line.startswith("@"):
                         # header or not complete
                         n = len(read)
                         if n == 0:
@@ -92,8 +105,8 @@ class FastxTools:
                             """
                             @@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6 # line! 期望它是 header！现在它是 quality
                             [
-                                '@Beta12AdemL1C001R00100001768/1', 
-                                'ATCCCCGTATCTTCACCCCACCACAAACTATTAG', 
+                                '@Beta12AdemL1C001R00100001768/1',
+                                'ATCCCCGTATCTTCACCCCACCACAAACTATTAG',
                                 '+',
                             ]'@@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6'
 
@@ -101,11 +114,11 @@ class FastxTools:
                             read.append(line)
                             line = f.readline().rstrip()
 
-                            if not line.startswith('@'):
-                                raise ValueError('The file may be incomplete!')
+                            if not line.startswith("@"):
+                                raise ValueError("The file may be incomplete!")
                         else:
                             f.close()
-                            raise ValueError('The file may be incomplete!')
+                            raise ValueError("The file may be incomplete!")
 
                         # header line!
                         # read.append(line)  # add header !
@@ -119,11 +132,10 @@ class FastxTools:
             f.close()
             # return ls
 
-
-        elif symbol == '>':
-            logger.debug('detect FASTA file')
+        elif symbol == ">":
+            logger.debug("detect FASTA file")
             read = []
-            seq = ''
+            seq = ""
             line = f.readline().rstrip()
 
             while True:
@@ -131,7 +143,7 @@ class FastxTools:
                     f.close()
                     break
                 else:
-                    if line.startswith('>'):
+                    if line.startswith(">"):
                         # 读取 header！
                         n = len(read)
 
@@ -147,10 +159,12 @@ class FastxTools:
                             read = []  # 重置 read 这个 list
                             read.append(line)
                             line = f.readline().rstrip()
-                            seq = ''  # 重置 seq 这个 str
+                            seq = ""  # 重置 seq 这个 str
                         else:
                             f.close()
-                            logger.error(BioatFileNotCompleteError('The file may be incomplete!'))
+                            logger.error(
+                                BioatFileNotCompleteError("The file may be incomplete!")
+                            )
                             exit(1)
                     else:
                         # 读取并添加 seq
@@ -163,7 +177,11 @@ class FastxTools:
             # return ls
         else:
             f.close()
-            logger.error(BioatFileFormatError('Input line one must starts with `@` for FASTQ or `>` for FASTA!'))
+            logger.error(
+                BioatFileFormatError(
+                    "Input line one must starts with `@` for FASTQ or `>` for FASTA!"
+                )
+            )
             exit(1)
         f.close()
 
@@ -201,7 +219,11 @@ class FastxTools:
         output = sys.stdout if output == sys.stdout.name else output
 
         if isinstance(output, str):
-            f = gzip.open(output, 'wt') if output.endswith('.gz') else open(output, 'wt')
+            f = (
+                gzip.open(output, "wt")
+                if output.endswith(".gz")
+                else open(output, "wt")
+            )
         else:
             f = output
 
@@ -210,13 +232,13 @@ class FastxTools:
         for read in fx:
             seq = read[1]
 
-            if seq.upper().__contains__('N'):
+            if seq.upper().__contains__("N"):
                 continue
             else:
-                f.write('\n'.join(read) + '\n')
+                f.write("\n".join(read) + "\n")
         f.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # fastx = FastxTools(file='../../data/random_l-180_n-100_hg38_minus-test.fa')
     pass

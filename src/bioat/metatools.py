@@ -2,31 +2,31 @@ import sys
 from bioat import get_logger
 from bioat.lib.libjgi import JGIOperator
 
-__module_name__ = 'bioat.metatools'
+__module_name__ = "bioat.metatools"
 
 
 class MetaTools:
     """Metagenome toolbox."""
 
     def JGI_query(
-            self,
-            # pick one from three
-            query_info: str | None = None,
-            xml: str | None = None,
-            log_fails: str | None = None,
-            # runtime params
-            nretry: int = 4,
-            timeout: int = 60,
-            regex: str | None = None,
-            all_get: bool = False,
-            overwrite_conf: bool = False,
-            filter_files: bool = False,
-            proxy_pool: str | None = None,
-            # doc helper
-            syntax_help: bool = False,
-            usage: bool = False,
-            # log
-            log_level: str = 'INFO'
+        self,
+        # pick one from three
+        query_info: str | None = None,
+        xml: str | None = None,
+        log_fails: str | None = None,
+        # runtime params
+        nretry: int = 4,
+        timeout: int = 60,
+        regex: str | None = None,
+        all_get: bool = False,
+        overwrite_conf: bool = False,
+        filter_files: bool = False,
+        proxy_pool: str | None = None,
+        # doc helper
+        syntax_help: bool = False,
+        usage: bool = False,
+        # log
+        log_level: str = "INFO",
     ):
         """JGI_query, a tool for downloading files from JGI-IMG database.
 
@@ -70,12 +70,21 @@ class MetaTools:
             proxy_pool=proxy_pool,
             syntax_help=syntax_help,
             usage=usage,
-            log_level=log_level
+            log_level=log_level,
         )
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-        logger.debug('run query')
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name=sys._getframe().f_code.co_name,
+        )
+        logger.debug("run query")
         operator.query()
-        logger.debug('parse xml to json')
+        logger.debug("parse xml to json")
         operator.parse_xml()
-        logger.debug('start to download; calculate and display total size of selected data')
+        logger.debug(
+            "start to download; calculate and display total size of selected data"
+        )
         operator.download()
+
+    def mafft(self):
+        pass
