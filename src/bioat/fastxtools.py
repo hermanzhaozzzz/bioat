@@ -16,7 +16,7 @@ class FastxTools:
         pass
 
     def fmt_this(self, file: str, new_file: str | None = None, log_level="WARNING"):
-        """format fastx file and make it easier to see.
+        """format fasta file and make it easier to see.
 
         :param file: input filename, fasta
         :param new_file: output filename, default is None, and when it is None, `file` will be replaced
