@@ -5,8 +5,9 @@ import os
 import subprocess
 import sys
 import re
+import gzip
 
-from Bio import SeqIO
+from Bio import SeqIO, bgzf
 from pybedtools import BedTool
 
 from bioat.logger import get_logger
@@ -461,6 +462,26 @@ def cas13_finder(
             ls_fa_cases_out.append(fa_cas)
     SeqIO.write(ls_fa_cases_out, fa_pep_cas13, "fasta")
     logger.info("End, exit.")
+
+
+def format_this_fastx(file: str, new_file: str | None = None, log_level: str = "DEBUG"):
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
+    logger.debug("start to format fastx file")
+    f_input = file
+    temp_file = f".bioat_temp_{f_input}"
+    new_file = f_input if new_file is None else new_file
+
+    fasta = SeqIO.parse(f_input, "fasta")
+
+    iter_out = (i for i in fasta)
+    SeqIO.write(iter_out, temp_file, "fasta")
+    logger.debug(f"rename {temp_file} to {new_file}")
+    os.rename(temp_file, new_file)
+    logger.debug("Done. Exit")
 
 
 if __name__ == "__main__":

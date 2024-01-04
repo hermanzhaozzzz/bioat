@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 from bioat.exceptions import BioatFileFormatError, BioatFileNotCompleteError
 from bioat.logger import get_logger
+from bioat.lib.libfastx import format_this_fastx
 
 __module_name__ = "bioat.fastxtools"
 
@@ -13,6 +14,15 @@ class FastxTools:
     def __init__(self):
         self.fastx = None
         pass
+
+    def fmt_this(self, file: str, new_file: str | None = None, log_level="WARNING"):
+        """format fastx file and make it easier to see.
+
+        :param file: input filename, fasta
+        :param new_file: output filename, default is None, and when it is None, `file` will be replaced
+        :param log_level: like others
+        """
+        format_this_fastx(file=file, new_file=new_file, log_level=log_level)
 
     def mgi_parse_md5(self, file: str, log_level="WARNING"):
         """Read mgi-like md5 file and convert to a normal md5 file.
