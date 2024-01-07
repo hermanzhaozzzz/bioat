@@ -427,8 +427,20 @@ def cas13_finder(
         cas for cas in fa_cases if filter_fasta_length(cas, lmin, lmax)
     )
 
-    # ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
-    pattern = re.compile(r"R[NHQ][A-Z]{3,5}H")
+    pattern = re.compile(r"R[NHQD][A-Z]{3,5}H")
+    # R: Arginine
+    # N: Asparagine
+    # H: Histidine
+    # Q: Glutarnine
+    # D: Asparticacid
+    # the pattern is based on three papers:
+    # 1.Anantharaman, V., Makarova, K. S., Burroughs, A. M., Koonin, E. V. & Aravind, L. Comprehensive analysis of the HEPN superfamily: identification of novel roles in intra-genomic conflicts, defense, pathogenesis and RNA processing. Biol. Direct 8, 15 (2013).
+    # see ![](http://_pic.zhaohuanan.cc:7777/images/2024/01/08/20240108002122.png)
+    # 2.Xu, C. et al. Programmable RNA editing with compact CRISPR–Cas13 systems from uncultivated microbes. Nat. Methods 18, 499–506 (2021).
+    # see ![](http://_pic.zhaohuanan.cc:7777/images/2024/01/08/20240108004055.png)
+    # 3. what? for figure below
+    # see ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)
+
     ls_fa_cases_out = []
 
     for fa_cas in fa_cases_filter_length:
