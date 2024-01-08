@@ -427,7 +427,8 @@ def cas13_finder(
         cas for cas in fa_cases if filter_fasta_length(cas, lmin, lmax)
     )
 
-    pattern = re.compile(r"R[NHQD][A-Z]{3,5}H")
+    # pattern = re.compile(r"R[NHQD][A-Z]{3,5}H")
+    pattern = re.compile(r"(R[NHQD][A-Z]{3,5}H|H[A-Z]{3,5}[NHQD]R)")
     # R: Arginine
     # N: Asparagine
     # H: Histidine
