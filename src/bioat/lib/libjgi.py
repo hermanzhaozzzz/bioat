@@ -553,11 +553,13 @@ class JGIOperator:
             if self._proxies:
                 logger.debug(f"query using IP: {self._proxy_ip}")
             try:
-                response.raise_for_status()  # 如果响应的状态码不是200，将引发HTTPError异常
+                # 如果响应的状态码不是200，将引发HTTPError异常
+                response.raise_for_status()
             except HTTPError:
                 logger.critical(f"response status: {response.status_code}")
                 logger.critical(
-                    "Couldn't connect with server. Please check Internet connection and retry."
+                    "Couldn't connect with server. "
+                    "Please check Internet connection and retry."
                 )
                 logger.critical(f"response.text = {response.text}")
                 self._clean_exit(
@@ -570,7 +572,8 @@ class JGIOperator:
 
             xml_file = self.config.FILENAME_TEMPLATE_XML.format(self.query_info)
             with open(xml_file, "wb") as f:
-                # 使用二进制写入模式（"wb"）来保存结果文件，因为response.content返回的是一个字节字符串
+                # 使用二进制写入模式（"wb"）来保存结果文件，
+                # 因为response.content返回的是一个字节字符串
                 logger.debug(f"successfully query, write xml @ {xml_file}")
                 f.write(response.content)
 
