@@ -172,7 +172,8 @@ def cas_finder(
                 if line.startswith(">"):
                     contig = line[1:]
                     # 2024-01-12 fix bug, if contig with space
-                    contig = contig.replace(" ", "_")
+                    # contig = contig.replace(" ", "_")
+                    contig = contig.split(" ")[0]
                     logger.debug(f"find contig line, the contig = {contig}")
                     continue
                 elif line.startswith("Array") or line.startswith("====="):
@@ -182,7 +183,7 @@ def cas_finder(
                     logger.debug("find a crispr array, try to parse it")
                 # when find a crispr array
                 # try to parse
-                # 2024-01-12 fix Sequence have space bug
+                # 2024-01-12 fix Sequence have space bug: invalid literal for int() with base 10: 'T'
                 line = line[:7] + line[7:23].replace(" ", "_") + line[23:]
                 info = (
                     line.split()
