@@ -578,14 +578,16 @@ class JGIOperator:
                 # 因为response.content返回的是一个字节字符串
                 logger.debug(f"successfully query, write xml @ {xml_file}")
                 f.write(response.content)
+
             # if just_query_xml = True, exit from here
-            self._clean_exit(
-                exit_message="exit reason: just_query_xml = True",
-                exit_code=0,
-                rm_cookie=True,
-                rm_xml=False,
-                logger=logger,
-            )
+            if self.just_query_xml:
+                self._clean_exit(
+                    exit_message="exit reason: just_query_xml = True",
+                    exit_code=0,
+                    rm_cookie=True,
+                    rm_xml=False,
+                    logger=logger,
+                )
 
     # step 05 parse xml info to update url
     def parse_xml(self):
