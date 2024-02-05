@@ -257,6 +257,7 @@ class JGIOperator:
         overwrite_conf: bool = False,
         filter_files: bool = False,
         proxy_pool: str | None = None,
+        just_query_xml: bool = False,
         # doc helper
         syntax_help: bool = False,
         usage: bool = False,
@@ -273,6 +274,7 @@ class JGIOperator:
         self.all_get = all_get
         self.overwrite_conf = overwrite_conf
         self.filter_files = filter_files  # TODO 搞清楚用法
+        self.just_query_xml = just_query_xml
         self.syntax_help = syntax_help
         self.usage = usage
         self.log_level = log_level
@@ -576,6 +578,14 @@ class JGIOperator:
                 # 因为response.content返回的是一个字节字符串
                 logger.debug(f"successfully query, write xml @ {xml_file}")
                 f.write(response.content)
+            # if just_query_xml = True, exit from here
+            self._clean_exit(
+                exit_message="exit reason: just_query_xml = True",
+                exit_code=0,
+                rm_cookie=True,
+                rm_xml=False,
+                logger=logger,
+            )
 
     # step 05 parse xml info to update url
     def parse_xml(self):

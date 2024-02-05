@@ -22,6 +22,7 @@ class MetaTools:
         overwrite_conf: bool = False,
         filter_files: bool = False,
         proxy_pool: str | None = None,
+        just_query_xml: bool = False,
         # doc helper
         syntax_help: bool = False,
         usage: bool = False,
@@ -51,6 +52,7 @@ class MetaTools:
         :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
             files listed by JGI for the query
         :param proxy_pool: str | None = None, http://abc.com:port, see https://github.com/hermanzhaozzzz/proxy_pool
+        :param just_query_xml: bool, set True if you just want save XML file.
         :param syntax_help: (doc mode) syntax_help
         :param usage: (doc mode) print verbose usage information and exit
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
@@ -68,6 +70,7 @@ class MetaTools:
             overwrite_conf=overwrite_conf,
             filter_files=filter_files,
             proxy_pool=proxy_pool,
+            just_query_xml=just_query_xml,
             syntax_help=syntax_help,
             usage=usage,
             log_level=log_level,
