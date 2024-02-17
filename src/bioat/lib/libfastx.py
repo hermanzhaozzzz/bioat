@@ -27,7 +27,6 @@ def filter_fasta_length(contig, lmin, lmax) -> bool:
 def cas_finder(
     input_fa: str,
     output_faa: str | None = None,
-    output_crispr_scaffold: str | None = None,
     lmin: int | None = None,
     lmax: int | None = None,
     extend: int = 10_000,
@@ -97,6 +96,16 @@ def cas_finder(
         )
         logger.debug(f"writing filtered contigs to file @ {fa_filtered}")
         SeqIO.write(contigs_output, fa_filtered, "fasta")
+
+        # if fa_filtered is empty, just return empty fa_pep_cas
+        logger.debug(f"checking if @ {fa_filtered} is empty.")
+
+        if os.path.getsize(fa_filtered) == 0:
+            logger.warning(f"fa_filtered @ {fa_filtered} is empty! will touch an empty output file @ {fa_pep_cas}")
+            with open(fa_pep_cas, 'wt') as f:
+                f.write('')
+            logger.info("End, exit.")
+            return  # just return output file as an empty file
     # -----------------------------
     # 1. cas & protein annotation
     # -----------------------------
