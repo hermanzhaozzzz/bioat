@@ -75,8 +75,8 @@ def cas_finder(
     assembly_id = f"{os.path.basename(fa_input)}"
 
     tests = {
-        0: False,  # PASS # 0. filter contigs
-        1: False,  # PASS # 1. cas & protein annotation
+        0: True,  # PASS # 0. filter contigs
+        1: True,  # PASS # 1. cas & protein annotation
         2: True,  # PASS # 2. get crispr loci
         3: True,  # PASS # 3. get protein cds
         4: True,  # PASS # 4. cas loci vs protein cds
@@ -110,6 +110,9 @@ def cas_finder(
             logger.warning(f"fa_filtered @ {fa_filtered} is empty! will touch an empty output file @ {fa_pep_cas}")
             with open(fa_pep_cas, 'wt') as f:
                 f.write('')
+            if output_crispr_info_tab:
+                with open(output_crispr_info_tab, 'wt') as f:
+                    f.write('')
             logger.info("End, exit.")
             return  # just return output file as an empty file
     # -----------------------------
@@ -148,6 +151,8 @@ def cas_finder(
             stderr=open("/dev/null", "wt") if log_level != "DEBUG" else sys.stderr,
         )
         logger.debug(f"call has returned, check output @ {f_pilercr}")
+        # if fa_filtered is empty, just return empty fa_pep_cas
+        logger.debug(f"checking if @ {fa_filtered} is empty.")
     # -----------------------------
     # 2.get crispr loci
     # -----------------------------
@@ -301,6 +306,18 @@ def cas_finder(
                 ls_all.append(ls_temp)
 
                 ls_df = []
+
+                if not ls_all or ls_all == [None]:
+                    # don't consider gz file. because it is a temp file.
+                    logger.warning(
+                        f'find no crispr info in @ {fa_filtered}! will touch an empty output file @ {fa_pep_cas}')
+                    with open(fa_pep_cas, 'wt') as f:
+                        f.write('')
+                    if output_crispr_info_tab:
+                        with open(output_crispr_info_tab, 'wt') as f:
+                            f.write('')
+                    logger.info("End, exit.")
+                    return  # just return output file as an empty file
 
                 for idx, one in enumerate(ls_all):
                     ls_one_info = [i[:1] + ls_rep_info[idx] + i[1].split() for i in one]
