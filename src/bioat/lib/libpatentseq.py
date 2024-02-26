@@ -5,7 +5,6 @@ import json
 import pandas as pd
 from bioat import get_logger
 from playwright.sync_api import Playwright, sync_playwright
-from bioat.lib.libspider import get_random_user_agents, ProxyPool
 
 __module_name__ = 'bioat.lib.libpatentseq'
 
@@ -29,12 +28,10 @@ def run(
         'password': password,
     }
     logger.debug(f'set account: {account}')
-    # headers = {
-    #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
-    # }
     headers = {
-        'User-Agent': get_random_user_agents()
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
     }
+
     logger.debug(f'set headers: {headers}')
     url_login = "https://www.lens.org/lens/bio/patseqfinder"
     url_query = 'https://www.lens.org/lens/bio/psf/api/searchformdata'
