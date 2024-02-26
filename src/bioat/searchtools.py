@@ -284,7 +284,7 @@ class SearchTools:
         :param query_name: queryName in output table
         :param username: lens.org username
         :param password: lens.org password
-        :param via_proxy: like socks5://127.0.0.1:8235
+        :param via_proxy: like http://127.0.0.1:8234 socks5://127.0.0.1:8235
         :param output: output table.csv/csv.gz
         :param nobrowser: wether or not to open browser for DEBUG
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'

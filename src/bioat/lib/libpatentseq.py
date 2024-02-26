@@ -5,6 +5,7 @@ import json
 import pandas as pd
 from bioat import get_logger
 from playwright.sync_api import Playwright, sync_playwright
+from bioat.lib.libspider import get_random_user_agents, ProxyPool
 
 __module_name__ = 'bioat.lib.libpatentseq'
 
@@ -28,8 +29,11 @@ def run(
         'password': password,
     }
     logger.debug(f'set account: {account}')
+    # headers = {
+    #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+    # }
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+        'User-Agent': get_random_user_agents()
     }
     logger.debug(f'set headers: {headers}')
     url_login = "https://www.lens.org/lens/bio/patseqfinder"
@@ -50,6 +54,9 @@ def run(
     logger.debug(f'set headless: {headless}')
     browser = playwright.firefox.launch(headless=headless)
     proxy_server = {"server": proxy_server} if proxy_server else None
+    if proxy_server:
+        logger.info(f'set proxy_server: {proxy_server}')
+
     context = browser.new_context(
         viewport={"width": 1920, "height": 1080} if not headless else None,
         proxy=proxy_server
@@ -110,7 +117,7 @@ def run(
                     logger.info(f'result hit:\n{df}')
                     if SEQ_HEADER:
                         SEQ_HEADER = SEQ_HEADER.replace('>', '').split(' ')[0]
-                        df.insert(0, 'queryName', 'SEQ_HEADER')
+                        df.insert(0, 'queryName', SEQ_HEADER)
                         logger.info(f'export hit info to {output}')
                         df.to_csv(output, index=False)
                     STATUS = 'FINISHED'
