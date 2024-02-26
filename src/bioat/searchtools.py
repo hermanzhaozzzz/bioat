@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import pandas as pd
+from bioat.lib.libpatentseq import query_patent
 
 __module_name__ = 'bioat.searchtools'
 
@@ -265,3 +266,38 @@ class SearchTools:
             fpath_csv = os.path.join(csv_path, keyword.replace(' ', '_') + '.csv')
             fpath_csv = fpath_csv[:MAX_CSV_FNAME]
             data_ranked.to_csv(fpath_csv, encoding='utf-8')
+
+    def query_patent(
+            self,
+            seq: str,
+            query_name: str | None = None,
+            username: str | None = None,
+            password: str | None = None,
+            via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
+            output: str | None = None,
+            nobrowser: bool = True,
+            log_level: str = 'WARNING'
+    ):
+        """Return a table with a list of patent blast hit from lens.org
+
+        :param seq: protein sequence, e.g. MCRISQQKK
+        :param query_name: queryName in output table
+        :param username: lens.org username
+        :param password: lens.org password
+        :param via_proxy: like socks5://127.0.0.1:8235
+        :param output: output table.csv/csv.gz
+        :param nobrowser: wether or not to open browser for DEBUG
+        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
+        """
+        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger.info('Run query patent sequence from lens.org...')
+        query_patent(
+            seq=seq,
+            seq_header=query_name,
+            username=username,
+            password=password,
+            proxy_server=via_proxy,
+            output=output,
+            headless=nobrowser,
+            log_level=log_level
+        )
