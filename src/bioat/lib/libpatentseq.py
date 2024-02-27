@@ -4,12 +4,11 @@ import os
 import sys
 import json
 import pandas as pd
-from selenium.common import NoSuchElementException
-
 from bioat import get_logger
 from bioat.lib.libpath import HOME
 from bioat.lib.libpandas import set_option
 from playwright.sync_api import Playwright, sync_playwright
+from playwright._impl._errors import TimeoutError
 
 __module_name__ = 'bioat.lib.libpatentseq'
 
@@ -85,7 +84,6 @@ def run(
 
     logger.debug(f'set headers: {headers}')
     url_login = "https://www.lens.org/lens/bio"
-    # url_query = 'https://www.lens.org/lens/bio/psf/api/searchformdata'
     url_query = "https://www.lens.org/lens/bio/patseqfinder"
     logger.debug(f'set url_login: {url_login}')
     logger.debug(f'set url_query: {url_query}')
@@ -124,10 +122,15 @@ def run(
             try:
                 page.goto(url_login)
                 break
+            except TimeoutError as e:
+                logger.warning(f'Could not load url {url_login}: {e}, retry...')
+                time.sleep(3)
+                counter += 1
             except Exception as e:
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
                 counter += 1
+            finally:
                 continue
         page.get_by_text("Thanks, Got It").click()
         page.get_by_role("link", name="Sign in", exact=True).click()
@@ -155,10 +158,15 @@ def run(
         try:
             page.goto(url_query)
             break
+        except TimeoutError as e:
+            logger.warning(f'Could not load url {url_query}: {e}, retry...')
+            time.sleep(3)
+            counter += 1
         except Exception as e:
             logger.warning(f'Could not load url {url_query}: {e}, retry...')
             time.sleep(3)
             counter += 1
+        finally:
             continue
     page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
     time.sleep(3)
