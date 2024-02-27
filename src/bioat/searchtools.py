@@ -276,6 +276,7 @@ class SearchTools:
             via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
             output: str | None = None,
             nobrowser: bool = True,
+            retry: int = 3,
             log_level: str = 'WARNING'
     ):
         """Return a table with a list of patent blast hit from lens.org
@@ -287,6 +288,7 @@ class SearchTools:
         :param via_proxy: like http://127.0.0.1:8234 socks5://127.0.0.1:8235
         :param output: output table.csv/csv.gz
         :param nobrowser: wether or not to open browser for DEBUG
+        :param retry: max retry times
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
         logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
@@ -299,5 +301,6 @@ class SearchTools:
             proxy_server=via_proxy,
             output=output,
             headless=nobrowser,
+            nretry=retry,
             log_level=log_level
         )

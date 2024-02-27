@@ -69,6 +69,7 @@ def run(
         proxy_server,
         output,
         headless,
+        nretry,
         log_level
 ) -> None:
     logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
@@ -118,7 +119,7 @@ def run(
         page.set_extra_http_headers(headers)
         logger.debug(f'goto {url_login}')
         counter = 0
-        while counter <= 3:
+        while counter <= nretry:
             try:
                 page.goto(url_login)
                 break
@@ -126,12 +127,16 @@ def run(
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
                 counter += 1
+                continue
             except Exception as e:
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
                 counter += 1
-            finally:
                 continue
+            finally:
+                if counter >= nretry:
+                    logger.error(f'Could not load url {url_login}: {e}, already retry maximum ({nretry})number of retries')
+
         page.get_by_text("Thanks, Got It").click()
         page.get_by_role("link", name="Sign in", exact=True).click()
         logger.debug(f'try to fill account info: {account}')
@@ -154,7 +159,7 @@ def run(
     page.set_extra_http_headers(headers)
     logger.debug(f'goto {url_query}')
     counter = 0
-    while counter <= 3:
+    while counter <= nretry:
         try:
             page.goto(url_query)
             break
@@ -162,12 +167,15 @@ def run(
             logger.warning(f'Could not load url {url_query}: {e}, retry...')
             time.sleep(3)
             counter += 1
+            continue
         except Exception as e:
             logger.warning(f'Could not load url {url_query}: {e}, retry...')
             time.sleep(3)
             counter += 1
-        finally:
             continue
+        finally:
+            if counter >= nretry:
+                logger.error(f'Could not load url {url_query}: {e}, already retry maximum ({nretry})number of retries')
     page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
     time.sleep(3)
     logger.debug(f'try to fill seq: {seq}')
@@ -246,6 +254,7 @@ def query_patent(
         proxy_server: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
         output: str | None = None,
         headless: bool = True,
+        nretry: int = 3,
         log_level: str = 'INFO'
 ):
     with sync_playwright() as playwright:
@@ -258,6 +267,7 @@ def query_patent(
             proxy_server=proxy_server,
             output=output,
             headless=headless,
+            nretry=nretry,
             log_level=log_level
         )
 
