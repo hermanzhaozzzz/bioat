@@ -54,6 +54,7 @@ def load_cookies(browser, log_level) -> None | object:
                 logger.info('Cookies are still valid, skip login and load cookies')
                 with open(COOKIE, 'rt') as f:
                     storage_state = json.loads(f.read().strip())
+                logger.debug(f'new_context')
                 context = browser.new_context(storage_state=storage_state)
                 return context
             else:
@@ -83,23 +84,18 @@ def run(
         log_level
 ) -> None:
     logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-    # set global var to check program status
-    global STATUS
-    global SEQ_HEADER
-    STATUS = 'RUN'
-    SEQ_HEADER = seq_header
 
     account = {
         'username': username,
         'password': password,
     }
     logger.debug(f'Set account: {account}')
-    headers = {  # not change it, for bypassing cloudflare challenge with firefox
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
-    }
+    # headers = {  # not change it, for bypassing cloudflare challenge with firefox
+    #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+    # }
 
-    logger.debug(f'Set headers: {headers}')
-    url_login = "https://www.lens.org/lens/bio"
+    # logger.debug(f'Set headers: {headers}')
+    url_login = "https://www.lens.org/lens/bio/"
     url_query = "https://www.lens.org/lens/bio/patseqfinder"
     logger.debug(f'set url_login: {url_login}')
     logger.debug(f'set url_query: {url_query}')
@@ -127,26 +123,29 @@ def run(
     context = load_cookies(browser, log_level)
 
     if context is None:  # need login
+
         logger.info('Cookies not exist or out of time. try to login')
 
         # login part
         counter = 0
-        while counter <= nretry:
+
+        while True:
             if counter > nretry:
                 logger.error(
                     f'Could not load url {url_login}, already retry maximum ({nretry})number of retries')
                 remove_cookie(log_level)
-                context.close()
+                logger.debug('browser close')
                 browser.close()
                 logger.error('Login failed')
                 sys.exit(1)
             try:
+                logger.debug(f'new_context')
                 context = browser.new_context(
                     viewport={"width": 1920, "height": 1080} if not headless else None,
                     proxy=proxy_server
                 )
                 page = context.new_page()
-                page.set_extra_http_headers(headers)
+                # page.set_extra_http_headers(headers)
                 logger.debug(f'Goto {url_login}')
                 page.goto(url_login)
                 page.get_by_text("Thanks, Got It").click()
@@ -165,31 +164,36 @@ def run(
                 time.sleep(2)
                 logger.debug(f'Try to sign in account')
                 page.get_by_role("button", name="Sign in").click()
-                page.close()
                 save_cookies(context, log_level)
                 break  # to else for break
             except TimeoutError as e:
+                logger.debug('context close')
+                context.close()
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
                 counter += 1
                 continue
             except Exception as e:
+                logger.debug('context close')
+                context.close()
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
                 counter += 1
                 continue
     # now login status is ok
     page = context.new_page()
-    page.set_extra_http_headers(headers)
+    # page.set_extra_http_headers(headers)
     logger.debug(f'Goto {url_query}')
     # query
     counter = 0
-    while counter <= nretry:
+    while True:
         if counter > nretry:
             logger.error(
                 f'Could not load url {url_query}, already retry maximum ({nretry})number of retries')
             remove_cookie(log_level)
+            logger.debug('context close')
             context.close()
+            logger.debug('browser close')
             browser.close()
             logger.error('Query failed')
             sys.exit(1)
@@ -221,9 +225,16 @@ def run(
             counter += 1
             continue
 
+    # set global var to check program status
+    global STATUS
+    global SEQ_HEADER
+    STATUS = 'RUN'
+    SEQ_HEADER = seq_header
+
     def handle_response(response):
         global STATUS
         global SEQ_HEADER
+
         if (
                 '#/results' in full_url and
                 response.request.method == 'POST' and
@@ -238,11 +249,13 @@ def run(
                     df = pd.DataFrame.from_dict(json_data['hits'])
                     set_option(log_level=log_level)
                     logger.info(f'Result hit:\n{df}')
+
                     if SEQ_HEADER:
                         SEQ_HEADER = SEQ_HEADER.replace('>', '').split(' ')[0]
                         df.insert(0, 'queryName', SEQ_HEADER)
-                        logger.info(f'Export hit info to {output}')
-                        df.to_csv(output, index=False)
+                        if output:
+                            logger.info(f'Export hit info to {output}')
+                            df.to_csv(output, index=False)
                     STATUS = 'FINISHED'
                 else:
                     logger.error("Response text is empty")
@@ -257,24 +270,35 @@ def run(
                 logger.info(f'STATUS: {STATUS}')
                 logger.info('Task complete.')
 
-    counter = 0
-    while STATUS == 'RUN' and counter * 2 <= 300:  # more than 200 seconds, failed
+    start_time = time.time()
+    while True:  # more than 150 seconds, failed
+        if STATUS != 'RUN':
+            logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s')
+            break
+        if int(time.time() - start_time) >= 150:
+            logger.error(
+                f"TimeoutError (waiting for more than 150s), "
+                f"this might be a problem with browser was terminated external")
+            logger.error('You can try again later')
+            exit(1)
         try:
-            time.sleep(2)
-            counter += 1
-            logger.info(f'STATUS={STATUS}, SPEND={counter * 2}s, waiting for completion')
-            # print(f"Current URL: {page.url}")
             full_url = page.evaluate('window.location.href')
-            # print(f"Full URL including hash: {full_url}")
+            # if time.time() - start_time % 5 == 0:
+            #     logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s, waiting for completion')
+            #     logger.debug(f"Current URL: {page.url}")
+            #     logger.debug(f"Full URL including hash: {full_url}")
             page.on('response', handle_response)
         except TargetClosedError as e:
             logger.error(f"Meet error{e}, this might be a problem with browser was terminated external")
             logger.error('you can try again later')
             sys.exit(1)
     # ---------------------
+    logger.debug('context close')
     context.close()
+    logger.debug('browser close')
     browser.close()
     logger.info('End. Exit.')
+    sys.exit(0)
 
 
 def query_patent(
