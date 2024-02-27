@@ -60,6 +60,16 @@ def load_cookies(browser, log_level) -> None | object:
                 return None
 
 
+def remove_cookie(log_level):
+    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger.info('Removing cookie')
+    try:
+        os.remove(COOKIE)
+        os.remove(f'{COOKIE}.time')
+    except FileNotFoundError:
+        logger.warning('Cookies are not found, skip remove.')
+
+
 def run(
         playwright: Playwright,
         username,
@@ -135,7 +145,9 @@ def run(
                 continue
             finally:
                 if counter >= nretry:
-                    logger.error(f'Could not load url {url_login}: {e}, already retry maximum ({nretry})number of retries')
+                    logger.error(
+                        f'Could not load url {url_login}: {e}, already retry maximum ({nretry})number of retries')
+                    remove_cookie()
 
         page.get_by_text("Thanks, Got It").click()
         page.get_by_role("link", name="Sign in", exact=True).click()
@@ -176,6 +188,7 @@ def run(
         finally:
             if counter >= nretry:
                 logger.error(f'Could not load url {url_query}: {e}, already retry maximum ({nretry})number of retries')
+                remove_cookie()
     page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
     time.sleep(3)
     logger.debug(f'try to fill seq: {seq}')
