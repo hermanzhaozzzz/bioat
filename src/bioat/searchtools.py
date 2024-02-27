@@ -277,7 +277,7 @@ class SearchTools:
             output: str | None = None,
             nobrowser: bool = True,
             retry: int = 3,
-            log_level: str = 'WARNING'
+            log_level: str = 'INFO'
     ):
         """Return a table with a list of patent blast hit from lens.org
 

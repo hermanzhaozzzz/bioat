@@ -8,7 +8,7 @@ from bioat import get_logger
 from bioat.lib.libpath import HOME
 from bioat.lib.libpandas import set_option
 from playwright.sync_api import Playwright, sync_playwright
-from playwright._impl._errors import TimeoutError
+from playwright._impl._errors import TimeoutError, TargetClosedError
 
 __module_name__ = 'bioat.lib.libpatentseq'
 
@@ -46,7 +46,7 @@ def load_cookies(browser, log_level) -> None | object:
         # run check time
         current_time = int(time.time())
         elapsed_time = current_time - login_time
-        if elapsed_time > 4 * 60 * 60:  # 4 hours
+        if elapsed_time > 15 * 60:  # 1/4 hours 15min
             logger.info('Cookies are expired, performing re-login...')
             return None
         else:
@@ -83,17 +83,22 @@ def run(
         log_level
 ) -> None:
     logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    # set global var to check program status
+    global STATUS
+    global SEQ_HEADER
+    STATUS = 'RUN'
+    SEQ_HEADER = seq_header
 
     account = {
         'username': username,
         'password': password,
     }
-    logger.debug(f'set account: {account}')
+    logger.debug(f'Set account: {account}')
     headers = {  # not change it, for bypassing cloudflare challenge with firefox
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
     }
 
-    logger.debug(f'set headers: {headers}')
+    logger.debug(f'Set headers: {headers}')
     url_login = "https://www.lens.org/lens/bio"
     url_query = "https://www.lens.org/lens/bio/patseqfinder"
     logger.debug(f'set url_login: {url_login}')
@@ -108,31 +113,61 @@ def run(
         'matrix': 'BLOSUM62',
         'seqLength': f'{len(seq)}',
     }
-    logger.debug(f'set data: {data}\n')
-    logger.debug(f'set headless: {headless}')
+    logger.debug(f'Set data: {data}\n')
+    logger.debug(f'Set headless: {headless}')
     proxy_server = {"server": proxy_server} if proxy_server else None
     if proxy_server:
-        logger.info(f'set proxy_server: {proxy_server}')
+        logger.info(f'Set proxy_server: {proxy_server}')
 
+    # start to test
     browser = playwright.firefox.launch(headless=headless)
 
-    logger.debug('try to load cookies')
+    logger.debug('Try to load cookies')
+
     context = load_cookies(browser, log_level)
-    if context is None:
-        # need login
-        logger.info('cookies not exist or out of time. try to login')
-        context = browser.new_context(
-            viewport={"width": 1920, "height": 1080} if not headless else None,
-            proxy=proxy_server
-        )
-        page = context.new_page()
-        page.set_extra_http_headers(headers)
-        logger.debug(f'goto {url_login}')
+
+    if context is None:  # need login
+        logger.info('Cookies not exist or out of time. try to login')
+
+        # login part
         counter = 0
         while counter <= nretry:
+            if counter > nretry:
+                logger.error(
+                    f'Could not load url {url_login}, already retry maximum ({nretry})number of retries')
+                remove_cookie(log_level)
+                context.close()
+                browser.close()
+                logger.error('Login failed')
+                sys.exit(1)
             try:
+                context = browser.new_context(
+                    viewport={"width": 1920, "height": 1080} if not headless else None,
+                    proxy=proxy_server
+                )
+                page = context.new_page()
+                page.set_extra_http_headers(headers)
+                logger.debug(f'Goto {url_login}')
                 page.goto(url_login)
-                break
+                page.get_by_text("Thanks, Got It").click()
+                page.get_by_role("link", name="Sign in", exact=True).click()
+                logger.debug(f'Try to fill account info: {account}')
+                page.get_by_label("Email address or Username").click()
+                page.get_by_label("Email address or Username").fill(account['username'])
+                page.get_by_label("Email address or Username").press("Tab")
+                page.get_by_label("Password").fill(account['password'])
+                # add remember me
+                page.get_by_role("group").locator("label").filter(has_text="Keep me logged in").locator("i").click()
+                # bypass cloudflare challenge
+                page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(
+                    "Verify you are human").check()
+                # must sleep for passing cloudflare
+                time.sleep(2)
+                logger.debug(f'Try to sign in account')
+                page.get_by_role("button", name="Sign in").click()
+                page.close()
+                save_cookies(context, log_level)
+                break  # to else for break
             except TimeoutError as e:
                 logger.warning(f'Could not load url {url_login}: {e}, retry...')
                 time.sleep(3)
@@ -143,37 +178,37 @@ def run(
                 time.sleep(3)
                 counter += 1
                 continue
-            finally:
-                if counter >= nretry:
-                    logger.error(
-                        f'Could not load url {url_login}: {e}, already retry maximum ({nretry})number of retries')
-                    remove_cookie()
-
-        page.get_by_text("Thanks, Got It").click()
-        page.get_by_role("link", name="Sign in", exact=True).click()
-        logger.debug(f'try to fill account info: {account}')
-        page.get_by_label("Email address or Username").click()
-        page.get_by_label("Email address or Username").fill(account['username'])
-        page.get_by_label("Email address or Username").press("Tab")
-        page.get_by_label("Password").fill(account['password'])
-        # add remember me
-        page.get_by_role("group").locator("label").filter(has_text="Keep me logged in").locator("i").click()
-        # bypass cloudflare challenge
-        page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(
-            "Verify you are human").check()
-        # must sleep for passing cloudflare
-        time.sleep(2)
-        logger.debug(f'try to sign in account')
-        page.get_by_role("button", name="Sign in").click()
-        save_cookies(context, log_level)
     # now login status is ok
     page = context.new_page()
     page.set_extra_http_headers(headers)
-    logger.debug(f'goto {url_query}')
+    logger.debug(f'Goto {url_query}')
+    # query
     counter = 0
     while counter <= nretry:
+        if counter > nretry:
+            logger.error(
+                f'Could not load url {url_query}, already retry maximum ({nretry})number of retries')
+            remove_cookie(log_level)
+            context.close()
+            browser.close()
+            logger.error('Query failed')
+            sys.exit(1)
         try:
             page.goto(url_query)
+            page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
+            time.sleep(3)
+            logger.debug(f'Try to fill seq: {seq}')
+            page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").fill(seq)
+            page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
+            page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
+                "div").click()
+            logger.debug(f'Set maximum number of hits to 50')
+            page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
+            logger.debug(f'Set maximum e-value to 1.0')
+            page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
+            logger.debug('Submit blastp query info')
+            page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
+            logger.info('Task has been submitted, waiting for completion')
             break
         except TimeoutError as e:
             logger.warning(f'Could not load url {url_query}: {e}, retry...')
@@ -185,30 +220,6 @@ def run(
             time.sleep(3)
             counter += 1
             continue
-        finally:
-            if counter >= nretry:
-                logger.error(f'Could not load url {url_query}: {e}, already retry maximum ({nretry})number of retries')
-                remove_cookie()
-    page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
-    time.sleep(3)
-    logger.debug(f'try to fill seq: {seq}')
-    page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").fill(seq)
-    page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
-    page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
-        "div").click()
-    logger.debug(f'set maximum number of hits to 50')
-    page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
-    logger.debug(f'set maximum e-value to 1.0')
-    page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
-    logger.debug('submit blastp query info')
-    page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
-    logger.info('task has been submitted, waiting for completion')
-
-    # set global var to check program status
-    global STATUS
-    global SEQ_HEADER
-    STATUS = 'RUN'
-    SEQ_HEADER = seq_header
 
     def handle_response(response):
         global STATUS
@@ -225,38 +236,45 @@ def run(
                 if response_text:
                     json_data = json.loads(response_text)
                     df = pd.DataFrame.from_dict(json_data['hits'])
-                    set_option()
-                    logger.info(f'result hit:\n{df}')
+                    set_option(log_level=log_level)
+                    logger.info(f'Result hit:\n{df}')
                     if SEQ_HEADER:
                         SEQ_HEADER = SEQ_HEADER.replace('>', '').split(' ')[0]
                         df.insert(0, 'queryName', SEQ_HEADER)
-                        logger.info(f'export hit info to {output}')
+                        logger.info(f'Export hit info to {output}')
                         df.to_csv(output, index=False)
                     STATUS = 'FINISHED'
                 else:
                     logger.error("Response text is empty")
-                    STATUS = 'ERROR'
+                    STATUS = 'ResponseEmptyError'
             except json.JSONDecodeError as e:
                 logger.error(f"Error decoding JSON: {e}")
-                STATUS = 'ERROR'
+                STATUS = 'JSONDecodeError'
             except Exception as e:
                 logger.error(f"Error while handling response: {e}")
                 STATUS = 'ERROR'
             finally:
                 logger.info(f'STATUS: {STATUS}')
-                logger.info('task complete.')
+                logger.info('Task complete.')
 
     counter = 0
-    while STATUS == 'RUN' and counter * 2 <= 200:  # more than 200 seconds, failed
-        time.sleep(2)
-        logger.info(f'STATUS={STATUS}, waiting for completion')
-        # print(f"Current URL: {page.url}")
-        full_url = page.evaluate('window.location.href')
-        # print(f"Full URL including hash: {full_url}")
-        page.on('response', handle_response)
+    while STATUS == 'RUN' and counter * 2 <= 300:  # more than 200 seconds, failed
+        try:
+            time.sleep(2)
+            counter += 1
+            logger.info(f'STATUS={STATUS}, SPEND={counter * 2}s, waiting for completion')
+            # print(f"Current URL: {page.url}")
+            full_url = page.evaluate('window.location.href')
+            # print(f"Full URL including hash: {full_url}")
+            page.on('response', handle_response)
+        except TargetClosedError as e:
+            logger.error(f"Meet error{e}, this might be a problem with browser was terminated external")
+            logger.error('you can try again later')
+            sys.exit(1)
     # ---------------------
     context.close()
     browser.close()
+    logger.info('End. Exit.')
 
 
 def query_patent(

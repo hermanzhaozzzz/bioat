@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.10.6"
+version = "0.10.7"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -12,7 +12,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 # Compatible Python versions
-python = ">=3.10.0"
+python = ">=3.10.0,<4"
 pandas = ">=1.5"
 numpy = ">=1.24.1"
 tqdm = ">=4.64.1"
@@ -33,6 +33,7 @@ pickleshare = "^0.7.5"
 pybedtools = "^0.9.1"
 msa4u = "^0.4.0"
 playwright = "^1.41.2"
+reportlab = "^4.0.0"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
