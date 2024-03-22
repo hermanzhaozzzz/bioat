@@ -31,3 +31,10 @@ class BioatParameterFormatError(Exception):
 class BioatFileNameError(Exception):
     def __str__(self):
         return f"BioatFileNameError: {self.msg}"
+
+
+class BioatCloudflareChallengeFailure(Exception):
+    """自定义异常类，表示Cloudflare挑战失败"""
+
+    def __str__(self):
+        return f"BioatCloudflareChallengeFailure: {self.msg}"

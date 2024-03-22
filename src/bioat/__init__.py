@@ -1,8 +1,8 @@
 """Doc of bioat.
 
 """
-from bioat.exceptions import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError # must be the first
-from bioat.logger import get_logger # must be the first
+from bioat.exceptions import *  # must be the first
+from bioat.logger import get_logger  # must be the second
 from bioat.about import about
 from bioat.bamtools import BamTools
 from bioat.bedtools import BedTools
