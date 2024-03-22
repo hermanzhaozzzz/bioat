@@ -21,6 +21,7 @@ docs/doctrees/
 # pycharm meta
 **/.idea/
 **/.run/
+_Deparsed_XSubs.pm
 
 # vscode
 **/.vscode/
