@@ -116,8 +116,8 @@ def run(
         logger.info(f'Set proxy_server: {proxy_server}')
 
     # start to test
-    browser = playwright.firefox.launch(headless=headless)
-
+    # browser = playwright.firefox.launch(headless=headless)
+    browser = playwright.webkit.launch(headless=headless)
     logger.debug('Try to load cookies')
 
     context = load_cookies(browser, log_level)
@@ -149,17 +149,17 @@ def run(
                 logger.debug(f'Goto {url_login}')
                 page.goto(url_login)
                 page.get_by_text("Thanks, Got It").click()
-                page.get_by_role("link", name="Sign in", exact=True).click()
+                page.get_by_role("link", name="Sign in").click()
                 logger.debug(f'Try to fill account info: {account}')
                 page.get_by_label("Email address or Username").click()
                 page.get_by_label("Email address or Username").fill(account['username'])
                 page.get_by_label("Email address or Username").press("Tab")
                 page.get_by_label("Password").fill(account['password'])
                 # add remember me
-                page.get_by_role("group").locator("label").filter(has_text="Keep me logged in").locator("i").click()
+                page.locator("label").filter(has_text="Keep me logged in").locator("i").click()
                 # bypass cloudflare challenge
-                page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(
-                    "Verify you are human").check()
+                # page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(
+                #     "Verify you are human").check()
                 # must sleep for passing cloudflare
                 time.sleep(2)
                 logger.debug(f'Try to sign in account')
