@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.10.9"
+version = "0.10.10"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -32,7 +32,7 @@ coloredlogs = ">=15.0.1"
 pickleshare = "^0.7.5"
 pybedtools = "^0.9.1"
 msa4u = "^0.4.0"
-playwright = "^1.41.2"
+playwright = ">=1.41.2"
 reportlab = "^4.0.0"
 
 [tool.poetry.scripts]

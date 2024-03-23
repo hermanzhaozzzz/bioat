@@ -283,8 +283,8 @@ class SearchTools:
 
         :param seq: protein sequence, e.g. MCRISQQKK
         :param query_name: queryName in output table
-        :param username: lens.org username
-        :param password: lens.org password
+        :param username: ORCID username(usually a mail)
+        :param password: ORCID password
         :param via_proxy: like http://127.0.0.1:8234 socks5://127.0.0.1:8235
         :param output: output table.csv/csv.gz
         :param nobrowser: wether or not to open browser for DEBUG

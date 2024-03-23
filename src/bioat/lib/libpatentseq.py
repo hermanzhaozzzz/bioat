@@ -116,12 +116,13 @@ def run(
         logger.info(f'Set proxy_server: {proxy_server}')
 
     # start to test
-    # browser = playwright.firefox.launch(headless=headless)
-    browser = playwright.webkit.launch(headless=headless)
+    browser = playwright.firefox.launch(headless=headless)
+    # browser = playwright.webkit.launch(hseadless=headless)
     logger.debug('Try to load cookies')
 
     context = load_cookies(browser, log_level)
 
+    # context = None
     if context is None:  # need login
 
         logger.info('Cookies not exist or out of time. try to login')
@@ -148,22 +149,47 @@ def run(
                 # page.set_extra_http_headers(headers)
                 logger.debug(f'Goto {url_login}')
                 page.goto(url_login)
+                logger.debug(f'Click "Thanks, Got It')
                 page.get_by_text("Thanks, Got It").click()
+                logger.debug(f'Click "Sign in')
                 page.get_by_role("link", name="Sign in").click()
-                logger.debug(f'Try to fill account info: {account}')
-                page.get_by_label("Email address or Username").click()
-                page.get_by_label("Email address or Username").fill(account['username'])
-                page.get_by_label("Email address or Username").press("Tab")
-                page.get_by_label("Password").fill(account['password'])
+                # logger.debug(f'Try to fill account info: {account}')
+                # page.get_by_label("Email address or Username").click()
+                # page.get_by_label("Email address or Username").fill(account['username'])
+                # page.get_by_label("Email address or Username").press("Tab")
+                # page.get_by_label("Password").fill(account['password'])
                 # add remember me
-                page.locator("label").filter(has_text="Keep me logged in").locator("i").click()
+                # page.locator("label").filter(has_text="Keep me logged in").locator("i").click()
                 # bypass cloudflare challenge
                 # page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(
                 #     "Verify you are human").check()
+
                 # must sleep for passing cloudflare
+                # time.sleep(2)
+                # logger.debug(f'Try to sign in account')
+                # page.get_by_role("button", name="Sign in").click()
+                with page.expect_popup() as page1_info:
+                    logger.debug(f'Click "SignIn with ORCID"')
+                    page.locator("a").filter(has_text="SignIn with ORCID").click()
+                page1 = page1_info.value
+                logger.debug(f'Click "Proceed"')
+                page1.get_by_role("link", name="Proceed").click()
+                logger.debug(f'Click "Accept All Cookies"')
+                page1.get_by_role("button", name="Accept All Cookies").click()
+                logger.debug(f'Click "Email or 16-digit ORCID iD"')
+                page1.get_by_label("Email or 16-digit ORCID iD").click()
+                logger.debug(f'Fill "Email or 16-digit ORCID iD"')
+                page1.get_by_label("Email or 16-digit ORCID iD").fill(account['username'])
+                logger.debug(f'Press Tab')
+                page1.get_by_label("Email or 16-digit ORCID iD").press("Tab")
+                logger.debug(f'Fill "Password"')
+                page1.get_by_label("Password").fill(account['password'])
+                logger.debug(f'Click "SIGN IN"')
                 time.sleep(2)
-                logger.debug(f'Try to sign in account')
-                page.get_by_role("button", name="Sign in").click()
+                page1.get_by_role("button", name="SIGN IN", exact=True).click()
+                time.sleep(2)
+                page1.close()
+
                 save_cookies(context, log_level)
                 break  # to else for break
             except TimeoutError as e:
