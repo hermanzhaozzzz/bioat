@@ -187,7 +187,8 @@ def run(
                 logger.debug(f'Click "SIGN IN"')
                 time.sleep(2)
                 page1.get_by_role("button", name="SIGN IN", exact=True).click()
-                time.sleep(2)
+                logger.debug(f'Waiting...')
+                time.sleep(20)
                 page1.close()
 
                 save_cookies(context, log_level)
