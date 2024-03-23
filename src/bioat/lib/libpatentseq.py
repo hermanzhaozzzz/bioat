@@ -302,9 +302,9 @@ def run(
         if STATUS != 'RUN':
             logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s')
             break
-        if int(time.time() - start_time) >= 150:
+        if int(time.time() - start_time) >= 300:
             logger.error(
-                f"TimeoutError (waiting for more than 150s), "
+                f"TimeoutError (waiting for more than 300s), "
                 f"this might be a problem with browser was terminated external")
             logger.error('You can try again later')
             exit(1)
