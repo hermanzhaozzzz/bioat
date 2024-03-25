@@ -233,11 +233,14 @@ def run(
                 if checker2:
                     logger.debug('checker1 found and checker2 found!')
                     login_status = True
+                    rm_cookie=False
                 else:
                     login_status = False
+                    rm_cookie = False
                     logger.error('seems the proxy IP has been banned!')
             else:
                 login_status = False
+                rm_cookie = True
                 logger.error('seems the cookies out of time!')
 
             if not login_status:
@@ -248,7 +251,9 @@ def run(
                 logger.debug('browser close')
                 browser.close()
                 logger.error('Query failed')
-                remove_cookie(log_level)
+                if rm_cookie:
+                    logger.debug('removing cookies because checker1 is failed!')
+                    remove_cookie(log_level)
                 sys.exit(1)
             else:
                 logger.debug('Passed cookies and success login!')
