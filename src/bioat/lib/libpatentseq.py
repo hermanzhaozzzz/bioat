@@ -225,7 +225,9 @@ def run(
             logger.error('Query failed')
             sys.exit(1)
         try:
-            page.goto(url_query, wait_until='networkidle', timeout=100000)
+            logger.debug('page.set_default_timeout(100000)')
+            page.set_default_timeout(100000)
+            page.goto(url_query, wait_until='networkidle')
             checker1 = page.locator('a.parent', has_text="Signed in as").count()
             checker2 = page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").count()
 
@@ -245,12 +247,12 @@ def run(
 
             if not login_status:
                 logger.error(
-                    f'Login failed!')
+                    f'Login failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}')
                 logger.debug('context close')
                 context.close()
                 logger.debug('browser close')
                 browser.close()
-                logger.error('Query failed')
+                logger.error(f'Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}')
                 if rm_cookie:
                     logger.debug('Removing cookies because checker1 is failed!')
                     remove_cookie(log_level)
@@ -259,23 +261,17 @@ def run(
                 logger.debug('Passed cookies and success login!')
             time.sleep(3)
             page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
-            time.sleep(3)
             logger.debug(f'Try to fill seq: {seq}')
             page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").fill(seq)
-            time.sleep(3)
             logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
-            time.sleep(3)
             logger.debug(f'Click "advanced options"')
             page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
                 "div").click()
-            time.sleep(3)
             logger.debug(f'Set maximum number of hits to 50')
             page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
-            time.sleep(3)
             logger.debug(f'Set maximum e-value to 1.0')
             page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
-            time.sleep(3)
             logger.debug('Submit blastp query info')
             page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
             time.sleep(3)
