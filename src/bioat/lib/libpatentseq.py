@@ -46,7 +46,7 @@ def load_cookies(browser, log_level) -> None | object:
         # run check time
         current_time = int(time.time())
         elapsed_time = current_time - login_time
-        if elapsed_time > 15 * 60:  # 1/4 hours 15min
+        if elapsed_time > 60 * 60:  # 1 hour
             logger.info('Cookies are expired, performing re-login...')
             return None
         else:
@@ -134,7 +134,7 @@ def run(
             if counter > nretry:
                 logger.error(
                     f'Could not load url {url_login}, already retry maximum ({nretry})number of retries')
-                remove_cookie(log_level)
+                # remove_cookie(log_level)  # 2024-03-25
                 logger.debug('browser close')
                 browser.close()
                 logger.error('Login failed')
@@ -174,8 +174,10 @@ def run(
                 page1 = page1_info.value
                 logger.debug(f'Click "Proceed"')
                 page1.get_by_role("link", name="Proceed").click()
+                time.sleep(2)
                 logger.debug(f'Click "Accept All Cookies"')
                 page1.get_by_role("button", name="Accept All Cookies").click()
+                time.sleep(2)
                 logger.debug(f'Click "Email or 16-digit ORCID iD"')
                 page1.get_by_label("Email or 16-digit ORCID iD").click()
                 logger.debug(f'Fill "Email or 16-digit ORCID iD"')
@@ -184,8 +186,8 @@ def run(
                 page1.get_by_label("Email or 16-digit ORCID iD").press("Tab")
                 logger.debug(f'Fill "Password"')
                 page1.get_by_label("Password").fill(account['password'])
-                logger.debug(f'Click "SIGN IN"')
                 time.sleep(2)
+                logger.debug(f'Click "SIGN IN"')
                 page1.get_by_role("button", name="SIGN IN", exact=True).click()
                 logger.debug(f'Waiting...')
                 time.sleep(20)
@@ -217,7 +219,6 @@ def run(
         if counter > nretry:
             logger.error(
                 f'Could not load url {url_query}, already retry maximum ({nretry})number of retries')
-            remove_cookie(log_level)
             logger.debug('context close')
             context.close()
             logger.debug('browser close')
@@ -225,7 +226,28 @@ def run(
             logger.error('Query failed')
             sys.exit(1)
         try:
-            page.goto(url_query)
+            page.goto(url_query, wait_until='networkidle')
+            selector = "b.ng-binding"  # 这是一个 CSS 选择器，用于定位 <b class="ng-binding"> 元素
+            text_to_check = "Guest"  # 你要检查的文本内容
+            # 元素存在
+            elements = page.query_selector_all(selector)
+            login_status = True
+            for element in elements:
+                if text_to_check in element.inner_text():
+                    login_status = False
+
+            if not login_status:
+                logger.error(
+                    f'Cookies fail, and will be removed, login failed!')
+                logger.debug('context close')
+                context.close()
+                logger.debug('browser close')
+                browser.close()
+                logger.error('Query failed')
+                remove_cookie(log_level)
+                sys.exit(1)
+            else:
+                logger.debug('Passed cookies and success login!')
             page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
             time.sleep(3)
             logger.debug(f'Try to fill seq: {seq}')
