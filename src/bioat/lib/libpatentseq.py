@@ -228,6 +228,8 @@ def run(
             logger.debug('page.set_default_timeout(100000)')
             page.set_default_timeout(100000)
             page.goto(url_query, wait_until='networkidle')
+            logger.debug(f'Waiting...')
+            time.sleep(20)
             checker1 = page.locator('a.parent', has_text="Signed in as").count()
             checker2 = page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").count()
 
