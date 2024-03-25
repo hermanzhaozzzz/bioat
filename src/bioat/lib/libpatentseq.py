@@ -266,12 +266,12 @@ def run(
             logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
             logger.debug(f'Click "advanced options"')
-            page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
-                "div").click()
-            logger.debug(f'Set maximum number of hits to 50')
-            page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
-            logger.debug(f'Set maximum e-value to 1.0')
-            page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
+            # page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
+            #     "div").click()
+            # logger.debug(f'Set maximum number of hits to 50')
+            # page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
+            # logger.debug(f'Set maximum e-value to 1.0')
+            # page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
             logger.debug('Submit blastp query info')
             page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
             time.sleep(3)
