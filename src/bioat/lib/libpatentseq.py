@@ -225,14 +225,20 @@ def run(
             logger.error('Query failed')
             sys.exit(1)
         try:
-            page.goto(url_query, wait_until='networkidle')
-            locator = page.locator('a.parent', has_text="Signed in as")
+            page.goto(url_query, wait_until='networkidle', timeout=100000)
+            checker1 = page.locator('a.parent', has_text="Signed in as").count()
+            checker2 = page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").count()
 
-            if locator.count() == 1:
-                # 检查是否有元素匹配该选择器
-                login_status = True
+            if checker1:
+                if checker2:
+                    logger.debug('checker1 found and checker2 found!')
+                    login_status = True
+                else:
+                    login_status = False
+                    logger.error('seems the proxy IP has been banned!')
             else:
                 login_status = False
+                logger.error('seems the cookies out of time!')
 
             if not login_status:
                 logger.error(
