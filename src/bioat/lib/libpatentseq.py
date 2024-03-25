@@ -231,45 +231,54 @@ def run(
 
             if checker1:
                 if checker2:
-                    logger.debug('checker1 found and checker2 found!')
+                    logger.debug('checker1 and checker2 pass!')
                     login_status = True
                     rm_cookie=False
                 else:
                     login_status = False
                     rm_cookie = False
-                    logger.error('seems the proxy IP has been banned!')
+                    logger.error('checker2 failed, it might because that the proxy IP has been banned!')
             else:
                 login_status = False
                 rm_cookie = True
-                logger.error('seems the cookies out of time!')
+                logger.error('checker1 failed, it might because that the cookies out of time!')
 
             if not login_status:
                 logger.error(
-                    f'Cookies fail, and will be removed, login failed!')
+                    f'Login failed!')
                 logger.debug('context close')
                 context.close()
                 logger.debug('browser close')
                 browser.close()
                 logger.error('Query failed')
                 if rm_cookie:
-                    logger.debug('removing cookies because checker1 is failed!')
+                    logger.debug('Removing cookies because checker1 is failed!')
                     remove_cookie(log_level)
                 sys.exit(1)
             else:
                 logger.debug('Passed cookies and success login!')
+            time.sleep(3)
             page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
             time.sleep(3)
             logger.debug(f'Try to fill seq: {seq}')
             page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").fill(seq)
+            time.sleep(3)
+            logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
+            time.sleep(3)
+            logger.debug(f'Click "advanced options"')
             page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
                 "div").click()
+            time.sleep(3)
             logger.debug(f'Set maximum number of hits to 50')
             page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
+            time.sleep(3)
             logger.debug(f'Set maximum e-value to 1.0')
             page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
+            time.sleep(3)
             logger.debug('Submit blastp query info')
             page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
+            time.sleep(3)
             logger.info('Task has been submitted, waiting for completion')
             break
         except TimeoutError as e:
