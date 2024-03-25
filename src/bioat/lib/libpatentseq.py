@@ -117,7 +117,6 @@ def run(
 
     # start to test
     browser = playwright.firefox.launch(headless=headless)
-    # browser = playwright.webkit.launch(hseadless=headless)
     logger.debug('Try to load cookies')
 
     context = load_cookies(browser, log_level)
@@ -227,14 +226,13 @@ def run(
             sys.exit(1)
         try:
             page.goto(url_query, wait_until='networkidle')
-            selector = "b.ng-binding"  # 这是一个 CSS 选择器，用于定位 <b class="ng-binding"> 元素
-            text_to_check = "Guest"  # 你要检查的文本内容
-            # 元素存在
-            elements = page.query_selector_all(selector)
-            login_status = True
-            for element in elements:
-                if text_to_check in element.inner_text():
-                    login_status = False
+            locator = page.locator('a.parent', has_text="Signed in as")
+
+            if locator.count() == 1:
+                # 检查是否有元素匹配该选择器
+                login_status = True
+            else:
+                login_status = False
 
             if not login_status:
                 logger.error(
