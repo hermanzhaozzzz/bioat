@@ -17,7 +17,7 @@ STATUS = "RUN"
 SEQ_HEADER = None
 COOKIE = f"{HOME}/.bioat/LENS.ORG/cookie.json"
 CSS_PATH = os.path.join(os.path.dirname(__file__), "patentseq")
-IP_ERRORS = ('NS_ERROR_UNKNOWN_HOST', 'NS_ERROR_NET_INTERRUPT')
+IP_ERRORS = ('NS_ERROR_UNKNOWN_HOST', 'NS_ERROR_NET_INTERRUPT', 'NS_ERROR_PROXY_FORBIDDEN')
 
 
 def save_cookies(context, log_level):
