@@ -10,31 +10,40 @@ from bioat.lib.libpandas import set_option
 from playwright.sync_api import Playwright, sync_playwright
 from playwright._impl._errors import TimeoutError, TargetClosedError
 
-__module_name__ = 'bioat.lib.libpatentseq'
+__module_name__ = "bioat.lib.libpatentseq"
 
-STATUS = 'RUN'
+STATUS = "RUN"
 SEQ_HEADER = None
-COOKIE = f'{HOME}/.bioat/LENS.ORG/cookie.json'
+COOKIE = f"{HOME}/.bioat/LENS.ORG/cookie.json"
+CSS_PATH = os.path.join(os.path.dirname(__file__), "patentseq")
 
 
 def save_cookies(context, log_level):
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
     # 保存 cookies
     storage_state = context.storage_state()
-    logger.info(f'Saving cookie to {COOKIE}')
+    logger.info(f"Saving cookie to {COOKIE}")
     os.makedirs(os.path.dirname(COOKIE), exist_ok=True)
-    with open(COOKIE, 'wt') as f:
+    with open(COOKIE, "wt") as f:
         f.write(json.dumps(storage_state))
-    logger.info(f'Saving cookie time to {COOKIE}.time')
-    with open(f'{COOKIE}.time', 'wt') as f:
+    logger.info(f"Saving cookie time to {COOKIE}.time")
+    with open(f"{COOKIE}.time", "wt") as f:
         f.write(str(int(time.time())))
 
 
 def load_cookies(browser, log_level) -> None | object:
     # 加载 cookies
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
     try:
-        with open(f'{COOKIE}.time', 'rt') as f:
+        with open(f"{COOKIE}.time", "rt") as f:
             login_time = int(f.read().strip())
     except FileNotFoundError:
         login_time = None
@@ -46,15 +55,19 @@ def load_cookies(browser, log_level) -> None | object:
         # run check time
         current_time = int(time.time())
         elapsed_time = current_time - login_time
-        if elapsed_time > 60 * 60:  # 1 hour
-            logger.info('Cookies are expired, performing re-login...')
+        if elapsed_time > 15 * 60:  # 1/4 hour
+            logger.info("Cookies are expired, performing re-login...")
             return None
         else:
-            if os.path.exists(COOKIE) and os.path.isfile(COOKIE) and os.path.getsize(f'{COOKIE}') > 0:
-                logger.info('Cookies are still valid, skip login and load cookies')
-                with open(COOKIE, 'rt') as f:
+            if (
+                os.path.exists(COOKIE)
+                and os.path.isfile(COOKIE)
+                and os.path.getsize(f"{COOKIE}") > 0
+            ):
+                logger.info("Cookies are still valid, skip login and load cookies")
+                with open(COOKIE, "rt") as f:
                     storage_state = json.loads(f.read().strip())
-                logger.debug(f'new_context')
+                logger.debug(f"new_context")
                 context = browser.new_context(storage_state=storage_state)
                 return context
             else:
@@ -62,34 +75,43 @@ def load_cookies(browser, log_level) -> None | object:
 
 
 def remove_cookie(log_level):
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
-    logger.info('Removing cookie')
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
+    logger.info("Removing cookie")
     try:
         os.remove(COOKIE)
-        os.remove(f'{COOKIE}.time')
+        os.remove(f"{COOKIE}.time")
     except FileNotFoundError:
-        logger.warning('Cookies are not found, skip remove.')
+        logger.warning("Cookies are not found, skip remove.")
 
 
 def run(
-        playwright: Playwright,
-        username,
-        password,
-        seq,
-        seq_header,
-        proxy_server,
-        output,
-        headless,
-        nretry,
-        log_level
+    playwright: Playwright,
+    username,
+    password,
+    seq,
+    seq_header,
+    proxy_server,
+    output,
+    headless,
+    nretry,
+    local_browser,
+    log_level,
 ) -> None:
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name=sys._getframe().f_code.co_name,
+    )
 
     account = {
-        'username': username,
-        'password': password,
+        "username": username,
+        "password": password,
     }
-    logger.debug(f'Set account: {account}')
+    logger.debug(f"Set account: {account}")
     # headers = {  # not change it, for bypassing cloudflare challenge with firefox
     #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
     # }
@@ -97,34 +119,35 @@ def run(
     # logger.debug(f'Set headers: {headers}')
     url_login = "https://www.lens.org/lens/bio/"
     url_query = "https://www.lens.org/lens/bio/patseqfinder"
-    logger.debug(f'set url_login: {url_login}')
-    logger.debug(f'set url_query: {url_query}')
+    logger.debug(f"set url_login: {url_login}")
+    logger.debug(f"set url_query: {url_query}")
     data = {
-        'queryString': seq,
-        'database': 'patseq-aa',
-        'sequenceType': 'AA',
-        'blastTool': 'blastp',
-        'numAlignments': '50',
-        'expValue': '0.1',
-        'matrix': 'BLOSUM62',
-        'seqLength': f'{len(seq)}',
+        "queryString": seq,
+        "database": "patseq-aa",
+        "sequenceType": "AA",
+        "blastTool": "blastp",
+        "numAlignments": "50",
+        "expValue": "0.1",
+        "matrix": "BLOSUM62",
+        "seqLength": f"{len(seq)}",
     }
-    logger.debug(f'Set data: {data}\n')
-    logger.debug(f'Set headless: {headless}')
+    logger.debug(f"Set data: {data}\n")
+    logger.debug(f"Set headless: {headless}")
     proxy_server = {"server": proxy_server} if proxy_server else None
     if proxy_server:
-        logger.info(f'Set proxy_server: {proxy_server}')
+        logger.info(f"Set proxy_server: {proxy_server}")
 
     # start to test
-    browser = playwright.firefox.launch(headless=headless)
-    logger.debug('Try to load cookies')
+    browser = playwright.firefox.launch(
+        headless=headless, executable_path=local_browser if local_browser else None
+    )
+    logger.debug("Try to load cookies")
 
     context = load_cookies(browser, log_level)
 
     # context = None
     if context is None:  # need login
-
-        logger.info('Cookies not exist or out of time. try to login')
+        logger.info("Cookies not exist or out of time. try to login")
 
         # login part
         counter = 0
@@ -132,21 +155,22 @@ def run(
         while True:
             if counter > nretry:
                 logger.error(
-                    f'Could not load url {url_login}, already retry maximum ({nretry})number of retries')
+                    f"Could not load url {url_login}, already retry maximum ({nretry})number of retries"
+                )
                 # remove_cookie(log_level)  # 2024-03-25
-                logger.debug('browser close')
+                logger.debug("browser close")
                 browser.close()
-                logger.error('Login failed')
+                logger.error("Login failed")
                 sys.exit(1)
             try:
-                logger.debug(f'new_context')
+                logger.debug(f"new_context")
                 context = browser.new_context(
                     viewport={"width": 1920, "height": 1080} if not headless else None,
-                    proxy=proxy_server
+                    proxy=proxy_server,
                 )
                 page = context.new_page()
                 # page.set_extra_http_headers(headers)
-                logger.debug(f'Goto {url_login}')
+                logger.debug(f"Goto {url_login}")
                 page.goto(url_login)
                 logger.debug(f'Click "Thanks, Got It')
                 page.get_by_text("Thanks, Got It").click()
@@ -174,97 +198,133 @@ def run(
                 logger.debug(f'Click "Proceed"')
                 page1.get_by_role("link", name="Proceed").click()
                 time.sleep(2)
-                logger.debug(f'Click "Accept All Cookies"')
+                logger.debug('Click "Accept All Cookies"')
                 page1.get_by_role("button", name="Accept All Cookies").click()
                 time.sleep(2)
-                logger.debug(f'Click "Email or 16-digit ORCID iD"')
+                logger.debug('Click "Email or 16-digit ORCID iD"')
                 page1.get_by_label("Email or 16-digit ORCID iD").click()
-                logger.debug(f'Fill "Email or 16-digit ORCID iD"')
-                page1.get_by_label("Email or 16-digit ORCID iD").fill(account['username'])
-                logger.debug(f'Press Tab')
+                logger.debug('Fill "Email or 16-digit ORCID iD"')
+                page1.get_by_label("Email or 16-digit ORCID iD").fill(
+                    account["username"]
+                )
+                logger.debug("Press Tab")
                 page1.get_by_label("Email or 16-digit ORCID iD").press("Tab")
-                logger.debug(f'Fill "Password"')
-                page1.get_by_label("Password").fill(account['password'])
+                logger.debug('Fill "Password"')
+                page1.get_by_label("Password").fill(account["password"])
                 time.sleep(2)
-                logger.debug(f'Click "SIGN IN"')
+                logger.debug('Click "SIGN IN"')
                 page1.get_by_role("button", name="SIGN IN", exact=True).click()
-                logger.debug(f'Waiting...')
+                logger.debug("Waiting...")
                 time.sleep(20)
                 page1.close()
 
                 save_cookies(context, log_level)
                 break  # to else for break
             except TimeoutError as e:
-                logger.debug('context close')
+                logger.debug("context close")
                 context.close()
-                logger.warning(f'Could not load url {url_login}: {e}, retry...')
+                logger.warning(f"Could not load url {url_login}: {e}, retry...")
                 time.sleep(3)
                 counter += 1
                 continue
             except Exception as e:
-                logger.debug('context close')
+                logger.debug("context close")
                 context.close()
-                logger.warning(f'Could not load url {url_login}: {e}, retry...')
+                logger.warning(f"Could not load url {url_login}: {e}, retry...")
                 time.sleep(3)
                 counter += 1
                 continue
     # now login status is ok
     page = context.new_page()
     # page.set_extra_http_headers(headers)
-    logger.debug(f'Goto {url_query}')
+    logger.debug(f"Goto {url_query}")
     # query
     counter = 0
     while True:
         if counter > nretry:
             logger.error(
-                f'Could not load url {url_query}, already retry maximum ({nretry})number of retries')
-            logger.debug('context close')
+                f"Could not load url {url_query}, already retry maximum ({nretry})number of retries"
+            )
+            logger.debug("context close")
             context.close()
-            logger.debug('browser close')
+            logger.debug("browser close")
             browser.close()
-            logger.error('Query failed')
+            logger.error("Query failed")
             sys.exit(1)
-        try:
-            logger.debug('page.set_default_timeout(100000)')
-            page.set_default_timeout(100000)
-            page.goto(url_query, wait_until='networkidle')
-            logger.debug(f'Waiting...')
-            time.sleep(20)
-            checker1 = page.locator('a.parent', has_text="Signed in as").count()
-            checker2 = page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").count()
+        # try:
+        if True:
+            # page.set_default_timeout(100000)
+            logger.debug("wait until domcontentloaded")
+            page.goto(url_query, wait_until="domcontentloaded")
+            logger.debug("next")
+            # logger.debug(f"Waiting...")
+            # page.wait_for_timeout(10000)
+            # inject local css files
+            # 本地 CSS 文件的路径（相对于当前工作目录）
+            css_local_font_maxcdn = f"{CSS_PATH}/font-awesome.min.css"
+            css_local_lens_index = f"{CSS_PATH}/index.css"
+            css_local_ui_overide = f"{CSS_PATH}/psf-ui.4.0-overide.min.css"
+
+            replace_css_script = """
+            const remoteLink = document.querySelector('link[rel="stylesheet"][href^="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"]');
+            if (remoteLink) {
+                remoteLink.href = "./patentseq/font-awesome.min.css";
+            }
+            """
+            page.evaluate(replace_css_script)
+
+            # 在这里进行后续的页面操作或验证...
+            page.wait_for_timeout(2000)
+            checker1 = page.locator("a.parent", has_text="Signed in as").count()
+            checker2 = (
+                page.frame_locator("iframe")
+                .get_by_placeholder("Enter a query sequence.")
+                .count()
+            )
 
             if checker1:
                 if checker2:
-                    logger.debug('checker1 and checker2 pass!')
+                    logger.debug("checker1 and checker2 pass!")
                     login_status = True
-                    rm_cookie=False
+                    rm_cookie = False
                 else:
                     login_status = False
                     rm_cookie = False
-                    logger.error('checker2 failed, it might because that the proxy IP has been banned!')
+                    logger.error(
+                        "checker2 failed, it might because that the proxy IP has been banned!"
+                    )
             else:
                 login_status = False
                 rm_cookie = True
-                logger.error('checker1 failed, it might because that the cookies out of time!')
+                logger.error(
+                    "checker1 failed, it might because that the cookies out of time!"
+                )
 
             if not login_status:
                 logger.error(
-                    f'Login failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}')
-                logger.debug('context close')
+                    f"Login failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
+                )
+                logger.debug("context close")
                 context.close()
-                logger.debug('browser close')
+                logger.debug("browser close")
                 browser.close()
-                logger.error(f'Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}')
+                logger.error(
+                    f"Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
+                )
                 if rm_cookie:
-                    logger.debug('Removing cookies because checker1 is failed!')
+                    logger.debug("Removing cookies because checker1 is failed!")
                     remove_cookie(log_level)
                 sys.exit(1)
             else:
-                logger.debug('Passed cookies and success login!')
+                logger.debug("Passed cookies and success login!")
             time.sleep(3)
-            page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").click()
-            logger.debug(f'Try to fill seq: {seq}')
-            page.frame_locator("iframe").get_by_placeholder("Enter a query sequence.").fill(seq)
+            page.frame_locator("iframe").get_by_placeholder(
+                "Enter a query sequence."
+            ).click()
+            logger.debug(f"Try to fill seq: {seq}")
+            page.frame_locator("iframe").get_by_placeholder(
+                "Enter a query sequence."
+            ).fill(seq)
             logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
             logger.debug(f'Click "advanced options"')
@@ -274,26 +334,28 @@ def run(
             # page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
             # logger.debug(f'Set maximum e-value to 1.0')
             # page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
-            logger.debug('Submit blastp query info')
-            page.frame_locator("iframe").get_by_role("button", name="Submit search").nth(1).click()
+            logger.debug("Submit blastp query info")
+            page.frame_locator("iframe").get_by_role(
+                "button", name="Submit search"
+            ).nth(1).click()
             time.sleep(3)
-            logger.info('Task has been submitted, waiting for completion')
+            logger.info("Task has been submitted, waiting for completion")
             break
-        except TimeoutError as e:
-            logger.warning(f'Could not load url {url_query}: {e}, retry...')
-            time.sleep(3)
-            counter += 1
-            continue
-        except Exception as e:
-            logger.warning(f'Could not load url {url_query}: {e}, retry...')
-            time.sleep(3)
-            counter += 1
-            continue
+        # except TimeoutError as e:
+        #     logger.warning(f"Could not load url {url_query}: {e}, retry...")
+        #     time.sleep(3)
+        #     counter += 1
+        #     continue
+        # except Exception as e:
+        #     logger.warning(f"Could not load url {url_query}: {e}, retry...")
+        #     time.sleep(3)
+        #     counter += 1
+        #     continue
 
     # set global var to check program status
     global STATUS
     global SEQ_HEADER
-    STATUS = 'RUN'
+    STATUS = "RUN"
     SEQ_HEADER = seq_header
 
     def handle_response(response):
@@ -301,9 +363,9 @@ def run(
         global SEQ_HEADER
 
         if (
-                '#/results' in full_url and
-                response.request.method == 'POST' and
-                response.status == 200
+            "#/results" in full_url
+            and response.request.method == "POST"
+            and response.status == 200
         ):
             try:
                 # 获取响应文本
@@ -311,71 +373,75 @@ def run(
                 # 尝试解析 JSON，但先确保它不是空的
                 if response_text:
                     json_data = json.loads(response_text)
-                    df = pd.DataFrame.from_dict(json_data['hits'])
+                    df = pd.DataFrame.from_dict(json_data["hits"])
                     set_option(log_level=log_level)
-                    logger.info(f'Result hit:\n{df}')
+                    logger.info(f"Result hit:\n{df}")
 
                     if SEQ_HEADER:
-                        SEQ_HEADER = SEQ_HEADER.replace('>', '').split(' ')[0]
-                        df.insert(0, 'queryName', SEQ_HEADER)
+                        SEQ_HEADER = SEQ_HEADER.replace(">", "").split(" ")[0]
+                        df.insert(0, "queryName", SEQ_HEADER)
                         if output:
-                            logger.info(f'Export hit info to {output}')
+                            logger.info(f"Export hit info to {output}")
                             df.to_csv(output, index=False)
-                    STATUS = 'FINISHED'
+                    STATUS = "FINISHED"
                 else:
                     logger.error("Response text is empty")
-                    STATUS = 'ResponseEmptyError'
+                    STATUS = "ResponseEmptyError"
             except json.JSONDecodeError as e:
                 logger.error(f"Error decoding JSON: {e}")
-                STATUS = 'JSONDecodeError'
+                STATUS = "JSONDecodeError"
             except Exception as e:
                 logger.error(f"Error while handling response: {e}")
-                STATUS = 'ERROR'
+                STATUS = "ERROR"
             finally:
-                logger.info(f'STATUS: {STATUS}')
-                logger.info('Task complete.')
+                logger.info(f"STATUS: {STATUS}")
+                logger.info("Task complete.")
 
     start_time = time.time()
     while True:  # more than 150 seconds, failed
-        if STATUS != 'RUN':
-            logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s')
+        if STATUS != "RUN":
+            logger.info(f"STATUS={STATUS}, SPEND={int(time.time() - start_time)}s")
             break
         if int(time.time() - start_time) >= 300:
             logger.error(
                 f"TimeoutError (waiting for more than 300s), "
-                f"this might be a problem with browser was terminated external")
-            logger.error('You can try again later')
+                f"this might be a problem with browser was terminated external"
+            )
+            logger.error("You can try again later")
             exit(1)
         try:
-            full_url = page.evaluate('window.location.href')
+            full_url = page.evaluate("window.location.href")
             # if time.time() - start_time % 5 == 0:
             #     logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s, waiting for completion')
             #     logger.debug(f"Current URL: {page.url}")
             #     logger.debug(f"Full URL including hash: {full_url}")
-            page.on('response', handle_response)
+            page.on("response", handle_response)
         except TargetClosedError as e:
-            logger.error(f"Meet error{e}, this might be a problem with browser was terminated external")
-            logger.error('you can try again later')
+            logger.error(
+                f"Meet error{e}, this might be a problem with browser was terminated external"
+            )
+            logger.error("you can try again later")
             sys.exit(1)
     # ---------------------
-    logger.debug('context close')
+    logger.debug("context close")
     context.close()
-    logger.debug('browser close')
+    logger.debug("browser close")
     browser.close()
-    logger.info('End. Exit.')
+    logger.info("End. Exit.")
     sys.exit(0)
 
 
 def query_patent(
-        seq: str,
-        seq_header: str | None = None,
-        username: str | None = None,
-        password: str | None = None,
-        proxy_server: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
-        output: str | None = None,
-        headless: bool = True,
-        nretry: int = 3,
-        log_level: str = 'INFO'
+    seq: str,
+    seq_header: str | None = None,
+    username: str | None = None,
+    password: str | None = None,
+    proxy_server: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
+    output: str | None = None,
+    headless: bool = True,
+    nretry: int = 3,
+    local_browser: str | None = None,
+    log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
         run(
@@ -388,14 +454,15 @@ def query_patent(
             output=output,
             headless=headless,
             nretry=nretry,
-            log_level=log_level
+            log_level=log_level,
+            local_browser=None,
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     query_patent(
-        seq='MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGYETTLKNTWNEIKDINKKDRLSKLIIKHFPFLEAATYRLNPTDTTKQKEEKQAEAQSLESLRKSFFVFIYKLRDLRNHYSHYKHSKSLERPKFEEGLLEKMYNIFNASIRLVKEDYQYNKDINPDEDFKHLDRTEEEFNYYFTKDNEGNITESGLLFFVSLFLEKKDAIWMQQKLRGFKDNRENKKKMTNEVFCRSRMLLPKLRLQSTQTQDWILLDMLNELIRCPKSLYERLREEDREKFRVPIEIADEDYDAEQEPFKNTLVRHQDRFPYFALRYFDYNEIFTNLRFQIDLGTYHFSIYKKQIGDYKESHHLTHKLYGFERIQEFTKQNRPDEWRKFVKTFNSFETSKEPYIPETTPHYHLENQKIGIRFRNDNDKIWPSLKTNSEKNEKSKYKLDKSFQAEAFLSVHELLPMMFYYLLLKTENTDNDNEIETKKKENKNDKQEKHKIEEIIENKITEIYALYDTFANGEIKSIDELEEYCKGKDIEIGHLPKQMIAILKDEHKVMATEAERKQEEMLVDVQKSLESLDNQINEEIENVERKNSSLKSGKIASWLVNDMMRFQPVQKDNEGKPLNNSKANSTEYQLLQRTLAFFGSEHERLAPYFKQTKLIESSNPHPFLKDTEWEKCNNILSFYRSYLEAKKNFLESLKPEDWEKNQYFLKLKEPKTKPKTLVQGWKNGFNLPRGIFTEPIRKWFMKHRENITVAELKRVGLVAKVIPLFFSEEYKDSVQPFYNYHFNVGNINKPDEKNFLNCEERRELLRKKKDEFKKMTDKEKEENPSYLEFKSWNKFERELRLVRNQDIVTWLLCMELFNKKKIKELNVEKIYLKNINTNTTKKEKNTEEKNGEEKNIKEKNNILNRIMPMRLPIKVYGRENFSKNKKKKIRRNTFFTVYIEEKGTKLLKQGNFKALERDRRLGGLFSFVKTPSKAESKSNTISKLRVEYELGEYQKARIEIIKDMLALEKTLIDKYNSLDTDNFNKMLTDWLELKGEPDKASFQNDVDLLIAVRNAFSHNQYPMRNRIAFANINPFSLSSANTSEEKGLGIANQLKDKTHKTIEKIIEIEKPIETKE',
-        username='hermanzhaozzzz',
-        password='zhn123,.',
+        seq="MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGYETTLKNTWNEIKDINKKDRLSKLIIKHFPFLEAATYRLNPTDTTKQKEEKQAEAQSLESLRKSFFVFIYKLRDLRNHYSHYKHSKSLERPKFEEGLLEKMYNIFNASIRLVKEDYQYNKDINPDEDFKHLDRTEEEFNYYFTKDNEGNITESGLLFFVSLFLEKKDAIWMQQKLRGFKDNRENKKKMTNEVFCRSRMLLPKLRLQSTQTQDWILLDMLNELIRCPKSLYERLREEDREKFRVPIEIADEDYDAEQEPFKNTLVRHQDRFPYFALRYFDYNEIFTNLRFQIDLGTYHFSIYKKQIGDYKESHHLTHKLYGFERIQEFTKQNRPDEWRKFVKTFNSFETSKEPYIPETTPHYHLENQKIGIRFRNDNDKIWPSLKTNSEKNEKSKYKLDKSFQAEAFLSVHELLPMMFYYLLLKTENTDNDNEIETKKKENKNDKQEKHKIEEIIENKITEIYALYDTFANGEIKSIDELEEYCKGKDIEIGHLPKQMIAILKDEHKVMATEAERKQEEMLVDVQKSLESLDNQINEEIENVERKNSSLKSGKIASWLVNDMMRFQPVQKDNEGKPLNNSKANSTEYQLLQRTLAFFGSEHERLAPYFKQTKLIESSNPHPFLKDTEWEKCNNILSFYRSYLEAKKNFLESLKPEDWEKNQYFLKLKEPKTKPKTLVQGWKNGFNLPRGIFTEPIRKWFMKHRENITVAELKRVGLVAKVIPLFFSEEYKDSVQPFYNYHFNVGNINKPDEKNFLNCEERRELLRKKKDEFKKMTDKEKEENPSYLEFKSWNKFERELRLVRNQDIVTWLLCMELFNKKKIKELNVEKIYLKNINTNTTKKEKNTEEKNGEEKNIKEKNNILNRIMPMRLPIKVYGRENFSKNKKKKIRRNTFFTVYIEEKGTKLLKQGNFKALERDRRLGGLFSFVKTPSKAESKSNTISKLRVEYELGEYQKARIEIIKDMLALEKTLIDKYNSLDTDNFNKMLTDWLELKGEPDKASFQNDVDLLIAVRNAFSHNQYPMRNRIAFANINPFSLSSANTSEEKGLGIANQLKDKTHKTIEKIIEIEKPIETKE",
+        username="hermanzhaozzzz",
+        password="zhn123,.",
         proxy_server="socks5://127.0.0.1:8235",
     )
