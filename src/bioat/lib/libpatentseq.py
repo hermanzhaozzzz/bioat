@@ -144,8 +144,17 @@ def run(
 
     if proxy_server:
         proxy_pool = ProxyPool(url=proxy_server)
-        proxy_ip = proxy_pool.get_proxy().get('proxy')
-        logger.info(f"Set proxy_server: {proxy_server}")
+        while True:
+            proxy_ip = proxy_pool.get_proxy().get('proxy')
+            logger.info(f"Set proxy_server: {proxy_server}")
+            if proxy_ip:
+                logger.debug("Get valid proxy, go on")
+                break
+            else:
+                logger.debug('No proxy found in proxy pool, waiting 10 seconds...')
+                time.sleep(10)
+                logger.debug('Next try to get proxy')
+                continue
         logger.info(f"Get proxy_ip: {proxy_ip}")
 
     # start to test
