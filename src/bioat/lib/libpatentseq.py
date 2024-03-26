@@ -7,6 +7,7 @@ import pandas as pd
 from bioat import get_logger
 from bioat.lib.libpath import HOME
 from bioat.lib.libpandas import set_option
+from bioat.lib.libspider import get_random_user_agents, ProxyPool
 from playwright.sync_api import Playwright, sync_playwright
 from playwright._impl._errors import TimeoutError, TargetClosedError
 
@@ -16,6 +17,7 @@ STATUS = "RUN"
 SEQ_HEADER = None
 COOKIE = f"{HOME}/.bioat/LENS.ORG/cookie.json"
 CSS_PATH = os.path.join(os.path.dirname(__file__), "patentseq")
+IP_ERRORS = ('NS_ERROR_UNKNOWN_HOST', 'NS_ERROR_NET_INTERRUPT')
 
 
 def save_cookies(context, log_level):
@@ -35,7 +37,7 @@ def save_cookies(context, log_level):
         f.write(str(int(time.time())))
 
 
-def load_cookies(browser, log_level) -> None | object:
+def load_cookies(browser, proxy_ip=None, log_level='DEBUG') -> None | object:
     # 加载 cookies
     logger = get_logger(
         level=log_level,
@@ -60,15 +62,18 @@ def load_cookies(browser, log_level) -> None | object:
             return None
         else:
             if (
-                os.path.exists(COOKIE)
-                and os.path.isfile(COOKIE)
-                and os.path.getsize(f"{COOKIE}") > 0
+                    os.path.exists(COOKIE)
+                    and os.path.isfile(COOKIE)
+                    and os.path.getsize(f"{COOKIE}") > 0
             ):
                 logger.info("Cookies are still valid, skip login and load cookies")
                 with open(COOKIE, "rt") as f:
                     storage_state = json.loads(f.read().strip())
                 logger.debug(f"new_context")
-                context = browser.new_context(storage_state=storage_state)
+                context = browser.new_context(
+                    storage_state=storage_state,
+                    proxy={"server": proxy_ip} if proxy_ip else None
+                )
                 return context
             else:
                 return None
@@ -89,17 +94,17 @@ def remove_cookie(log_level):
 
 
 def run(
-    playwright: Playwright,
-    username,
-    password,
-    seq,
-    seq_header,
-    proxy_server,
-    output,
-    headless,
-    nretry,
-    local_browser,
-    log_level,
+        playwright: Playwright,
+        username,
+        password,
+        seq,
+        seq_header,
+        proxy_server,
+        output,
+        headless,
+        nretry,
+        local_browser,
+        log_level,
 ) -> None:
     logger = get_logger(
         level=log_level,
@@ -133,9 +138,15 @@ def run(
     }
     logger.debug(f"Set data: {data}\n")
     logger.debug(f"Set headless: {headless}")
-    proxy_server = {"server": proxy_server} if proxy_server else None
+
+    proxy_ip = None
+    proxy_pool = None
+
     if proxy_server:
+        proxy_pool = ProxyPool(url=proxy_server)
+        proxy_ip = proxy_pool.get_proxy().get('proxy')
         logger.info(f"Set proxy_server: {proxy_server}")
+        logger.info(f"Get proxy_ip: {proxy_ip}")
 
     # start to test
     browser = playwright.firefox.launch(
@@ -143,7 +154,7 @@ def run(
     )
     logger.debug("Try to load cookies")
 
-    context = load_cookies(browser, log_level)
+    context = load_cookies(browser, proxy_ip, log_level)
 
     # context = None
     if context is None:  # need login
@@ -166,7 +177,7 @@ def run(
                 logger.debug(f"new_context")
                 context = browser.new_context(
                     viewport={"width": 1920, "height": 1080} if not headless else None,
-                    proxy=proxy_server,
+                    proxy={"server": proxy_ip} if proxy_ip else None,
                 )
                 page = context.new_page()
                 # page.set_extra_http_headers(headers)
@@ -228,6 +239,12 @@ def run(
                 counter += 1
                 continue
             except Exception as e:
+                if str(e) in IP_ERRORS:
+                    logger.error(f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...")
+                    proxy_pool.delete_proxy(proxy_ip)
+                    proxy_ip = proxy_pool.get_proxy().get('proxy')
+                    logger.debug(f"Get new proxy_ip: {proxy_ip} and retry...")
+
                 logger.debug("context close")
                 context.close()
                 logger.warning(f"Could not load url {url_login}: {e}, retry...")
@@ -251,29 +268,27 @@ def run(
             browser.close()
             logger.error("Query failed")
             sys.exit(1)
-        # try:
-        if True:
+        try:
+        # if True:
             # page.set_default_timeout(100000)
-            logger.debug("wait until domcontentloaded")
-            page.goto(url_query, wait_until="domcontentloaded")
-            logger.debug("next")
+            logger.debug("wait until networkidle")
+            page.goto(url_query, wait_until="networkidle")
+            # logger.debug("next")
             # logger.debug(f"Waiting...")
             # page.wait_for_timeout(10000)
             # inject local css files
             # 本地 CSS 文件的路径（相对于当前工作目录）
-            css_local_font_maxcdn = f"{CSS_PATH}/font-awesome.min.css"
-            css_local_lens_index = f"{CSS_PATH}/index.css"
-            css_local_ui_overide = f"{CSS_PATH}/psf-ui.4.0-overide.min.css"
-
-            replace_css_script = """
-            const remoteLink = document.querySelector('link[rel="stylesheet"][href^="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"]');
-            if (remoteLink) {
-                remoteLink.href = "./patentseq/font-awesome.min.css";
-            }
-            """
-            page.evaluate(replace_css_script)
-
-            # 在这里进行后续的页面操作或验证...
+            # css_local_font_maxcdn = f"{CSS_PATH}/font-awesome.min.css"
+            # css_local_lens_index = f"{CSS_PATH}/index.css"
+            # css_local_ui_overide = f"{CSS_PATH}/psf-ui.4.0-overide.min.css"
+            #
+            # replace_css_script = """
+            # const remoteLink = document.querySelector('link[rel="stylesheet"][href^="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"]');
+            # if (remoteLink) {
+            #     remoteLink.href = "./patentseq/font-awesome.min.css";
+            # }
+            # """
+            # page.evaluate(replace_css_script)
             page.wait_for_timeout(2000)
             checker1 = page.locator("a.parent", has_text="Signed in as").count()
             checker2 = (
@@ -328,12 +343,12 @@ def run(
             logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
             logger.debug(f'Click "advanced options"')
-            # page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
-            #     "div").click()
-            # logger.debug(f'Set maximum number of hits to 50')
-            # page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
-            # logger.debug(f'Set maximum e-value to 1.0')
-            # page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
+            page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
+                "div").click()
+            logger.debug(f'Set maximum number of hits to 50')
+            page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
+            logger.debug(f'Set maximum e-value to 1.0')
+            page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
             logger.debug("Submit blastp query info")
             page.frame_locator("iframe").get_by_role(
                 "button", name="Submit search"
@@ -341,16 +356,21 @@ def run(
             time.sleep(3)
             logger.info("Task has been submitted, waiting for completion")
             break
-        # except TimeoutError as e:
-        #     logger.warning(f"Could not load url {url_query}: {e}, retry...")
-        #     time.sleep(3)
-        #     counter += 1
-        #     continue
-        # except Exception as e:
-        #     logger.warning(f"Could not load url {url_query}: {e}, retry...")
-        #     time.sleep(3)
-        #     counter += 1
-        #     continue
+        except TimeoutError as e:
+            logger.warning(f"Could not load url {url_query}: {e}, retry...")
+            time.sleep(3)
+            counter += 1
+            continue
+        except Exception as e:
+            if str(e) in IP_ERRORS:
+                logger.error(f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...")
+                proxy_pool.delete_proxy(proxy_ip)
+                proxy_ip = proxy_pool.get_proxy().get('proxy')
+                logger.debug(f"Get new proxy_ip: {proxy_ip} and retry...")
+            logger.warning(f"Could not load url {url_query}: {e}, retry...")
+            time.sleep(3)
+            counter += 1
+            continue
 
     # set global var to check program status
     global STATUS
@@ -363,9 +383,9 @@ def run(
         global SEQ_HEADER
 
         if (
-            "#/results" in full_url
-            and response.request.method == "POST"
-            and response.status == 200
+                "#/results" in full_url
+                and response.request.method == "POST"
+                and response.status == 200
         ):
             try:
                 # 获取响应文本
@@ -432,16 +452,16 @@ def run(
 
 
 def query_patent(
-    seq: str,
-    seq_header: str | None = None,
-    username: str | None = None,
-    password: str | None = None,
-    proxy_server: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
-    output: str | None = None,
-    headless: bool = True,
-    nretry: int = 3,
-    local_browser: str | None = None,
-    log_level: str = "INFO",
+        seq: str,
+        seq_header: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        proxy_server: str | None = None,
+        output: str | None = None,
+        headless: bool = True,
+        nretry: int = 3,
+        local_browser: str | None = None,
+        log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
         run(
@@ -461,8 +481,8 @@ def query_patent(
 
 if __name__ == "__main__":
     query_patent(
-        seq="MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGYETTLKNTWNEIKDINKKDRLSKLIIKHFPFLEAATYRLNPTDTTKQKEEKQAEAQSLESLRKSFFVFIYKLRDLRNHYSHYKHSKSLERPKFEEGLLEKMYNIFNASIRLVKEDYQYNKDINPDEDFKHLDRTEEEFNYYFTKDNEGNITESGLLFFVSLFLEKKDAIWMQQKLRGFKDNRENKKKMTNEVFCRSRMLLPKLRLQSTQTQDWILLDMLNELIRCPKSLYERLREEDREKFRVPIEIADEDYDAEQEPFKNTLVRHQDRFPYFALRYFDYNEIFTNLRFQIDLGTYHFSIYKKQIGDYKESHHLTHKLYGFERIQEFTKQNRPDEWRKFVKTFNSFETSKEPYIPETTPHYHLENQKIGIRFRNDNDKIWPSLKTNSEKNEKSKYKLDKSFQAEAFLSVHELLPMMFYYLLLKTENTDNDNEIETKKKENKNDKQEKHKIEEIIENKITEIYALYDTFANGEIKSIDELEEYCKGKDIEIGHLPKQMIAILKDEHKVMATEAERKQEEMLVDVQKSLESLDNQINEEIENVERKNSSLKSGKIASWLVNDMMRFQPVQKDNEGKPLNNSKANSTEYQLLQRTLAFFGSEHERLAPYFKQTKLIESSNPHPFLKDTEWEKCNNILSFYRSYLEAKKNFLESLKPEDWEKNQYFLKLKEPKTKPKTLVQGWKNGFNLPRGIFTEPIRKWFMKHRENITVAELKRVGLVAKVIPLFFSEEYKDSVQPFYNYHFNVGNINKPDEKNFLNCEERRELLRKKKDEFKKMTDKEKEENPSYLEFKSWNKFERELRLVRNQDIVTWLLCMELFNKKKIKELNVEKIYLKNINTNTTKKEKNTEEKNGEEKNIKEKNNILNRIMPMRLPIKVYGRENFSKNKKKKIRRNTFFTVYIEEKGTKLLKQGNFKALERDRRLGGLFSFVKTPSKAESKSNTISKLRVEYELGEYQKARIEIIKDMLALEKTLIDKYNSLDTDNFNKMLTDWLELKGEPDKASFQNDVDLLIAVRNAFSHNQYPMRNRIAFANINPFSLSSANTSEEKGLGIANQLKDKTHKTIEKIIEIEKPIETKE",
-        username="hermanzhaozzzz",
-        password="zhn123,.",
-        proxy_server="socks5://127.0.0.1:8235",
+        seq="MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGY",
+        username="your_account",
+        password="abc123456",
+        proxy_server="http://127.0.0.1:8234",
     )
