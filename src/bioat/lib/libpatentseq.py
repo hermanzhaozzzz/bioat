@@ -269,27 +269,8 @@ def run(
             logger.error("Query failed")
             sys.exit(1)
         try:
-        # if True:
-            # page.set_default_timeout(100000)
             logger.debug("wait until networkidle")
             page.goto(url_query, wait_until="networkidle")
-            # logger.debug("next")
-            # logger.debug(f"Waiting...")
-            # page.wait_for_timeout(10000)
-            # inject local css files
-            # 本地 CSS 文件的路径（相对于当前工作目录）
-            # css_local_font_maxcdn = f"{CSS_PATH}/font-awesome.min.css"
-            # css_local_lens_index = f"{CSS_PATH}/index.css"
-            # css_local_ui_overide = f"{CSS_PATH}/psf-ui.4.0-overide.min.css"
-            #
-            # replace_css_script = """
-            # const remoteLink = document.querySelector('link[rel="stylesheet"][href^="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"]');
-            # if (remoteLink) {
-            #     remoteLink.href = "./patentseq/font-awesome.min.css";
-            # }
-            # """
-            # page.evaluate(replace_css_script)
-            page.wait_for_timeout(2000)
             checker1 = page.locator("a.parent", has_text="Signed in as").count()
             checker2 = (
                 page.frame_locator("iframe")
