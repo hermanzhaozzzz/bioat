@@ -108,6 +108,7 @@ def run(
     headless,
     nretry,
     local_browser,
+    rm_fail_cookie,
     log_level,
 ) -> None:
     logger = get_logger(
@@ -181,7 +182,6 @@ def run(
                 logger.error(
                     f"Could not load url {url_login}, already retry maximum ({nretry})number of retries"
                 )
-                # remove_cookie(log_level)  # 2024-03-25
                 logger.debug("browser close")
                 browser.close()
                 logger.error("Login failed")
@@ -323,8 +323,13 @@ def run(
                     f"Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
                 )
                 if rm_cookie:
-                    logger.debug("Removing cookies because checker1 is failed!")
-                    remove_cookie(log_level)
+                    logger.debug("Consider to remove cookies because checker1 is failed!")
+                    if rm_fail_cookie:
+                        logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
+                        remove_cookie(log_level)
+                    else:
+                        logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
+                        logger.warning(f"User set to not remove cookies.")
                 sys.exit(1)
             else:
                 logger.debug("Passed cookies and success login!")
@@ -464,6 +469,7 @@ def query_patent(
     headless: bool = True,
     nretry: int = 3,
     local_browser: str | None = None,
+    rm_fail_cookie: bool = False,
     log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
@@ -477,8 +483,9 @@ def query_patent(
             output=output,
             headless=headless,
             nretry=nretry,
+            local_browser=local_browser,
+            rm_fail_cookie=rm_fail_cookie,
             log_level=log_level,
-            local_browser=None,
         )
 
 

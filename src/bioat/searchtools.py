@@ -331,6 +331,7 @@ class SearchTools:
         nobrowser: bool = True,
         retry: int = 3,
         local_browser: str | None = None,
+        rm_fail_cookie: bool = False,
         log_level: str = "INFO",
     ):
         """Return a table with a list of patent blast hit from lens.org
@@ -344,6 +345,7 @@ class SearchTools:
         :param nobrowser: wether or not to open browser for DEBUG
         :param retry: max retry times
         :param local_browser: local firefox browser executable file path
+        :param rm_fail_cookie: remove cookies from local if query fail, default is False
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
         logger = get_logger(
@@ -362,5 +364,6 @@ class SearchTools:
             headless=nobrowser,
             nretry=retry,
             local_browser=local_browser,
+            rm_fail_cookie=rm_fail_cookie,
             log_level=log_level,
         )
