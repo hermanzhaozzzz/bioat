@@ -17,7 +17,11 @@ STATUS = "RUN"
 SEQ_HEADER = None
 COOKIE = f"{HOME}/.bioat/LENS.ORG/cookie.json"
 CSS_PATH = os.path.join(os.path.dirname(__file__), "patentseq")
-IP_ERRORS = ('NS_ERROR_UNKNOWN_HOST', 'NS_ERROR_NET_INTERRUPT', 'NS_ERROR_PROXY_FORBIDDEN')
+IP_ERRORS = (
+    "NS_ERROR_UNKNOWN_HOST",
+    "NS_ERROR_NET_INTERRUPT",
+    "NS_ERROR_PROXY_FORBIDDEN",
+)
 
 
 def save_cookies(context, log_level):
@@ -37,7 +41,7 @@ def save_cookies(context, log_level):
         f.write(str(int(time.time())))
 
 
-def load_cookies(browser, proxy_ip=None, log_level='DEBUG') -> None | object:
+def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
     # 加载 cookies
     logger = get_logger(
         level=log_level,
@@ -57,14 +61,14 @@ def load_cookies(browser, proxy_ip=None, log_level='DEBUG') -> None | object:
         # run check time
         current_time = int(time.time())
         elapsed_time = current_time - login_time
-        if elapsed_time > 15 * 60:  # 1/4 hour
+        if elapsed_time > 60 * 60:  # 1 hour
             logger.info("Cookies are expired, performing re-login...")
             return None
         else:
             if (
-                    os.path.exists(COOKIE)
-                    and os.path.isfile(COOKIE)
-                    and os.path.getsize(f"{COOKIE}") > 0
+                os.path.exists(COOKIE)
+                and os.path.isfile(COOKIE)
+                and os.path.getsize(f"{COOKIE}") > 0
             ):
                 logger.info("Cookies are still valid, skip login and load cookies")
                 with open(COOKIE, "rt") as f:
@@ -72,7 +76,7 @@ def load_cookies(browser, proxy_ip=None, log_level='DEBUG') -> None | object:
                 logger.debug(f"new_context")
                 context = browser.new_context(
                     storage_state=storage_state,
-                    proxy={"server": proxy_ip} if proxy_ip else None
+                    proxy={"server": proxy_ip} if proxy_ip else None,
                 )
                 return context
             else:
@@ -94,17 +98,17 @@ def remove_cookie(log_level):
 
 
 def run(
-        playwright: Playwright,
-        username,
-        password,
-        seq,
-        seq_header,
-        proxy_server,
-        output,
-        headless,
-        nretry,
-        local_browser,
-        log_level,
+    playwright: Playwright,
+    username,
+    password,
+    seq,
+    seq_header,
+    proxy_server,
+    output,
+    headless,
+    nretry,
+    local_browser,
+    log_level,
 ) -> None:
     logger = get_logger(
         level=log_level,
@@ -145,15 +149,15 @@ def run(
     if proxy_server:
         proxy_pool = ProxyPool(url=proxy_server)
         while True:
-            proxy_ip = proxy_pool.get_proxy().get('proxy')
+            proxy_ip = proxy_pool.get_proxy().get("proxy")
             logger.info(f"Set proxy_server: {proxy_server}")
             if proxy_ip:
                 logger.debug("Get valid proxy, go on")
                 break
             else:
-                logger.debug('No proxy found in proxy pool, waiting 10 seconds...')
+                logger.debug("No proxy found in proxy pool, waiting 10 seconds...")
                 time.sleep(10)
-                logger.debug('Next try to get proxy')
+                logger.debug("Next try to get proxy")
                 continue
         logger.info(f"Get proxy_ip: {proxy_ip}")
 
@@ -249,9 +253,11 @@ def run(
                 continue
             except Exception as e:
                 if str(e) in IP_ERRORS:
-                    logger.error(f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...")
+                    logger.error(
+                        f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry..."
+                    )
                     proxy_pool.delete_proxy(proxy_ip)
-                    proxy_ip = proxy_pool.get_proxy().get('proxy')
+                    proxy_ip = proxy_pool.get_proxy().get("proxy")
                     logger.debug(f"Get new proxy_ip: {proxy_ip} and retry...")
 
                 logger.debug("context close")
@@ -333,12 +339,17 @@ def run(
             logger.debug(f'Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
             logger.debug(f'Click "advanced options"')
-            page.frame_locator("iframe").locator("div").filter(has_text=re.compile(r"^advanced options$")).locator(
-                "div").click()
-            logger.debug(f'Set maximum number of hits to 50')
-            page.frame_locator("iframe").get_by_label("Maximum Number of Hits to").select_option("50")
-            logger.debug(f'Set maximum e-value to 1.0')
-            page.frame_locator("iframe").get_by_label("Expectation value threshold").select_option("1.0")
+            page.frame_locator("iframe").locator("div").filter(
+                has_text=re.compile(r"^advanced options$")
+            ).locator("div").click()
+            logger.debug(f"Set maximum number of hits to 50")
+            page.frame_locator("iframe").get_by_label(
+                "Maximum Number of Hits to"
+            ).select_option("50")
+            logger.debug(f"Set maximum e-value to 1.0")
+            page.frame_locator("iframe").get_by_label(
+                "Expectation value threshold"
+            ).select_option("1.0")
             logger.debug("Submit blastp query info")
             page.frame_locator("iframe").get_by_role(
                 "button", name="Submit search"
@@ -353,9 +364,11 @@ def run(
             continue
         except Exception as e:
             if str(e) in IP_ERRORS:
-                logger.error(f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...")
+                logger.error(
+                    f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry..."
+                )
                 proxy_pool.delete_proxy(proxy_ip)
-                proxy_ip = proxy_pool.get_proxy().get('proxy')
+                proxy_ip = proxy_pool.get_proxy().get("proxy")
                 logger.debug(f"Get new proxy_ip: {proxy_ip} and retry...")
             logger.warning(f"Could not load url {url_query}: {e}, retry...")
             time.sleep(3)
@@ -373,9 +386,9 @@ def run(
         global SEQ_HEADER
 
         if (
-                "#/results" in full_url
-                and response.request.method == "POST"
-                and response.status == 200
+            "#/results" in full_url
+            and response.request.method == "POST"
+            and response.status == 200
         ):
             try:
                 # 获取响应文本
@@ -442,16 +455,16 @@ def run(
 
 
 def query_patent(
-        seq: str,
-        seq_header: str | None = None,
-        username: str | None = None,
-        password: str | None = None,
-        proxy_server: str | None = None,
-        output: str | None = None,
-        headless: bool = True,
-        nretry: int = 3,
-        local_browser: str | None = None,
-        log_level: str = "INFO",
+    seq: str,
+    seq_header: str | None = None,
+    username: str | None = None,
+    password: str | None = None,
+    proxy_server: str | None = None,
+    output: str | None = None,
+    headless: bool = True,
+    nretry: int = 3,
+    local_browser: str | None = None,
+    log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
         run(
