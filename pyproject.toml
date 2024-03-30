@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.10.24"
+version = "0.10.25"
 description = "Bioinformatic toolkit with python (It's still under development!)"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -34,6 +34,7 @@ pybedtools = "^0.9.1"
 msa4u = "^0.4.0"
 playwright = ">=1.41.2"
 reportlab = "^4.0.0"
+mpld3 = "^0.5.10"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
