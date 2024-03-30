@@ -15,6 +15,11 @@ def init_matplotlib(log_level='INFO'):
     logger.debug("set: plt.style.use('ggplot')  # use ggplot style")
     plt.style.use('ggplot')
 
+    logger.debug("set: plt.rcParams['font.family'] = 'Helvetica'")
+    plt.rcParams['font.family'] = 'Helvetica'
+    logger.debug("set: plt.rcParams['font.sans-serif'] = ['Helvetica']")
+    plt.rcParams['font.sans-serif'] = ['Helvetica']
+
     logger.debug('ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams')
     logger.info("set: plt.rcParams['pdf.use14corefonts'] = True  # trigger core fonts for PDF backend")
     plt.rcParams['pdf.use14corefonts'] = True
