@@ -1,8 +1,12 @@
+"""Tests for `bamtools` package.
+"""
 import os
 import random
 import string
 import subprocess
+import pytest
 from bioat.cli import Cli
+from bioat.lib.libsystem import check_cmd
 from .settings import DATA_PATH
 
 cli = Cli()
@@ -65,25 +69,29 @@ def test_cli_remove_clip_1():
     assert subprocess.run(args).returncode == 0
 
 
-# def test_cli_remove_clip_2():
-#     # test pipe
-#     args = ['samtools', 'view', '-h', f_bam_sortn]
-#     p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
-#     args = ['bioat', 'bam', 'remove_clip']
-#     p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
-#     args = ['head']
-#     p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
-#     _ = p3.communicate()[0]  # output str
-#     assert p3.returncode == 0
+def test_cli_remove_clip_2():
+    if not check_cmd('samtools'):
+        pytest.skip('samtools is not installed')
+    # test pipe
+    args = ['samtools', 'view', '-h', f_bam_sortn]
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    args = ['bioat', 'bam', 'remove_clip']
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    args = ['head']
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    _ = p3.communicate()[0]  # output str
+    assert p3.returncode == 0
 
 
-# def test_cli_remove_clip_3():
-#     # test pipe
-#     args = ['samtools', 'view', '-h', f_bam_sortn]
-#     p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
-#     args = ['bioat', 'bam', 'remove_clip']
-#     p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
-#     args = ['tail']
-#     p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
-#     _ = p3.communicate()[0]  # output str
-#     assert p3.returncode == 0
+def test_cli_remove_clip_3():
+    if not check_cmd('samtools'):
+        pytest.skip('samtools is not installed')
+    # test pipe
+    args = ['samtools', 'view', '-h', f_bam_sortn]
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    args = ['bioat', 'bam', 'remove_clip']
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    args = ['tail']
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    _ = p3.communicate()[0]  # output str
+    assert p3.returncode == 0

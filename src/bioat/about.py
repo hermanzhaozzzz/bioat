@@ -3,8 +3,8 @@ from bioat.version import (__version__, __author__, __upgrade_date__, __email__,
 from bioat import __name__ as name
 
 about = f"""
-BioinformaticAnalysisTools ({name})
-    - bioat version:
+BioAT ({name})
+    - {name} version:
         {__version__}
     - last update:
         - {__upgrade_date__}

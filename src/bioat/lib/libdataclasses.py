@@ -2,50 +2,9 @@
 dataclasses:
     - https://docs.python.org/zh-cn/3/library/dataclasses.html
     - python version >= 3.7.0, PEP 557, PEP 526
-    - 这个模块提供了一个装饰器和一些函数，用于自动为用户自定义的类添加生成的 special method 例如 __init__() 和 __repr__()。
-
----
-
-demo:
-    from dataclasses import dataclass
-
-    @dataclass
-    class InventoryItem:
-        '''annotates'''
-        name: str
-        unit_price: float
-        quantity_on_hand: int = 0
-
-        def total_cost(self) -> float:
-            return self.unit_price * self.quantity_on_hand
-
-    # 除其他内容以外，还将添加如下所示的 __init__():
-    def __init__(self, name: str, unit_price: float, quantity_on_hand: int = 0):
-        self.name = name
-        self.unit_price = unit_price
-        self.quantity_on_hand = quantity_on_hand
-
-    # 请注意，此方法会自动添加到类中：而不是在如上所示的 InventoryItem 定义中被直接指定。
-
-
-    # 下面这三种 dataclass() 用法是等价的
-    @dataclass
-    class C:
-        ...
-
-    @dataclass()
-    class C:
-        ...
-
-    @dataclass(init=True, repr=True, eq=True, order=False, unsafe_hash=False, frozen=False,
-               match_args=True, kw_only=False, slots=False, weakref_slot=False)
-    class C:
-        ...
-
-    具体说明查看官方文档
 """
-
 from dataclasses import dataclass
+
 
 @dataclass
 class Bed:
@@ -147,6 +106,7 @@ class Fastq(Fasta):
     #     # https://www.jianshu.com/p/248308513e2e
     #     pass
 
+
 @dataclass(frozen=True)
 class Assembly(object):
     contigs: list[Fasta]
@@ -155,6 +115,7 @@ class Assembly(object):
 
     def __init__(self, path: str):
         pass
+
 
 @dataclass
 class VCF:

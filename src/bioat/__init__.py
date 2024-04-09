@@ -1,5 +1,7 @@
-"""Doc of bioat.
-
+"""BioAT package.
+BioAT can be a package to import.
+BioAT also can be a command-line tool.
+It is a bioinformatic tool/pkg bundle for python.
 """
 from bioat.exceptions import *  # must be the first
 from bioat.logger import get_logger  # must be the second
