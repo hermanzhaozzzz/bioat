@@ -2,12 +2,18 @@ import sys
 import time
 import pandas as pd
 from bioat import get_logger
-from pandarallel import pandarallel
 from bioat.lib._dev_tools import profile
 import gc
 
 __module_name__ = 'bioat.hictools'
 
+
+try:
+    from pandarallel import pandarallel
+except ImportError:
+    logger = get_logger(__module_name__)
+    logger.error('pandarallel not installed, please exec `python -m pip install pandarallel`, then try again.')
+    sys.exit(1)
 try:
     pandarallel.initialize(
         progress_bar=False,

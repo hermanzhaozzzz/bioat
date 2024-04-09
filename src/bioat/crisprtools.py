@@ -16,21 +16,23 @@ class CrisprTools:
         if exists_in_PATH("pilercr")
         else f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
     )
+
     # /for development test
 
     def cas_finder(
-        self,
-        input_fa,
-        output_faa=None,
-        output_crispr_info_tab=None,
-        lmin=3000,  # 3001 in Nature Methods paper
-        lmax=None,
-        extend=10_000,
-        temp_dir=None,
-        prodigal=_prodigal,
-        pilercr=_pilercr,
-        rm_temp=True,
-        log_level="INFO",
+            self,
+            input_fa,
+            output_faa=None,
+            output_crispr_info_tab=None,
+            lmin=3000,  # 3001 in Nature Methods paper
+            lmax=None,
+            extend=10_000,
+            temp_dir=None,
+            prodigal=_prodigal,
+            prodigal_mode='meta',
+            pilercr=_pilercr,
+            rm_temp=True,
+            log_level="INFO"
     ):
         """De novo annotation for Cas candidates from neighbor of CRISPR loci.
 
@@ -43,6 +45,7 @@ class CrisprTools:
         :param temp_dir: folder to put temp files in
         :param prodigal: the executable prodigal path
         :param pilercr: the executable pilercr path
+        :param prodigal_mode: meta | single, mode for prodigal annotation
         :param rm_temp: set False to keep the temp files
         :param log_level: set DEBUG to see output from prodigal and pilercr
         """
@@ -55,6 +58,7 @@ class CrisprTools:
             extend=extend,
             temp_dir=temp_dir,
             prodigal=prodigal,
+            prodigal_mode=prodigal_mode,
             pilercr=pilercr,
             rm_temp=rm_temp,
             log_level=log_level,
@@ -68,7 +72,7 @@ class CrisprTools:
     #     pass
 
     def cas13_finder(
-        self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
+            self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
     ):
         """De novo annotation for Cas13 candidates from proteins.faa.
 

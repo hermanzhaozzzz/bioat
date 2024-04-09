@@ -9,11 +9,18 @@ import gzip
 
 import pandas as pd
 import numpy as np
-from Bio import SeqIO, bgzf
-from pybedtools import BedTool
+from Bio import SeqIO
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libfastx"
+
+try:
+    from pybedtools import BedTool
+except ImportError:
+    logger = get_logger(__module_name__)
+    logger.error('pybedtools not installed, please exec `python -m pip install pybedtools` '
+                 'or `conda install pybedtools`, then try again.')
+    sys.exit(1)
 
 
 def filter_fasta_length(contig, lmin, lmax) -> bool:
@@ -34,9 +41,10 @@ def cas_finder(
         extend: int = 10_000,
         temp_dir: str | None = None,
         prodigal: str | None = None,
+        prodigal_mode: str = 'meta',
         pilercr: str | None = None,
         rm_temp: bool = True,
-        log_level="DEBUG",
+        log_level="INFO",
 ) -> None:
     # set logger
     logger = get_logger(
@@ -54,6 +62,9 @@ def cas_finder(
             temp_dir = dirname
     else:
         pass
+
+    if prodigal_mode not in ("meta", "single"):
+        logger.error(f"prodigal mode {prodigal_mode} not supported, must be 'meta' or 'single'")
 
     fa_input = input_fa  # input_fa = '202155.assembled.fna'
     fa_pep_cas = os.path.join(  # output_faa, 不指定 | 指定
@@ -129,7 +140,7 @@ def cas_finder(
                 "-i",
                 fa_filtered,
                 "-p",
-                "single",
+                prodigal_mode,
                 "-f",
                 "gff",
                 "-o",
@@ -606,18 +617,23 @@ def cas13_finder(
     logger.info("End, exit.")
 
 
-def format_this_fastx(file: str, new_file: str | None = None, log_level: str = "DEBUG"):
+def format_this_fastx(old_file: str, new_file: str | None = None, force: bool = False, log_level: str = "DEBUG"):
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
         func_name=sys._getframe().f_code.co_name,
     )
     logger.debug("start to format fastx file")
-    f_input = file
+    f_input = old_file
     temp_file = f".bioat_temp_{f_input}"
+    # replace old file or write to new file!
     new_file = f_input if new_file is None else new_file
 
-    handler = gzip.open(f_input, 'wt') if f_input.endswith(".gz") else open(f_input, 'wt')
+    if new_file == f_input and not force:
+        logger.error(f"file {f_input} already exists, skip formatting, use --force to overwrite or define --new-file")
+        sys.exit(1)
+
+    handler = gzip.open(f_input, 'rt') if f_input.endswith(".gz") else open(f_input, 'rt')
     fasta = SeqIO.parse(handler, "fasta")
 
     iter_out = (i for i in fasta)

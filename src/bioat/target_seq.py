@@ -5,17 +5,20 @@ from bioat import BioatFileFormatError, BioatFileNameError, BioatParameterFormat
 from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
 from bioat.lib.libcolor import map_color, make_color_list, convert_hex_to_rgb
 from bioat.lib.libalignment import instantiate_pairwise_aligner
+from bioat.lib.libpandas import set_option
 from bioat import get_logger
 from Bio.Seq import Seq
 from tabulate import tabulate
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
 import pandas as pd
 
 __module_name__ = 'bioat.target_seq'
+
+set_option(log_level='ERROR')
 
 
 class TargetSeq:
@@ -810,7 +813,7 @@ class TargetSeq:
 
         # parse parameter: reference_seq, if reference_seq is None, reference_seq value will be derived from df_bases
         if reference_seq:
-            # fa file or seq str     to seq str
+            # fa file or seq str to seq str
             if os.path.isfile(reference_seq):
                 f = open(reference_seq, 'rt') if not reference_seq.endswith('.gz') else gzip.open(reference_seq, 'rt')
                 reference_seq = ''.join([i.rstrip() for i in f.readlines()[1:]])
@@ -995,7 +998,7 @@ class TargetSeq:
             ls_columns.extend(ls_tmp)
 
         df_tmp.columns = ls_columns
-
+        # print(f'df_tmp = \n{df_tmp}')
         # define ref_seq as the referencing sequence
         if len(ls_bmat_table) == 1:
             ref_seq = "".join(bmat_table['ref_base_' + label_panel[0]].tolist())
@@ -1006,6 +1009,8 @@ class TargetSeq:
             raise ValueError('ref info gets wrong!')
 
         df_bmat_all = df_tmp.copy()
+        # print(f'df_bmat_all = \n{df_bmat_all}')
+        # print(f'ref_seq = \n{ref_seq}')
         # make alignment info
         sgRNA_align = [""] * len(ref_seq)
         sgRNA_align_insert = [""] * len(ref_seq)
@@ -1102,7 +1107,7 @@ class TargetSeq:
         #     plot_heatmap_index = bmat_table_select.chr_index
         plot_data_list = [
             ["Ref_index", df_bases_select.chr_index],
-            ["Target_seq", target_seq_aln[plot_region[0]: plot_region[1]]],
+            ["Target_seq", np.array(target_seq_aln[plot_region[0]: plot_region[1]])],
             ["Ref_seq", df_bases_select['ref_base_%s' % label_panel[0]]]
         ]
         if count_ratio == 'count' or count_ratio == 'all':
@@ -1218,17 +1223,20 @@ class TargetSeq:
 
         # make box_y initialize
         current_y = 0
-        bl_matrix = True
-        df_matrix = pd.DataFrame(np.zeros((len(panel_height_coef), len(plot_data_list[0][1]))))
-
+        df_matrix = pd.DataFrame([[''] * len(plot_data_list[0][1])] * len(panel_height_coef))
         ls_row_name = []
         for panel_index in range(len(panel_height_coef)):
             ls_row_name.append(plot_data_list[panel_index][0])
+            df_matrix.iloc[panel_index, :] = df_matrix.iloc[panel_index, :].astype(np.str_)
 
             for index, box_value in enumerate(plot_data_list[panel_index][1]):
                 row = panel_index
                 col = index
                 df_matrix.iloc[row, col] = box_value
+                # print(f'box_value = {box_value}, row = {row}, col = {col}')
+                # print(f'df_matrix.iloc[row, col] = {df_matrix.iloc[row, col]}')
+                # if box_value == '':
+                #     raise ValueError
         df_matrix.index = ls_row_name
 
         # plot heatmap
@@ -1277,7 +1285,7 @@ class TargetSeq:
                 ls_bl_select_df_sample = ls_bool
                 df_sample = df_sample.loc[:, ls_bl_select_df_sample]
                 df_sample = df_sample.loc[['A', 'G', 'C', 'T'], :].T.copy()
-                df_sample = df_sample.applymap(int)
+                df_sample = df_sample.astype(int)
                 df_sample['sum'] = df_sample['A'] + df_sample['G'] + df_sample['C'] + df_sample['T']
                 df_sample['Ref_seq'] = np.array(ls_ref)[ls_bl_select_df_sample]
                 df_sample['To_base'] = df_sample['Ref_seq'].map(lambda x: dt_base[x])
@@ -1291,16 +1299,18 @@ class TargetSeq:
                 df_sample['Mut_ratio'] = df_sample['Mut_count'] / df_sample['sum']
                 ls_sample_ratio = df_sample['Mut_ratio'].tolist()
                 ls_ratio.append(ls_sample_ratio)
-
             df_ratio_all = pd.DataFrame(ls_ratio).T
             df_ratio_all.columns = label_panel
 
             try:
                 logger.debug('Catch NA: {}'.format(df_ratio_all.isna().sum().sum()))
                 logger.debug(df_ratio_all.head())
+                # print(f'df_matrix.T = \n{df_matrix.T}')
                 df_ratio_all.index = df_matrix.T['Ref_index'][ls_bl_select_df_sample].map(float).map(int).tolist()
                 df_ratio_all['Target_seq'] = df_matrix.T['Target_seq'][ls_bl_select_df_sample].tolist()
                 df_ratio_all['Ref_seq'] = df_matrix.T['Ref_seq'][ls_bl_select_df_sample].tolist()
+                # print(f'df_ratio_all.T = \n{df_ratio_all.T}')
+                # exit()
             except ValueError:
                 start_idx = df_matrix.T['Ref_index'][ls_bl_select_df_sample].map(float).map(int).tolist()[0]
                 end_idx = start_idx + len(df_ratio_all.index.tolist())
@@ -1308,25 +1318,26 @@ class TargetSeq:
                 df_ratio_all['Target_seq'] = df_matrix.T['Target_seq'].tolist()
                 df_ratio_all['Ref_seq'] = df_matrix.T['Ref_seq'].tolist()
 
-            df_ratio_all['On-Target'] = 0
-            df_ratio_all['Reference'] = 0
+            df_ratio_all['On-Target'] = ''
+            df_ratio_all['Reference'] = ''
             df_ratio_all = df_ratio_all[['Target_seq', 'Ref_seq', 'On-Target', 'Reference'] + label_panel].T.copy()
 
             df_onTarget_Ref = df_ratio_all.iloc[:2, :].fillna(' ')
             logger.debug(f'df_onTarget_Ref: \n{df_onTarget_Ref}')
             # exit()
             # print(df_onTarget_Ref == '')
-            df_onTarget_Ref_color = df_ratio_all.iloc[:2, :].fillna('').applymap(plot_agct)
+            df_onTarget_Ref_color = df_ratio_all.iloc[:2, :].fillna('').map(plot_agct)
             logger.debug(f'df_onTarget_Ref_color: \n{df_onTarget_Ref_color}')
             # exit()
             logger.debug(f'df_ratio_all: \n{df_ratio_all}')
             # exit()
             df_plot = df_ratio_all.iloc[2:, :].copy()
             logger.debug(f'df_plot: \n{df_plot}')
+            # print(f'df_plot: \n{df_plot}')
             # exit()
-            df_plot_rec = df_plot.applymap(float) * 100
+            df_plot.iloc[2:, :] = df_plot.iloc[2:, :].astype(float) * 100
             ls_max = []
-            for i in df_plot_rec.values.tolist():
+            for i in df_plot.iloc[2:, :].values.tolist():
                 ls_max.extend(i)
             try:
                 ls_break = list(np.arange(0, max(ls_max), max(ls_max) / 100))
@@ -1345,14 +1356,15 @@ class TargetSeq:
             # exit()
 
             df_onTarget_Ref_tmp = df_onTarget_Ref.T
-            df_onTarget_Ref_tmp['Target_seq'][df_onTarget_Ref_tmp['Target_seq'].isnull()] = ' '
+            df_onTarget_Ref_tmp.loc[df_onTarget_Ref_tmp['Target_seq'].isnull(), 'Target_seq'] = pd.NA
             df_onTarget_Ref = df_onTarget_Ref_tmp.T
-            df_plot_rec = df_plot.applymap(float) * 100
+            df_plot_rec = df_plot.copy()
             logger.debug('df_plot_rec:\n' + tabulate(df_plot_rec, headers='keys', tablefmt='psql'))
 
             # heatmap颜色，去map_hex_for_matrix函数中调整
             def map_hex_for_matrix(x):
                 # 判断value范围并返回颜色的Hex值
+                value = -1
                 for value in ls_break:
                     if x < value:
                         break
@@ -1361,9 +1373,25 @@ class TargetSeq:
                 return ls_color[ls_break.index(value) - 1]
 
             logger.debug(f'df_plot_rec: \n{df_plot_rec}')
+            # print(f'df_plot_rec: \n{df_plot_rec}')
             # exit()
-            df_plot_rec_cmap = df_plot_rec.applymap(map_hex_for_matrix)
+            df_plot_rec.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(map_hex_for_matrix)
+            df_plot_rec_cmap = df_plot_rec.copy()
+            # print(df_plot_rec_cmap)
+            # exit()
+
+            # print(f'df_plot_rec = \n{df_plot_rec}')
+            # print(df_plot_rec.loc['On-Target', :])
+            # print(df_plot_rec.loc['On-Target', :].dtype)
+            # df_matrix = pd.DataFrame([[''] * len(plot_data_list[0][1])] * len(panel_height_coef))
+            # print(f"df_onTarget_Ref.loc['Target_seq', :] = \n{df_onTarget_Ref.loc['Target_seq', :]}")
+            # print('df_onTarget_Ref', df_onTarget_Ref.loc['Target_seq', :] == '')
+            # print(f"df_plot_rec.loc['On-Target', :] = \n{df_plot_rec.loc['On-Target', :]}")
+            # print('df_plot_rec', df_plot_rec.loc['On-Target', :] == '')
+            # exit()
             df_plot_rec.loc['On-Target', :] = df_onTarget_Ref.loc['Target_seq', :]
+            # print(df_plot_rec.loc['On-Target', :])
+            # print(df_onTarget_Ref.loc['Target_seq', :])
             df_plot_rec.loc['Reference', :] = df_onTarget_Ref.loc['Ref_seq', :]
             df_plot_rec_cmap.loc['On-Target', :] = df_onTarget_Ref.loc['Target_seq', :].map(plot_agct)
             df_plot_rec_cmap.loc['Reference', :] = df_onTarget_Ref.loc['Ref_seq', :].map(plot_agct)

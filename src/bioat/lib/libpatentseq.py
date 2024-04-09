@@ -8,10 +8,16 @@ from bioat import get_logger
 from bioat.lib.libpath import HOME
 from bioat.lib.libpandas import set_option
 from bioat.lib.libspider import get_random_user_agents, ProxyPool
-from playwright.sync_api import Playwright, sync_playwright
-from playwright._impl._errors import TimeoutError, TargetClosedError
 
 __module_name__ = "bioat.lib.libpatentseq"
+
+try:
+    from playwright.sync_api import Playwright, sync_playwright
+    from playwright._impl._errors import TimeoutError, TargetClosedError
+except ImportError:
+    logger = get_logger(__module_name__)
+    logger.error('Unable to import playwright. please exec `python -m pip install playwright`, then try again.')
+    sys.exit(1)
 
 STATUS = "RUN"
 SEQ_HEADER = None
@@ -66,9 +72,9 @@ def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
             return None
         else:
             if (
-                os.path.exists(COOKIE)
-                and os.path.isfile(COOKIE)
-                and os.path.getsize(f"{COOKIE}") > 0
+                    os.path.exists(COOKIE)
+                    and os.path.isfile(COOKIE)
+                    and os.path.getsize(f"{COOKIE}") > 0
             ):
                 logger.info("Cookies are still valid, skip login and load cookies")
                 with open(COOKIE, "rt") as f:
@@ -98,18 +104,18 @@ def remove_cookie(log_level):
 
 
 def run(
-    playwright: Playwright,
-    username,
-    password,
-    seq,
-    seq_header,
-    proxy_server,
-    output,
-    headless,
-    nretry,
-    local_browser,
-    rm_fail_cookie,
-    log_level,
+        playwright: Playwright,
+        username,
+        password,
+        seq,
+        seq_header,
+        proxy_server,
+        output,
+        headless,
+        nretry,
+        local_browser,
+        rm_fail_cookie,
+        log_level,
 ) -> None:
     logger = get_logger(
         level=log_level,
@@ -391,9 +397,9 @@ def run(
         global SEQ_HEADER
 
         if (
-            "#/results" in full_url
-            and response.request.method == "POST"
-            and response.status == 200
+                "#/results" in full_url
+                and response.request.method == "POST"
+                and response.status == 200
         ):
             try:
                 # 获取响应文本
@@ -460,17 +466,17 @@ def run(
 
 
 def query_patent(
-    seq: str,
-    seq_header: str | None = None,
-    username: str | None = None,
-    password: str | None = None,
-    proxy_server: str | None = None,
-    output: str | None = None,
-    headless: bool = True,
-    nretry: int = 3,
-    local_browser: str | None = None,
-    rm_fail_cookie: bool = False,
-    log_level: str = "INFO",
+        seq: str,
+        seq_header: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        proxy_server: str | None = None,
+        output: str | None = None,
+        headless: bool = True,
+        nretry: int = 3,
+        local_browser: str | None = None,
+        rm_fail_cookie: bool = False,
+        log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
         run(
