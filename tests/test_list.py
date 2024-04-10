@@ -1,3 +1,6 @@
+"""
+Tests for `list` module.
+"""
 import subprocess
 from bioat.cli import Cli
 

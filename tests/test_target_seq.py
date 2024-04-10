@@ -1,3 +1,6 @@
+"""
+Tests for `target_seq` package.
+"""
 import os
 import subprocess
 

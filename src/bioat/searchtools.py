@@ -20,16 +20,16 @@ class SearchTools:
         pass
 
     def google_scholar(
-        self,
-        keyword: str = "CRISPR",
-        sort_by: str = "cit/year",
-        n_results: int = 100,
-        csv_path: str = ".",
-        save_table: bool = True,
-        plot: bool = False,
-        start_year: int = None,
-        end_year: int = datetime.now().year,
-        log_level: str = "WARNING",
+            self,
+            keyword: str = "CRISPR",
+            sort_by: str = "CitePerYear",
+            n_results: int = 100,
+            csv_path: str = ".",
+            save_table: bool = True,
+            plot: bool = False,
+            start_year: int = None,
+            end_year: int = datetime.now().year,
+            log_level: str = "WARNING",
     ):
         """Return a table with a list of publications from google scholar, sort_by cit/year.
 
@@ -44,14 +44,14 @@ class SearchTools:
 
         :param keyword: Keyword to be searched. Use double quote followed by simple quote to search for an exact
                 keyword. Example: "'exact keyword'"
-        :param sort_by: Column to be sorted by. Default is by the columns "Citations",
+        :param sort_by: Column to be sorted by.
                 i.e., it will be sorted by the number of citations.
-                If you want to sort by citations per year, use --sort_by "cit/year"
-                Or --sort_by "Citations" to sort by citations totally
+                If you want to sort by citations per year, use --sort_by "CitePerYear"
+                Or --sort_by "Citations" to sort by citations totally.
         :param n_results: Number of articles to search on Google Scholar.
                 Default is 100. (be careful with robot checking if value is too high)
-        :param csv_path: Path to save the exported csv file. By default it is the current folder
-        :param save_table: By default results are going to be exported to a csv file.
+        :param csv_path: Path to save the exported csv file. By default, it is the current folder
+        :param save_table: By default, results are going to be exported to a csv file.
                 Select this option to just print results but not store them
         :param plot: Use this flag in order to plot the results with the original rank in the x-axis
                 and the number of citaions in the y-axis.
@@ -69,7 +69,7 @@ class SearchTools:
         def get_citations(content):
             out = 0
             for char in range(0, len(content)):
-                if content[char : char + 9] == "Cited by ":
+                if content[char: char + 9] == "Cited by ":
                     init = char + 9
                     for end in range(init + 1, init + 6):
                         if content[end] == "<":
@@ -80,7 +80,7 @@ class SearchTools:
         def get_year(content):
             for char in range(0, len(content)):
                 if content[char] == "-":
-                    out = content[char - 5 : char - 1]
+                    out = content[char - 5: char - 1]
             if not out.isdigit():
                 out = 0
             return int(out)
@@ -105,7 +105,7 @@ class SearchTools:
         def get_author(content):
             for char in range(0, len(content)):
                 if content[char] == "-":
-                    out = content[2 : char - 1]
+                    out = content[2: char - 1]
                     break
             return out
 
@@ -165,7 +165,7 @@ class SearchTools:
 
         if log_level == "DEBUG":
             GSCHOLAR_MAIN_URL = (
-                "https://web.archive.org/web/20210314203256/" + GSCHOLAR_URL
+                    "https://web.archive.org/web/20210314203256/" + GSCHOLAR_URL
             )
 
         # Start new session
@@ -289,8 +289,9 @@ class SearchTools:
         data.index.name = "Rank"
 
         # Add columns with number of citations per year
-        data["cit/year"] = data["Citations"] / (end_year + 1 - data["Year"])
-        data["cit/year"] = data["cit/year"].round(0).astype(int)
+        data["CitePerYear"] = data["Citations"] / (end_year + 1 - data["Year"])
+        data["CitePerYear"] = data["CitePerYear"].round(0).astype(int)
+        data = data[['Author', 'Citations', "CitePerYear", 'Year', 'Venue', 'Title', 'Publisher']]
 
         # Sort by the selected columns, if exists
         try:
@@ -321,18 +322,18 @@ class SearchTools:
             data_ranked.to_csv(fpath_csv, encoding="utf-8")
 
     def query_patent(
-        self,
-        seq: str,
-        query_name: str | None = None,
-        username: str | None = None,
-        password: str | None = None,
-        via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
-        output: str | None = None,
-        nobrowser: bool = True,
-        retry: int = 3,
-        local_browser: str | None = None,
-        rm_fail_cookie: bool = False,
-        log_level: str = "INFO",
+            self,
+            seq: str,
+            query_name: str | None = None,
+            username: str | None = None,
+            password: str | None = None,
+            via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
+            output: str | None = None,
+            nobrowser: bool = True,
+            retry: int = 3,
+            local_browser: str | None = None,
+            rm_fail_cookie: bool = False,
+            log_level: str = "INFO",
     ):
         """Return a table with a list of patent blast hit from lens.org
 
