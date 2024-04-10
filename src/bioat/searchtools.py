@@ -3,6 +3,7 @@ import sys
 from time import sleep
 from datetime import datetime
 from bioat import get_logger
+from bioat import BioatParameterFormatError
 
 import requests
 from bs4 import BeautifulSoup
@@ -24,7 +25,7 @@ class SearchTools:
             keyword: str = "CRISPR",
             sort_by: str = "CitePerYear",
             n_results: int = 100,
-            csv_path: str = ".",
+            output: str | None = None,
             save_table: bool = True,
             plot: bool = False,
             start_year: int = None,
@@ -50,7 +51,7 @@ class SearchTools:
                 Or --sort_by "Citations" to sort by citations totally.
         :param n_results: Number of articles to search on Google Scholar.
                 Default is 100. (be careful with robot checking if value is too high)
-        :param csv_path: Path to save the exported csv file. By default, it is the current folder
+        :param output: Path of the exported table file. format can be 'csv', 'tsv', 'xls' or 'xlsx'(default).
         :param save_table: By default, results are going to be exported to a csv file.
                 Select this option to just print results but not store them
         :param plot: Use this flag in order to plot the results with the original rank in the x-axis
@@ -90,16 +91,17 @@ class SearchTools:
                 from selenium import webdriver
                 from selenium.webdriver.chrome.options import Options
                 from selenium.common.exceptions import StaleElementReferenceException
-            except Exception as e:
+            except ImportError as e:
                 logger.error(e)
                 logger.error(
-                    "Please install Selenium and chrome webdriver for manual checking of captchas"
+                    "Please install Selenium using `pip install selenium`"
                 )
+                sys.exit(1)
 
             logger.info("Loading...")
-            chrome_options = Options()
-            chrome_options.add_argument("disable-infobars")
-            driver = webdriver.Chrome(chrome_options=chrome_options)
+            options = Options()
+            options.add_argument("disable-infobars")
+            driver = webdriver.Chrome(options=options)
             return driver
 
         def get_author(content):
@@ -140,7 +142,6 @@ class SearchTools:
 
             return c.encode("utf-8")
 
-        MAX_CSV_FNAME = 255
         # Websession Parameters
         GSCHOLAR_URL = (
             "https://scholar.google.com/scholar?start={}&q={}&hl=en&as_sdt=0,5"
@@ -317,9 +318,19 @@ class SearchTools:
 
         # Save results
         if save_table:
-            fpath_csv = os.path.join(csv_path, keyword.replace(" ", "_") + ".csv")
-            fpath_csv = fpath_csv[:MAX_CSV_FNAME]
-            data_ranked.to_csv(fpath_csv, encoding="utf-8")
+            if not output:
+                fpath_csv = os.path.join('.', keyword.replace(" ", "_") + ".xlsx")
+                data_ranked.to_excel(fpath_csv, index=False)
+            elif output.endswith(".csv"):
+                data_ranked.to_csv(output, encoding="utf-8")
+            elif output.endswith(".tsv"):
+                data_ranked.to_csv(output, sep="\t", index=False)
+            elif output.endswith(".xlsx"):
+                data_ranked.to_excel(output, index=False)
+            elif output.endswith(".xls"):
+                data_ranked.to_excel(output, index=False)
+            else:
+                raise BioatParameterFormatError('Output format not supported')
 
     def query_patent(
             self,
