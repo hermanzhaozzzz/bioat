@@ -23,6 +23,7 @@ class CrisprTools:
             self,
             input_fa,
             output_faa=None,
+            output_contig_fa=None,
             output_crispr_info_tab=None,
             lmin=3000,  # 3001 in Nature Methods paper
             lmax=None,
@@ -38,6 +39,7 @@ class CrisprTools:
 
         :param input_fa: metagenome.fa (with many contigs in it)
         :param output_faa: De novo annotated Cas candidates
+        :param output_contig_fa: De novo annotated Cas candidate whole contigs
         :param output_crispr_info_tab: De novo annotated CRISPR info table (csv)
         :param lmin: min length for a contig
         :param lmax: max length for a contig
@@ -52,6 +54,7 @@ class CrisprTools:
         cas_finder(
             input_fa=input_fa,
             output_faa=output_faa,
+            output_contig_fa=output_contig_fa,
             output_crispr_info_tab=output_crispr_info_tab,
             lmin=lmin,
             lmax=lmax,

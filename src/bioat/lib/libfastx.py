@@ -35,6 +35,7 @@ def filter_fasta_length(contig, lmin, lmax) -> bool:
 def cas_finder(
         input_fa: str,
         output_faa: str | None = None,
+        output_contig_fa: str | None = None,
         output_crispr_info_tab: str | None = None,
         lmin: int | None = None,
         lmax: int | None = None,
@@ -71,10 +72,14 @@ def cas_finder(
         workspace,
         f"{input_fa}.pep.cas.faa" if output_faa is None else str(output_faa),
     )
+    fa_crisper_contig = os.path.join(  # output_contig_fa, 不指定 | 指定
+        workspace,
+        f"{input_fa}.crisper.contig.fa" if output_contig_fa is None else str(output_contig_fa),
+    )
+
     dirname = os.path.dirname(fa_pep_cas)
     os.makedirs(dirname, exist_ok=True)
     # temp files
-    fa_crisper_scaffold = os.path.join(temp_dir, f"{fa_pep_cas}.crisper.scaffold.fa")
     f_pilercr = os.path.join(temp_dir, f"{fa_pep_cas}.crispr.spacer.pilercr")
     fa_pep = os.path.join(temp_dir, f"{input_fa}.pep.faa")
     fa_filtered = os.path.join(temp_dir, f"{input_fa}.filtered.fa")
@@ -92,7 +97,7 @@ def cas_finder(
         3: True,  # PASS # 3. get protein cds
         4: True,  # PASS # 4. cas loci vs protein cds
         5: True,  # PASS # 5. get cas faa
-        6: True,  # PASS # 6. get crispr loci as scaffold
+        6: True,  # PASS # 6. get all crispr contigs
     }
     # -----------------------------
     # 0. filter contigs
@@ -123,6 +128,9 @@ def cas_finder(
                 f.write('')
             if output_crispr_info_tab:
                 with open(output_crispr_info_tab, 'wt') as f:
+                    f.write('')
+            if fa_crisper_contig:
+                with open(fa_crisper_contig, 'wt') as f:
                     f.write('')
             logger.info("End, exit.")
             return  # just return output file as an empty file
@@ -477,8 +485,8 @@ def cas_finder(
                     break
             cas_loc_info[f'{dt_this["contig_id"]}_{CDS_id}'] = dt_this
 
-        crispr_ids = ["_".join(i.split("_")[:-1]) for i in cas_loc_info.keys()]
-
+        # crispr_ids = ["_".join(i.split("_")[:-1]) for i in cas_loc_info.keys()]
+        # print(len(crispr_ids))
         # logger.debug(
         #     f'cas_loc_info = \n{cas_loc_info}\n'
         # )
@@ -503,10 +511,16 @@ def cas_finder(
         handler.close()
         logger.debug(f"generate cas.faa file, check output @ {fa_pep_cas}")
     # -----------------------------
-    # 6.get cas candidate scaffolds
+    # 6.get all crispr contigs
     # -----------------------------
     if tests[6]:
-        logger.info("6.get cas candidate scaffolds")
+        logger.info("6.get all crispr contigs")
+        with open(bed_crispr, "rt") as f:
+            contigs_crispr = f.readlines()
+        # print(len(contigs_crispr))
+        crispr_ids = [i.split('\t')[0].split(';')[-1].split('@')[-1] for i in contigs_crispr]
+        print(crispr_ids)
+        print(len(crispr_ids))
         handler = gzip.open(fa_input, "rt") if fa_input.endswith(".gz") else open(fa_input, "rt")
         assembly_input = SeqIO.parse(handler, "fasta")
         contigs_output = []
@@ -514,15 +528,14 @@ def cas_finder(
         for contig in assembly_input:
             if contig.id in crispr_ids:
                 contigs_output.append(contig)
-        SeqIO.write(contigs_output, fa_crisper_scaffold, "fasta")
+        SeqIO.write(contigs_output, fa_crisper_contig, "fasta")
         handler.close()
         logger.debug(
-            f"generate crispr_scaffold.fa file, check output @ {fa_crisper_scaffold}"
+            f"generate crispr_scaffold.fa file, check output @ {fa_crisper_contig}"
         )
 
     if rm_temp:
         logger.info(f"removing temp files @ {temp_dir}")
-        os.remove(fa_crisper_scaffold)
         os.remove(f_pilercr)
         os.remove(fa_pep)
         os.remove(fa_filtered)
