@@ -528,7 +528,12 @@ def cas_finder(
         for contig in assembly_input:
             if contig.id in crispr_ids:
                 contigs_output.append(contig)
-        SeqIO.write(contigs_output, fa_crisper_contig, "fasta")
+
+        if contigs_output:
+            SeqIO.write(contigs_output, fa_crisper_contig, "fasta")
+        else:
+            with open(fa_crisper_contig, "wt") as f:
+                f.write('')
         handler.close()
         logger.debug(
             f"generate crispr_scaffold.fa file, check output @ {fa_crisper_contig}"
