@@ -335,6 +335,9 @@ def cas_finder(
                     if output_crispr_info_tab:
                         with open(output_crispr_info_tab, 'wt') as f:
                             f.write('')
+                    if output_contig_fa:
+                        with open(output_contig_fa, 'wt') as f:
+                            f.write('')
                     logger.info("End, exit.")
                     return  # just return output file as an empty file
 
