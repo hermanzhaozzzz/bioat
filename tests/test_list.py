@@ -1,7 +1,17 @@
+"""Tests for `list` subcommand.
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+>>> example 1:
+    bioat list
 """
-Tests for `list` module.
-"""
+
 import subprocess
+
 from bioat.cli import Cli
 
 cli = Cli()
@@ -15,4 +25,4 @@ def test_list():
 
 def test_cli_list():
     args = ['bioat', 'list']
-    assert subprocess.run(args).returncode == 0
+    subprocess.run(args, check=True)

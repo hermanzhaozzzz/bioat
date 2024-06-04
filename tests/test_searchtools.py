@@ -1,9 +1,22 @@
+"""test_searchtools
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+>>> example 1:
+    _example_
+
+>>> example 2:
+    _example_
 """
-test_searchtools
-"""
+
 import os
-import pytest
 import subprocess
+
+import pytest
 
 from bioat.cli import Cli
 

@@ -1,6 +1,7 @@
 """
 Tests for `target_seq` package.
 """
+
 import os
 import subprocess
 
@@ -19,7 +20,9 @@ f_output_fig_count_ratio = os.path.join(
 f_output_table_count_ratio = os.path.join(
     TESTOUT_PATH, "test_target_seq_compare_count-ratio.csv"
 )
-f_output_fig_heatmap = os.path.join(TESTOUT_PATH, "test_target_seq_compare_heatmap.pdf")
+f_output_fig_heatmap = os.path.join(
+    TESTOUT_PATH, "test_target_seq_compare_heatmap.pdf"
+)
 f_output_table_heatmap = os.path.join(
     TESTOUT_PATH, "test_target_seq_compare_heatmap.csv"
 )
