@@ -1,20 +1,44 @@
+"""_summary_
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat list
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> bioat.list()
+            >>> print(bioat.list())
+
+example 2:
+    _example_
+"""
+
 import gzip
 import os.path
 import sys
-from bioat import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
-from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
-from bioat.lib.libcolor import map_color, make_color_list, convert_hex_to_rgb
-from bioat.lib.libalignment import instantiate_pairwise_aligner
-from bioat.lib.libpandas import set_option
-from bioat import get_logger
-from Bio.Seq import Seq
-from tabulate import tabulate
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Rectangle
-import matplotlib.pyplot as plt
+
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from Bio.Seq import Seq
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Rectangle
+from tabulate import tabulate
+
+from bioat import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
+from bioat.lib.libalignment import instantiate_pairwise_aligner
+from bioat.lib.libcolor import convert_hex_to_rgb, make_color_list, map_color
+from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
+from bioat.lib.libpandas import set_option
+from bioat.logger import get_logger
 
 __module_name__ = 'bioat.target_seq'
 
@@ -96,7 +120,11 @@ class TargetSeq:
             --input_table test_sorted.mpileup.info.tsv \
             --output_fig test_sorted.mpileup.info.pdf\n
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name="region_heatmap",
+        )
 
         if get_built_in_target_seq:
             logger.info(
@@ -625,36 +653,36 @@ class TargetSeq:
         fig.savefig(fname=output_fig, bbox_inches='tight', dpi=output_fig_dpi, format=output_fig_fmt)
 
     def region_heatmap_compare(
-            self,
-            input_tables: str,
-            labels: str = None,
-            target_seq: str = None,  # sgRNA
-            reference_seq: str = None,  # target locus
-            output_fig_heatmap: str = None,
-            output_fig_count_ratio: str = None,
-            output_table_heatmap: str = None,
-            output_table_count_ratio: str = None,
-            output_fig_fmt: str = 'pdf',
-            input_table_header: bool = True,
-            to_base: tuple = ('A', 'G', 'C', 'T', 'Ins', 'Del'),
-            heatmap_mut_direction: tuple = ('CT', 'GA'),
-            count_ratio='all',
-            region_extend_length: int = 5,
-            output_fig_dpi: int = 100,
-            show_indel: bool = True,
-            show_index: bool = True,
-            block_ref: bool = True,
-            box_border: bool = False,
-            box_space: float = 0.03,
-            min_color: tuple = (250, 239, 230),
-            max_color: tuple = (154, 104, 57),
-            min_ratio: float = 0.001,
-            max_ratio: float = 0.99,
-            local_alignment_scoring_matrix: tuple = (5, -4, -24, -8),
-            local_alignment_min_score: int = 15,
-            PAM_priority_weight: float = 1.0,
-            get_built_in_target_seq: bool = False,
-            log_level: str = 'INFO'
+        self,
+        input_tables: str,
+        labels: str | None = None,
+        target_seq: str | None = None,  # sgRNA
+        reference_seq: str | None = None,  # target locus
+        output_fig_heatmap: str | None = None,
+        output_fig_count_ratio: str | None = None,
+        output_table_heatmap: str | None = None,
+        output_table_count_ratio: str | None = None,
+        output_fig_fmt: str = "pdf",
+        input_table_header: bool = True,
+        to_base: tuple = ("A", "G", "C", "T", "Ins", "Del"),
+        heatmap_mut_direction: tuple = ("CT", "GA"),
+        count_ratio="all",
+        region_extend_length: int = 5,
+        output_fig_dpi: int = 100,
+        show_indel: bool = True,
+        show_index: bool = True,
+        block_ref: bool = True,
+        box_border: bool = False,
+        box_space: float = 0.03,
+        min_color: tuple = (250, 239, 230),
+        max_color: tuple = (154, 104, 57),
+        min_ratio: float = 0.001,
+        max_ratio: float = 0.99,
+        local_alignment_scoring_matrix: tuple = (5, -4, -24, -8),
+        local_alignment_min_score: int = 15,
+        PAM_priority_weight: float = 1.0,
+        get_built_in_target_seq: bool = False,
+        log_level: str = "INFO",
     ):
         """Plot region mutation info using table generated by `bioat bam mpileup_to_table`.
 
@@ -715,7 +743,11 @@ class TargetSeq:
             --labels condition1,condition2,condition3 \
             --target_seq HEK4 \n
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name="region_heatmap_compare",
+        )
 
         base_color_dict = {"A": "#04E3E3", "T": "#F9B874", "C": "#B9E76B", "G": "#F53798", "N": "#DDEAF6"}
 
@@ -1455,7 +1487,6 @@ class TargetSeq:
                             fontname="DejaVu Sans",
                             alpha=1
                         )
-
 
                 # add seq panels
                 else:

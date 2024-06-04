@@ -4,6 +4,9 @@ Tests for `target_seq` package.
 
 import os
 import subprocess
+import time
+
+import pytest
 
 from bioat.cli import Cli
 
@@ -136,7 +139,7 @@ def test_cli_region_heatmap_compare_1():
         "--log_level",
         "WARNING",
     ]
-    assert subprocess.run(args).returncode == 0
+    assert subprocess.run(args, check=True)
 
 
 def test_region_heatmap_compare_2():
@@ -189,7 +192,7 @@ def test_cli_region_heatmap_compare_2():
         "--log_level",
         "WARNING",
     ]
-    assert subprocess.run(args).returncode == 0
+    assert subprocess.run(args, check=True)
 
 
 def test_region_heatmap_compare_3():
@@ -248,11 +251,12 @@ def test_cli_region_heatmap_compare_3():
         "--log_level",
         "WARNING",
     ]
-    assert subprocess.run(args).returncode == 0
+    assert subprocess.run(args, check=True)
 
 
-for i in output_files:
-    try:
-        os.remove(i)
-    except:
-        pass
+def test_finish_test_and_clean_files():
+    for i in output_files:
+        try:
+            os.remove(i)
+        except:
+            pass

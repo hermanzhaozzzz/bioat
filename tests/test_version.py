@@ -2,6 +2,7 @@
 Tests for `version` module.
 """
 import subprocess
+
 from bioat.cli import Cli
 
 cli = Cli()

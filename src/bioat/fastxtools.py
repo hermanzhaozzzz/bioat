@@ -1,9 +1,11 @@
 import gzip
 import sys
+
 import pandas as pd
+
 from bioat.exceptions import BioatFileFormatError, BioatFileNotCompleteError
-from bioat.logger import get_logger
 from bioat.lib.libfastx import format_this_fastx
+from bioat.logger import get_logger
 
 __module_name__ = "bioat.fastxtools"
 
@@ -33,7 +35,7 @@ class FastxTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="mgi_parse_md5",
         )
         try:
             df = pd.read_csv(
@@ -64,7 +66,7 @@ class FastxTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="check_completeness",
         )
         pass
 
@@ -80,7 +82,7 @@ class FastxTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="_load_fastx_generator",
         )
         f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
         # FASTQ @  | FASTA >

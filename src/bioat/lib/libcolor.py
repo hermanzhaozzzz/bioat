@@ -1,9 +1,33 @@
-import numpy as np
-import sys
+"""_summary_
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat list
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> bioat.list()
+            >>> print(bioat.list())
+
+example 2:
+    _example_
+"""
+
 import math
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import Rectangle
-from bioat import get_logger
+
+from bioat.logger import get_logger
 
 __module_name__ = 'bioat.lib.libcolor'
 
@@ -121,7 +145,11 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
         <color_list>
     """
     # set logger
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="make_color_list",
+    )
 
     return_fmt = return_fmt.upper()
     supported_fmt = ('HEX', 'RGB')

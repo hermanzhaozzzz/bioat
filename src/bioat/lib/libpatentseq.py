@@ -1,22 +1,47 @@
-import time
-import re
-import os
-import sys
+"""_summary_
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat list
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> bioat.list()
+            >>> print(bioat.list())
+
+example 2:
+    _example_
+"""
+
 import json
+import os
+import re
+import sys
+import time
+
 import pandas as pd
-from bioat import get_logger
-from bioat.lib.libpath import HOME
+
 from bioat.lib.libpandas import set_option
-from bioat.lib.libspider import get_random_user_agents, ProxyPool
+from bioat.lib.libpath import HOME
+from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libpatentseq"
 
 try:
+    from playwright._impl._errors import TargetClosedError, TimeoutError
     from playwright.sync_api import Playwright, sync_playwright
-    from playwright._impl._errors import TimeoutError, TargetClosedError
 except ImportError:
     logger = get_logger(__module_name__)
-    logger.error('Unable to import playwright. please exec `python -m pip install playwright`, then try again.')
+    logger.error(
+        "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
+    )
     sys.exit(1)
 
 STATUS = "RUN"
@@ -32,9 +57,7 @@ IP_ERRORS = (
 
 def save_cookies(context, log_level):
     logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        level=log_level, module_name=__module_name__, func_name="save_cookies"
     )
     # 保存 cookies
     storage_state = context.storage_state()
@@ -50,9 +73,7 @@ def save_cookies(context, log_level):
 def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
     # 加载 cookies
     logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        level=log_level, module_name=__module_name__, func_name="load_cookies"
     )
     try:
         with open(f"{COOKIE}.time", "rt") as f:
@@ -72,11 +93,13 @@ def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
             return None
         else:
             if (
-                    os.path.exists(COOKIE)
-                    and os.path.isfile(COOKIE)
-                    and os.path.getsize(f"{COOKIE}") > 0
+                os.path.exists(COOKIE)
+                and os.path.isfile(COOKIE)
+                and os.path.getsize(f"{COOKIE}") > 0
             ):
-                logger.info("Cookies are still valid, skip login and load cookies")
+                logger.info(
+                    "Cookies are still valid, skip login and load cookies"
+                )
                 with open(COOKIE, "rt") as f:
                     storage_state = json.loads(f.read().strip())
                 logger.debug(f"new_context")
@@ -91,9 +114,7 @@ def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
 
 def remove_cookie(log_level):
     logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        level=log_level, module_name=__module_name__, func_name="remove_cookie"
     )
     logger.info("Removing cookie")
     try:
@@ -104,23 +125,21 @@ def remove_cookie(log_level):
 
 
 def run(
-        playwright: Playwright,
-        username,
-        password,
-        seq,
-        seq_header,
-        proxy_server,
-        output,
-        headless,
-        nretry,
-        local_browser,
-        rm_fail_cookie,
-        log_level,
+    playwright: Playwright,
+    username,
+    password,
+    seq,
+    seq_header,
+    proxy_server,
+    output,
+    headless,
+    nretry,
+    local_browser,
+    rm_fail_cookie,
+    log_level,
 ) -> None:
     logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        level=log_level, module_name=__module_name__, func_name="run"
     )
 
     account = {
@@ -162,7 +181,9 @@ def run(
                 logger.debug("Get valid proxy, go on")
                 break
             else:
-                logger.debug("No proxy found in proxy pool, waiting 10 seconds...")
+                logger.debug(
+                    "No proxy found in proxy pool, waiting 10 seconds..."
+                )
                 time.sleep(10)
                 logger.debug("Next try to get proxy")
                 continue
@@ -170,7 +191,8 @@ def run(
 
     # start to test
     browser = playwright.firefox.launch(
-        headless=headless, executable_path=local_browser if local_browser else None
+        headless=headless,
+        executable_path=local_browser if local_browser else None,
     )
     logger.debug("Try to load cookies")
 
@@ -195,7 +217,11 @@ def run(
             try:
                 logger.debug(f"new_context")
                 context = browser.new_context(
-                    viewport={"width": 1920, "height": 1080} if not headless else None,
+                    viewport=(
+                        {"width": 1920, "height": 1080}
+                        if not headless
+                        else None
+                    ),
                     proxy={"server": proxy_ip} if proxy_ip else None,
                 )
                 page = context.new_page()
@@ -223,7 +249,9 @@ def run(
                 # page.get_by_role("button", name="Sign in").click()
                 with page.expect_popup() as page1_info:
                     logger.debug(f'Click "SignIn with ORCID"')
-                    page.locator("a").filter(has_text="SignIn with ORCID").click()
+                    page.locator("a").filter(
+                        has_text="SignIn with ORCID"
+                    ).click()
                 page1 = page1_info.value
                 logger.debug(f'Click "Proceed"')
                 page1.get_by_role("link", name="Proceed").click()
@@ -329,7 +357,9 @@ def run(
                     f"Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
                 )
                 if rm_cookie:
-                    logger.debug("Consider to remove cookies because checker1 is failed!")
+                    logger.debug(
+                        "Consider to remove cookies because checker1 is failed!"
+                    )
                     if rm_fail_cookie:
                         logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
                         remove_cookie(log_level)
@@ -348,7 +378,9 @@ def run(
                 "Enter a query sequence."
             ).fill(seq)
             logger.debug(f'Click "Protein"')
-            page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
+            page.frame_locator("iframe").get_by_text(
+                "Protein", exact=True
+            ).click()
             logger.debug(f'Click "advanced options"')
             page.frame_locator("iframe").locator("div").filter(
                 has_text=re.compile(r"^advanced options$")
@@ -397,9 +429,9 @@ def run(
         global SEQ_HEADER
 
         if (
-                "#/results" in full_url
-                and response.request.method == "POST"
-                and response.status == 200
+            "#/results" in full_url
+            and response.request.method == "POST"
+            and response.status == 200
         ):
             try:
                 # 获取响应文本
@@ -434,7 +466,9 @@ def run(
     start_time = time.time()
     while True:  # more than 150 seconds, failed
         if STATUS != "RUN":
-            logger.info(f"STATUS={STATUS}, SPEND={int(time.time() - start_time)}s")
+            logger.info(
+                f"STATUS={STATUS}, SPEND={int(time.time() - start_time)}s"
+            )
             break
         if int(time.time() - start_time) >= 300:
             logger.error(
@@ -466,17 +500,17 @@ def run(
 
 
 def query_patent(
-        seq: str,
-        seq_header: str | None = None,
-        username: str | None = None,
-        password: str | None = None,
-        proxy_server: str | None = None,
-        output: str | None = None,
-        headless: bool = True,
-        nretry: int = 3,
-        local_browser: str | None = None,
-        rm_fail_cookie: bool = False,
-        log_level: str = "INFO",
+    seq: str,
+    seq_header: str | None = None,
+    username: str | None = None,
+    password: str | None = None,
+    proxy_server: str | None = None,
+    output: str | None = None,
+    headless: bool = True,
+    nretry: int = 3,
+    local_browser: str | None = None,
+    rm_fail_cookie: bool = False,
+    log_level: str = "INFO",
 ):
     with sync_playwright() as playwright:
         run(

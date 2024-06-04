@@ -4,9 +4,12 @@ import os
 import random
 import string
 import subprocess
+
 import pytest
+
 from bioat.cli import Cli
 from bioat.lib.libsystem import check_cmd
+
 from .settings import DATA_PATH
 
 cli = Cli()
@@ -18,6 +21,7 @@ temp_dir = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.dig
 
 
 def test_mpileup_to_table():
+    """_summary_"""
     cli.bam.mpileup_to_table(
         mpileup=f_mpileup,
         output='/dev/null',
@@ -30,6 +34,7 @@ def test_mpileup_to_table():
 
 
 def test_cli_mpileup_to_table():
+    """_summary_"""
     args = [
         'bioat', 'bam', 'mpileup_to_table',
         '--mpileup', f_mpileup,
@@ -40,10 +45,11 @@ def test_cli_mpileup_to_table():
         '--remove_temp', 'True',
         '--log_level', 'WARNING'
     ]
-    assert subprocess.run(args).returncode == 0
+    subprocess.run(args, check=True)
 
 
 def test_remove_clip():
+    """_summary_"""
     cli.bam.remove_clip(
         input=f_bam_sortn,
         output='/dev/null',
@@ -56,6 +62,7 @@ def test_remove_clip():
 
 
 def test_cli_remove_clip_1():
+    """_summary_"""
     args = [
         'bioat', 'bam', 'remove_clip',
         '--input', f_bam_sortn,
@@ -66,10 +73,11 @@ def test_cli_remove_clip_1():
         '--max_clip', '0',
         '--log_level', 'WARNING'
     ]
-    assert subprocess.run(args).returncode == 0
+    subprocess.run(args, check=True)
 
 
 def test_cli_remove_clip_2():
+    """_summary_"""
     if not check_cmd('samtools'):
         pytest.skip('samtools is not installed')
     # test pipe
@@ -84,6 +92,7 @@ def test_cli_remove_clip_2():
 
 
 def test_cli_remove_clip_3():
+    """_summary_"""
     if not check_cmd('samtools'):
         pytest.skip('samtools is not installed')
     # test pipe

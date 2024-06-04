@@ -1,6 +1,30 @@
+"""_summary_
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat list
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> bioat.list()
+            >>> print(bioat.list())
+
+example 2:
+    _example_
+"""
+
 import sys
+
 import pandas as pd
-from bioat import get_logger
+
+from bioat.logger import get_logger
 
 __module_name__ = 'bioat.tabletools'
 
@@ -34,7 +58,9 @@ class TableTools:
         :param output_header: True | False, output table has header or not
         :param log_level: log status
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level, module_name=__module_name__, func_name="merge"
+        )
         # fix params
         inputs = list(inputs) if isinstance(inputs, tuple) else inputs.split(',')
         tags = list(tags) if isinstance(tags, tuple) else tags.split(',')
@@ -86,7 +112,9 @@ class TableTools:
         :param compress: True | False, gzip the output table or not
         :param log_level: log status
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level, module_name=__module_name__, func_name="split"
+        )
         logger.debug(f'input_fmt={input_fmt}')
         logger.debug(f'output_fmt={output_fmt}')
         logger.debug(f'input_header={input_header}')

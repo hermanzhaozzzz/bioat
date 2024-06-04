@@ -1,12 +1,12 @@
+import datetime
+import gzip
+import json
 import os
 import re
 import sys
-import gzip
-import json
 import tarfile
 import textwrap
 import time
-import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from hashlib import md5
@@ -17,9 +17,10 @@ from requests.exceptions import ChunkedEncodingError
 from requests.utils import cookiejar_from_dict
 from tqdm import tqdm
 from urllib3.exceptions import InvalidChunkLength, ProtocolError
-from bioat.lib.libspider import get_random_user_agents, ProxyPool
+
 from bioat.exceptions import BioatParameterFormatError
 from bioat.lib.libpath import HOME
+from bioat.lib.libspider import ProxyPool, get_random_user_agents
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libjgi"
@@ -92,7 +93,9 @@ class JGIConfig:
     FILENAME_CONFIG_PATH = os.path.join(HOME, ".bioat", "JGI", "account.conf")
 
     def __init__(self, overwrite_conf: bool = False):
-        self.logger = get_logger(level="DEBUG", module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        self.logger = get_logger(
+            level="DEBUG", module_name=__module_name__, func_name="JGIConfig"
+        )
         self.info: dict = {"user": None, "password": None, "categories": None}
         self.logger.debug("start to set / load user info...")
         if overwrite_conf:
@@ -312,7 +315,11 @@ class JGIOperator:
 
         print syntax_help and/or usage if these parameters are defined. And then, exit progress.
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_run_doc",
+        )
         run_docs = any([self.syntax_help, self.usage])
         if run_docs:
             logger.debug("doc mode is selected")
@@ -332,7 +339,11 @@ class JGIOperator:
         Parse query_info/xml/log_fails to update self.query_info and self.log_fails.
         After this method, you should call self.login method and then self.query method
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_parse_input",
+        )
         logger.debug(
             "update JGIOperator obj.query_info and obj.log_fails using parameters:"
             " 'query_info', 'xml' and 'log_fails'"
@@ -400,7 +411,11 @@ class JGIOperator:
 
     # step 03 login
     def _load_cookie(self):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_load_cookie",
+        )
 
         # prepare info
         url = self.config.URL_JGI_LOGIN
@@ -499,7 +514,9 @@ class JGIOperator:
 
     # step 04 query
     def query(self):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level, module_name=__module_name__, func_name="query"
+        )
         # prepare info
         url = self.config.URL_JGI_FETCH_XML
         cookie_file = self.config.FILENAME_COOKIE
@@ -563,7 +580,11 @@ class JGIOperator:
         <filter_categories> is True, or all files otherwise
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="parse_xml",
+        )
 
         # Parse xml file for content to download
 
@@ -640,7 +661,11 @@ class JGIOperator:
 
     # step 06 download from url
     def download(self):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="download",
+        )
         self._decision_tree()
 
         self._urls_to_get = sorted(self._urls_to_get)
@@ -796,7 +821,11 @@ class JGIOperator:
         informing the user.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_clean_exit",
+        )
         to_remove = []
 
         if rm_xml:
@@ -828,7 +857,11 @@ class JGIOperator:
         Adapted from http://stackoverflow.com/a/13044946/3076552
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_check_for_xml",
+        )
         xml_hex = "\x3c"  # hex code at beginning of XML file
         read_length = len(xml_hex)
         with open(filename) as f:
@@ -846,7 +879,11 @@ class JGIOperator:
                 return False
 
     def _check_md5(self, filename, md5_hash):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_check_md5",
+        )
         if not md5_hash:
             logger.warning(f"No MD5 hash listed for {filename}; skipping check")
             ret_val = True
@@ -863,7 +900,11 @@ class JGIOperator:
         return ret_val
 
     def _check_sizeInBytes(self, filename, sizeInBytes):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_check_sizeInBytes",
+        )
         if not sizeInBytes:
             logger.info(f"No sizeInBytes listed for {filename}; skipping check")
             ret_val = True
@@ -880,7 +921,11 @@ class JGIOperator:
         return ret_val
 
     def _decision_tree(self):
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_decision_tree",
+        )
         # Decision tree depending on if non-interactive options given
         regex_filter = None
         user_choice = None
@@ -998,7 +1043,11 @@ class JGIOperator:
         copies unless <keep_original> is True.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_decompress_files",
+        )
         logger.debug("decompress_files...")
         for f in local_file_list:
             self._extract_file(f, keep_original)
@@ -1010,7 +1059,11 @@ class JGIOperator:
         Returns a tuple of (filename, cURL command used, success boolean)
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_download_from_url",
+        )
         url_no_prefix = url.replace("&amp;", "&")  # for query local xml info
 
         # get md5 value for this file from xml
@@ -1259,7 +1312,11 @@ class JGIOperator:
         list of unsuccessful URLs
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_download_list",
+        )
         # Run curl commands to retrieve selected files
         # Make sure the URL formats conforms to the Genome Portal format
 
@@ -1314,7 +1371,11 @@ class JGIOperator:
         TODO: implement .zip decompression
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_extract_file",
+        )
         tar_pattern = "tar.gz$"  # matches tar.gz
         gz_pattern = "(?<!tar)\.gz$"  # excludes tar.gz
         endings_map = {"tar": (tarfile, "r:gz", ".tar.gz"), "gz": (gzip, "rb", ".gz")}
@@ -1371,7 +1432,11 @@ class JGIOperator:
         Reformats the output from xml_hunt()
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_format_found",
+        )
         logger.debug("get categories from config (including possible user additions)")
         output = {}
         for p, c in sorted(d.items()):
@@ -1475,7 +1540,11 @@ class JGIOperator:
         Get user file selection choice(s)
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_get_user_choice",
+        )
         choice = input(
             "Enter file selection ('q' to quit, "
             "'u' to review syntax/usage, 'a' for all, "
@@ -1517,7 +1586,11 @@ class JGIOperator:
 
         filename without ".tmp"
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_is_broken",
+        )
         if (
                 not os.path.isfile(filename)
                 or os.path.getsize(filename) < min_size_bytes
@@ -1543,7 +1616,11 @@ class JGIOperator:
         (values).
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_parse_selection",
+        )
         parts = user_input.split(";")
         for p in parts:
             if len(p.split(":")) > 2 or p.count(":") == 0:
@@ -1583,7 +1660,11 @@ class JGIOperator:
         by a ":"-joined string of parent names.
 
         """
-        logger = get_logger(level=self.log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=self.log_level,
+            module_name=__module_name__,
+            func_name="_xml_hunt",
+        )
         logger.debug("xml_hunt...")
         root = ET.iterparse(xml_file, events=("start", "end"))
         parents = []

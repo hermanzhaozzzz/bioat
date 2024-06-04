@@ -1,17 +1,41 @@
+"""module of bamtools
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+bioat bamtools <command> deal with SAM or BAM files
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat bam remove_clip --help
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> help(bioat.bam.remove_clip)
+
+example 2:
+    _example_
+"""
+
 import gzip
 import os
-import sys
-import string
 import random
-import pysam
+import string
+import sys
 from io import TextIOWrapper
 from multiprocessing import Process
-from signal import signal, SIGPIPE, SIG_DFL
-from bioat import get_logger
+from signal import SIG_DFL, SIGPIPE, signal
 
-# from bioat.lib.libdataclasses import Bam
-__module_name__ = 'bioat.bamtools'
+import pysam
 
+from bioat.logger import get_logger
+
+__module_name__ = "bioat.bamtools"
+
+# TODO
+# !description for signal codes?
 signal(SIGPIPE, SIG_DFL)
 
 
@@ -22,14 +46,14 @@ class BamTools:
         pass
 
     def mpileup_to_table(
-            self,
-            mpileup: str,
-            output: str = sys.stdout,
-            threads: int = os.cpu_count() - 1,
-            mutation_number_threshold: int = 0,
-            temp_dir: str = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}",
-            remove_temp: bool = True,
-            log_level: str = 'INFO'
+        self,
+        mpileup: str,
+        output: str = sys.stdout,
+        threads: int = os.cpu_count() - 1,
+        mutation_number_threshold: int = 0,
+        temp_dir: str = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}",
+        remove_temp: bool = True,
+        log_level: str = "INFO",
     ):
         """Convert mpileup file to info file.
 
@@ -41,7 +65,11 @@ class BamTools:
         :param remove_temp: Where to keep temp files, default is /tmp
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name="mpileup_to_table",
+        )
 
         def _temp_split_bam(mpileup, threads, temp_dir):
             # creat temp file name and open file
@@ -56,8 +84,17 @@ class BamTools:
 
             for index in range(threads):
                 # make filename
-                temp_file_basename = "temp_" + input_file_basename + "." + str(index) + "." + "".join(
-                    random.sample(string.ascii_letters + string.digits, 16)) + '.gz'
+                temp_file_basename = (
+                    "temp_"
+                    + input_file_basename
+                    + "."
+                    + str(index)
+                    + "."
+                    + "".join(
+                        random.sample(string.ascii_letters + string.digits, 16)
+                    )
+                    + ".gz"
+                )
                 temp_file_name = os.path.join(temp_dir, temp_file_basename)
                 temp_filename_list.append(temp_file_name)
 
@@ -69,14 +106,18 @@ class BamTools:
             logger.debug("Counting input file...")
 
             total_input_line_num = 0
-            input_file = gzip.open(mpileup, "rt") if mpileup.endswith('.gz') else open(mpileup, "rt")
+            input_file = (
+                gzip.open(mpileup, "rt")
+                if mpileup.endswith(".gz")
+                else open(mpileup, "rt")
+            )
 
             # count total_input_line_num
             for _ in input_file:
                 total_input_line_num += 1
 
             if total_input_line_num % threads == 0:
-                each_file_line_num = (total_input_line_num // threads)
+                each_file_line_num = total_input_line_num // threads
             else:
                 each_file_line_num = (total_input_line_num // threads) + 1
 
@@ -85,7 +126,11 @@ class BamTools:
 
             # split temp files
             # write into output filename
-            input_file = gzip.open(mpileup, "rt") if mpileup.endswith('.gz') else open(mpileup, "rt")
+            input_file = (
+                gzip.open(mpileup, "rt")
+                if mpileup.endswith(".gz")
+                else open(mpileup, "rt")
+            )
 
             for index, line in enumerate(input_file):
                 file_index = index // each_file_line_num
@@ -100,7 +145,11 @@ class BamTools:
 
         def _merge_out_bmat(temp_filename_list, output, remove_temp=True):
             if type(output) is str:
-                output = gzip.open(output, "wt") if output.endswith('.gz') else open(output, "wt")
+                output = (
+                    gzip.open(output, "wt")
+                    if output.endswith(".gz")
+                    else open(output, "wt")
+                )
             # write header
             header = [
                 "chr_name",
@@ -116,7 +165,7 @@ class BamTools:
                 "deletion",
                 "insertion",
                 "ambiguous",
-                "mut_num"
+                "mut_num",
             ]
             output.write("\t".join(header) + "\n")
 
@@ -135,7 +184,9 @@ class BamTools:
                 os.rmdir(temp_dir)
 
         # make temp files
-        temp_filename_list = _temp_split_bam(mpileup=mpileup, threads=threads, temp_dir=temp_dir)
+        temp_filename_list = _temp_split_bam(
+            mpileup=mpileup, threads=threads, temp_dir=temp_dir
+        )
         # multiple processing part
         logger.debug("Parsing files...")
 
@@ -144,8 +195,14 @@ class BamTools:
         for index, temp_mpileup in enumerate(temp_filename_list):
             temp_output = temp_mpileup + ".bmat.gz"
             # add multiprocess
-            sub_proc = Process(target=_run_mpileup_to_table,
-                               args=(temp_mpileup, temp_output, mutation_number_threshold,))
+            sub_proc = Process(
+                target=_run_mpileup_to_table,
+                args=(
+                    temp_mpileup,
+                    temp_output,
+                    mutation_number_threshold,
+                ),
+            )
             procs_list.append(sub_proc)
             sub_proc.start()
 
@@ -154,18 +211,22 @@ class BamTools:
         logger.debug("Done!")
         # merge output files
         logger.debug("Merging files...")
-        _merge_out_bmat(temp_filename_list=temp_filename_list, output=output, remove_temp=remove_temp)
+        _merge_out_bmat(
+            temp_filename_list=temp_filename_list,
+            output=output,
+            remove_temp=remove_temp,
+        )
         logger.debug("Done!...")
 
     def remove_clip(
-            self,
-            input: str = sys.stdin,
-            output: str = sys.stdout,
-            threads: int = 1,
-            output_fmt: str = 'SAM',
-            remove_as_paired: bool = True,
-            max_clip: int = 0,
-            log_level: str = 'INFO'
+        self,
+        input: str = sys.stdin,
+        output: str = sys.stdout,
+        threads: int = 1,
+        output_fmt: str = "SAM",
+        remove_as_paired: bool = True,
+        max_clip: int = 0,
+        log_level: str = "INFO",
     ):
         """Remove softclip reads in BAM file.
 
@@ -182,33 +243,47 @@ class BamTools:
         :param max_clip: the maximum clips allowed per read
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+        logger = get_logger(
+            level=log_level,
+            module_name=__module_name__,
+            func_name="remove_clip",
+        )
 
-        save = pysam.set_verbosity(0)  # https://github.com/pysam-developers/pysam/issues/939
+        save = pysam.set_verbosity(
+            0
+        )  # https://github.com/pysam-developers/pysam/issues/939
 
         if isinstance(input, str):  # not stdin
-            bam_in = pysam.AlignmentFile(input, "r", threads=threads, check_sq=False)
+            bam_in = pysam.AlignmentFile(
+                input, "r", threads=threads, check_sq=False
+            )
         elif isinstance(input, TextIOWrapper):  # stdin
-            bam_in = pysam.AlignmentFile("-", "r", threads=threads, check_sq=False)
+            bam_in = pysam.AlignmentFile(
+                "-", "r", threads=threads, check_sq=False
+            )
         else:
             exit(1)
         pysam.set_verbosity(save)
 
         try:
-            so = bam_in.header['HD']['SO']
+            so = bam_in.header["HD"]["SO"]
         except KeyError:
             so = None
 
         if so:
             if so != "queryname":
-                logger.fatal(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                             f"your header: [SO:{so}]\n")
+                logger.fatal(
+                    f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                    f"your header: [SO:{so}]\n"
+                )
                 exit(1)
         else:
-            logger.warning(f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                           "your bam file does not have a header\n")
+            logger.warning(
+                f"the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
+                "your bam file does not have a header\n"
+            )
 
-        write_mode = 'wb' if output_fmt.upper() == "BAM" else 'w'
+        write_mode = "wb" if output_fmt.upper() == "BAM" else "w"
         bam_out = pysam.AlignmentFile(output, write_mode, template=bam_in)
 
         # Iterate through reads.
@@ -254,9 +329,12 @@ class BamTools:
                         bam_out.write(read2)
             else:
                 logger.fatal(
-                    'something wrong with read1/2 pairs, they may have different read id or there is None in them')
-                logger.fatal(f'read1={read1}, read2={read2}')
-                logger.fatal(f'read1_id={read1.query_name}, read2_id={read2.query_name}')
+                    "something wrong with read1/2 pairs, they may have different read id or there is None in them"
+                )
+                logger.fatal(f"read1={read1}, read2={read2}")
+                logger.fatal(
+                    f"read1_id={read1.query_name}, read2_id={read2.query_name}"
+                )
                 exit(1)
 
         bam_in.close()
@@ -265,31 +343,39 @@ class BamTools:
 
 def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
     # open input file
-    temp_mpileup = gzip.open(temp_mpileup, "rt") if temp_mpileup.endswith('.gz') else open(temp_mpileup, "rt")
+    temp_mpileup = (
+        gzip.open(temp_mpileup, "rt")
+        if temp_mpileup.endswith(".gz")
+        else open(temp_mpileup, "rt")
+    )
     # open output file
-    temp_output = gzip.open(temp_output, "wt") if temp_output.endswith('.gz') else open(temp_output, "wt")
+    temp_output = (
+        gzip.open(temp_output, "wt")
+        if temp_output.endswith(".gz")
+        else open(temp_output, "wt")
+    )
 
     # parse mpileup file
     for line in temp_mpileup:
-        data = line.strip().split('\t')
+        data = line.strip().split("\t")
         chr_name = data[0]
         bp = data[1]
         bases = data[4].upper()
         ref = data[2].upper()
-        types = {'A': 0, 'G': 0, 'C': 0, 'T': 0, '-': [], '+': [], 'Not': []}
+        types = {"A": 0, "G": 0, "C": 0, "T": 0, "-": [], "+": [], "Not": []}
 
         # coverage > 0
         i = 0
         while i < len(bases):
             base = bases[i]
 
-            if base == '^':
+            if base == "^":
                 i += 2
 
-            elif base == '$':
+            elif base == "$":
                 i += 1
 
-            elif base == '-':
+            elif base == "-":
                 i += 1
                 del_str_num = ""
 
@@ -302,13 +388,13 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
                 for a in range(delNum):
                     delSeq += bases[i]
                     i += 1
-                types['-'].append(delSeq)
+                types["-"].append(delSeq)
 
-            elif base == '*':
-                types['-'].append(bases[i])
+            elif base == "*":
+                types["-"].append(bases[i])
                 i += 1
 
-            elif base == '+':
+            elif base == "+":
                 i += 1
                 add_str_num = ""
 
@@ -321,9 +407,9 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
                 for a in range(addNum):
                     addSeq += bases[i]
                     i += 1
-                types['+'].append(addSeq)
+                types["+"].append(addSeq)
 
-            elif (base == '.') or (base == ','):
+            elif (base == ".") or (base == ","):
                 types[ref] += 1
                 i += 1
 
@@ -331,30 +417,32 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
                 if base in types:
                     types[base] += 1
                 else:
-                    types['Not'].append(base)
+                    types["Not"].append(base)
                 i += 1
 
-        adds = '.'
+        adds = "."
         adds_count = 0
-        if len(types['+']) > 0:
-            adds = ','.join(types['+'])
-            adds_count = len(types['+'])
+        if len(types["+"]) > 0:
+            adds = ",".join(types["+"])
+            adds_count = len(types["+"])
 
         dels = "."
         dels_count = 0
-        if len(types['-']) > 0:
-            dels = ",".join(types['-'])
-            dels_count = len(types['-'])
+        if len(types["-"]) > 0:
+            dels = ",".join(types["-"])
+            dels_count = len(types["-"])
 
-        amb = '.'
+        amb = "."
         amb_count = 0
-        if len(types['Not']) > 0:
-            amb = ','.join(types['Not'])
-            amb_count = len(types['Not'])
+        if len(types["Not"]) > 0:
+            amb = ",".join(types["Not"])
+            amb_count = len(types["Not"])
 
         # get other mutation number
         if ref in types:
-            mut_num = types["A"] + types["T"] + types["G"] + types["C"] - types[ref]
+            mut_num = (
+                types["A"] + types["T"] + types["G"] + types["C"] - types[ref]
+            )
         else:
             mut_num = 0
 
@@ -362,17 +450,17 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
             chr_name,
             bp,
             ref,
-            types['A'],
-            types['G'],
-            types['C'],
-            types['T'],
+            types["A"],
+            types["G"],
+            types["C"],
+            types["T"],
             dels_count,
             adds_count,
             amb_count,
             dels,
             adds,
             amb,
-            mut_num
+            mut_num,
         ]
 
         # make a filter
@@ -386,5 +474,5 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
     temp_output.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

@@ -1,10 +1,11 @@
 import sys
 
 import pandas as pd
-from Bio.Seq import Seq
 from Bio.Align import PairwiseAligner
+from Bio.Seq import Seq
+
 from bioat.lib.libalignment import get_alignment_info
-from bioat import get_logger
+from bioat.logger import get_logger
 
 __module_name__ = 'bioat.lib.libcrispr'
 
@@ -129,7 +130,11 @@ def run_target_seq_align(
 
     """
     # set logger
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="run_target_seq_align",
+    )
 
     if PAM:
         # considering PAM
@@ -176,4 +181,3 @@ def run_target_seq_align(
             inplace=True
         )
         return df.iloc[0, :].to_dict()
-

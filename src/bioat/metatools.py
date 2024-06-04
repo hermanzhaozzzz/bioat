@@ -1,6 +1,7 @@
 import sys
-from bioat import get_logger
+
 from bioat.lib.libjgi import JGIOperator
+from bioat.logger import get_logger
 
 __module_name__ = "bioat.metatools"
 
@@ -78,7 +79,7 @@ class MetaTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="JGI_query",
         )
         logger.debug("run query")
         operator.query()

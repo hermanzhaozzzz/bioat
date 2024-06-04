@@ -1,7 +1,9 @@
-import sys
 import math
+import sys
+
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+
 from bioat.logger import get_logger
 
 __all__ = ['init_matplotlib']
@@ -9,7 +11,11 @@ __module_name__ = 'bioat.lib.libpandas'
 
 
 def init_matplotlib(log_level='INFO'):
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="init_matplotlib",
+    )
     logger.info('Initializing matplotlib')
     logger.debug('ref: https://matplotlib.org/stable/api/style_api.html')
     logger.debug("set: plt.style.use('ggplot')  # use ggplot style")

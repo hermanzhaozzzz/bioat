@@ -1,3 +1,13 @@
+"""Test for `about` subcommand
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+>>> example 1:
+    bioat about
+"""
+
 import subprocess
 
 import bioat
@@ -7,15 +17,14 @@ cli = Cli()
 
 
 def test_about():
-    # test about function
+    """test about function"""
     assert hasattr(cli, "about")
-    out = cli.about()
-    assert isinstance(out, str)
+    assert isinstance(cli.about(), str)
     # test about text attribute
-    assert bioat.about is not None
-    assert isinstance(bioat.about, str)
+    assert isinstance(cli.about(), str)
 
 
 def test_cli_about():
+    """test about cmd"""
     args = ["bioat", "about"]
-    assert subprocess.run(args).returncode == 0
+    assert subprocess.run(args, check=True)

@@ -1,6 +1,30 @@
-import pandas as pd
+"""_summary_
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+_description_
+
+example 1:
+    bioat list
+        <in shell>:
+            $ bioat list
+        <in python consolo>:
+            >>> from bioat.cli import Cli
+            >>> bioat = Cli()
+            >>> bioat.list()
+            >>> print(bioat.list())
+
+example 2:
+    _example_
+"""
+
 import sys
-from bioat import get_logger
+
+import pandas as pd
+
+from bioat.logger import get_logger
 
 __all__ = ['set_option']
 __module_name__ = 'bioat.lib.libpandas'
@@ -8,7 +32,9 @@ __module_name__ = 'bioat.lib.libpandas'
 
 def set_option(max_colwidth: int = 40, display_width: int = 120, display_max_columns: int = None,
                display_max_rows: int = 50, log_level='INFO'):
-    logger = get_logger(level=log_level, module_name=__module_name__, func_name=sys._getframe().f_code.co_name)
+    logger = get_logger(
+        level=log_level, module_name=__module_name__, func_name="set_option"
+    )
 
     logger.info(f'set pandas: max_colwidth={max_colwidth}')
     pd.set_option("max_colwidth", max_colwidth)  # column最大宽度

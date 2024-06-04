@@ -1,15 +1,16 @@
 import os
 import sys
-from time import sleep
 from datetime import datetime
-from bioat import get_logger
-from bioat import BioatParameterFormatError
+from time import sleep
 
-import requests
-from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+from bioat import BioatParameterFormatError
 from bioat.lib.libpatentseq import query_patent
+from bioat.logger import get_logger
 
 __module_name__ = "bioat.searchtools"
 
@@ -64,7 +65,7 @@ class SearchTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="google_scholar",
         )
 
         def get_citations(content):
@@ -89,8 +90,8 @@ class SearchTools:
         def setup_driver():
             try:
                 from selenium import webdriver
-                from selenium.webdriver.chrome.options import Options
                 from selenium.common.exceptions import StaleElementReferenceException
+                from selenium.webdriver.chrome.options import Options
             except ImportError as e:
                 logger.error(e)
                 logger.error(
@@ -190,7 +191,7 @@ class SearchTools:
             logger = get_logger(
                 level=log_level,
                 module_name=__module_name__,
-                func_name=sys._getframe().f_code.co_name,
+                func_name="google_scholar",
             )
 
             logger.debug("Opening URL:", url)
@@ -363,7 +364,7 @@ class SearchTools:
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
-            func_name=sys._getframe().f_code.co_name,
+            func_name="query_patent",
         )
         logger.info("Run query patent sequence from lens.org...")
         query_patent(

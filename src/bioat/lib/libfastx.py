@@ -1,15 +1,16 @@
 """Doc.
 TODO
 """
+import gzip
 import os
+import re
 import subprocess
 import sys
-import re
-import gzip
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from Bio import SeqIO
+
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libfastx"
@@ -51,7 +52,7 @@ def cas_finder(
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        func_name="cas_finder",
     )
     workspace = os.getcwd()  # where I am
 
@@ -566,7 +567,7 @@ def cas13_finder(
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        func_name="cas13_finder",
     )
     workspace = os.getcwd()  # where I am
 
@@ -642,7 +643,7 @@ def format_this_fastx(old_file: str, new_file: str | None = None, force: bool = 
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
-        func_name=sys._getframe().f_code.co_name,
+        func_name="format_this_fastx",
     )
     logger.debug("start to format fastx file")
     f_input = old_file
