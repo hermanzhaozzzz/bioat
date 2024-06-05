@@ -361,7 +361,7 @@ def get_alignment_info(
 
     # define params
     ref_aln_start = target_seq_length - len(target_seq.lstrip("-"))
-    ref_aln_end = ref_aln_start + len((target_seq.strip("-"))) - 1
+    ref_aln_end = ref_aln_start + len((target_seq.strip("-")))
     match_count = 0
     mismatch_count = 0
     gap_count = 0
