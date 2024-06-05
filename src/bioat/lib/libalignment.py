@@ -260,8 +260,18 @@ def get_aligned_seq(
     if letn_match:
         length = len(res["reference_seq"])
         # change base N to match
-        i_n_a = [i for i in range(length) if res["reference_seq"][i] == "N"]
-        i_n_b = [i for i in range(length) if res["target_seq"][i] == "N"]
+        i_n_a = [
+            i
+            for i in range(length)
+            if (res["reference_seq"][i] == "N")
+            and (res["target_seq"][i] != "-")
+        ]
+        i_n_b = [
+            i
+            for i in range(length)
+            if (res["target_seq"][i] == "N")
+            and (res["reference_seq"][i] != "-")
+        ]
         i_n = list(set(i_n_a) | set(i_n_b))
         aln_list = list(res["aln_info"])
 
