@@ -1,13 +1,79 @@
+"""bioat.lib.libplot
+
+author: Herman Huanan Zhao
+email: hermanzhaozzzz@gmail.com
+homepage: https://github.com/hermanzhaozzzz
+
+This module provides functions for plotting.
+
+example 1:
+    init_matplotlib
+        <in python consolo>:
+            >>> import matplotlib.pyplot as plt
+            >>> from bioat.lib.libplot import init_matplotlib
+            >>> init_matplotlib(log_level='info')
+            >>> plt.plot([1, 2, 3], [4, 5, 6])
+            >>> plt.show()
+
+example 2:
+    plot_colortable
+        <in python consolo>:
+            >>> from bioat.lib.libplot import plot_colortable
+            >>> colors = ['#64C1E8', '#80CED7', '#63C7B2', '#8E6C88', '#CA61C3', '#FF958C', '#883677']
+            >>> plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])
+            >>> plt.show()
+"""
+
 import math
+import os
+import shutil
 import sys
 
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 from matplotlib.patches import Rectangle
 
 from bioat.logger import get_logger
 
-__all__ = ['init_matplotlib']
-__module_name__ = 'bioat.lib.libpandas'
+__all__ = ["init_matplotlib", "plot_colortable"]
+__module_name__ = "bioat.lib.libplot"
+
+DATAPATH = os.path.join(os.path.dirname(__file__), "libplot")
+
+
+def _copy_fonts(log_level):
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="_copy_fonts",
+    )
+    try:
+        to_path = None
+        for i in sys.path:
+            if i.endswith("site-packages"):
+                to_path = i
+                break
+        if not to_path:
+            raise FileNotFoundError("site-packages not found in sys.path")
+        to_path = [i for i in sys.path if i.endswith("site-packages")][0]
+        to_path = os.path.join(to_path, "matplotlib/mpl-data/fonts/ttf")
+        from_path = DATAPATH
+        logger.debug(f"Copying fonts from {from_path} to {to_path}")
+        fonts = [
+            "Helvetica-Bold.ttf",
+            "Helvetica-BoldOblique.ttf",
+            "Helvetica-Light.ttf",
+            "Helvetica-Oblique.ttf",
+            "Helvetica.ttf",
+        ]
+        for font in fonts:
+            shutil.copyfile(
+                os.path.join(from_path, font),
+                os.path.join(to_path, font),
+            )
+        logger.debug("Fonts copied successfully")
+    except Exception as e:
+        logger.error(f"Failed to copy fonts: {e}")
 
 
 def init_matplotlib(log_level='INFO'):
@@ -17,8 +83,9 @@ def init_matplotlib(log_level='INFO'):
         func_name="init_matplotlib",
     )
     logger.info('Initializing matplotlib')
+    _copy_fonts(log_level)
     logger.debug('ref: https://matplotlib.org/stable/api/style_api.html')
-    logger.debug("set: plt.style.use('ggplot')  # use ggplot style")
+    logger.info("set: plt.style.use('ggplot')  # use ggplot style")
     plt.style.use('ggplot')
 
     logger.info("set: plt.rcParams['font.family'] = 'Helvetica'")
