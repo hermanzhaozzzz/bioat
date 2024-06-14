@@ -30,12 +30,30 @@ __all__ = ['set_option']
 __module_name__ = 'bioat.lib.libpandas'
 
 
-def set_option(max_colwidth: int = 40, display_width: int = 120, display_max_columns: int = None,
-               display_max_rows: int = 50, log_level='INFO'):
+def set_option(
+    progres_bar: bool = True,
+    max_colwidth: int = 40,
+    display_width: int = 120,
+    display_max_columns: int | None = None,
+    display_max_rows: int = 50,
+    log_level="INFO",
+):
     logger = get_logger(
         level=log_level, module_name=__module_name__, func_name="set_option"
     )
+    # 通过判断是否在notebook环境中，来选择不同的进度条
+    try:
+        from IPython.display import display
 
+        logger.info("set pandas from a notebook environment")
+        from tqdm.notebook import tqdm
+    except ImportError:
+        logger.info("set pandas from a terminal environment")
+        from tqdm import tqdm
+
+    if progres_bar:
+        logger.info("set pandas: tqdm.pandas")
+        tqdm.pandas()
     logger.info(f'set pandas: max_colwidth={max_colwidth}')
     pd.set_option("max_colwidth", max_colwidth)  # column最大宽度
     logger.info(f'set pandas: display.width={display_width}')
@@ -44,7 +62,7 @@ def set_option(max_colwidth: int = 40, display_width: int = 120, display_max_col
     pd.set_option("display.max_columns", display_max_columns)  # column最大显示数
     logger.info(f'set pandas: display.max_rows={display_max_rows}')
     pd.set_option("display.max_rows", display_max_rows)  # row最大显示数
-    return None
+    return
 
 
 def move_column(df: pd.DataFrame, to_move: str, after: str | None = None, before: str | None = None,
