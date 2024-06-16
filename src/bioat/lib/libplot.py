@@ -30,10 +30,13 @@ import shutil
 import sys
 
 import matplotlib.pyplot as plt
-from matplotlib import font_manager
+import numpy as np
 from matplotlib.patches import Rectangle
 
 from bioat.logger import get_logger
+
+# from matplotlib_inline import backend_inline
+
 
 __all__ = ["init_matplotlib", "plot_colortable"]
 __module_name__ = "bioat.lib.libplot"
@@ -56,7 +59,9 @@ def _copy_fonts(log_level):
         if not to_path:
             raise FileNotFoundError("site-packages not found in sys.path")
         to_path = [i for i in sys.path if i.endswith("site-packages")][0]
-        to_path = os.path.join(to_path, "matplotlib/mpl-data/fonts/ttf")
+        to_path = os.path.join(
+            to_path, "matplotlib", "mpl-data", "fonts", "ttf"
+        )
         from_path = DATAPATH
         logger.debug(f"Copying fonts from {from_path} to {to_path}")
         fonts = [
@@ -149,6 +154,81 @@ def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
     return fig
 
 
+# def use_svg_display():
+#     """Use the svg format to display a plot in Jupyter.
+
+#     Defined in :numref:`sec_calculus`"""
+#     backend_inline.set_matplotlib_formats("svg")
+
+
+def set_figsize(figsize=(3.5, 2.5)):
+    """Set the figure size for matplotlib.
+
+    Defined in :numref:`sec_calculus`"""
+    # use_svg_display()
+    plt.rcParams["figure.figsize"] = figsize
+
+
+def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
+    """Set the axes for matplotlib.
+
+    Defined in :numref:`sec_calculus`"""
+    axes.set_xlabel(xlabel)
+    axes.set_ylabel(ylabel)
+    axes.set_xscale(xscale)
+    axes.set_yscale(yscale)
+    axes.set_xlim(xlim)
+    axes.set_ylim(ylim)
+
+    if legend:
+        axes.legend(legend)
+    axes.grid()
+
+
+def plot(
+    X,
+    Y=None,
+    xlabel=None,
+    ylabel=None,
+    legend=[],
+    xlim=None,
+    ylim=None,
+    xscale="linear",
+    yscale="linear",
+    fmts=("-", "m--", "g-.", "r:"),
+    figsize=(3.5, 2.5),
+    axes=None,
+):
+    """Plot data points.
+
+    Defined in :numref:`sec_calculus`"""
+
+    def has_one_axis(X):  # True if X (tensor or list) has 1 axis
+        return (
+            hasattr(X, "ndim")
+            and X.ndim == 1
+            or isinstance(X, list)
+            and not hasattr(X[0], "__len__")
+        )
+
+    if has_one_axis(X):
+        X = [X]
+    if Y is None:
+        X, Y = [[]] * len(X), X
+    elif has_one_axis(Y):
+        Y = [Y]
+    if len(X) != len(Y):
+        X = X * len(Y)
+
+    set_figsize(figsize)
+    if axes is None:
+        axes = plt.gca()
+    axes.cla()
+    for x, y, fmt in zip(X, Y, fmts):
+        axes.plot(x, y, fmt) if len(x) else axes.plot(y, fmt)
+    set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+
+
 if __name__ == '__main__':
     # test for init_matplotlib
     init_matplotlib(log_level='debug')
@@ -161,4 +241,20 @@ if __name__ == '__main__':
               '#FF958C',
               '#883677']
     plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])
+    plt.show()
+
+    def normal(x, mu, sigma):
+        p = 1 / math.sqrt(2 * math.pi * sigma**2)
+        return p * np.exp(-0.5 / sigma**2 * (x - mu) ** 2)
+
+    x = np.arange(-7, 7, 0.01)
+    params = [(0, 1), (0, 2), (3, 1)]
+    plot(
+        x,
+        [normal(x, mu, sigma) for mu, sigma in params],
+        xlabel="x",
+        ylabel="p(x)",
+        figsize=(4.5, 2.5),
+        legend=[f"mean {mu}, std {sigma}" for mu, sigma in params],
+    )
     plt.show()

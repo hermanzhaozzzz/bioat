@@ -27,6 +27,7 @@ bs4 = ">=0.0.1"
 coloredlogs = ">=15.0.1"
 psutil = "^5.9.8"
 openpyxl = "^3.1.2"
+matplotlib-inline = "^0.1.7"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
