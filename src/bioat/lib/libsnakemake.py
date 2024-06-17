@@ -1,6 +1,13 @@
 import os
 
 
+def check_cmd(x):
+    return any(
+        os.access(os.path.join(path, x), os.X_OK)
+        for path in os.environ["PATH"].split(os.pathsep)
+    )
+
+
 def print_head(SAMPLES, MODE):
     print('----------\nSAMPLES:')
     [print('\t' + i) for i in SAMPLES]
