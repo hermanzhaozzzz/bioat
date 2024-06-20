@@ -31,6 +31,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.font_manager import FontManager
 from matplotlib.patches import Rectangle
 
 from bioat.logger import get_logger
@@ -42,6 +43,13 @@ __all__ = ["init_matplotlib", "plot_colortable"]
 __module_name__ = "bioat.lib.libplot"
 
 DATAPATH = os.path.join(os.path.dirname(__file__), "libplot")
+FONTS = [
+    "Helvetica-Bold.ttf",
+    "Helvetica-BoldOblique.ttf",
+    "Helvetica-Light.ttf",
+    "Helvetica-Oblique.ttf",
+    "Helvetica.ttf",
+]
 
 
 def _copy_fonts(log_level):
@@ -64,14 +72,7 @@ def _copy_fonts(log_level):
         )
         from_path = DATAPATH
         logger.debug(f"Copying fonts from {from_path} to {to_path}")
-        fonts = [
-            "Helvetica-Bold.ttf",
-            "Helvetica-BoldOblique.ttf",
-            "Helvetica-Light.ttf",
-            "Helvetica-Oblique.ttf",
-            "Helvetica.ttf",
-        ]
-        for font in fonts:
+        for font in FONTS:
             shutil.copyfile(
                 os.path.join(from_path, font),
                 os.path.join(to_path, font),
@@ -81,6 +82,17 @@ def _copy_fonts(log_level):
         logger.error(f"Failed to copy fonts: {e}")
 
 
+def _add_fonts(log_level):
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="_add_fonts",
+    )
+    for font in FONTS:
+        FontManager().addfont(os.path.join(DATAPATH, font))
+        logger.debug(f"Added font {font} to FontManager")
+
+
 def init_matplotlib(log_level='INFO'):
     logger = get_logger(
         level=log_level,
@@ -88,7 +100,8 @@ def init_matplotlib(log_level='INFO'):
         func_name="init_matplotlib",
     )
     logger.info('Initializing matplotlib')
-    _copy_fonts(log_level)
+    # _copy_fonts(log_level)  # todo, I dont know who is better to copy fonts or add fonts
+    _add_fonts(log_level)
     logger.debug('ref: https://matplotlib.org/stable/api/style_api.html')
     logger.info("set: plt.style.use('ggplot')  # use ggplot style")
     plt.style.use('ggplot')
