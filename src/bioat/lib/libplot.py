@@ -34,6 +34,7 @@ import numpy as np
 from matplotlib.font_manager import FontManager
 from matplotlib.patches import Rectangle
 
+from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
 
 # from matplotlib_inline import backend_inline
@@ -100,8 +101,14 @@ def init_matplotlib(log_level='INFO'):
         func_name="init_matplotlib",
     )
     logger.info('Initializing matplotlib')
-    # _copy_fonts(log_level)  # todo, I dont know who is better to copy fonts or add fonts
-    _add_fonts(log_level)
+    try:
+        os.remove(os.path.join(HOME, ".cache", "matplotlib", "fontlist-v330.json"))
+        _add_fonts(log_level)
+        _copy_fonts(
+            log_level
+        )  # todo, I dont know who is better to copy fonts or add fonts
+    except:
+        pass
     logger.debug('ref: https://matplotlib.org/stable/api/style_api.html')
     logger.info("set: plt.style.use('ggplot')  # use ggplot style")
     plt.style.use('ggplot')
