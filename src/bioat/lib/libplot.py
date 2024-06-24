@@ -280,8 +280,23 @@ def plot(
     # return axes
 
 
-def plot_dna_features(df: pd.DataFrame, use_demo_data=True):
+def plot_dna_features(
+    df: pd.DataFrame | None = None,
+    use_demo_data=True,
+    dna_length=20000,
+    fig_width=10,
+    fig_height=2,
+    col_group="group",
+    col_name="name",
+    # col_type = 'type',
+    col_start="start",
+    col_end="end",
+    col_strand="strand",
+    col_color="color",
+    **kwargs,
+) -> plt.Figure:
     # """
+    # ![](https://raw.githubusercontent.com/hermanzhaozzzz/PicturesBed01/master/PicGo/202406250001537.png)
     #     group            name    type  start    end  strand    color
     # 0    0000  AAAAAAAAAAAAAA     CDS   1050   4000     1.0  #ffd700
     # 1    0000            BBBB     CDS   3500   6000    -1.0  #ffcccc
@@ -295,7 +310,12 @@ def plot_dna_features(df: pd.DataFrame, use_demo_data=True):
     # 513  4444            None  spacer  12304  12334     NaN      red
     # 514  4444            None  spacer  12370  12400     NaN      red
     # """
-    if use_demo_data:
+    def _get_demo_data():
+        """get demo data for DNA features
+
+        :return: demo DNA features
+        :rtype: pd.DataFrame
+        """
         df = pd.DataFrame(
             {
                 "name": ["AAAAAAAAAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
@@ -335,87 +355,91 @@ def plot_dna_features(df: pd.DataFrame, use_demo_data=True):
         print("=" * 20, "DEMO", "=" * 20)
         print(df)
         print("=" * 20, "/DEMO", "=" * 20)
-    else:
-        if not df:
+        return df
+
+    if df is None:
+        if use_demo_data:
+            df = _get_demo_data()
+        else:
             raise ValueError("Please provide a DataFrame with DNA features.")
+
     # 设置子图的数量
-    n = df["group"].nunique()
+    n = df[col_group].nunique()
 
     # 创建一个n行1列的子图
-    fig, axs = plt.subplots(
-        n, 1, figsize=(10, 2 * n), sharex=False
-    )  # 你可以根据需要调整figsize
+    fig, axs = plt.subplots(n, 1, figsize=(fig_width, fig_height * n))
 
     # 循环遍历每个子图并进行绘图
-    for i, g in zip(range(n), df.groupby("group")):
-        group, data = g
-        print(f"i = {i}; group = {group}")
-        print(data)
+    for i, g in zip(range(n), df.groupby(col_group)):
+        group_name, data = g
+
         features = []
-        for i_row, row in data.iterrows():
-            label = row.get("name", None)
-            start = row.get("start", -100)
-            end = row.get("end", 0)
-            strand = row.get("strand", 0)
-            color = row.get("color", "black")
+        for _, row in data.iterrows():
+            label = row.get(col_name, None)
+            start = row.get(col_start, -100)
+            end = row.get(col_end, 0)
+            strand = row.get(col_strand, 0)
+            color = row.get(col_color, "black")
             feature = GraphicFeature(
                 start=start, end=end, strand=strand, color=color, label=label
             )
             features.append(feature)
 
-        record = GraphicRecord(sequence_length=20000, features=features)
+        record = GraphicRecord(sequence_length=dna_length, features=features)
 
         record.plot(  # https://github.com/Edinburgh-Genome-Foundry/DnaFeaturesViewer
             ax=axs[i],
-            figure_width=10,
-            draw_line=True,
-            with_ruler=True,
+            figure_width=fig_width,
+            draw_line=kwargs.get("draw_line", True),
+            with_ruler=kwargs.get("with_ruler", True),
             plot_sequence=False,
-            annotate_inline=True,
-            max_label_length=50,
-            max_line_length=30,
+            annotate_inline=kwargs.get("annotate_inline", True),
+            max_label_length=kwargs.get("max_label_length", 50),
+            max_line_length=kwargs.get("max_line_length", 20),
             level_offset=0,
             strand_in_label_threshold="default",
             elevate_outline_annotations="default",
-            x_lim=None,
-            figure_height=None,
+            figure_height=fig_height,
             sequence_params=None,
         )
-    # plt.show()
-
-    # axs[i].set_title(f"Subplot {i+1}")  # 设置子图的标题
-    # axs[i].set_xlabel("X Label")  # 设置x轴标签
-    # axs[i].set_ylabel("Y Label")  # 设置y轴标签
-    # axs[i].grid(True)  # 显示网格线
+        # axs[i].set_title(f"Subplot {i+1}")  # 设置子图的标题
+        axs[i].set_xlabel(
+            group_name,
+        )  # 设置x轴标签
+        # axs[i].set_ylabel("Y Label")  # 设置y轴标签
+        axs[i].grid(False)  # 显示网格线
+        # plt.show()
+    plt.tight_layout()
+    return fig
 
     # 调整子图之间的距离
-    # plt.tight_layout()
 
 
 if __name__ == "__main__":
     # test for init_matplotlib
-    init_matplotlib(log_level="warning")
-    plot_colortable(
-        ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"],
-        ncols=1,
-    )
+    # init_matplotlib(log_level="warning")
+    # plot_colortable(
+    #     ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"],
+    #     ncols=1,
+    # )
 
-    def normal(x, mu, sigma):
-        p = 1 / math.sqrt(2 * math.pi * sigma**2)
-        return p * np.exp(-0.5 / sigma**2 * (x - mu) ** 2)
+    # def normal(x, mu, sigma):
+    #     p = 1 / math.sqrt(2 * math.pi * sigma**2)
+    #     return p * np.exp(-0.5 / sigma**2 * (x - mu) ** 2)
 
-    x = np.arange(-7, 7, 0.01)
-    params = [(0, 1), (0, 2), (3, 1)]
-    plot(
-        x,
-        [normal(x, mu, sigma) for mu, sigma in params],
-        xlabel="x",
-        ylabel="p(x)",
-        figsize=(4.5, 2.5),
-        legend=[f"mean {mu}, std {sigma}" for mu, sigma in params],
-    )
-    plt.show()
-    plt.close()
-
+    # x = np.arange(-7, 7, 0.01)
+    # params = [(0, 1), (0, 2), (3, 1)]
+    # plot(
+    #     x,
+    #     [normal(x, mu, sigma) for mu, sigma in params],
+    #     xlabel="x",
+    #     ylabel="p(x)",
+    #     figsize=(4.5, 2.5),
+    #     legend=[f"mean {mu}, std {sigma}" for mu, sigma in params],
+    # )
+    # plt.show()
+    # plt.close()
+    fig = plot_dna_features()
+    # fig.savefig("/Users/zhaohuanan/Downloads/test.png", dpi=300)
     # 显示图形
-    plt.show()
+    # plt.show()
