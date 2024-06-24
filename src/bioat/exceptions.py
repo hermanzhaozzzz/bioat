@@ -38,3 +38,8 @@ class BioatCloudflareChallengeFailure(Exception):
 
     def __str__(self):
         return f"BioatCloudflareChallengeFailure: {self.msg}"
+
+class BioatRuntimeWarning(UserWarning):
+    """自定义警告类，表示运行时出现的警告"""
+    def __str__(self):
+        return f"BioatRuntimeWarning: {self.msg}"

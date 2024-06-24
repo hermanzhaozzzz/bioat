@@ -28,6 +28,7 @@ coloredlogs = ">=15.0.1"
 psutil = "^5.9.8"
 openpyxl = "^3.1.2"
 matplotlib-inline = "^0.1.7"
+dna-features-viewer = "^3.1.3"
 
 [tool.poetry.scripts]
 bioat = "bioat.__main__:main"
@@ -37,6 +38,7 @@ pytest = ">=7.1.3"
 pytest-cov = ">=3.0"
 
 # ...and can be installed only when explicitly requested
+ipykernel = "^6.29.4"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

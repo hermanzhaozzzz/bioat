@@ -28,23 +28,22 @@ import math
 import os
 import shutil
 import sys
+from glob import glob
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.font_manager import FontManager
+from dna_features_viewer import GraphicFeature, GraphicRecord
 from matplotlib.patches import Rectangle
 
+from bioat.exceptions import BioatException, BioatRuntimeWarning
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
-
-# from matplotlib_inline import backend_inline
-
 
 __all__ = ["init_matplotlib", "plot_colortable"]
 __module_name__ = "bioat.lib.libplot"
 
-DATAPATH = os.path.join(os.path.dirname(__file__), "libplot")
-FONTS = [
+BIOAT_DEFAULT_FONTS_DATAPATH = os.path.join(os.path.dirname(__file__), "libplot")
+BIOAT_DEFAULT_FONTS = [
     "Helvetica-Bold.ttf",
     "Helvetica-BoldOblique.ttf",
     "Helvetica-Light.ttf",
@@ -53,12 +52,22 @@ FONTS = [
 ]
 
 
-def _copy_fonts(log_level):
+def _copy_fonts(refresh=False, log_level="warning"):
+    """copy fonts from bioat package to matplotlib package
+
+    :param log_level: log level for logger
+    :type log_level: string
+    :raises FileNotFoundError: if not found which site-packages to copy fonts to
+    """
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
         func_name="_copy_fonts",
     )
+    if refresh:
+        files_to_remove = glob(os.path.join(HOME, ".cache", "matplotlib", "fontlist*"))
+        for file in files_to_remove:
+            os.remove(file)
     try:
         to_path = None
         for i in sys.path:
@@ -66,77 +75,99 @@ def _copy_fonts(log_level):
                 to_path = i
                 break
         if not to_path:
-            raise FileNotFoundError("site-packages not found in sys.path")
+            logger.warning(BioatRuntimeWarning("site-packages not found in sys.path"))
+            return
         to_path = [i for i in sys.path if i.endswith("site-packages")][0]
         to_path = os.path.join(
             to_path, "matplotlib", "mpl-data", "fonts", "ttf"
         )
-        from_path = DATAPATH
+        from_path = BIOAT_DEFAULT_FONTS_DATAPATH
         logger.debug(f"Copying fonts from {from_path} to {to_path}")
-        for font in FONTS:
+        for font in BIOAT_DEFAULT_FONTS:
             shutil.copyfile(
                 os.path.join(from_path, font),
                 os.path.join(to_path, font),
             )
         logger.debug("Fonts copied successfully")
     except Exception as e:
-        logger.error(f"Failed to copy fonts: {e}")
+        logger.error(BioatException(f"Failed to copy fonts: {e}"))
 
 
-def _add_fonts(log_level):
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="_add_fonts",
-    )
-    for font in FONTS:
-        FontManager().addfont(os.path.join(DATAPATH, font))
-        logger.debug(f"Added font {font} to FontManager")
+def init_matplotlib(
+    style="ggplot", font="Helvetica", refresh=False, log_level="INFO", **kwargs
+):
+    """easily set matplotlib style
 
-
-def init_matplotlib(log_level='INFO'):
+    :param style: matplotlib style, defaults to 'ggplot'
+    :type style: str, optional
+    :param font: use what font in matplotlib, defaults to 'Helvetica'
+    :type font: str, optional
+    :param refresh: wether to remove matplotlib font cache and reset it, defaults to False
+    :type refresh: bool, optional
+    :param log_level: log level, defaults to 'INFO'
+    :type log_level: str, optional
+    :param set_backend_pdf: whether to use core fonts for the PDF backend, defaults to True
+    :type set_backend_pdf: bool, optional
+    :param set_backend_ps: whether to use core fonts for the PS backend, defaults to True
+    :type set_backend_ps: bool, optional
+    :param set_backend_svg: whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend, defaults to 'none'
+    :type set_backend_svg: str, optional
+    :raises BioatException: if failed to copy fonts
+    :raises BioatRuntimeWarning: if site-packages not found in sys.path
+    """
     logger = get_logger(
         level=log_level,
         module_name=__module_name__,
         func_name="init_matplotlib",
     )
     logger.info('Initializing matplotlib')
-    try:
-        os.remove(os.path.join(HOME, ".cache", "matplotlib", "fontlist-v330.json"))
-        _add_fonts(log_level)
-        _copy_fonts(
-            log_level
-        )  # todo, I dont know who is better to copy fonts or add fonts
-    except:
-        pass
-    logger.debug('ref: https://matplotlib.org/stable/api/style_api.html')
-    logger.info("set: plt.style.use('ggplot')  # use ggplot style")
-    plt.style.use('ggplot')
+    _copy_fonts(refresh=refresh, log_level=log_level)
+    logger.info(
+        f"set: plt.style.use('{style}')\n"
+        "# set matplotlib style theme\n"
+        "# ref: https://matplotlib.org/stable/api/style_api.html"
+    )
+    plt.style.use(style)
 
-    logger.info("set: plt.rcParams['font.family'] = 'Helvetica'")
-    plt.rcParams['font.family'] = 'Helvetica'
-    logger.info("set: plt.rcParams['font.sans-serif'] = ['Helvetica']")
-    plt.rcParams['font.sans-serif'] = ['Helvetica']
+    logger.info(f"set: plt.rcParams['font.family'] = '{font}'")
+    plt.rcParams["font.family"] = font
+    logger.info(f"set: plt.rcParams['font.sans-serif'] = ['{font}']")
+    plt.rcParams["font.sans-serif"] = [font]
 
-    logger.debug('ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams')
-    logger.info("set: plt.rcParams['pdf.use14corefonts'] = True  # trigger core fonts for PDF backend")
-    plt.rcParams['pdf.use14corefonts'] = True
-    logger.info("set: plt.rcParams['ps.useafm'] = True  # trigger core fonts for PS backend")
-    plt.rcParams['ps.useafm'] = True
-    logger.info("set: plt.rcParams['svg.fonttype'] = 'none'  # change 'path' to 'none' (use font)for SVG backend")
-    plt.rcParams['svg.fonttype'] = 'none'
+    # set backends
+    set_backend_pdf = kwargs.get("set_backend_pdf", True)
+    set_backend_ps = kwargs.get("set_backend_ps", True)
+    set_backend_svg = kwargs.get("set_backend_svg", "none")
+
+    if set_backend_pdf:
+        logger.info(
+            f"set: plt.rcParams['pdf.use14corefonts'] = {set_backend_pdf} \n"
+            "# whether to use core fonts for the PDF backend\n"
+            "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)"
+        )
+        plt.rcParams["pdf.use14corefonts"] = set_backend_pdf
+    if set_backend_ps:
+        logger.info(
+            f"set: plt.rcParams['ps.useafm'] = {set_backend_ps}\n"
+            "# whether to use core fonts for the PS backend"
+        )
+        plt.rcParams["ps.useafm"] = set_backend_ps
+    if set_backend_svg:
+        logger.info(
+            f"set: plt.rcParams['svg.fonttype'] = '{set_backend_svg}'\n"
+            "# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend"
+        )
+        plt.rcParams["svg.fonttype"] = set_backend_svg
+    logger.info("matplotlib initialized successfully")
 
 
-def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
+def plot_colortable(colors, *, ncols=4):
     cell_width = 212
     cell_height = 22
     swatch_width = 48
     margin = 12
 
     names = list(colors)
-
-    if not labels:
-        labels = names
 
     n = len(names)
     nrows = math.ceil(n / ncols)
@@ -162,23 +193,21 @@ def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
         swatch_start_x = cell_width * col
         text_pos_x = cell_width * col + swatch_width + 7
 
-        ax.text(text_pos_x, y, labels[i], fontsize=14,
-                horizontalalignment='left',
-                verticalalignment='center')
+        ax.text(
+            text_pos_x,
+            y,
+            names[i],
+            fontsize=14,
+            horizontalalignment="left",
+            verticalalignment="center",
+        )
 
         ax.add_patch(
             Rectangle(xy=(swatch_start_x, y - 9), width=swatch_width,
                       height=18, facecolor=name, edgecolor='0.7')
         )
-
-    return fig
-
-
-# def use_svg_display():
-#     """Use the svg format to display a plot in Jupyter.
-
-#     Defined in :numref:`sec_calculus`"""
-#     backend_inline.set_matplotlib_formats("svg")
+    plt.show()
+    plt.close()
 
 
 def set_figsize(figsize=(3.5, 2.5)):
@@ -247,22 +276,16 @@ def plot(
     for x, y, fmt in zip(X, Y, fmts):
         axes.plot(x, y, fmt) if len(x) else axes.plot(y, fmt)
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+    # return axes
 
 
 if __name__ == '__main__':
     # test for init_matplotlib
-    init_matplotlib(log_level='debug')
-    # %%% test func plot_colortable
-    colors = ['#64C1E8',
-              '#80CED7',
-              '#63C7B2',
-              '#8E6C88',
-              '#CA61C3',
-              '#FF958C',
-              '#883677']
-    plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])
-    plt.show()
-
+    init_matplotlib(log_level="warning")
+    plot_colortable(
+        ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"],
+        ncols=1,
+    )
     def normal(x, mu, sigma):
         p = 1 / math.sqrt(2 * math.pi * sigma**2)
         return p * np.exp(-0.5 / sigma**2 * (x - mu) ** 2)
@@ -276,5 +299,63 @@ if __name__ == '__main__':
         ylabel="p(x)",
         figsize=(4.5, 2.5),
         legend=[f"mean {mu}, std {sigma}" for mu, sigma in params],
+    )
+    plt.show()
+    plt.close()
+    # !test
+    import pandas as pd
+
+    df = pd.DataFrame(
+        {
+            "name": ["AAaAAAAAAAAAAAAAAAA", "B", "C"] + ["DR"] * 4 + ["spacer"] * 4,
+            "type": ["CDS", "CDS", "CDS"] + ["DR"] * 4 + ["spacer"] * 4,
+            "start": (
+                [0, 100, 200] + list(range(300, 500, 66)) + list(range(336, 536, 66))
+            ),
+            "end": (
+                [50, 130, 280] + list(range(336, 540, 66)) + list(range(366, 566, 66))
+            ),
+            "strand": [1, -1, 1] + [1] * 4 + [1] * 4,
+            "color": (
+                [
+                    "#ffd700",
+                    "#ffcccc",
+                    "#cffccc",
+                ]
+                + ["black"] * 4
+                + ["red"] * 4
+            ),
+        }
+    )
+    print(df)
+    features = []
+    for i, row in df.iterrows():
+        label = row.get("name", "?")
+        feature = row.get("type", "?")
+        start = row.get("start", 0)
+        end = row.get("end", 0)
+        strand = row.get("strand", 0)
+        color = row.get("color", "black")
+        feature = GraphicFeature(
+            start=start, end=end, strand=strand, color=color, label=label
+        )
+        features.append(feature)
+
+    record = GraphicRecord(sequence_length=600, features=features)
+    record.plot(
+        figure_width=20,
+        draw_line=True,
+        with_ruler=True,
+        ruler_color=None,
+        plot_sequence=False,
+        annotate_inline=True,
+        max_label_length=50,
+        max_line_length=30,
+        level_offset=0,
+        strand_in_label_threshold="default",
+        elevate_outline_annotations="default",
+        x_lim=None,
+        figure_height=None,
+        sequence_params=None,
     )
     plt.show()

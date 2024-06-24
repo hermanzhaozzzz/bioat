@@ -10,26 +10,6 @@ from bioat.logger import get_logger
 __module_name__ = 'bioat.hictools'
 
 
-try:
-    from pandarallel import pandarallel
-except ImportError:
-    logger = get_logger(__module_name__)
-    logger.error('pandarallel not installed, please exec `python -m pip install pandarallel`, then try again.')
-    sys.exit(1)
-try:
-    pandarallel.initialize(
-        progress_bar=False,
-        use_memory_fs=True,
-        verbose=1
-    )
-except SystemError:
-    pandarallel.initialize(
-        progress_bar=False,
-        use_memory_fs=False,
-        verbose=1
-    )
-
-
 class HiCTools:
     """Hi-C toolbox."""
 
@@ -125,11 +105,11 @@ class HiCTools:
             total_bins = df_chromosome.iloc[-1, 2]
 
             # calculate mapped bin index
-            df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.parallel_apply(
+            df_valid_pairs[["bin_index_A", "bin_index_B"]] = df_valid_pairs.apply(
                 # df_valid_pairs[['bin_index_A', 'bin_index_B']] = df_valid_pairs.apply(
                 get_bin_index,
                 axis=1,
-                result_type='expand'
+                result_type="expand",
             )
 
             # print(df_valid_pairs)

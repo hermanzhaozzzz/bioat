@@ -37,12 +37,13 @@ __module_name__ = "bioat.lib.libpatentseq"
 try:
     from playwright._impl._errors import TargetClosedError, TimeoutError
     from playwright.sync_api import Playwright, sync_playwright
-except ImportError:
+except (ImportError, ModuleNotFoundError) as e:
     logger = get_logger(__module_name__)
+    logger.error(e)
     logger.error(
         "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
     )
-    sys.exit(1)
+    # sys.exit(1)
 
 STATUS = "RUN"
 SEQ_HEADER = None
