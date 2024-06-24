@@ -32,6 +32,7 @@ from glob import glob
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from matplotlib.patches import Rectangle
 
@@ -279,13 +280,126 @@ def plot(
     # return axes
 
 
-if __name__ == '__main__':
+def plot_dna_features(df: pd.DataFrame, use_demo_data=True):
+    # """
+    #     group            name    type  start    end  strand    color
+    # 0    0000  AAAAAAAAAAAAAA     CDS   1050   4000     1.0  #ffd700
+    # 1    0000            BBBB     CDS   3500   6000    -1.0  #ffcccc
+    # 2    0000              CC     CDS  14000  16000     NaN  #cffccc
+    # 3    0000            None      DR  10300  10336     NaN    black
+    # 4    0000            None      DR  10366  10402     NaN    black
+    # ..    ...             ...     ...    ...    ...     ...      ...
+    # 510  4444            None  spacer  12106  12136     NaN      red
+    # 511  4444            None  spacer  12172  12202     NaN      red
+    # 512  4444            None  spacer  12238  12268     NaN      red
+    # 513  4444            None  spacer  12304  12334     NaN      red
+    # 514  4444            None  spacer  12370  12400     NaN      red
+    # """
+    if use_demo_data:
+        df = pd.DataFrame(
+            {
+                "name": ["AAAAAAAAAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
+                "type": ["CDS", "CDS", "CDS"] + ["DR"] * 50 + ["spacer"] * 50,
+                "start": (
+                    [1050, 3500, 14000]
+                    + list(range(10300, 10300 + 66 * 50, 66))
+                    + list(range(10336, 10336 + 66 * 50, 66))
+                ),
+                "end": (
+                    [4000, 6000, 16000]
+                    + list(range(10336, 10336 + 66 * 50, 66))
+                    + list(range(10366, 10366 + 66 * 50, 66))
+                ),
+                "strand": [1, -1, None] + [None] * 50 + [None] * 50,
+                "color": (
+                    [
+                        "#ffd700",
+                        "#ffcccc",
+                        "#cffccc",
+                    ]
+                    + ["black"] * 50
+                    + ["red"] * 50
+                ),
+            }
+        )
+        ls = []
+        for i in range(5):
+            tmpdf = df.copy()
+            tmpdf.insert(0, "group", str(i) * 4)
+            if i in (2, 4):
+                tmpdf["start"] = tmpdf["start"] - 300 * i
+                tmpdf["end"] = tmpdf["end"] - 300 * i
+            ls.append(tmpdf)
+        df = pd.concat(ls)
+        df.reset_index(drop=True, inplace=True)
+        print("=" * 20, "DEMO", "=" * 20)
+        print(df)
+        print("=" * 20, "/DEMO", "=" * 20)
+    else:
+        if not df:
+            raise ValueError("Please provide a DataFrame with DNA features.")
+    # 设置子图的数量
+    n = df["group"].nunique()
+
+    # 创建一个n行1列的子图
+    fig, axs = plt.subplots(
+        n, 1, figsize=(10, 2 * n), sharex=False
+    )  # 你可以根据需要调整figsize
+
+    # 循环遍历每个子图并进行绘图
+    for i, g in zip(range(n), df.groupby("group")):
+        group, data = g
+        print(f"i = {i}; group = {group}")
+        print(data)
+        features = []
+        for i_row, row in data.iterrows():
+            label = row.get("name", None)
+            start = row.get("start", -100)
+            end = row.get("end", 0)
+            strand = row.get("strand", 0)
+            color = row.get("color", "black")
+            feature = GraphicFeature(
+                start=start, end=end, strand=strand, color=color, label=label
+            )
+            features.append(feature)
+
+        record = GraphicRecord(sequence_length=20000, features=features)
+
+        record.plot(  # https://github.com/Edinburgh-Genome-Foundry/DnaFeaturesViewer
+            ax=axs[i],
+            figure_width=10,
+            draw_line=True,
+            with_ruler=True,
+            plot_sequence=False,
+            annotate_inline=True,
+            max_label_length=50,
+            max_line_length=30,
+            level_offset=0,
+            strand_in_label_threshold="default",
+            elevate_outline_annotations="default",
+            x_lim=None,
+            figure_height=None,
+            sequence_params=None,
+        )
+    # plt.show()
+
+    # axs[i].set_title(f"Subplot {i+1}")  # 设置子图的标题
+    # axs[i].set_xlabel("X Label")  # 设置x轴标签
+    # axs[i].set_ylabel("Y Label")  # 设置y轴标签
+    # axs[i].grid(True)  # 显示网格线
+
+    # 调整子图之间的距离
+    # plt.tight_layout()
+
+
+if __name__ == "__main__":
     # test for init_matplotlib
     init_matplotlib(log_level="warning")
     plot_colortable(
         ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"],
         ncols=1,
     )
+
     def normal(x, mu, sigma):
         p = 1 / math.sqrt(2 * math.pi * sigma**2)
         return p * np.exp(-0.5 / sigma**2 * (x - mu) ** 2)
@@ -302,60 +416,6 @@ if __name__ == '__main__':
     )
     plt.show()
     plt.close()
-    # !test
-    import pandas as pd
 
-    df = pd.DataFrame(
-        {
-            "name": ["AAaAAAAAAAAAAAAAAAA", "B", "C"] + ["DR"] * 4 + ["spacer"] * 4,
-            "type": ["CDS", "CDS", "CDS"] + ["DR"] * 4 + ["spacer"] * 4,
-            "start": (
-                [0, 100, 200] + list(range(300, 500, 66)) + list(range(336, 536, 66))
-            ),
-            "end": (
-                [50, 130, 280] + list(range(336, 540, 66)) + list(range(366, 566, 66))
-            ),
-            "strand": [1, -1, 1] + [1] * 4 + [1] * 4,
-            "color": (
-                [
-                    "#ffd700",
-                    "#ffcccc",
-                    "#cffccc",
-                ]
-                + ["black"] * 4
-                + ["red"] * 4
-            ),
-        }
-    )
-    print(df)
-    features = []
-    for i, row in df.iterrows():
-        label = row.get("name", "?")
-        feature = row.get("type", "?")
-        start = row.get("start", 0)
-        end = row.get("end", 0)
-        strand = row.get("strand", 0)
-        color = row.get("color", "black")
-        feature = GraphicFeature(
-            start=start, end=end, strand=strand, color=color, label=label
-        )
-        features.append(feature)
-
-    record = GraphicRecord(sequence_length=600, features=features)
-    record.plot(
-        figure_width=20,
-        draw_line=True,
-        with_ruler=True,
-        ruler_color=None,
-        plot_sequence=False,
-        annotate_inline=True,
-        max_label_length=50,
-        max_line_length=30,
-        level_offset=0,
-        strand_in_label_threshold="default",
-        elevate_outline_annotations="default",
-        x_lim=None,
-        figure_height=None,
-        sequence_params=None,
-    )
+    # 显示图形
     plt.show()
