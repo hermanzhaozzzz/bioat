@@ -283,12 +283,12 @@ def plot(
 def plot_dna_features(
     df: pd.DataFrame | None = None,
     use_demo_data=True,
-    dna_length=20000,
     fig_width=10,
     fig_height=2,
+    col_locus_start="locus_start",
+    col_locus_length="locus_length",
     col_group="group",
     col_name="name",
-    # col_type = 'type',
     col_start="start",
     col_end="end",
     col_strand="strand",
@@ -296,19 +296,23 @@ def plot_dna_features(
     **kwargs,
 ) -> plt.Figure:
     # """
-    # ![](https://raw.githubusercontent.com/hermanzhaozzzz/PicturesBed01/master/PicGo/202406250001537.png)
-    #     group            name    type  start    end  strand    color
-    # 0    0000  AAAAAAAAAAAAAA     CDS   1050   4000     1.0  #ffd700
-    # 1    0000            BBBB     CDS   3500   6000    -1.0  #ffcccc
-    # 2    0000              CC     CDS  14000  16000     NaN  #cffccc
-    # 3    0000            None      DR  10300  10336     NaN    black
-    # 4    0000            None      DR  10366  10402     NaN    black
-    # ..    ...             ...     ...    ...    ...     ...      ...
-    # 510  4444            None  spacer  12106  12136     NaN      red
-    # 511  4444            None  spacer  12172  12202     NaN      red
-    # 512  4444            None  spacer  12238  12268     NaN      red
-    # 513  4444            None  spacer  12304  12334     NaN      red
-    # 514  4444            None  spacer  12370  12400     NaN      red
+    # ![](https://raw.githubusercontent.com/hermanzhaozzzz/PicturesBed01/master/PicGo/202406260156158.png)
+    # ==================== DEMO ====================
+    #     group     name    type  start    end  strand    color  locus_length  locus_start
+    # 0    0000  AAAAAAA     CDS   1050   4000     1.0  #ffd700         20000            0
+    # 1    0000     BBBB     CDS   3500   6000    -1.0  #ffcccc         20000            0
+    # 2    0000       CC     CDS  14000  16000     NaN  #cffccc         20000            0
+    # 3    0000     None      DR  10300  10336     NaN    black         20000            0
+    # 4    0000     None      DR  10366  10402     NaN    black         20000            0
+    # ..    ...      ...     ...    ...    ...     ...      ...           ...          ...
+    # 510  4444     None  spacer  12106  12136     NaN      red         14000         1000
+    # 511  4444     None  spacer  12172  12202     NaN      red         14000         1000
+    # 512  4444     None  spacer  12238  12268     NaN      red         14000         1000
+    # 513  4444     None  spacer  12304  12334     NaN      red         14000         1000
+    # 514  4444     None  spacer  12370  12400     NaN      red         14000         1000
+
+    # [515 rows x 9 columns]
+    # ==================== /DEMO ====================
     # """
     def _get_demo_data():
         """get demo data for DNA features
@@ -318,7 +322,7 @@ def plot_dna_features(
         """
         df = pd.DataFrame(
             {
-                "name": ["AAAAAAAAAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
+                "name": ["AAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
                 "type": ["CDS", "CDS", "CDS"] + ["DR"] * 50 + ["spacer"] * 50,
                 "start": (
                     [1050, 3500, 14000]
@@ -340,6 +344,8 @@ def plot_dna_features(
                     + ["black"] * 50
                     + ["red"] * 50
                 ),
+                "locus_length": [20000] * 103,
+                "locus_start": [0] * 103,
             }
         )
         ls = []
@@ -349,6 +355,8 @@ def plot_dna_features(
             if i in (2, 4):
                 tmpdf["start"] = tmpdf["start"] - 300 * i
                 tmpdf["end"] = tmpdf["end"] - 300 * i
+                tmpdf["locus_length"] = tmpdf["locus_length"] - 1500 * i
+                tmpdf["locus_start"] = 1000
             ls.append(tmpdf)
         df = pd.concat(ls)
         df.reset_index(drop=True, inplace=True)
@@ -365,28 +373,41 @@ def plot_dna_features(
 
     # 设置子图的数量
     n = df[col_group].nunique()
-
     # 创建一个n行1列的子图
     fig, axs = plt.subplots(n, 1, figsize=(fig_width, fig_height * n))
+    if n == 1:
+        # 确保 axs 是一个列表，方便统一处理
+        axs = [axs]
 
     # 循环遍历每个子图并进行绘图
     for i, g in zip(range(n), df.groupby(col_group)):
         group_name, data = g
+        # print(f"group_name = {group_name}")
 
         features = []
         for _, row in data.iterrows():
             label = row.get(col_name, None)
+            if isinstance(label, float):
+                label = None
             start = row.get(col_start, -100)
             end = row.get(col_end, 0)
             strand = row.get(col_strand, 0)
-            color = row.get(col_color, "black")
+            color = row.get(col_color, "grey")
             feature = GraphicFeature(
                 start=start, end=end, strand=strand, color=color, label=label
             )
             features.append(feature)
-
-        record = GraphicRecord(sequence_length=dna_length, features=features)
-
+        if use_demo_data:
+            locus_start = data["locus_start"].values[0]
+            locus_length = data["locus_length"].values[0]
+        else:
+            locus_start = data[col_locus_start].values[0]
+            locus_length = data[col_locus_length].values[0]
+        record = GraphicRecord(
+            first_index=locus_start, sequence_length=locus_length, features=features
+        )
+        # print(axs)
+        # print(n)
         record.plot(  # https://github.com/Edinburgh-Genome-Foundry/DnaFeaturesViewer
             ax=axs[i],
             figure_width=fig_width,
@@ -402,11 +423,11 @@ def plot_dna_features(
             figure_height=fig_height,
             sequence_params=None,
         )
-        # axs[i].set_title(f"Subplot {i+1}")  # 设置子图的标题
+        # ax.set_title(f"Subplot {i+1}")  # 设置子图的标题
         axs[i].set_xlabel(
             group_name,
         )  # 设置x轴标签
-        # axs[i].set_ylabel("Y Label")  # 设置y轴标签
+        # ax.set_ylabel("Y Label")  # 设置y轴标签
         axs[i].grid(False)  # 显示网格线
         # plt.show()
     plt.tight_layout()
@@ -439,7 +460,24 @@ if __name__ == "__main__":
     # )
     # plt.show()
     # plt.close()
-    fig = plot_dna_features()
+    df_plot = pd.read_csv("~/demo.tsv", sep="\t")
+    # print(df_plot)
+    plot_dna_features()
+    plot_dna_features(
+        df=df_plot,
+        # use_demo_data=True
+        fig_width=20,
+        fig_height=3,
+        col_locus_start="locus_start",
+        col_locus_length="locus_length",
+        col_group="crispr_id:member",
+        col_name="pep_name",
+        col_start="pep_start",
+        col_end="pep_end",
+        col_strand="pep_strand",
+        col_color="color",
+    )
+
     # fig.savefig("/Users/zhaohuanan/Downloads/test.png", dpi=300)
     # 显示图形
     # plt.show()
