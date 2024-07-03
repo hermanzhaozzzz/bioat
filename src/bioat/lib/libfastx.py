@@ -18,7 +18,7 @@ __module_name__ = "bioat.lib.libfastx"
 
 try:
     from pybedtools import BedTool
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     logger = get_logger(__module_name__)
     logger.warning(
         "pybedtools not installed, please exec `python -m pip install pybedtools` "
