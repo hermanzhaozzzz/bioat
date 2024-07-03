@@ -38,11 +38,17 @@ try:
     from playwright._impl._errors import TargetClosedError, TimeoutError
     from playwright.sync_api import Playwright, sync_playwright
 except (ImportError, ModuleNotFoundError) as e:
-    logger = get_logger(__module_name__)
+    logger = get_logger(level="warning", module_name=__module_name__)
     logger.warning(e)
     logger.warning(
         "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
     )
+
+    class Playwright:
+        """Fake class to avoid install plawright"""
+
+        pass
+
 
 STATUS = "RUN"
 SEQ_HEADER = None
