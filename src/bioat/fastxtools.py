@@ -24,7 +24,7 @@ class FastxTools:
         :param new_file: output filename, default is None, and when it is None, `file` will be replaced
         :param log_level: like others
         """
-        format_this_fastx(file=file, new_file=new_file, log_level=log_level)
+        format_this_fastx(old_file=file, new_file=new_file, log_level=log_level)
 
     def mgi_parse_md5(self, file: str, log_level="WARNING"):
         """Read mgi-like md5 file and convert to a normal md5 file.
@@ -197,23 +197,23 @@ class FastxTools:
             exit(1)
         f.close()
 
-    def get_headers(self):
-        # if self.fastx is None:
-        self.fastx = self._load_fastx_generator()
+    # def get_headers(self):
+    #     # if self.fastx is None:
+    #     self.fastx = self._load_fastx_generator()
 
-        return [i[0][1:] for i in self.fastx]
+    #     return [i[0][1:] for i in self.fastx]
 
-    def get_sequence(self):
-        # if self.fastx is None:
-        self.fastx = self._load_fastx_generator()
+    # def get_sequence(self):
+    #     # if self.fastx is None:
+    #     self.fastx = self._load_fastx_generator()
 
-        return [i[1] for i in self.fastx]
+    #     return [i[1] for i in self.fastx]
 
-    def get_record_dict(self):
-        # if self.fastx is None:
-        self.fastx = self._load_fastx_generator()
+    # def get_record_dict(self):
+    #     # if self.fastx is None:
+    #     self.fastx = self._load_fastx_generator()
 
-        return {i[0][1:]: i[1] for i in self.fastx}
+    #     return {i[0][1:]: i[1] for i in self.fastx}
 
     # cli subcmd
     def filter_read_contains_N(self, file: str, output=sys.stdout.name):

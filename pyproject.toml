@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bioat"
-version = "0.12.12"
+version = "0.12.13"
 description = "Bioinformatic toolkit with python"
 license = "MIT"
 authors = ["Herman Zhao <hermanzhaozzzz@gmail.com>"]
