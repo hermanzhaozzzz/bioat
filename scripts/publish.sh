@@ -7,7 +7,6 @@
 # [pypi + poetry]设置密钥和授权
 # 确保 PyPI Token 被正确设置。
 # poetry config pypi-token.pypi pypi-somekeys
-# poetry config --list | grep pypi-token
 # --------------------------
 # [conda forge  github]授权脚本自动创建 Pull Request
 # 确保你已登录 GitHub CLI：使用以下命令确保你已经登录到 GitHub CLI，并授权脚本自动创建 Pull Request：

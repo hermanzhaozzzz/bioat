@@ -1,5 +1,3 @@
-# scripts/toml2yaml.py
-
 import os
 import sys
 
@@ -19,44 +17,55 @@ def parse_pyproject(pyproject_path):
         "description": poetry.get("description", "No description available."),
         "license": poetry.get("license", "No license provided"),
         "authors": poetry.get("authors", []),
-        "maintainers": poetry.get("maintainers", []),
+        "maintainer": poetry.get("repository", "").split("/")[-2],
         "repository": poetry.get("repository", ""),
         "homepage": poetry.get("homepage", ""),
         "readme": poetry.get("readme", "README.md"),
         "documentation": poetry.get("documentation", ""),
     }
 
-    # 提取依赖项和开发依赖项
+    # 提取依赖项
     dependencies = poetry.get("dependencies", {})
-    dev_dependencies = poetry.get("group", {}).get("dev", {}).get("dependencies", {})
+
+    # 提取可选依赖项（extras）
+    extras = poetry.get("extras", {})
 
     # 处理依赖项中的格式问题
     fixed_dependencies = fix_dependency_format(dependencies)
+    fixed_extras = fix_dependency_format_from_extras(extras, dependencies)
 
-    # 替换 matplotlib 为 matplotlib-base
-    if "matplotlib" in fixed_dependencies:
-        fixed_dependencies["matplotlib-base"] = fixed_dependencies.pop("matplotlib")
-
-    return package_info, fixed_dependencies, dev_dependencies
+    return package_info, fixed_dependencies, fixed_extras
 
 
 def fix_dependency_format(dependencies):
     """修正依赖项中的格式问题，确保符合 conda 要求"""
-    need_fix_bioconda = ("pysam", "dna-features-viewer")
     fixed_dependencies = {}
-    for package, version in dependencies.items():
-        if isinstance(version, str):
-            # 替换 "^" 和 "≥" 为 ">="，并移除不必要的空格
-            version = version.replace("^", ">=").replace("≥", ">=")
-        if package in need_fix_bioconda:
-            # 对 pysam 等依赖项特殊处理，确保来源为 bioconda
-            fixed_dependencies[package] = {"version": version, "channel": "bioconda"}
-        else:
-            fixed_dependencies[package] = version
+    for pkg, ver in dependencies.items():
+        if isinstance(ver, dict):
+            # 只提取 'ver' 字段
+            ver = ver.get("version", "")
+        if isinstance(ver, str):
+            # 确保没有空格，并替换 "^" 和 "≥" 为 ">="
+            ver = ver.replace("^", ">=").replace("≥", ">=").strip()
+        fixed_dependencies[pkg] = ver
     return fixed_dependencies
 
 
-def create_meta_yaml(package_info, dependencies, conda_recipe_dir):
+def fix_dependency_format_from_extras(extras, dependencies):
+    """将 extras 中的可选依赖项合并到主依赖项中，并修正格式"""
+    combined_dependencies = dependencies.copy()  # 保留原始依赖项
+    for extra_deps in extras.values():
+        for dep in extra_deps:
+            if dep in dependencies:
+                version = dependencies.get(dep)
+                # 仅提取版本信息
+                if isinstance(version, dict):
+                    version = version.get("version", "")
+                combined_dependencies[dep] = version
+    return combined_dependencies
+
+
+def create_meta_yaml(package_info, dependencies, extras_dependencies, conda_recipe_dir):
     """根据解析的依赖项和项目信息创建 meta.yaml 文件"""
     name = package_info["name"]
     version = package_info["version"]
@@ -64,24 +73,21 @@ def create_meta_yaml(package_info, dependencies, conda_recipe_dir):
     license_name = package_info["license"]
     repository = package_info["repository"]
     homepage = package_info["homepage"]
-    readme = package_info["readme"]
-    # maintainers = [
-    #     author.split("<")[0].strip() for author in package_info["maintainers"]
-    # ]
-    # maintainer_str = "\n    - ".join(maintainers)
     maintainer = package_info["repository"].split("/")[-2]
+
+    # 获取 Python 版本信息，默认使用 >=3.10
+    python_version = dependencies.pop("python", ">=3.10")
+
     conda_requirements = []
-    channels = set()
 
-    # 处理依赖项并生成格式化的 requirements
-    for pkg, info in dependencies.items():
-        if isinstance(info, dict) and "channel" in info:
-            # 对 bioconda 来源的包做特殊处理
-            conda_requirements.append(f"{pkg} {info['version']}  # [{info['channel']}]")
-            channels.add(info["channel"])
-        else:
-            conda_requirements.append(f"{pkg} {info}")
+    # 合并主依赖和可选依赖，并生成格式化的 requirements
+    all_dependencies = {**dependencies, **extras_dependencies}
+    for pkg, ver in all_dependencies.items():
+        conda_requirements.append(f"    - {pkg}{ver}")
 
+    conda_requirements = "\n".join(conda_requirements)
+
+    # 基础 meta.yaml 配置
     meta_yaml = f"""
 package:
   name: {name}
@@ -92,22 +98,17 @@ source:
   git_rev: v{version}
 
 build:
-  noarch: python
   number: 0
   script: "{{{{ PYTHON }}}} -m pip install ."
 
 requirements:
   host:
-    - python >=3.10
+    - python{python_version}
     - pip
     - setuptools
     - poetry
   run:
-    - {"\n    - ".join(conda_requirements)}
-
-test:
-  commands:
-    - {name} --help
+{conda_requirements}
 
 about:
   home: {homepage}
@@ -127,11 +128,10 @@ channels:
 """
 
     # 确保 Conda 配方目录存在
-    if not os.path.exists(conda_recipe_dir):
-        os.makedirs(conda_recipe_dir)
+    os.makedirs(conda_recipe_dir, exist_ok=True)
 
     # 写入 meta.yaml 文件
-    with open(f"{conda_recipe_dir}/meta.yaml", "w") as f:
+    with open(os.path.join(conda_recipe_dir, "meta.yaml"), "w") as f:
         f.write(meta_yaml)
 
     print(f"Conda recipe created at {conda_recipe_dir}/meta.yaml")
@@ -146,7 +146,16 @@ if __name__ == "__main__":
     conda_recipe_dir = sys.argv[2]
 
     # 解析 pyproject.toml 文件
-    package_info, dependencies, dev_dependencies = parse_pyproject(pyproject_path)
+    (
+        package_info,
+        dependencies,
+        extras_dependencies,
+    ) = parse_pyproject(pyproject_path)
 
     # 生成 meta.yaml 配方
-    create_meta_yaml(package_info, dependencies, conda_recipe_dir)
+    create_meta_yaml(
+        package_info,
+        dependencies,
+        extras_dependencies,
+        conda_recipe_dir,
+    )
