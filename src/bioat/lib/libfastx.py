@@ -24,6 +24,7 @@ except (ImportError, ModuleNotFoundError):
         "pybedtools not installed, please exec `python -m pip install pybedtools` "
         "or `conda install pybedtools`, then try again."
     )
+    sys.exit(0)
 
 
 def filter_fasta_length(contig, lmin, lmax) -> bool:

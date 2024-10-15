@@ -97,7 +97,7 @@ class SearchTools:
                 logger.error(
                     "Please install Selenium using `pip install selenium`"
                 )
-                sys.exit(1)
+                sys.exit(0)
 
             logger.info("Loading...")
             options = Options()

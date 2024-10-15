@@ -43,11 +43,12 @@ except (ImportError, ModuleNotFoundError) as e:
     logger.warning(
         "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
     )
+    sys.exit(0)
 
-    class Playwright:
-        """Fake class to avoid install plawright"""
+    # class Playwright:
+    #     """Fake class to avoid install plawright"""
 
-        pass
+    #     pass
 
 
 STATUS = "RUN"

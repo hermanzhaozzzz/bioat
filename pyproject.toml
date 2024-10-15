@@ -27,8 +27,6 @@ coloredlogs = ">=15.0.1"
 psutil = ">=5.9.8"
 openpyxl = ">=3.1.2"
 matplotlib-inline = ">=0.1.7"
-pybedtools = {version = ">=0.9.0", optional = true}
-pysam = {version = ">=0.20.0", optional = true}
 scikit-learn = {version = ">=1.0.2", optional = true}
 scipy = {version = ">=1.7.3", optional = true}
 beautifulsoup4 = {version = ">=4.12.3", optional = true}

@@ -17,8 +17,7 @@ homepage: https://github.com/hermanzhaozzzz
     
 """
 
-from bioat import (  # SystemTools,
-    BamTools,
+from bioat import (  # SystemTools,; BamTools,
     BedTools,
     CrisprTools,
     FastxTools,
@@ -81,7 +80,7 @@ class Cli(object):
     # """
 
     def __init__(self):
-        self.bam = BamTools()
+        # self.bam = BamTools()
         self.bed = BedTools()
         self.crispr = CrisprTools()
         self.fastx = FastxTools()

@@ -4,7 +4,7 @@ BioAT also can be a command-line tool.
 It is a bioinformatic tool/pkg bundle for python.
 """
 
-from bioat.bamtools import BamTools
+# from bioat.bamtools import BamTools
 from bioat.bedtools import BedTools
 from bioat.crisprtools import CrisprTools
 from bioat.exceptions import *  # !must be the first

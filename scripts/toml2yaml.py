@@ -38,7 +38,7 @@ def parse_pyproject(pyproject_path):
 
 
 def fix_dependency_format(dependencies):
-    """修正依赖项中的格式问题，确保符合 conda 要求"""
+    """修正依赖项中的格式问题，确保符合 conda 要求，并替换 matplotlib 为 matplotlib-base"""
     fixed_dependencies = {}
     for pkg, ver in dependencies.items():
         if isinstance(ver, dict):
@@ -47,6 +47,11 @@ def fix_dependency_format(dependencies):
         if isinstance(ver, str):
             # 确保没有空格，并替换 "^" 和 "≥" 为 ">="
             ver = ver.replace("^", ">=").replace("≥", ">=").strip()
+
+        # 替换 matplotlib 为 matplotlib-base
+        if pkg == "matplotlib":
+            pkg = "matplotlib-base"
+
         fixed_dependencies[pkg] = ver
     return fixed_dependencies
 
@@ -61,6 +66,9 @@ def fix_dependency_format_from_extras(extras, dependencies):
                 # 仅提取版本信息
                 if isinstance(version, dict):
                     version = version.get("version", "")
+                    # 替换 matplotlib 为 matplotlib-base
+                if dep == "matplotlib":
+                    dep = "matplotlib-base"
                 combined_dependencies[dep] = version
     return combined_dependencies
 
@@ -78,14 +86,25 @@ def create_meta_yaml(package_info, dependencies, extras_dependencies, conda_reci
     # 获取 Python 版本信息，默认使用 >=3.10
     python_version = dependencies.pop("python", ">=3.10")
 
-    conda_requirements = []
+    conda_requirements = dict()
 
     # 合并主依赖和可选依赖，并生成格式化的 requirements
     all_dependencies = {**dependencies, **extras_dependencies}
     for pkg, ver in all_dependencies.items():
-        conda_requirements.append(f"    - {pkg}{ver}")
+        if pkg == "matplotlib":
+            pkg = "matplotlib-base"
+        conda_requirements[pkg] = ver
 
-    conda_requirements = "\n".join(conda_requirements)
+    conda_requirements_ls = []
+    for pkg, ver in conda_requirements.items():
+        # if pkg == "python":
+        #     # If python is a host requirement, it should be a run requirement.
+        #     conda_requirements_ls.append(f"    - {pkg}")
+        # else:
+        #     conda_requirements_ls.append(f"    - {pkg} {ver}")
+        conda_requirements_ls.append(f"    - {pkg} {ver}")
+
+    conda_requirements_ls = "\n".join(conda_requirements_ls)
 
     # 基础 meta.yaml 配置
     meta_yaml = f"""
@@ -98,17 +117,24 @@ source:
   git_rev: v{version}
 
 build:
+  noarch: python
   number: 0
   script: "{{{{ PYTHON }}}} -m pip install ."
 
 requirements:
   host:
-    - python{python_version}
+    - python {python_version} # Non noarch packages should have python requirement without any version constraints
     - pip
     - setuptools
     - poetry
   run:
-{conda_requirements}
+{conda_requirements_ls}
+
+test:
+  commands:
+    - {name} --help  #  `{name}` is a command-line tool
+  imports:
+    - {name}
 
 about:
   home: {homepage}
@@ -119,12 +145,6 @@ about:
 extra:
   recipe-maintainers:
     - {maintainer}
-
-channels:
-    - bioconda
-    - conda-forge
-    - hcc
-    - pkgs/main
 """
 
     # 确保 Conda 配方目录存在
