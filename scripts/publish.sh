@@ -17,15 +17,19 @@
 # --------------------------
 # 提交前,先tag版本号
 # git checkout main  # 或其他主分支
+# 如果tag和以前的相同,可以使用 -f覆盖旧标签,慎用,不利于协作开发
 # git tag v0.12.13
 # git push origin v0.12.13
 # --------------------------
-# 对PR进行新的更改
-# git add recipes/bioat/meta.yaml
+# 如果PR提交失败,则需要根据PR Comments的提示
+# 对PR进行新的更改, 手动提交PR更新
+# cd staged-recipes/recipes/bioat
+# git add meta.yaml
 # git commit -m "Add python >=3.8 requirement to meta.yaml"
 # git push
+# push后即进入自动化check流程
 # --------------------------
-# 自动化提交版本
+# 初次提交版本时可以直接自动化提交版本
 # ./scripts/publish.sh
 # --------------------------
 # 项目信息
