@@ -13,12 +13,17 @@
 # 确保你已登录 GitHub CLI：使用以下命令确保你已经登录到 GitHub CLI，并授权脚本自动创建 Pull Request：
 # gh auth login
 # --------------------------
+
 # 项目信息
 PACKAGE_NAME="bioat"
 GITHUB_REPO_URL="https://github.com/hermanzhaozzzz/bioat"
 VERSION=$(poetry version --short)
 CONDA_RECIPE_DIR="conda-recipe"
 FORKED_REPO_URL="https://github.com/hermanzhaozzzz/staged-recipes"  # 你的 fork 仓库地址
+LICENSE_FILE="LICENSE"
+
+# 获取 GitHub 用户信息
+MAINTAINER="hermanzhaozzzz"  # 您的 GitHub 用户名
 
 # 检查版本是否已经存在于 PyPI
 function check_pypi_version {
@@ -44,17 +49,26 @@ function publish_to_pypi {
   fi
 
   poetry publish
-  if [ $? -ne 0 ]; then
+  if [ $? -ne 0 ];then
     echo "Error: Failed to publish to PyPI."
     exit 1
   fi
   echo "Successfully published to PyPI!"
 }
 
-# 创建 Conda 配方文件
+# 创建 Conda 配方文件并自动修复 linter 错误
 function create_conda_recipe {
   echo "Creating Conda recipe..."
+  rm -rf $CONDA_RECIPE_DIR
   mkdir -p $CONDA_RECIPE_DIR
+
+  # 确保 LICENSE 文件存在
+  if [ ! -f $LICENSE_FILE ]; then
+    echo "Error: LICENSE file not found. Please add a LICENSE file."
+    exit 1
+  fi
+
+  # 创建 meta.yaml 文件，包含 setuptool 作为构建后端和 noarch 配置
   cat > $CONDA_RECIPE_DIR/meta.yaml << EOL
 package:
   name: $PACKAGE_NAME
@@ -65,16 +79,18 @@ source:
   git_rev: v$VERSION
 
 build:
+  noarch: python  # 使用 noarch: python 来表示该包与平台无关
   number: 0
   script: "{{ PYTHON }} -m pip install ."
 
 requirements:
-  build:
+  host:
     - python
     - pip
-
+    - setuptools  # 明确指定 setuptools 作为构建后端
+    - poetry  # poetry 作为 host 依赖
   run:
-    - python >=3.7
+    - python
 
 test:
   commands:
@@ -82,38 +98,46 @@ test:
 
 about:
   home: $GITHUB_REPO_URL
-  license: MIT
+  license: AGPL-3.0-only  # 更新为 GNU AGPLv3
+  license_file: $LICENSE_FILE
   summary: "A bioinformatics analysis toolkit"
+
+extra:
+  recipe-maintainers:
+    - $MAINTAINER
 EOL
-  echo "Conda recipe created!"
+
+  echo "Conda recipe created and common linting issues fixed!"
 }
 
 # 提交到 Conda Forge
 function submit_to_conda_forge {
   echo "Submitting to Conda Forge..."
 
-  # 克隆 Conda Forge 的 staged-recipes 仓库
   if [ ! -d "staged-recipes" ]; then
     git clone https://github.com/conda-forge/staged-recipes.git
+  else
+    cd staged-recipes
+    git pull origin master
   fi
-  cd staged-recipes
 
   # 检查是否有 myfork 远程仓库
   if ! git remote | grep -q myfork; then
     git remote add myfork $FORKED_REPO_URL
   fi
 
-  # 创建一个分支并复制 Conda recipe
+  if git show-ref --quiet refs/heads/add-$PACKAGE_NAME-$VERSION; then
+    git branch -D add-$PACKAGE_NAME-$VERSION
+  fi
+
   git checkout -b add-$PACKAGE_NAME-$VERSION
   mkdir -p recipes/$PACKAGE_NAME
   cp ../$CONDA_RECIPE_DIR/meta.yaml recipes/$PACKAGE_NAME/
 
-  # 提交并推送到自己的 GitHub 仓库
   git add .
   git commit -m "Add recipe for $PACKAGE_NAME v$VERSION"
   git push myfork add-$PACKAGE_NAME-$VERSION
 
-  # 使用 GitHub CLI 创建 Pull Request
   gh pr create --title "Add $PACKAGE_NAME v$VERSION" --body "This PR adds the Conda recipe for $PACKAGE_NAME version $VERSION."
   cd ..
   echo "Pull request created for Conda Forge!"
@@ -121,6 +145,15 @@ function submit_to_conda_forge {
 
 # 主函数，发布到 PyPI 和 Conda Forge
 function main {
+  if ! command -v poetry &> /dev/null; then
+    echo "Error: poetry is not installed. Please install poetry first."
+    exit 1
+  fi
+  if ! command -v gh &> /dev/null; then
+    echo "Error: GitHub CLI (gh) is not installed. Please install gh first."
+    exit 1
+  fi
+
   check_pypi_version
   if [ $? -eq 0 ]; then
     publish_to_pypi
