@@ -13,7 +13,11 @@
 # 确保你已登录 GitHub CLI：使用以下命令确保你已经登录到 GitHub CLI，并授权脚本自动创建 Pull Request：
 # gh auth login
 # --------------------------
-
+# 提交前,先tag版本号
+# git checkout main  # 或其他主分支
+# git tag v0.12.13
+# git push origin v0.12.13
+# --------------------------
 # 项目信息
 PACKAGE_NAME="bioat"
 GITHUB_REPO_URL="https://github.com/hermanzhaozzzz/bioat"
