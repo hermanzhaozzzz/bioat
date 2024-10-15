@@ -12,11 +12,21 @@
 # [conda forge  github]授权脚本自动创建 Pull Request
 # 确保你已登录 GitHub CLI：使用以下命令确保你已经登录到 GitHub CLI，并授权脚本自动创建 Pull Request：
 # gh auth login
+# cd staged-recipes 
+# gh repo set-default conda-forge/staged-recipes
 # --------------------------
 # 提交前,先tag版本号
 # git checkout main  # 或其他主分支
 # git tag v0.12.13
 # git push origin v0.12.13
+# --------------------------
+# 对PR进行新的更改
+# git add recipes/bioat/meta.yaml
+# git commit -m "Add python >=3.8 requirement to meta.yaml"
+# git push
+# --------------------------
+# 自动化提交版本
+# ./scripts/publish.sh
 # --------------------------
 # 项目信息
 PACKAGE_NAME="bioat"
@@ -24,7 +34,6 @@ GITHUB_REPO_URL="https://github.com/hermanzhaozzzz/bioat"
 VERSION=$(poetry version --short)
 CONDA_RECIPE_DIR="conda-recipe"
 FORKED_REPO_URL="https://github.com/hermanzhaozzzz/staged-recipes"  # 你的 fork 仓库地址
-LICENSE_FILE="LICENSE"
 
 # 获取 GitHub 用户信息
 MAINTAINER="hermanzhaozzzz"  # 您的 GitHub 用户名
@@ -67,7 +76,7 @@ function create_conda_recipe {
   mkdir -p $CONDA_RECIPE_DIR
 
   # 确保 LICENSE 文件存在
-  if [ ! -f $LICENSE_FILE ]; then
+  if [ ! -f $LICENSE_FILE ];then
     echo "Error: LICENSE file not found. Please add a LICENSE file."
     exit 1
   fi
@@ -91,7 +100,7 @@ requirements:
   host:
     - python >=3.8  # 在 host 中指定 Python 版本下限
     - pip
-    - setuptools
+    - setuptools  # 明确指定 setuptools 作为构建后端
     - poetry
   run:
     - python >=3.8  # 在 run 中也指定 Python 版本下限
@@ -104,7 +113,7 @@ about:
   home: $GITHUB_REPO_URL
   license: AGPL-3.0-only  # 更新为 GNU AGPLv3
   license_file: $LICENSE_FILE
-  summary: "A bioinformatics analysis toolkit"
+  summary: "bioat, A python package & command line toolkit for Bioinformatics and data science!"
 
 extra:
   recipe-maintainers:
@@ -114,37 +123,51 @@ EOL
   echo "Conda recipe created and common linting issues fixed!"
 }
 
-# 提交到 Conda Forge
-function submit_to_conda_forge {
-  echo "Submitting to Conda Forge..."
+# 确保设置默认仓库为 myfork
+function ensure_default_remote {
+  # 提取 OWNER/REPO 格式
+  REPO_PATH=conda-forge/staged-recipes
+  echo "Ensuring default remote repository is set to $REPO_PATH..."
+  gh repo set-default $REPO_PATH || echo "Could not set default repository"
+}
 
+# 提交到 Conda Forge 或更新现有 PR
+function submit_to_conda_forge {
+  ensure_default_remote  # 调用设置默认仓库的函数
+  echo "Submitting to Conda Forge..."
+  
+  # 从conda forge/staged-recipes 仓库克隆
   if [ ! -d "staged-recipes" ]; then
     git clone https://github.com/conda-forge/staged-recipes.git
   else
     cd staged-recipes
-    git pull origin master
+    git pull origin main  # 使用main分支代替master
   fi
 
-  # 检查是否有 myfork 远程仓库
+  # 检查是否有 myfork 远程仓库存在于我的 fork仓库中
   if ! git remote | grep -q myfork; then
     git remote add myfork $FORKED_REPO_URL
   fi
 
-  if git show-ref --quiet refs/heads/add-$PACKAGE_NAME-$VERSION; then
-    git branch -D add-$PACKAGE_NAME-$VERSION
-  fi
-
-  git checkout -b add-$PACKAGE_NAME-$VERSION
+  git checkout add-$PACKAGE_NAME-$VERSION || git checkout -b add-$PACKAGE_NAME-$VERSION
+  
   mkdir -p recipes/$PACKAGE_NAME
   cp ../$CONDA_RECIPE_DIR/meta.yaml recipes/$PACKAGE_NAME/
-
+  
   git add .
-  git commit -m "Add recipe for $PACKAGE_NAME v$VERSION"
+  git commit -m "Update recipe for $PACKAGE_NAME v$VERSION"
   git push myfork add-$PACKAGE_NAME-$VERSION
 
-  gh pr create --title "Add $PACKAGE_NAME v$VERSION" --body "This PR adds the Conda recipe for $PACKAGE_NAME version $VERSION."
+  existing_pr=$(gh pr list --base main --head myfork:add-$PACKAGE_NAME-$VERSION --json number --jq '.[0].number')
+
+  if [ -z "$existing_pr" ]; then
+    gh pr create --title "Add $PACKAGE_NAME v$VERSION" --body "This PR adds the Conda recipe for $PACKAGE_NAME version $VERSION."
+    echo "New pull request created for Conda Forge!"
+  else
+    echo "Pull request #$existing_pr already exists. Pushing updates..."
+  fi
+
   cd ..
-  echo "Pull request created for Conda Forge!"
 }
 
 # 主函数，发布到 PyPI 和 Conda Forge
