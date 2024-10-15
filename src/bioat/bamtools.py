@@ -28,12 +28,15 @@ from io import TextIOWrapper
 from multiprocessing import Process
 from signal import SIG_DFL, SIGPIPE, signal
 
-import pysam
-
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.bamtools"
 
+logger = get_logger(level="INFO", module_name=__module_name__)
+try:
+    import pysam
+except ImportError:
+    logger.error("pysam is not installed, please install it first!")
 # TODO
 # !description for signal codes?
 signal(SIGPIPE, SIG_DFL)
@@ -48,13 +51,13 @@ class BamTools:
     def mpileup_to_table(
         self,
         mpileup: str,
-        output: str = sys.stdout,
+        output: str | TextIOWrapper = sys.stdout,
         threads: int = os.cpu_count() - 1,
         mutation_number_threshold: int = 0,
         temp_dir: str = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}",
         remove_temp: bool = True,
         log_level: str = "INFO",
-    ):
+    ) -> None:
         """Convert mpileup file to info file.
 
         :param mpileup: samtools mpileup format file

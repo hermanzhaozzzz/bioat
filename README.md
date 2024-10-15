@@ -10,7 +10,7 @@ the Bioinformatic Analysis Tools
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Introduction
-A python **package** & **command line toolkit** for Bioinformatics and data science!
+**bioat**, a python **package** & **command line toolkit** for Bioinformatics and data science!
 
 ## Installation
 ```shell
@@ -36,7 +36,7 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 
 ## about author
 
-> author: [赵华男 | ZHAO Hua-nan](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
+> author: [赵华男 | Huanan Herman Zhao](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
 >
 > email: hermanzhaozzzz@gmail.com
 >
