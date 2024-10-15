@@ -4,7 +4,8 @@
 test_outfiles/
 docs/html/
 docs/doctrees/
-
+staged-recipes/
+conda-recipe/
 ##############
 # common project
 ##############
