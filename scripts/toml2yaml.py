@@ -99,12 +99,12 @@ def create_meta_yaml(package_info, dependencies, extras_dependencies, conda_reci
 
     conda_requirements_ls = []
     for pkg, ver in conda_requirements.items():
-        if pkg == "python":
-            # If python is a host requirement, it should be a run requirement.
-            conda_requirements_ls.append(f"    - {pkg}")
-        else:
-            conda_requirements_ls.append(f"    - {pkg} {ver}")
-        # conda_requirements_ls.append(f"    - {pkg} {ver}")
+        # if pkg == "python":
+        #     # If python is a host requirement, it should be a run requirement.
+        #     conda_requirements_ls.append(f"    - {pkg}")
+        # else:
+        #     conda_requirements_ls.append(f"    - {pkg} {ver}")
+        conda_requirements_ls.append(f"    - {pkg} {ver}")
 
     conda_requirements_ls = "\n".join(conda_requirements_ls)
 
@@ -120,14 +120,14 @@ source:
   # git_rev: v{version}
 
 build:
-  # noarch: python  # windows conda-forge build不通过,提示注释本行
+  noarch: python  # windows conda-forge build不通过,提示注释本行
   number: 0
-  script: "{{{{ PYTHON }}}} -m pip install ."
+  script: "del bioat.exe; {{{{ PYTHON }}}} -m pip install . --no-deps --ignore-installed -vv"
 
 requirements:
   host:
-    # - python {python_version} # Non noarch packages should have python requirement without any version constraints
-    - python
+    - python {python_version} # Non noarch packages should have python requirement without any version constraints
+    # - python
     - pip
     - setuptools
     - poetry
