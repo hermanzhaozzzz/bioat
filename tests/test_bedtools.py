@@ -16,5 +16,5 @@
 # temp_dir = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}"
 
 
-def test_random():
-    pass
+# def test_random():
+#     pass
