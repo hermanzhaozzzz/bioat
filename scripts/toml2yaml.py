@@ -120,7 +120,7 @@ source:
   # git_rev: v{version}
 
 build:
-  noarch: python
+  # noarch: python  # windows conda-forge build不通过,提示注释本行
   number: 0
   script: "{{{{ PYTHON }}}} -m pip install ."
 
