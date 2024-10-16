@@ -116,7 +116,8 @@ package:
 
 source:
   git_url: {repository}
-  git_rev: v{version}
+  git_rev: master
+  # git_rev: v{version}
 
 build:
   noarch: python
