@@ -122,7 +122,8 @@ source:
 build:
   noarch: python  # windows conda-forge build不通过,提示注释本行
   number: 0
-  script: "del bioat.exe; {{{{ PYTHON }}}} -m pip install . --no-deps --ignore-installed -vv"
+  script: "{{{{ PYTHON }}}} -m pip install . -vv"
+  skip: True  # [not win]
 
 requirements:
   host:
@@ -137,8 +138,12 @@ requirements:
 test:
   commands:
     - {name} --help  #  `{name}` is a command-line tool
+    - pip check
   imports:
     - {name}
+  requires:
+    - pip
+
 
 about:
   home: {homepage}
