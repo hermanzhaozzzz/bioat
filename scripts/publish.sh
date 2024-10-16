@@ -78,7 +78,7 @@ function create_conda_recipe {
 
     # # 调用 Python 脚本生成 Conda 配方
     # python3 scripts/toml2yaml.py $PYPROJECT_FILE $CONDA_RECIPE_DIR
-    grayskull pypi bioat --output $CONDA_RECIPE_DIR/meta.yaml
+    grayskull pypi bioat --output staged-recipes/recipes
 }
 
 # 提交到 Conda Forge 或更新现有 PR
