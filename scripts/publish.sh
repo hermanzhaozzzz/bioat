@@ -178,7 +178,7 @@ function main {
 
     # 生成 Conda 配方并提交到 Conda Forge
     create_conda_recipe
-    submit_to_conda_forge
+    # submit_to_conda_forge
 }
 
 main

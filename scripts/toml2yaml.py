@@ -93,6 +93,8 @@ def create_meta_yaml(package_info, dependencies, extras_dependencies, conda_reci
     for pkg, ver in all_dependencies.items():
         if pkg == "matplotlib":
             pkg = "matplotlib-base"
+        if pkg in ("playwright", "selenium", "beautifulsoup4"):
+            continue
         conda_requirements[pkg] = ver
 
     conda_requirements_ls = []
