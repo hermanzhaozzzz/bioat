@@ -122,7 +122,7 @@ function submit_to_conda_forge {
     git add .
     # git commit -m "Update recipe for $PACKAGE_NAME v$VERSION"
     # 通过添加 --allow-empty 标志来强制 Git 提交，即使没有实际内容的变更，也会进行一次提交。这在自动化脚本中是非常有用的方式。
-    git commit --allow-empty -m "Update recipe for $PACKAGE_NAME v$VERSION"
+    git commit --allow-empty -m "Update recipe for $PACKAGE_NAME v$VERSION @`date`"
     # 如果你不介意覆盖历史提交，你可以在 git push 时使用 -f 标志强制推送更新，确保每次提交都能强制推送
     git push myfork add-$PACKAGE_NAME-$VERSION -f
     # git push myfork add-$PACKAGE_NAME-$VERSION
@@ -178,7 +178,7 @@ function main {
 
     # 生成 Conda 配方并提交到 Conda Forge
     create_conda_recipe
-    # submit_to_conda_forge
+    submit_to_conda_forge
 }
 
 main
