@@ -66,6 +66,24 @@ function publish_to_pypi {
 
 # 创建 Conda 配方文件
 function create_conda_recipe {
+
+    # 从conda forge/staged-recipes 仓库克隆
+    if [ ! -d "staged-recipes" ]; then
+        echo "本地缺少staged-recipes仓库,重新从conda-forge官方仓库克隆到本地..."
+        git clone https://github.com/conda-forge/staged-recipes.git
+    else
+        echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新..."
+        cd staged-recipes
+        echo "现在位于 $PWD"
+        echo 
+        echo "=========== git ===========↓↓↓↓↓↓↓↓"
+        git pull origin main --rebase
+        echo "=========== git ===========↑↑↑↑↑↑↑↑"
+        echo 
+    fi
+    cd ..
+    echo "现在位于 $PWD"
+
     echo "创建 Conda 配方(recipe)文件..."
     rm -rf $CONDA_RECIPE_DIR
     mkdir -p $CONDA_RECIPE_DIR
@@ -83,27 +101,16 @@ function create_conda_recipe {
 
 # 提交到 Conda Forge 或更新现有 PR
 function submit_to_conda_forge {
-    echo "向 conda-forge提交中..."
     
-    # 从conda forge/staged-recipes 仓库克隆
-    if [ ! -d "staged-recipes" ]; then
-        echo "本地缺少staged-recipes仓库,重新从conda-forge官方仓库克隆到本地..."
-        git clone https://github.com/conda-forge/staged-recipes.git
-    else
-        echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新..."
-        cd staged-recipes
-        echo 
-        echo "=========== git ===========↓↓↓↓↓↓↓↓"
-        git pull origin main --rebase
-        echo "=========== git ===========↑↑↑↑↑↑↑↑"
-        echo 
-    fi
-
+    cd staged-recipes
+    echo "现在位于 $PWD"
     # 检查是否有 myfork 远程仓库存在于我的 fork 仓库中
     if ! git remote | grep -q myfork; then
         echo "对本地的staged-recipes仓库,添加我fork的远程仓库,即$FORKED_REPO_URL,并命名为 myfork 远程仓库..."
         git remote add myfork $FORKED_REPO_URL
     fi
+
+    echo "向 conda-forge提交中..."
 
     echo "签出分支 add-$PACKAGE_NAME-$VERSION"
     echo 
@@ -111,11 +118,10 @@ function submit_to_conda_forge {
     git checkout add-$PACKAGE_NAME-$VERSION || git checkout -b add-$PACKAGE_NAME-$VERSION
     echo "=========== git ===========↑↑↑↑↑↑↑↑"
     echo 
-    echo "复制配方文件到 recipes/$PACKAGE_NAME 文件夹下"
+    echo "复制配方文件到 staged-recipes/recipes/$PACKAGE_NAME 文件夹下"
     mkdir -p recipes/$PACKAGE_NAME
-    cp ../$CONDA_RECIPE_DIR/meta.yaml recipes/$PACKAGE_NAME/
     
-    echo "现在在位置 $PWD/staged-recipes 下"
+    echo "现在在位置 $PWD下"
     echo "将本地分支 add-$PACKAGE_NAME-$VERSION 中配方文件的更改提交到我的 myfork 远程仓库中,即$FORKED_REPO_URL"
 
     echo 
@@ -128,6 +134,8 @@ function submit_to_conda_forge {
     git push myfork add-$PACKAGE_NAME-$VERSION -f
     # git push myfork add-$PACKAGE_NAME-$VERSION
 
+    cd ..
+    echo "现在位于 $PWD"
     echo "=========== git ===========↑↑↑↑↑↑↑↑"
     echo 
     echo "推送成功"
@@ -153,8 +161,6 @@ function submit_to_conda_forge {
         pr_url="https://github.com/conda-forge/staged-recipes/pull/$existing_pr"
         echo "现有的 PR URL (点击查看): $pr_url"
     fi
-
-    cd ..
 }
 
 # 主函数，发布到 PyPI 和 Conda Forge
@@ -177,9 +183,22 @@ function main {
         publish_to_pypi
     fi
 
+    echo "waiting for the PyPI release..."
+    echo "Waiting for 60 seconds. Press Enter to skip."
+
+    for ((i=60; i>0; i--)); do
+        read -t 1 -n 1 input
+        if [ $? -eq 0 ]; then
+            echo "Skipped waiting!"
+            break
+        else
+            echo -ne "Waiting: $i seconds remaining. Press Enter to skip...\r"
+        fi
+    done
+
     # 生成 Conda 配方并提交到 Conda Forge
     create_conda_recipe
-    # submit_to_conda_forge
+    submit_to_conda_forge
 }
 
 main
