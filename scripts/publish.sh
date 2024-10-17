@@ -74,7 +74,7 @@ function create_conda_recipe {
     else
         echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新..."
         cd staged-recipes
-        echo "现在位于 $PWD"
+        echo "现在位于 `pwd`"
         echo 
         echo "=========== git ===========↓↓↓↓↓↓↓↓"
         git pull origin main --rebase
@@ -82,7 +82,7 @@ function create_conda_recipe {
         echo 
     fi
     cd ..
-    echo "现在位于 $PWD"
+    echo "现在位于 `pwd`"
 
     echo "创建 Conda 配方(recipe)文件..."
     rm -rf $CONDA_RECIPE_DIR
@@ -103,7 +103,7 @@ function create_conda_recipe {
 function submit_to_conda_forge {
     
     cd staged-recipes
-    echo "现在位于 $PWD"
+    echo "现在位于 `pwd`"
     # 检查是否有 myfork 远程仓库存在于我的 fork 仓库中
     if ! git remote | grep -q myfork; then
         echo "对本地的staged-recipes仓库,添加我fork的远程仓库,即$FORKED_REPO_URL,并命名为 myfork 远程仓库..."
@@ -121,7 +121,7 @@ function submit_to_conda_forge {
     echo "复制配方文件到 staged-recipes/recipes/$PACKAGE_NAME 文件夹下"
     mkdir -p recipes/$PACKAGE_NAME
     
-    echo "现在在位置 $PWD下"
+    echo "现在在位置 `pwd`下"
     echo "将本地分支 add-$PACKAGE_NAME-$VERSION 中配方文件的更改提交到我的 myfork 远程仓库中,即$FORKED_REPO_URL"
 
     echo 
@@ -135,7 +135,7 @@ function submit_to_conda_forge {
     # git push myfork add-$PACKAGE_NAME-$VERSION
 
     cd ..
-    echo "现在位于 $PWD"
+    echo "现在位于 `pwd`"
     echo "=========== git ===========↑↑↑↑↑↑↑↑"
     echo 
     echo "推送成功"
