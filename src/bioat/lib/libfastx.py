@@ -629,8 +629,8 @@ def cas13_finder(
     handler.close()
 
     # pattern = re.compile(r"R[NHD][A-Z]{3,5}H")
-    # pattern = re.compile(r"R[NHQD][A-Z]{3,5}H")
-    pattern = re.compile(r"(R[NHQD][A-Z]{3,5}H|H[A-Z]{3,5}[NHQD]R)")
+    pattern = re.compile(r"R[NHQD][A-Z]{3,5}H")
+    # pattern = re.compile(r"(R[NHQD][A-Z]{3,5}H|H[A-Z]{3,5}[NHQD]R)")
     # R: Arginine
     # N: Asparagine
     # H: Histidine
