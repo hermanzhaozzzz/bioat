@@ -14,8 +14,11 @@ the Bioinformatic Analysis Tools
 
 ## Installation
 ```shell
-# supported platform: Linux / MacOS (intel & arm64) / WSL on Windows
+# supported platform: Linux / MacOS (intel & arm64) / Windows
 pip install --upgrade bioat
+# or via conda / mamba / microconda / micromamba
+# eg:
+conda install -c conda-forge bioat
 ```
 
 
