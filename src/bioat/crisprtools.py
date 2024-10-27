@@ -1,56 +1,80 @@
-from bioat.lib.libpath import HOME, exists_in_PATH
-from bioat.lib.libfastx import cas_finder, cas13_finder
+"""
+crisprtools.py
+
+This module provides a toolbox for mining CRISPR-related sequences in metagenomic data.
+It includes functionality for identifying Cas candidates associated with CRISPR loci
+and for annotating Cas13 candidates from protein sequences. The main class, `CrisprTools`,
+provides methods for calling external executables such as Prodigal and Pilercr for protein
+prediction and CRISPR identification.
+
+Classes:
+    CrisprTools: A class containing methods for identifying Cas candidates and Cas13
+                 candidates from genomic data.
+
+Methods:
+    cas_finder: A method for de novo annotation of Cas candidates from CRISPR loci,
+                utilizing input fasta files and producing various output files.
+    cas13_finder: A method for the annotation of Cas13 candidates from protein
+                  fasta files.
+
+Usage:
+    To use this module, create an instance of `CrisprTools` and call the methods
+    `cas_finder` or `cas13_finder` with the appropriate parameters to perform
+    CRISPR analysis on your dataset.
+"""
+
+from bioat.lib.libfastx import cas13_finder, cas_finder
+from bioat.lib.libpath import check_executable
 
 
 class CrisprTools:
-    """CRISPR mining toolbox."""
+    """CRISPR mining toolbox.
 
-    # for development test
-    _prodigal = (
-        "prodigal"
-        if exists_in_PATH("prodigal")
-        else f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/prodigal"
-    )
-    _pilercr = (
-        "pilercr"
-        if exists_in_PATH("pilercr")
-        else f"{HOME}/micromamba/envs/snakepipes_Cas-mining/bin/pilercr"
-    )
+    This class provides methods for performing CRISPR analysis on datasets, including
+    finding Cas proteins and CRISPR sequences.
 
-    # /for development test
+    Attributes:
+        None
+    """
+
+    def __init__(self):
+        pass
 
     def cas_finder(
-            self,
-            input_fa,
-            output_faa=None,
-            output_contig_fa=None,
-            output_crispr_info_tab=None,
-            lmin=3000,  # 3001 in Nature Methods paper
-            lmax=None,
-            extend=10_000,
-            temp_dir=None,
-            prodigal=_prodigal,
-            prodigal_mode='meta',
-            pilercr=_pilercr,
-            rm_temp=True,
-            log_level="INFO"
+        self,
+        input_fa,
+        output_faa=None,
+        output_contig_fa=None,
+        output_crispr_info_tab=None,
+        lmin=3000,  # 3001 in Nature Methods paper
+        lmax=None,
+        extend=10_000,
+        temp_dir=None,
+        prodigal=None,
+        prodigal_mode="meta",
+        pilercr=None,
+        rm_temp=True,
+        log_level="INFO",
     ):
-        """De novo annotation for Cas candidates from neighbor of CRISPR loci.
+        """De novo annotation for Cas candidates from neighbors of CRISPR loci.
 
-        :param input_fa: metagenome.fa (with many contigs in it)
-        :param output_faa: De novo annotated Cas candidates
-        :param output_contig_fa: De novo annotated Cas candidate whole contigs
-        :param output_crispr_info_tab: De novo annotated CRISPR info table (csv)
-        :param lmin: min length for a contig
-        :param lmax: max length for a contig
-        :param extend: proteins are considered over how far from the start/end of the CRISPR loci
-        :param temp_dir: folder to put temp files in
-        :param prodigal: the executable prodigal path
-        :param pilercr: the executable pilercr path
-        :param prodigal_mode: meta | single, mode for prodigal annotation
-        :param rm_temp: set False to keep the temp files
-        :param log_level: set DEBUG to see output from prodigal and pilercr
+        Args:
+            input_fa (str): Path to the input metagenome fasta file containing many contigs.
+            output_faa (str, optional): Path to save the de novo annotated Cas candidates.
+            output_contig_fa (str, optional): Path to save the whole contigs of de novo annotated Cas candidates.
+            output_crispr_info_tab (str, optional): Path to save the de novo annotated CRISPR info table (CSV format).
+            lmin (int, optional): Minimum length for a contig. Defaults to 3000.
+            lmax (int, optional): Maximum length for a contig. Defaults to None.
+            extend (int, optional): Distance over which proteins are considered from the start/end of the CRISPR loci. Defaults to 10000.
+            temp_dir (str, optional): Directory to store temporary files. Defaults to None.
+            prodigal (str, optional): Path to the Prodigal executable. Defaults to None.
+            prodigal_mode (str, optional): Mode for Prodigal annotation. Can be "meta" or "single". Defaults to "meta".
+            pilercr (str, optional): Path to the Pilercr executable. Defaults to None.
+            rm_temp (bool, optional): If False, temporary files will be kept. Defaults to True.
+            log_level (str, optional): Logging level; set to "DEBUG" to see logs from prodigal and pilercr. Defaults to "INFO".
         """
+        check_executable(name=prodigal)
+        check_executable(name=pilercr)
         cas_finder(
             input_fa=input_fa,
             output_faa=output_faa,
@@ -75,18 +99,17 @@ class CrisprTools:
     #     pass
 
     def cas13_finder(
-            self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
+        self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
     ):
         """De novo annotation for Cas13 candidates from proteins.faa.
 
-        :param input_faa: cas_candidates.faa
-        :param output_faa: cas13_candidates.faa
-        :param lmin: min length for a cas candidate
-        :param lmax: max length for a cas candidate
-        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
+        Args:
+            input_faa (str): The input file containing Cas candidates in .faa format.
+            output_faa (str, optional): The output file for Cas13 candidates in .faa format. Defaults to None.
+            lmin (int, optional): Minimum length for a Cas candidate. Defaults to 200.
+            lmax (int, optional): Maximum length for a Cas candidate. Defaults to 1500.
+            log_level (str, optional): The logging level. Options are 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'. Defaults to 'INFO'.
         """
-        """Cas13 mining toolbox."""
-        # start to test HEPN filter
         cas13_finder(
             input_faa=input_faa,
             output_faa=output_faa,

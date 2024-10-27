@@ -13,8 +13,6 @@ _description_
     _example_
 """
 
-import os
-import subprocess
 
 import pytest
 
@@ -22,7 +20,7 @@ from bioat.cli import Cli
 
 # from .settings import DATA_PATH, TESTOUT_PATH
 
-cli = Cli()
+bioat_cli = Cli()
 
 DEBUG = False
 
@@ -30,16 +28,18 @@ DEBUG = False
 def test_google_scholar():
     if not DEBUG:
         pytest.skip('skip test for google scholar')
-    cli.search.google_scholar(keyword='test', save_table=False)
+    bioat_cli.search.google_scholar(keyword="test", save_table=False)
 
 
 def test_google_scholar_no_keyword():
     if not DEBUG:
         pytest.skip('skip test for google scholar')
-    cli.search.google_scholar(save_table=False)
+    bioat_cli.search.google_scholar(save_table=False)
 
 
 def test_google_scholar_xlsx():
     if not DEBUG:
         pytest.skip('skip test for google scholar')
-    cli.search.google_scholar(keyword='test', output='/dev/null/xlsx.xlsx', save_table=False)
+    bioat_cli.search.google_scholar(
+        keyword="test", output="/dev/null/xlsx.xlsx", save_table=False
+    )

@@ -31,12 +31,11 @@ import sys
 from glob import glob
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from matplotlib.patches import Rectangle
 
-from bioat.exceptions import BioatException, BioatRuntimeWarning
+from bioat.exceptions import BioatError, BioatRuntimeWarning
 from bioat.lib.libpath import HOME
 from bioat.logger import get_logger
 
@@ -91,7 +90,7 @@ def _copy_fonts(refresh=False, log_level="warning"):
             )
         logger.debug("Fonts copied successfully")
     except Exception as e:
-        logger.error(BioatException(f"Failed to copy fonts: {e}"))
+        logger.error(BioatError(f"Failed to copy fonts: {e}"))
 
 
 def init_matplotlib(
@@ -113,7 +112,7 @@ def init_matplotlib(
     :type set_backend_ps: bool, optional
     :param set_backend_svg: whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend, defaults to 'none'
     :type set_backend_svg: str, optional
-    :raises BioatException: if failed to copy fonts
+    :raises BioatError: if failed to copy fonts
     :raises BioatRuntimeWarning: if site-packages not found in sys.path
     """
     logger = get_logger(

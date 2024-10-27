@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-from bioat import BioatParameterFormatError
+from bioat import BioatInvalidOptionError
 from bioat.lib.libpatentseq import query_patent
 from bioat.logger import get_logger
 
@@ -117,7 +117,7 @@ class SearchTools:
             try:
                 element = driver.find_element_by_xpath(xpath)
                 return element
-            except Exception as e:
+            except Exception:
                 if _count < attempts:
                     sleep(1)
                     get_element(driver, xpath, attempts=attempts, _count=_count + 1)
@@ -331,7 +331,7 @@ class SearchTools:
             elif output.endswith(".xls"):
                 data_ranked.to_excel(output, index=False)
             else:
-                raise BioatParameterFormatError('Output format not supported')
+                raise BioatInvalidOptionError("Output format not supported")
 
     def query_patent(
             self,

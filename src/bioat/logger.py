@@ -1,34 +1,33 @@
-"""Module for logging
+"""
+Module for Logging.
 
-author: Herman Huanan Zhao
-email: hermanzhaozzzz@gmail.com
-homepage: https://github.com/hermanzhaozzzz
+This module provides a logging utility that allows for configurable
+logging levels and formats. It uses the `logging` standard library
+and enhances it with colorized output for better visibility in
+command-line interfaces.
 
-Logging format and color
+Usage:
+    You can create a logger object by calling the `get_logger()`
+    function, specifying the desired logging level, module name,
+    and optionally a function name.
 
-example 1: # TODO
-    bioat list
-        <in shell>:
-            $ bioat list
-        <in python consolo>:
-            >>> from bioat.cli import Cli
-            >>> bioat = Cli()
-            >>> bioat.list()
-            >>> print(bioat.list())
+Examples:
+    # Create a logger for the main module
+    logger = get_logger("DEBUG")
+    logger.debug("Debug message")
 
-example 2:
-    _example_
+    # Create a logger for a specific function
+    logger = get_logger("ERROR", func_name="my_function")
+    logger.error("Error message")
 """
 
 import logging
 import logging.handlers
-import sys
 from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING, Logger
 
 import coloredlogs
 
-# !dont move this -> __PKG_NAME__, referenced by many functions
-__PKG_NAME__ = "bioat"
+from ._meta import __PKG_NAME__
 
 LEVEL = dict(
     zip(
@@ -45,15 +44,21 @@ def get_logger(
 ) -> Logger:
     """Return a logger object.
 
-    :param level: logger level, can be set to CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET, defaults to "ERROR"
-    :type level: str, optional
-    :param module_name: _description_, defaults to __PKG_NAME__
-    :type module_name: _type_, optional
-    :param func_name: _description_, defaults to None
-    :type func_name: _type_, optional
-    :return: a logger object
-    :rtype: Logger
+    This function creates and returns a logger object configured with the specified logging level,
+    module name, and optionally, function name.
+
+    Args:
+        level (str): Logger level. Can be set to CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET.
+            Defaults to "ERROR".
+        module_name (str): The name of the module for which the logger is created.
+            Defaults to __PKG_NAME__.
+        func_name (str, optional): The name of the function for which the logger is created.
+            Defaults to None.
+
+    Returns:
+        Logger: A logger object configured with the provided parameters.
     """
+
     level = LEVEL[level.upper()]
 
     # define the name var in fmt: %(name)

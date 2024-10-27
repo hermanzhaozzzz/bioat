@@ -1,38 +1,44 @@
-"""Cli about
+"""
+about.py
 
-author: Herman Huanan Zhao
-email: hermanzhaozzzz@gmail.com
-homepage: https://github.com/hermanzhaozzzz
+This module provides information about the BioAT package, including
+version, author details, and links to related resources.
 
->>> example 1:
-    bioat about
+Author:
+    Herman Huanan Zhao (hermanzhaozzzz AT gmail.com)
+
+Example:
+    To display the information about the package, run the command:
+        bioat about
+
+Attributes:
+    __ABOUT__ (str): A formatted string containing information about
+                     the BioAT package, including version, repository
+                     page, documentation page, issue tracking page,
+                     and author details.
 """
 
-from bioat.logger import __PKG_NAME__
-from bioat.version import (
-    __author__,
-    __doc_address__,
-    __email__,
-    __issue_address__,
-    __repo_address__,
-    __upgrade_date__,
-    __version__,
+from bioat import (
+    __AUTHOR__,
+    __AUTHOR_EMAIL__,
+    __DOC_PAGE__,
+    __HOME_PAGE__,
+    __ISSUE_PAGE__,
+    __VERSION__,
 )
+from bioat.logger import __PKG_NAME__
 
-__ABOUT__ = f"""
+__ABOUT__ = f"""\
 BioAT ({__PKG_NAME__})
     - {__PKG_NAME__} version:
-        {__version__}
-    - last update:
-        - {__upgrade_date__}
-    - repository page:
-        {__repo_address__}
-    - doc page:
-        {__doc_address__}
-    - issue / new feature page:
-        {__issue_address__}
-    - author:
-        - name: {__author__}
-        - email: {__email__}
-    ---
+        {__VERSION__}
+    - Home page:
+        {__HOME_PAGE__}
+    - Doc page:
+        {__DOC_PAGE__}
+    - Issue & feature request page:
+        {__ISSUE_PAGE__}
+    - Author:
+        - name: {__AUTHOR__}
+        - email: {__AUTHOR_EMAIL__}
 """

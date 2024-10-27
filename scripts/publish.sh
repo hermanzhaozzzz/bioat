@@ -19,6 +19,8 @@
 # 如果tag和以前的相同,可以使用 -f覆盖旧标签,慎用,不利于协作开发
 # git tag v0.12.13
 # git push origin v0.12.13
+# 然后正式提交
+# ./scripts/publish.sh
 # --------------------------
 # 项目信息从 pyproject.toml 中解析
 PYPROJECT_FILE="pyproject.toml"
@@ -94,8 +96,7 @@ function create_conda_recipe {
         exit 1
     fi
 
-    # # 调用 Python 脚本生成 Conda 配方
-    # python3 scripts/toml2yaml.py $PYPROJECT_FILE $CONDA_RECIPE_DIR
+    # 生成 Conda 配方 # brew install grayskull
     grayskull pypi bioat --output staged-recipes/recipes
 }
 
@@ -167,12 +168,17 @@ function submit_to_conda_forge {
 function main {
     # 检查是否安装了 poetry
     if ! command -v poetry &> /dev/null; then
-        echo "Error: poetry is not installed. Please install poetry first."
+        echo "Error: poetry is not installed. Please install poetry first (brew install poetry)."
         exit 1
     fi
     # 检查是否安装了 gh (GitHub CLI)
     if ! command -v gh &> /dev/null; then
-        echo "Error: GitHub CLI (gh) is not installed. Please install gh first."
+        echo "Error: GitHub CLI (gh) is not installed. Please install gh first (brew install gh)."
+        exit 1
+    fi
+    # 检查是否安装了 grayskull
+    if ! command -v grayskull &> /dev/null; then
+        echo "Error: grayskull is not installed. Please install grayskull first (brew install grayskull)."
         exit 1
     fi
 

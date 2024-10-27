@@ -27,7 +27,6 @@ example 1:
             >>> print(res)
 """
 
-import sys
 
 from Bio.Align import Alignment, PairwiseAligner, substitution_matrices
 from Bio.Seq import Seq

@@ -1,4 +1,3 @@
-import sys
 
 from bioat.lib.libjgi import JGIOperator
 from bioat.logger import get_logger

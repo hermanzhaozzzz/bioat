@@ -14,11 +14,10 @@ from hashlib import md5
 import requests
 from requests import HTTPError
 from requests.exceptions import ChunkedEncodingError
-from requests.utils import cookiejar_from_dict
 from tqdm import tqdm
 from urllib3.exceptions import InvalidChunkLength, ProtocolError
 
-from bioat.exceptions import BioatParameterFormatError
+from bioat.exceptions import BioatInvalidOptionError
 from bioat.lib.libpath import HOME
 from bioat.lib.libspider import ProxyPool, get_random_user_agents
 from bioat.logger import get_logger
@@ -715,7 +714,7 @@ class JGIOperator:
             if self.regex or self.all_get or self.log_fails:
                 self._failed_urls, _ = self._download_list(self._urls_to_get)
             else:
-                raise BioatParameterFormatError
+                raise BioatInvalidOptionError
 
         logger.info(
             "Finished downloading {} files.".format(len(self._downloaded_files))

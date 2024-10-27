@@ -1,45 +1,104 @@
-__module_name__ = 'bioat.exceptions'
+"""
+This module contains custom exception classes for the bioat package.
+"""
+
+__module_name__ = "bioat.exceptions"
+
+__all__ = [
+    "BioatError",
+    "BioatFileFormatError",
+    "BioatFileNotCompleteError",
+    "BioatFileNotFoundError",
+    "BioatInvalidInputError",
+    "BioatInvalidOptionError",
+    "BioatInvalidParameterError",
+    "BioatMissingDependencyError",
+    "BioatRuntimeError",
+    "BioatValueError",
+]
 
 
-class BioatException(ValueError):
+class BioatError(Exception):
+    """
+    Base class for all custom exceptions in the bioat package.
+    """
+
     def __init__(self, *args, **kwargs):
-        self.msg = ''
+        # 使用列表来收集消息，避免多次字符串拼接
+        messages = []
         if args:
-            self.msg += f'{args};'
+            messages.append(" ".join(map(str, args)))  # 将args转换为字符串并连接
         if kwargs:
-            self.msg += f'{kwargs};'
+            messages.append(
+                " ".join(f"{k}={v}" for k, v in kwargs.items())
+            )  # 格式化kwargs
+        self.msg = "; ".join(messages)
 
     def __str__(self):
-        return f"BioatException: {self.msg}"
+        """
+        Return a string representation of the exception.
+        """
+        return f"{self.msg}"  # 返回当前类的名称
 
 
-class BioatFileFormatError(BioatException):
-    def __str__(self):
-        return f"BioatFileFormatError: {self.msg}"
+class BioatFileFormatError(BioatError):
+    """
+    Exception raised for errors in file format.
+    """
+    pass
 
 
-class BioatFileNotCompleteError(Exception):
-    def __str__(self):
-        return f"BioatFileNotCompleteError: {self.msg}"
+class BioatFileNotCompleteError(BioatError):
+    """
+    Exception raised when a file is not complete.
+    """
+    pass
 
 
-class BioatParameterFormatError(Exception):
-    def __str__(self):
-        return f"BioatParameterFormatError: {self.msg}"
+class BioatFileNotFoundError(BioatError):
+    """
+    Exception raised when a required file is not found.
+    """
+    pass
 
 
-class BioatFileNameError(Exception):
-    def __str__(self):
-        return f"BioatFileNameError: {self.msg}"
+class BioatInvalidInputError(BioatError):
+    """
+    Exception raised for invalid input errors.
+    """
+    pass
 
 
-class BioatCloudflareChallengeFailure(Exception):
-    """自定义异常类，表示Cloudflare挑战失败"""
+class BioatInvalidOptionError(BioatError):
+    """
+    Exception raised for invalid option errors.
+    """
+    pass
 
-    def __str__(self):
-        return f"BioatCloudflareChallengeFailure: {self.msg}"
+class BioatInvalidParameterError(BioatError):
+    """
+    Exception raised for invalid parameter errors.
+    """
 
-class BioatRuntimeWarning(UserWarning):
-    """自定义警告类，表示运行时出现的警告"""
-    def __str__(self):
-        return f"BioatRuntimeWarning: {self.msg}"
+    pass
+
+
+class BioatMissingDependencyError(BioatError):
+    """
+    Exception raised when a required dependency is missing.
+    """
+    pass
+
+
+class BioatRuntimeError(BioatError):
+    """
+    Exception raised for runtime errors.
+    """
+    pass
+
+
+class BioatValueError(BioatError):
+    """
+    Exception raised for errors related to values.
+    """
+    pass

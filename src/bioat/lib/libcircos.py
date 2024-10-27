@@ -2,21 +2,21 @@
 Adapt from https://github.com/ponnhide/pyCircos
 and thanks for this github user.
 """
-import os
-import re
 import io
 import math
-import urllib
+import os
+import re
 import tempfile
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.path as mpath
-import matplotlib.patches as mpatches
-import pandas as pd
-from Bio import SeqIO
-from Bio import Phylo
+import urllib
+
 import Bio
+import matplotlib
+import matplotlib.patches as mpatches
+import matplotlib.path as mpath
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from Bio import Phylo, SeqIO
 
 matplotlib.rcParams["figure.max_open_warning"] = 0
 matplotlib.rcParams['ps.fonttype'] = 42

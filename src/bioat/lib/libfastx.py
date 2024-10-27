@@ -1,7 +1,3 @@
-"""Doc.
-TODO
-"""
-
 import gzip
 import os
 import re
@@ -16,18 +12,8 @@ from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libfastx"
 
-try:
-    from pybedtools import BedTool
-except (ImportError, ModuleNotFoundError):
-    logger = get_logger(level="warning", module_name=__module_name__)
-    logger.warning(
-        "pybedtools not installed, please exec `python -m pip install pybedtools` "
-        "or `conda install pybedtools`, then try again."
-    )
-    sys.exit(0)
 
-
-def filter_fasta_length(contig, lmin, lmax) -> bool:
+def _filter_fasta_length(contig, lmin, lmax) -> bool:
     if lmin is None and lmax is not None:
         return len(contig) <= lmax
     elif lmin is not None and lmax is None:
@@ -57,6 +43,15 @@ def cas_finder(
         module_name=__module_name__,
         func_name="cas_finder",
     )
+    try:
+        from pybedtools import BedTool
+    except (ImportError, ModuleNotFoundError):
+        logger.warning(
+            "pybedtools not installed, please exec `python -m pip install pybedtools` "
+            "or `conda install pybedtools`, then try again."
+        )
+        sys.exit(0)
+
     workspace = os.getcwd()  # where I am
 
     if temp_dir is None:
@@ -125,7 +120,7 @@ def cas_finder(
         contigs_output = (
             contig
             for contig in contigs_input
-            if filter_fasta_length(contig, lmin, lmax)
+            if _filter_fasta_length(contig, lmin, lmax)
         )
         logger.debug(f"writing filtered contigs to file @ {fa_filtered}")
         # don't consider gz file. because it is a temp file.
@@ -624,7 +619,7 @@ def cas13_finder(
     )
     fa_cases = SeqIO.parse(handler, format="fasta")
     fa_cases_filter_length = [
-        cas for cas in fa_cases if filter_fasta_length(cas, lmin, lmax)
+        cas for cas in fa_cases if _filter_fasta_length(cas, lmin, lmax)
     ]
     handler.close()
 
@@ -701,11 +696,12 @@ def format_this_fastx(
     # replace old file or write to new file!
     new_file = f_input if new_file is None else new_file
 
-    if new_file == f_input and not force:
-        logger.error(
-            f"file {f_input} already exists, skip formatting, use --force to overwrite or define --new-file"
-        )
-        sys.exit(1)
+    if new_file == f_input:
+        if not force:
+            logger.error(
+                f"use --force to overwrite <{f_input}>, or define --new_file"
+            )
+            sys.exit(1)
 
     handler = (
         gzip.open(f_input, "rt") if f_input.endswith(".gz") else open(f_input, "rt")

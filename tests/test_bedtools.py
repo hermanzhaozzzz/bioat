@@ -10,9 +10,9 @@
 #
 # cli = Cli()
 #
-# f_mpileup = os.path.join(DATA_PATH, 'bam/test_sorted.mpileup.gz')
-# f_bam_sortp = os.path.join(DATA_PATH, 'bam/test_sorted.bam')
-# f_bam_sortn = os.path.join(DATA_PATH, 'bam/test_sorted_n.bam')
+# MPILEUP_FILE = os.path.join(DATA_PATH, 'bam/test_sorted.mpileup.gz')
+# BAM_SORTP_FILE = os.path.join(DATA_PATH, 'bam/test_sorted.bam')
+# BAM_SORTN_FILE = os.path.join(DATA_PATH, 'bam/test_sorted_n.bam')
 # temp_dir = f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}"
 
 

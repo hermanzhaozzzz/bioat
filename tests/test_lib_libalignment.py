@@ -20,10 +20,9 @@ example 2:
     _example_
 """
 
-from Bio import Align
 from Bio.Seq import Seq
 
-from bioat.lib._dev_tools import profile
+from bioat.devtools import profile
 from bioat.lib.libalignment import (
     get_aligned_seq,
     get_alignment_info,

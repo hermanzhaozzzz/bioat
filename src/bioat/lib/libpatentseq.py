@@ -30,6 +30,7 @@ import pandas as pd
 
 from bioat.lib.libpandas import set_option
 from bioat.lib.libpath import HOME
+from bioat.lib.libspider import ProxyPool
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libpatentseq"
@@ -107,7 +108,7 @@ def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
                 logger.info("Cookies are still valid, skip login and load cookies")
                 with open(COOKIE, "rt") as f:
                     storage_state = json.loads(f.read().strip())
-                logger.debug(f"new_context")
+                logger.debug("new_context")
                 context = browser.new_context(
                     storage_state=storage_state,
                     proxy={"server": proxy_ip} if proxy_ip else None,
@@ -216,7 +217,7 @@ def run(
                 logger.error("Login failed")
                 sys.exit(1)
             try:
-                logger.debug(f"new_context")
+                logger.debug("new_context")
                 context = browser.new_context(
                     viewport=(
                         {"width": 1920, "height": 1080} if not headless else None
@@ -227,9 +228,9 @@ def run(
                 # page.set_extra_http_headers(headers)
                 logger.debug(f"Goto {url_login}")
                 page.goto(url_login)
-                logger.debug(f'Click "Thanks, Got It')
+                logger.debug('Click "Thanks, Got It')
                 page.get_by_text("Thanks, Got It").click()
-                logger.debug(f'Click "Sign in')
+                logger.debug('Click "Sign in')
                 page.get_by_role("link", name="Sign in").click()
                 # logger.debug(f'Try to fill account info: {account}')
                 # page.get_by_label("Email address or Username").click()
@@ -247,10 +248,10 @@ def run(
                 # logger.debug(f'Try to sign in account')
                 # page.get_by_role("button", name="Sign in").click()
                 with page.expect_popup() as page1_info:
-                    logger.debug(f'Click "SignIn with ORCID"')
+                    logger.debug('Click "SignIn with ORCID"')
                     page.locator("a").filter(has_text="SignIn with ORCID").click()
                 page1 = page1_info.value
-                logger.debug(f'Click "Proceed"')
+                logger.debug('Click "Proceed"')
                 page1.get_by_role("link", name="Proceed").click()
                 time.sleep(2)
                 logger.debug('Click "Accept All Cookies"')
@@ -362,7 +363,7 @@ def run(
                         remove_cookie(log_level)
                     else:
                         logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
-                        logger.warning(f"User set to not remove cookies.")
+                        logger.warning("User set to not remove cookies.")
                 sys.exit(1)
             else:
                 logger.debug("Passed cookies and success login!")
@@ -374,17 +375,17 @@ def run(
             page.frame_locator("iframe").get_by_placeholder(
                 "Enter a query sequence."
             ).fill(seq)
-            logger.debug(f'Click "Protein"')
+            logger.debug('Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
-            logger.debug(f'Click "advanced options"')
+            logger.debug('Click "advanced options"')
             page.frame_locator("iframe").locator("div").filter(
                 has_text=re.compile(r"^advanced options$")
             ).locator("div").click()
-            logger.debug(f"Set maximum number of hits to 50")
+            logger.debug("Set maximum number of hits to 50")
             page.frame_locator("iframe").get_by_label(
                 "Maximum Number of Hits to"
             ).select_option("50")
-            logger.debug(f"Set maximum e-value to 1.0")
+            logger.debug("Set maximum e-value to 1.0")
             page.frame_locator("iframe").get_by_label(
                 "Expectation value threshold"
             ).select_option("1.0")
@@ -465,8 +466,8 @@ def run(
             break
         if int(time.time() - start_time) >= 300:
             logger.error(
-                f"TimeoutError (waiting for more than 300s), "
-                f"this might be a problem with browser was terminated external"
+                "TimeoutError (waiting for more than 300s), "
+                "this might be a problem with browser was terminated external"
             )
             logger.error("You can try again later")
             exit(1)

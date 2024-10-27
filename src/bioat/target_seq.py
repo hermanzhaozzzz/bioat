@@ -22,7 +22,6 @@ example 2:
 
 import gzip
 import os.path
-import sys
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -33,7 +32,11 @@ from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
 from tabulate import tabulate
 
-from bioat import BioatFileFormatError, BioatFileNameError, BioatParameterFormatError
+from bioat.exceptions import (
+    BioatFileFormatError,
+    BioatInvalidInputError,
+    BioatInvalidOptionError,
+)
 from bioat.lib.libalignment import instantiate_pairwise_aligner
 from bioat.lib.libcolor import convert_hex_to_rgb, make_color_list, map_color
 from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
@@ -128,9 +131,9 @@ class TargetSeq:
 
         if get_built_in_target_seq:
             logger.info(
-                f'You can use <key> in built-in <target_seq> to represent your target_seq:\n' +
-                '\t<key>\t<target_seq>\n' +
-                ''.join([f'\t{k}\t{v}\n' for k, v in TARGET_SEQ_LIB.items()])
+                "You can use <key> in built-in <target_seq> to represent your target_seq:\n"
+                + "\t<key>\t<target_seq>\n"
+                + "".join([f"\t{k}\t{v}\n" for k, v in TARGET_SEQ_LIB.items()])
             )
             logger.info('exit because of the defination for get_built_in_target_seq')
             exit(0)
@@ -640,10 +643,10 @@ class TargetSeq:
                     current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
         # plot box
-        logger.debug(f'plot rectangles')
+        logger.debug("plot rectangles")
         ax.add_collection(PatchCollection(patches, match_original=True))
 
-        logger.debug(f'plot text on each rectangle')
+        logger.debug("plot text on each rectangle")
         for text_x, text_y, text_info, text_fontsize in text_list:
             plt.text(
                 x=text_x, y=text_y, s=text_info, horizontalalignment='center', verticalalignment='center',
@@ -762,9 +765,9 @@ class TargetSeq:
         # check whether return built-in information
         if get_built_in_target_seq:
             logger.info(
-                f'You can use <key> in built-in <target_seq> to represent your target_seq:\n' +
-                '\t<key>\t<target_seq>\n' +
-                ''.join([f'\t{k}\t{v}\n' for k, v in TARGET_SEQ_LIB.items()])
+                "You can use <key> in built-in <target_seq> to represent your target_seq:\n"
+                + "\t<key>\t<target_seq>\n"
+                + "".join([f"\t{k}\t{v}\n" for k, v in TARGET_SEQ_LIB.items()])
             )
             logger.info('exit because of the defination for get_built_in_target_seq')
             exit(0)
@@ -800,7 +803,7 @@ class TargetSeq:
             if base not in default_bases:
                 logger.error('check to_base parameter')
                 logger.error(f'{base} not in {default_bases}')
-                raise BioatParameterFormatError
+                raise BioatInvalidOptionError
         logger.debug(f'to_base was defined as {to_base}')
 
         # check parameter: count_ratio
@@ -809,7 +812,7 @@ class TargetSeq:
         if count_ratio not in default_count_ratio_choices:
             logger.error('check count_ratio parameter')
             logger.error(f'{count_ratio} not in {default_count_ratio_choices}')
-            raise BioatParameterFormatError
+            raise BioatInvalidOptionError
         logger.debug(f'count_ratio was defined as {count_ratio}')
 
         # parse parameter: input_tables
@@ -818,7 +821,7 @@ class TargetSeq:
         elif isinstance(input_tables, str):
             input_tables = input_tables.replace(' ', '').replace('\t', '').strip().split(',')
         else:
-            raise BioatFileNameError
+            raise BioatInvalidInputError
         logger.debug(f'parse tables... {input_tables}')
 
         # parse parameter: labels, if labels is None, labels value will be input_tables names
@@ -827,7 +830,7 @@ class TargetSeq:
         elif isinstance(labels, str):
             labels = labels.replace(' ', '').replace('\t', '').strip().split(',') if labels else input_tables
         else:
-            raise BioatFileNameError
+            raise BioatInvalidInputError
         logger.debug(f'parse labels... {labels}')
 
         # set alignment
@@ -1085,12 +1088,12 @@ class TargetSeq:
         if isinstance(min_color, tuple):
             low_color = min_color
         else:
-            raise BioatParameterFormatError
+            raise BioatInvalidOptionError
 
         if isinstance(max_color, tuple):
             high_color = max_color
         else:
-            raise BioatParameterFormatError
+            raise BioatInvalidOptionError
 
         try:
             color_list = make_color_list(low_color, high_color, len(color_break) - 1, "Hex")

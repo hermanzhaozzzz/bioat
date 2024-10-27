@@ -20,7 +20,6 @@ example 2:
     _example_
 """
 
-import sys
 
 import pandas as pd
 

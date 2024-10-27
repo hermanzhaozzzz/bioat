@@ -17,21 +17,33 @@ class FastxTools:
         self.fastx = None
         pass
 
-    def fmt_this(self, file: str, new_file: str | None = None, log_level="WARNING"):
-        """format fasta file and make it easier to see.
+    def fmt_this(
+        self, file: str, new_file: str | None = None, force=False, log_level="WARNING"
+    ):
+        """Formats a FASTA file to improve readability.
 
-        :param file: input filename, fasta
-        :param new_file: output filename, default is None, and when it is None, `file` will be replaced
-        :param log_level: like others
+        Args:
+            file (str): The input filename for the FASTA file.
+            new_file (str | None): The output filename. If None, the `file` will be replaced. Default is None.
+            force (bool): If True, forces the formatting even if the output file exists. Default is False.
+            log_level (str): The logging level for messages. Default is "WARNING".
+
+        This function calls 'format_this_fastx' to perform the actual formatting on the specified FASTA file.
         """
-        format_this_fastx(old_file=file, new_file=new_file, log_level=log_level)
+        format_this_fastx(
+            old_file=file, new_file=new_file, force=force, log_level=log_level
+        )
 
     def mgi_parse_md5(self, file: str, log_level="WARNING"):
-        """Read mgi-like md5 file and convert to a normal md5 file.
+        """Converts a mgi-like MD5 file into a standard MD5 file.
 
-        :param file: file name of a mgi-like md5 file.
-        :param log_level: INFO/DEBUG/WARNING/ERROR, default is WARNING.
+        Args:
+            file (str): The name of the mgi-like MD5 file to read.
+            log_level (str, optional): The logging level to use.
+                It can be INFO, DEBUG, WARNING, or ERROR. The default is WARNING.
+
         """
+
         logger = get_logger(
             level=log_level,
             module_name=__module_name__,
@@ -54,21 +66,6 @@ class FastxTools:
         to_path = file.replace(".txt", "") + ".fix.md5"
         logger.info(f"write to {to_path}")
         df.to_csv(to_path, header=False, index=False, sep="\t")
-
-    def check_completeness(self, file: str, fmt="FASTQ", log_level="WARNING"):
-        """正在开发中
-
-        :param file: :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
-        :param fmt: FASTQ | FASTA
-        :param log_level:
-        :return: str, PASS | FILENAME_LOG_FAIL
-        """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="check_completeness",
-        )
-        pass
 
     @staticmethod
     def _load_fastx_generator(file, log_level="WARNING"):
@@ -197,33 +194,24 @@ class FastxTools:
             exit(1)
         f.close()
 
-    # def get_headers(self):
-    #     # if self.fastx is None:
-    #     self.fastx = self._load_fastx_generator()
+    # CLI subcommand for filtering sequences
+    def filter_read_contains_n(self, file: str, output=sys.stdout.name):
+        """Filter reads that contain the 'N' base in FASTA or FASTQ formats.
 
-    #     return [i[0][1:] for i in self.fastx]
+        This function processes a given FASTA or FASTQ file and
+        filters out reads that contain the 'N' base.
+        The result is directed to an output file, or to stdout
+        if no output file is specified.
 
-    # def get_sequence(self):
-    #     # if self.fastx is None:
-    #     self.fastx = self._load_fastx_generator()
+        Args:
+            file (str): The name of the FASTA or FASTQ file to be processed.
+            output (str): The name of the output file. Defaults to stdout
+                          if not specified, and the format matches the input.
 
-    #     return [i[1] for i in self.fastx]
-
-    # def get_record_dict(self):
-    #     # if self.fastx is None:
-    #     self.fastx = self._load_fastx_generator()
-
-    #     return {i[0][1:]: i[1] for i in self.fastx}
-
-    # cli subcmd
-    def filter_read_contains_N(self, file: str, output=sys.stdout.name):
-        """Filter read contains N base in FASTA or FASTQ
-
-
-
-        :param file: FASTA | FASTQ file name.
-        :param output: FASTA | FASTQ file name file, stdout if not assigned, format as input.
+        Returns:
+            None
         """
+
         if self.fastx is None:
             self.fastx = self._load_fastx_generator(file)
 
@@ -252,5 +240,4 @@ class FastxTools:
 
 
 if __name__ == "__main__":
-    # fastx = FastxTools(file='../../data/random_l-180_n-100_hg38_minus-test.fa')
     pass

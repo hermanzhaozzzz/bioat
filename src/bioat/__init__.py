@@ -3,17 +3,79 @@ BioAT can be a package to import.
 BioAT also can be a command-line tool.
 It is a bioinformatic tool/pkg bundle for python.
 """
+# !use "# ruff: isort: skip_file" annotation to skip this file when sorting imports
+# ruff: isort: skip_file
+from bioat._meta import (
+    __PKG_NAME__,
+    __AUTHOR__,
+    __AUTHOR_EMAIL__,
+    __BAM_PARSER_BACKEND__,
+    __DESCRIPTION__,
+    __DOC_FORMAT__,
+    __DOC_PAGE__,
+    __HOME_PAGE__,
+    __ISSUE_PAGE__,
+    __LICENSE__,
+    __VERSION__,
+    pysam,
+)
 
-# from bioat.bamtools import BamTools
+from bioat.exceptions import (
+    BioatFileFormatError,
+    BioatFileNotCompleteError,
+    BioatFileNotFoundError,
+    BioatInvalidInputError,
+    BioatInvalidOptionError,
+    BioatInvalidParameterError,
+    BioatMissingDependencyError,
+    BioatRuntimeError,
+    BioatValueError,
+)
+
+from bioat.bamtools import BamTools
 from bioat.bedtools import BedTools
 from bioat.crisprtools import CrisprTools
-from bioat.exceptions import *  # !must be the first
+
 from bioat.fastxtools import FastxTools
 from bioat.hictools import HiCTools
-from bioat.logger import __PKG_NAME__  # !must be the second
+
 from bioat.metatools import MetaTools
 from bioat.searchtools import SearchTools
 from bioat.systemtools import SystemTools
 from bioat.tabletools import TableTools
 from bioat.target_seq import TargetSeq
-from bioat.version import __author__, __doc_format__, __version__
+
+
+__all__ = [
+    "__PKG_NAME__",
+    "__AUTHOR__",
+    "__AUTHOR_EMAIL__",
+    "__BAM_PARSER_BACKEND__",
+    "__DESCRIPTION__",
+    "__DOC_FORMAT__",
+    "__DOC_PAGE__",
+    "__HOME_PAGE__",
+    "__ISSUE_PAGE__",
+    "__LICENSE__",
+    "__VERSION__",
+    "BamTools",
+    "BedTools",
+    "CrisprTools",
+    "FastxTools",
+    "HiCTools",
+    "MetaTools",
+    "SearchTools",
+    "SystemTools",
+    "TableTools",
+    "TargetSeq",
+    "BioatFileFormatError",
+    "BioatFileNotCompleteError",
+    "BioatFileNotFoundError",
+    "BioatInvalidInputError",
+    "BioatInvalidOptionError",
+    "BioatInvalidParameterError",
+    "BioatMissingDependencyError",
+    "BioatRuntimeError",
+    "BioatValueError",
+    "pysam",
+]

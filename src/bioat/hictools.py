@@ -1,10 +1,9 @@
 import gc
-import sys
 import time
 
 import pandas as pd
 
-from bioat.lib._dev_tools import profile
+from bioat.devtools import profile
 from bioat.logger import get_logger
 
 __module_name__ = 'bioat.hictools'
@@ -100,7 +99,9 @@ class HiCTools:
             circle = 2
 
             # calculate total bins
-            df_chromosome['bins'] = df_chromosome['length'].map(lambda x: int(x / new_bin) + 1)
+            df_chromosome["bins"] = df_chromosome["length"].map(
+                lambda x, new_bin=new_bin: int(x / new_bin) + 1
+            )
             df_chromosome['bins_cumsum'] = df_chromosome['bins'].cumsum()
             total_bins = df_chromosome.iloc[-1, 2]
 
