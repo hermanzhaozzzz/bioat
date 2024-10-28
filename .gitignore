@@ -6,6 +6,7 @@ docs/html/
 docs/doctrees/
 staged-recipes/
 conda-recipe/
+bioat-feedstock/
 ##############
 # common project
 ##############

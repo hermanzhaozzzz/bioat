@@ -96,9 +96,10 @@ function create_conda_recipe {
     META_YAML_PATH="staged-recipes/recipes/bioat/meta.yaml"
     if [ -f "$META_YAML_PATH" ]; then
         echo "Updating version and sha256 in meta.yaml..."
-        sed -i "s/version: .*/version: \"$VERSION\"/" $META_YAML_PATH
+        # 适配 macOS 和 Linux 的 sed 语法
+        sed -i '' "s/version: .*/version: \"$VERSION\"/" $META_YAML_PATH
         SHA256=$(curl -sL https://pypi.io/packages/source/b/bioat/bioat-$VERSION.tar.gz | sha256sum | awk '{ print $1 }')
-        sed -i "s/sha256: .*/sha256: \"$SHA256\"/" $META_YAML_PATH
+        sed -i '' "s/sha256: .*/sha256: \"$SHA256\"/" $META_YAML_PATH
     else
         echo "Error: meta.yaml file not found. Please ensure Grayskull generated it correctly."
         exit 1
@@ -209,7 +210,40 @@ function main {
 
     # 生成 Conda 配方并提交到 Conda Forge
     create_conda_recipe
-    submit_to_conda_forge
+    # submit_to_conda_forge
+    echo "Conda 配方文件已经生成, 参考下文自行提交新版本."
+    echo `pwd`
+    
+    echo "https://conda-forge.org/docs/maintainer/updating_pkgs/"
+
+    # 检查并获取 bioat-feedstock
+    if [ ! -d "bioat-feedstock" ]; then
+        echo "本地缺少 bioat-feedstock 仓库, 重新从 conda-forge 官方仓库[的我的fork仓库]克隆到本地..."
+        echo "git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git"
+        git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git
+    else
+        echo "本地存在 bioat-feedstock 仓库, 尝试拉取官方仓库更新..."
+        cd bioat-feedstock
+        git checkout main
+        git remote add upstream https://github.com/conda-forge/bioat-feedstock.git
+        git fetch upstream
+        git rebase upstream/main
+        cd ..
+    fi
+
+    cd bioat-feedstock
+    git checkout -b $VERSION
+    # 将 staged-recipes 中的最新 recipe 复制到 bioat-feedstock 的 recipe 目录
+    cp ../staged-recipes/recipes/bioat/meta.yaml recipe/meta.yaml
+    
+    # 更新内容后提交更改
+    git add .
+    git commit -m "Update version for bioat to $VERSION"
+    git push origin $VERSION -f
+    cd ..
+    echo "bioat-feedstock 仓库已经更新, 请自行提交 PR 至官方仓库."
+    echo "访问 https://github.com/hermanzhaozzzz/bioat-feedstock 创建PR请求"
+    
 }
 
 main
