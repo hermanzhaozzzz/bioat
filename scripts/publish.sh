@@ -68,7 +68,6 @@ function publish_to_pypi {
 
 # 创建 Conda 配方文件
 function create_conda_recipe {
-
     # 从conda forge/staged-recipes 仓库克隆
     if [ ! -d "staged-recipes" ]; then
         echo "本地缺少staged-recipes仓库,重新从conda-forge官方仓库克隆到本地..."
@@ -76,15 +75,9 @@ function create_conda_recipe {
     else
         echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新..."
         cd staged-recipes
-        echo "现在位于 `pwd`"
-        echo 
-        echo "=========== git ===========↓↓↓↓↓↓↓↓"
         git pull origin main --rebase
-        echo "=========== git ===========↑↑↑↑↑↑↑↑"
-        echo 
+        cd ..
     fi
-    cd ..
-    echo "现在位于 `pwd`"
 
     echo "创建 Conda 配方(recipe)文件..."
     rm -rf $CONDA_RECIPE_DIR
@@ -98,6 +91,18 @@ function create_conda_recipe {
 
     # 生成 Conda 配方 # brew install grayskull
     grayskull pypi bioat --output staged-recipes/recipes
+
+    # 更新 meta.yaml 中的版本和 sha256
+    META_YAML_PATH="staged-recipes/recipes/bioat/meta.yaml"
+    if [ -f "$META_YAML_PATH" ]; then
+        echo "Updating version and sha256 in meta.yaml..."
+        sed -i "s/version: .*/version: \"$VERSION\"/" $META_YAML_PATH
+        SHA256=$(curl -sL https://pypi.io/packages/source/b/bioat/bioat-$VERSION.tar.gz | sha256sum | awk '{ print $1 }')
+        sed -i "s/sha256: .*/sha256: \"$SHA256\"/" $META_YAML_PATH
+    else
+        echo "Error: meta.yaml file not found. Please ensure Grayskull generated it correctly."
+        exit 1
+    fi
 }
 
 # 提交到 Conda Forge 或更新现有 PR
