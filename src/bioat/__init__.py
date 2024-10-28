@@ -37,6 +37,7 @@ from bioat.bedtools import BedTools
 from bioat.crisprtools import CrisprTools
 
 from bioat.fastxtools import FastxTools
+from bioat.foldtools import FoldTools
 from bioat.hictools import HiCTools
 
 from bioat.metatools import MetaTools
@@ -62,6 +63,7 @@ __all__ = [
     "BedTools",
     "CrisprTools",
     "FastxTools",
+    "FoldTools",
     "HiCTools",
     "MetaTools",
     "SearchTools",

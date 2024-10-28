@@ -10,11 +10,9 @@ class MetaTools:
 
     def JGI_query(
         self,
-        # pick one from three
         query_info: str | None = None,
         xml: str | None = None,
         log_fails: str | None = None,
-        # runtime params
         nretry: int = 4,
         timeout: int = 60,
         regex: str | None = None,
@@ -23,42 +21,62 @@ class MetaTools:
         filter_files: bool = False,
         proxy_pool: str | None = None,
         just_query_xml: bool = False,
-        # doc helper
         syntax_help: bool = False,
         usage: bool = False,
-        # log
         log_level: str = "INFO",
     ):
-        """JGI_query, a tool for downloading files from JGI-IMG database.
+        """JGI_query: Tool for downloading files from the JGI-IMG database.
 
-        This script will list and retrieve files from JGI using the curl API.
-        It will return a list of all files available for download for a given query organism.
+        This function lists and retrieves files from JGI using the curl API and
+        returns a list of all files available for download for a given query organism.
 
-        The source code is adapted from https://github.com/glarue/jgi-query
+        The source code is adapted from https://github.com/glarue/jgi-query.
 
-        :param query_info: (input) organism name formatted per JGI's abbreviation.
-            For example, 'Nematostella vectensis' is abbreviated by JGI as 'Nemve1'.
-            The appropriate abbreviation may be found by searching for the organism on JGI;
-            the name used in the URL of the 'Info' page for that organism is the correct abbreviation.
-            The full URL may also be used for this argument.
-        :param xml: (input) specify a local xml file for the query instead of retrieving a new copy from JGI
-        :param log_fails: (input) nretry downloading from URLs listed in log file
-        :param nretry: number of times to nretry downloading files with errors (0 to skip such files)
-        :param timeout: timeout (seconds) for downloading, set -1 to disable this
-        :param regex: (no interactive) Regex pattern to use to auto-select and download files
-        :param all_get: (no interactive) Auto-select and download all files for query
-        :param overwrite_conf: (interactive) initiate configuration dialog to overwrite existing user/password
-            configuration
-        :param filter_files: (work in progress) filter organism results by config categories instead of reporting all
-            files listed by JGI for the query
-        :param proxy_pool: str | None = None, http://abc.com:port, see https://github.com/hermanzhaozzzz/proxy_pool
-        :param just_query_xml: bool, set True if you just want save XML file.
-        :param syntax_help: (doc mode) syntax_help
-        :param usage: (doc mode) print verbose usage information and exit
-        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
+        Args:
+            query_info (str | None):
+                Organism name formatted per JGI's abbreviation.
+                Example: 'Nematostella vectensis' is abbreviated by JGI as 'Nemve1'.
+                The correct abbreviation can be found by searching for the organism on JGI;
+                the name used in the URL of the 'Info' page for that organism is
+                the correct abbreviation. The full URL may also be used for this argument.
+            xml (str | None):
+                Specify a local XML file for the query instead of retrieving
+                a new copy from JGI.
+            log_fails (str | None):
+                Log file containing URLs to retry downloading from in case of failure.
+            nretry (int):
+                Number of times to retry downloading files with errors.
+                Use 0 to skip such files.
+            timeout (int):
+                Timeout (in seconds) for downloading. Set to -1 to disable.
+            regex (str | None):
+                Regex pattern to use for auto-selecting and downloading files
+                without interaction.
+            all_get (bool):
+                If True, auto-select and download all files for the query
+                without interaction.
+            overwrite_conf (bool):
+                If True, initiate configuration dialog to overwrite
+                existing user/password configuration.
+            filter_files (bool):
+                Under development. Filter organism results by config categories
+                instead of reporting all files listed by JGI for the query.
+            proxy_pool (str | None):
+                URL for the proxy pool, e.g., http://abc.com:port. See
+                https://github.com/hermanzhaozzzz/proxy_pool.
+            just_query_xml (bool):
+                Set True if you just want to save the XML file.
+            syntax_help (bool):
+                If True, provide syntax help in doc mode.
+            usage (bool):
+                If True, print verbose usage information and exit.
+            log_level (str):
+                Set the logging level. Options include 'CRITICAL', 'ERROR',
+                'WARNING', 'INFO', 'DEBUG', 'NOTSET'.
         """
-        # load or create JGI account info &
-        # auto check if you need overwrite user info
+        # Load or create JGI account info and
+        # auto check if user info needs to be overwritten.
+
         operator = JGIOperator(
             query_info=query_info,
             xml=xml,
@@ -88,6 +106,3 @@ class MetaTools:
             "start to download; calculate and display total size of selected data"
         )
         operator.download()
-
-    def mafft(self):
-        pass

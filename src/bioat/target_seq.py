@@ -214,8 +214,7 @@ class TargetSeq:
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
             logger.debug(f'final_align_reverse:\n{rev}')
         else:
-            logger.info('use PAM mode to align')
-            # TODO
+            logger.info("use PAM mode to align")
             # fwd = run_target_seq_align(ref_seq, target_seq, aligner, PAM=PAM)
             # logger.debug(f'final_align_forward:\n{fwd}')
             # rev = run_target_seq_align(ref_seq_rc, target_seq, aligner, PAM=PAM)
@@ -326,7 +325,7 @@ class TargetSeq:
             logger.debug(f'target_seq_aln = {target_seq_aln}')
             logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
 
-        # add PAM info# TODO
+        # add PAM info
 
         # print(target_seq_aln)
         # print(target_seq_aln_insert)
@@ -892,8 +891,7 @@ class TargetSeq:
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
             logger.debug(f'final_align_reverse:\n{rev}')
         else:
-            logger.info('use PAM mode to align')
-            # TODO
+            logger.info("use PAM mode to align")
             fwd = run_target_seq_align(ref_seq, target_seq, aligner, PAM=PAM)
             logger.debug(f'final_align_forward:\n{fwd}')
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner, PAM=PAM)

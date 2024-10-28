@@ -49,6 +49,7 @@ from bioat import (
     BedTools,
     CrisprTools,
     FastxTools,
+    FoldTools,
     HiCTools,
     MetaTools,
     SearchTools,
@@ -70,8 +71,8 @@ class Cli(object):
 
     Copyright:
         For researchers: freely applied to academic research. Please cite my work:
-            1. #TODO bibtex
-            2. #TODO software copyright
+            1. bibtex
+            2. software copyright
         For commercial use:
             NOT PERMITTED unless permission is obtained from the author.
 
@@ -112,6 +113,7 @@ class Cli(object):
         self.bed = BedTools()
         self.crispr = CrisprTools()
         self.fastx = FastxTools()
+        self.fold = FoldTools()
         self.hic = HiCTools()
         self.meta = MetaTools()
         self.search = SearchTools()

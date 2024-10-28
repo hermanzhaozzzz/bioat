@@ -267,7 +267,7 @@ class JGIOperator:
         self.regex = regex
         self.all_get = all_get
         self.overwrite_conf = overwrite_conf
-        self.filter_files = filter_files  # TODO 搞清楚用法
+        self.filter_files = filter_files
         self.just_query_xml = just_query_xml
         self.syntax_help = syntax_help
         self.usage = usage
@@ -1366,9 +1366,6 @@ class JGIOperator:
     def _extract_file(self, file_path, keep_compressed=False):
         """
         Native Python file decompression for tar.gz and .gz files.
-
-        TODO: implement .zip decompression
-
         """
         logger = get_logger(
             level=self.log_level,
@@ -1516,7 +1513,6 @@ class JGIOperator:
         Get regex pattern from user, compile and return.
 
         """
-        # TODO make this exit gracefully if user can't
         # manage to get a working regex
         compile_success = False
         pattern = ""

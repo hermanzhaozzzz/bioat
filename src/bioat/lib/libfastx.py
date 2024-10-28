@@ -12,6 +12,103 @@ from bioat.logger import get_logger
 
 __module_name__ = "bioat.lib.libfastx"
 
+AMINO_ACIDS = {
+    "ALA": "A",
+    "ARG": "R",
+    "ASN": "N",
+    "ASP": "D",
+    "CYS": "C",
+    "GLU": "E",
+    "GLN": "Q",
+    "GLY": "G",
+    "HIS": "H",
+    "ILE": "I",
+    "LEU": "L",
+    "LYS": "K",
+    "MET": "M",
+    "PHE": "F",
+    "PRO": "P",
+    "SER": "S",
+    "THR": "T",
+    "TRP": "W",
+    "TYR": "Y",
+    "VAL": "V",
+}
+AMINO_ACIDS_EXTEND = {
+    "ABA": "A",  # α-氨基丁酸
+    "ACE": "A",  # 乙酰基
+    "AIB": "A",  # 2-氨基异丁酸
+    "ALC": "A",  # 烯丙基丙氨酸
+    "AYA": "A",  # N-乙酰基丙氨酸
+    "DA2": "A",  # 2,3-二氨基丙酸
+    "DAB": "A",  # D-氨基丁酸
+    "DAL": "A",  # D-丙氨酸
+    "DHA": "A",  # 脱氢丙氨酸
+    "SAR": "A",  # N-甲基甘氨酸
+    "BAL": "C",  # β-丙氨酸
+    "CAF": "C",  # 半胱氨酸酰胺
+    "CME": "C",  # 羧甲基化半胱氨酸
+    "CSD": "C",  # 半胱氨酸二硫化物
+    "CSO": "C",  # S-羟基半胱氨酸
+    "CSS": "C",  # 羧硫半胱氨酸
+    "CSU": "C",  # S-亚磺酰胺半胱氨酸
+    "CSX": "C",  # 硫醇丙氨酸
+    "CY1": "C",  # S-羟甲基半胱氨酸
+    "CYG": "C",  # 胱氨酸
+    "CYX": "C",  # 双硫键连接的半胱氨酸
+    "BHD": "D",  # β-羟基天冬氨酸
+    "CGU": "E",  # γ-羧基谷氨酸
+    "DGL": "E",  # D-谷氨酸
+    "PCA": "E",  # 吡咯-2-氨基酸
+    "GLZ": "G",  # 羧基甘氨酸
+    "HSE": "H",  # 同亮氨酸（甲基化形式）
+    "HIC": "H",  # β-羟基组氨酸
+    "ALY": "K",  # N-乙酰化赖氨酸
+    "CMT": "K",  # N-甲基赖氨酸
+    "KCX": "K",  # 羧基赖氨酸
+    "LGY": "K",  # 乙酰化赖氨酸
+    "M3L": "K",  # 三甲基赖氨酸
+    "MLY": "K",  # ε-甲基赖氨酸
+    "MLZ": "K",  # 甲基化赖氨酸
+    "NMM": "K",  # N-甲基赖氨酸
+    "MLE": "L",  # N-甲基亮氨酸
+    "NLE": "L",  # 去甲硫氨酸
+    "FME": "M",  # N-甲酰蛋氨酸
+    "MSE": "M",  # 硒代蛋氨酸
+    "OMT": "M",  # 羟甲基蛋氨酸
+    "ASQ": "N",  # 醋酸化天冬酰胺
+    "BMA": "N",  # β-D-甘露糖
+    "DSN": "N",  # D-天冬酰胺
+    "FUC": "N",  # 岩藻糖
+    "MAN": "N",  # 甘露糖
+    "NAG": "N",  # N-乙酰氨基葡萄糖
+    "SIA": "N",  # 唾液酸
+    "HYP": "P",  # 羟脯氨酸
+    "OHP": "P",  # 羟基化脯氨酸
+    "PG1": "P",  # 羟脯氨酸
+    "PR3": "P",  # 3,4-羟基脯氨酸
+    "M3Q": "Q",  # N-甲基谷氨酰胺
+    "MGN": "Q",  # N-甲基化谷氨酰胺
+    "NRQ": "Q",  # 糖化谷氨酰胺
+    "QIL": "Q",  # 甲基谷氨酰胺
+    "MGG": "R",  # N-甲基精氨酸
+    "ORN": "R",  # 鸟氨酸
+    "GAL": "S",  # 半乳糖
+    "SEP": "S",  # 磷酸丝氨酸
+    "SHR": "S",  # 去氢丝氨酸
+    "SUI": "S",  # 过硫酸丝氨酸
+    "TPO": "T",  # 磷酸化苏氨酸
+    "4FW": "W",  # 5-氟代色氨酸
+    "FTR": "W",  # 6-氟代色氨酸
+    "HTR": "W",  # 羟基色氨酸
+    "MLW": "W",  # N-甲基化色氨酸
+    "PTR": "Y",  # 磷酸酪氨酸
+    "STY": "Y",  # 硫代酪氨酸
+    "TYI": "Y",  # 碘酪氨酸
+    "TYS": "Y",  # 硫酸酪氨酸
+    "LCY": "Y",  # 羟基化酪氨酸
+}
+
 
 def _filter_fasta_length(contig, lmin, lmax) -> bool:
     if lmin is None and lmax is not None:
@@ -263,7 +360,7 @@ def cas_finder(
                 logger.debug(f"splitted line info is: info = {info}")
 
                 if not info[0].isnumeric():
-                    raise ValueError(f"info = {info}")  # TODO
+                    raise ValueError(f"info = {info}")
                 logger.debug(f"contig = {contig}, info[1] = {info[1]}")
                 # assert contig == info[1]  # check contig name?  # pilercr返回的info[1]可能是contig的name的截短
                 array_index, _, crispr_start, crispr_length = info[:4]
