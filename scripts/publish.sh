@@ -239,10 +239,10 @@ function main {
     # 更新内容后提交更改
     git add .
     git commit -m "Update version for bioat to $VERSION"
-    git push origin $VERSION -f
+    git push
     cd ..
     echo "bioat-feedstock 仓库已经更新, 请自行提交 PR 至官方仓库."
-    echo "访问 https://github.com/hermanzhaozzzz/bioat-feedstock 创建PR请求"
+    echo "访问 https://github.com/hermanzhaozzzz/bioat-feedstock/pulls 创建PR请求"
     
 }
 
