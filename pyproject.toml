@@ -1,7 +1,7 @@
 # ref https://github.com/python-poetry/poetry/blob/main/pyproject.toml
 [tool.poetry]
 name = "bioat"
-version = "0.13.0"
+version = "0.13.1"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
 license = "Apache-2.0"
 authors = ["Huanan Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -29,14 +29,9 @@ openpyxl = ">=3.1.2"
 matplotlib-inline = ">=0.1.7"
 bamnostic = ">=1.1.10"
 beautifulsoup4 = ">=4.12.3"
-playwright = ">=1.19.0"
 selenium = ">=4.1.3"
-scikit-learn = {version = ">=1.0.2", optional = true}
-scipy = {version = ">=1.7.3", optional = true}
-
-[tool.poetry.extras]
-ai = ["scikit-learn", "scipy"]
-bio = ["pybedtools", "pysam"]
+scikit-learn = ">=1.0.2"
+scipy = ">=1.7.3"
 
 
 
