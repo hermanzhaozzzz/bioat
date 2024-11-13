@@ -73,13 +73,13 @@ function create_conda_recipe {
         echo "本地缺少staged-recipes仓库,重新从conda-forge官方仓库克隆到本地..."
         git clone https://github.com/conda-forge/staged-recipes.git
     else
-        echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新..."
+        echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新... 这里会显示上一次更新的最新版本而不是本次提交的版本(不是错误)"
         cd staged-recipes
         git pull origin main --rebase
         cd ..
     fi
 
-    echo "创建 Conda 配方(recipe)文件..."
+    echo "开始使用grayskull创建本次更新的 Conda 配方(recipe)文件,见下面的grayskull日志(建议等待120s以上以同步bioat的pypi版本更新状态)..."
     rm -rf $CONDA_RECIPE_DIR
     mkdir -p $CONDA_RECIPE_DIR
 
@@ -194,56 +194,90 @@ function main {
         # 如果 PyPI 上没有相同版本，则发布到 PyPI
         publish_to_pypi
     fi
-
+    echo "==============================>>>>>"
     echo "waiting for the PyPI release..."
-    echo "Waiting for 60 seconds. Press Enter to skip."
+    echo "==========>>>>>"
+    echo "Waiting for 120 seconds."
+    echo "==============================>>>>>"
 
-    for ((i=60; i>0; i--)); do
+    for ((i=120; i>0; i--)); do
         read -t 1 -n 1 input
         if [ $? -eq 0 ]; then
             echo "Skipped waiting!"
             break
         else
-            echo -ne "Waiting: $i seconds remaining. Press Enter to skip...\r"
+            echo -ne "Waiting: $i seconds remaining. <Press Enter to skip.> \033[0K\r"
         fi
     done
 
     # 生成 Conda 配方并提交到 Conda Forge
     create_conda_recipe
     # submit_to_conda_forge
-    echo "Conda 配方文件已经生成, 参考下文自行提交新版本."
+    echo "now at:"
     echo `pwd`
-    
+    echo
+    echo
+    echo "==============================>>>>>"
+    echo "Conda 配方文件已经生成, 参考下文自行提交新版本."
+    echo "==============================>>>>>"
     echo "https://conda-forge.org/docs/maintainer/updating_pkgs/"
 
     # 检查并获取 bioat-feedstock
     if [ ! -d "bioat-feedstock" ]; then
+        echo "~~~~~~~~~~~~~~>>>>>"
         echo "本地缺少 bioat-feedstock 仓库, 重新从 conda-forge 官方仓库[的我的fork仓库]克隆到本地..."
         echo "git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git"
         git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git
     else
+        echo "~~~~~~~~~~~~~~>>>>>"
         echo "本地存在 bioat-feedstock 仓库, 尝试拉取官方仓库更新..."
         cd bioat-feedstock
         git checkout main
-        git remote add upstream https://github.com/conda-forge/bioat-feedstock.git
+        git remote add upstream https://github.com/conda-forge/bioat-feedstock.git >/dev/null 2>&1
         git fetch upstream
         git rebase upstream/main
         cd ..
     fi
-
+    echo "~~~~~~~~~~~~~~>>>>>"
+    echo "cd bioat-feedstock"
     cd bioat-feedstock
+    echo "try to delete old branch $VERSION"
+    git branch -D $VERSION
+    echo "create new branch $VERSION"
+    echo "git checkout -b $VERSION"
     git checkout -b $VERSION
+    echo "~~~~~~~~~~~~~~>>>>>"
     # 将 staged-recipes 中的最新 recipe 复制到 bioat-feedstock 的 recipe 目录
+    echo "cp ../staged-recipes/recipes/bioat/meta.yaml recipe/meta.yaml"
     cp ../staged-recipes/recipes/bioat/meta.yaml recipe/meta.yaml
-    
+    echo "==============================>>>>>"
+    echo "git add+commit+push the new meta.yaml to hermanzhaozzzz/bioat-feedstock branch $VERSION"
+    echo "==============================>>>>>"
     # 更新内容后提交更改
+    echo "git add ."
     git add .
-    git commit -m "Update version for bioat to $VERSION"
-    git push
+    echo "git commit -m \"Update to $VERSION\""
+    git commit -m "Update to $VERSION"
+    echo "git push origin $VERSION"
+    git push origin $VERSION
+    echo "~~~~~~~~~~~~~~>>>>>"
     cd ..
+    echo "cd `pwd`"
+    echo "==============================>>>>>"
     echo "bioat-feedstock 仓库已经更新, 请自行提交 PR 至官方仓库."
+    echo "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️"
     echo "访问 https://github.com/hermanzhaozzzz/bioat-feedstock/pulls 创建PR请求"
-    
+    echo "[step1] 点击 New pull request"
+    echo "[step2] [❎❎❎注意一般直接就是默认的❎❎❎]选择 conda-forge/bioat-feedstock 的main分支作为 base repository"
+    echo "[step3] 选择 hermanzhaozzzz/bioat-feedstock 的$VERSION 分支作为 compare branch"
+    echo "[step4] 点击 Create pull request"
+    echo "[step5] 自动化测试通过后, 点击 Merge pull request"
+    echo "[step6] 在PR下添加一个Comments, 内容 [⭐️ @conda-forge-admin, please rerender ⭐️] 通知 conda-forge 重新渲染"
+    echo "⭐️"
+    echo "按照Pull request successfully merged and closed提示点击Delete branch按钮删除 hermanzhaozzzz/bioat-feedstock/$VERSION 分支"
+    echo "⭐️"
+    echo "Conda 包已经发布, 可以半小时后运行 conda search -c conda-forge 自行检查是否成功更新版本."
+    echo "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️"
 }
 
 main
