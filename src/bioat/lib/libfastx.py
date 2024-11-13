@@ -4,9 +4,13 @@ import re
 import subprocess
 import sys
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from Bio import SeqIO
+from tqdm import tqdm
 
 from bioat.logger import get_logger
 
@@ -817,6 +821,94 @@ def format_this_fastx(
     logger.debug(f"rename {temp_file} to {new_file}")
     os.rename(temp_file, new_file)
     logger.debug("Done. Exit")
+
+
+def calculate_length_distribution(
+    file,
+    table=None,
+    image=None,
+    plt_show=False,
+    log_level="WARNING",
+):
+    logger = get_logger(
+        level=log_level,
+        module_name=__module_name__,
+        func_name="format_this_fastx",
+    )
+
+    if not table:
+        table = f"{file}.lengths"
+        logger.info(f"table file: {table}")
+    if not image:
+        image = f"{file}.lengths.pdf"
+        logger.info(f"image file: {image}")
+
+    if not os.path.isfile(table):
+        logger.info(f"no exists length table, generate table file: {table}")
+        with open(file, "r") as fi:
+            total_sequences = sum(1 for _ in SeqIO.parse(fi, "fasta"))
+
+        with open(file, "r") as fi, open(table, "w") as fo:
+            for record in tqdm(
+                SeqIO.parse(fi, "fasta"),
+                total=total_sequences,
+                desc="Processing sequences",
+            ):
+                fo.write(f"{len(record.seq)}\n")
+    else:
+        logger.info(f"exists length table: {table}, directly draw image: {image}")
+
+    df = pd.read_csv(table, header=None, names=["length"])
+
+    # data = np.random.lognormal(mean=4.5, sigma=1.0, size=10000)  # 对数正态分布参数设置
+    # # 筛选出数据范围在10到10000之间的值
+    # data = data[(data >= 10) & (data <= 10000)]
+    # df = pd.DataFrame()
+    # df['length'] = data
+
+    fig = plt.figure(figsize=(8, 6))
+    sns.despine(fig)
+
+    # 分布图 (直方图) - 第一行，占据两列
+    logger.info("plot histplot")
+    ax1 = fig.add_subplot(2, 1, 1)
+    sns.histplot(
+        df, x="length", bins=300, edgecolor=".3", linewidth=0.5, log_scale=True, ax=ax1
+    )
+    ax1.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, numticks=4))
+    ax1.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+    ax1.set_xticks([10, 100, 1000, 10000])
+    ax1.tick_params(axis="x", rotation=90)
+    ax1.set_xlim(10, 10000)
+    ax1.set_title("Length Distribution (Log Scale)", fontsize=16)
+    ax1.set_xlabel("Log10 of Length", fontsize=14)
+    ax1.set_ylabel("Counts", fontsize=14)
+
+    if len(df) >= 10000:
+        # box和violin的性能不好
+        df = df.sample(n=10000, random_state=42)
+
+    # 箱线图 - 第二行左列（非对数刻度，最大值设为10000）
+    logger.info("plot boxplot")
+    ax2 = fig.add_subplot(2, 2, 3)
+    sns.boxplot(x=df["length"], ax=ax2, color="lightgreen")
+    ax2.set_title("Boxplot of Lengths", fontsize=16)
+    ax2.set_xlabel("Protein Length", fontsize=14)
+    ax2.set_xlim(0, 1000)
+
+    # 小提琴图 - 第二行右列（非对数刻度，最大值设为10000）
+    logger.info("plot violinplot")
+    ax3 = fig.add_subplot(2, 2, 4)
+
+    sns.violinplot(x=df["length"], ax=ax3, color="lightcoral")
+    ax3.set_title("Violin Plot of Lengths", fontsize=16)
+    ax3.set_xlabel("Length", fontsize=14)
+    ax3.set_xlim(0, 1000)
+
+    plt.tight_layout()
+    plt.savefig(image)
+    if plt_show:
+        plt.show()
 
 
 if __name__ == "__main__":

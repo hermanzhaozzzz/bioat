@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 
 from bioat.exceptions import BioatFileFormatError, BioatFileNotCompleteError
-from bioat.lib.libfastx import format_this_fastx
+from bioat.lib.libfastx import calculate_length_distribution, format_this_fastx
 from bioat.logger import get_logger
 
 __module_name__ = "bioat.fastxtools"
@@ -32,6 +32,27 @@ class FastxTools:
         """
         format_this_fastx(
             old_file=file, new_file=new_file, force=force, log_level=log_level
+        )
+
+    def plot_length_distribution(
+        self,
+        file: str,
+        table: str | None = None,
+        image: str | None = None,
+        plt_show: bool = False,
+        log_level="WARNING",
+    ):
+        """Plots the length distribution of a FASTA file.
+
+        Args:
+            file (str): The input filename for the FASTA file.
+            table (str | None, optional): The output filename for the length distribution table. Default is <file>.lengths.
+            image (str | None, optional): The output filename for the length distribution figure. Default is <file>.lengths.pdf.
+            plt_show (bool, optional): If True, shows the plot. Default is False.
+            log_level (str): The logging level for messages. Default is "WARNING".
+        """
+        calculate_length_distribution(
+            file=file, table=table, image=image, plt_show=plt_show, log_level=log_level
         )
 
     def mgi_parse_md5(self, file: str, log_level="WARNING"):
