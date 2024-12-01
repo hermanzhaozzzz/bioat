@@ -40,6 +40,7 @@ LEVEL = dict(
 def get_logger(
     level="ERROR",
     module_name=__PKG_NAME__,
+    cls_name: None | str = None,
     func_name: None | str = None,
 ) -> Logger:
     """Return a logger object.
@@ -52,6 +53,8 @@ def get_logger(
             Defaults to "ERROR".
         module_name (str): The name of the module for which the logger is created.
             Defaults to __PKG_NAME__.
+        cls_name (str, optional): The name of the class for which the logger is created.
+            Defaults to None.
         func_name (str, optional): The name of the function for which the logger is created.
             Defaults to None.
 
@@ -62,12 +65,17 @@ def get_logger(
     level = LEVEL[level.upper()]
 
     # define the name var in fmt: %(name)
-    if func_name:
+    if cls_name and func_name:
+        logger = logging.getLogger(f"{module_name}.{cls_name}.{func_name}")
+    elif cls_name and not func_name:
+        logger = logging.getLogger(f"{module_name}.{cls_name}")
+    elif not cls_name and func_name:
         logger = logging.getLogger(f"{module_name}.{func_name}")
     else:
         logger = logging.getLogger(f"{module_name}")
+
     # 设置日志格式
-    fmt = "%(asctime)s - [%(name)s] - %(filename)s[line:%(lineno)4d] - %(levelname)+8s: %(message)s"
+    fmt = "%(asctime)s.%(msecs)03d - [%(name)s] - %(filename)s[line:%(lineno)4d] - %(levelname)+8s: %(message)s"
     # add color feature to logger obj (cli color)
     coloredlogs.DEFAULT_FIELD_STYLES = dict(
         asctime=dict(color="green"),
@@ -82,9 +90,36 @@ def get_logger(
 
 if __name__ == "__main__":
     logger = get_logger(
+        "DEBUG", module_name="module", cls_name="Class", func_name="func"
+    )
+    logger.debug("Python debug")
+    logger.info("Python info")
+    logger.warning("Python warning")
+    logger.error("Python Error")
+    logger.critical("Python critical")
+    logger = get_logger("DEBUG", module_name="module", cls_name="Class")
+    logger.debug("Python debug")
+    logger.info("Python info")
+    logger.warning("Python warning")
+    logger.error("Python Error")
+    logger.critical("Python critical")
+    logger = get_logger("DEBUG", module_name="module", func_name="func")
+    logger.debug("Python debug")
+    logger.info("Python info")
+    logger.warning("Python warning")
+    logger.error("Python Error")
+    logger.critical("Python critical")
+    logger = get_logger(
         "DEBUG",
-        # module_name="bioat.logger",
-        # func_name="test_function"
+        module_name="module",
+    )
+    logger.debug("Python debug")
+    logger.info("Python info")
+    logger.warning("Python warning")
+    logger.error("Python Error")
+    logger.critical("Python critical")
+    logger = get_logger(
+        "DEBUG",
     )
     logger.debug("Python debug")
     logger.info("Python info")
