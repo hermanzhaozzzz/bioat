@@ -36,7 +36,7 @@ conda install -c conda-forge bioat
 ```
 
 
-## usage
+## Usage
 ```shell
 # list commands
 bioat list
@@ -51,7 +51,7 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 ```
 [circos plot](docs/demo_circos-plot.ipynb)
 
-## about author
+## About author
 
 > author: [赵华男 | Huanan Herman Zhao](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
 >
