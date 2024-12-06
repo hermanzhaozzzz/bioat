@@ -77,6 +77,7 @@ rst_epilog = f"""
 version = release.rsplit('.', 1)[0]  # 主版本号
 
 # 输出设置
+master_doc = 'contents'
 html_title = f"{project} Documentation"
 html_short_title = project
 pygments_style = 'sphinx'

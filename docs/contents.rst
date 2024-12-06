@@ -1,7 +1,8 @@
-.. bioat documentation master file
+Welcome to BioAT Documentation!
+================================
 
-Welcome to bioat's documentation!
-=================================
+Contents:
+---------
 
 .. toctree::
    :maxdepth: 2
