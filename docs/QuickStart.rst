@@ -1,2 +1,1 @@
 # QuickStart
-../README.md
