@@ -1,23 +1,37 @@
 # BioAT
 the Bioinformatic Analysis Tools
 
-![macos](https://github.com/hermanzhaozzzz/bioat/actions/workflows/macos.yml/badge.svg)
+## About bioat
 
-![linux](https://github.com/hermanzhaozzzz/bioat/actions/workflows/linux.yml/badge.svg)
+Home: https://github.com/hermanzhaozzzz/bioat
 
-![windows](https://github.com/hermanzhaozzzz/bioat/actions/workflows/windows.yml/badge.svg)
+Package license: Apache-2.0
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+Summary: **bioat**, a python **package** & **command line toolkit** for Bioinformatics and data science!
 
-## Introduction
-**bioat**, a python **package** & **command line toolkit** for Bioinformatics and data science!
+## Current build status
+
+<table><tr><td>All platforms:</td>
+    <td>
+      <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23719&branchName=main">
+        <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/bioat-feedstock?branchName=main">
+      </a>
+    </td>
+  </tr>
+</table>
+
+## Current release info
+
+| Name | Downloads | Version | Platforms |
+| --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-bioat-green.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) |
+
 
 ## Installation
 ```shell
 # supported platform: Linux / MacOS (intel & arm64) / Windows
 pip install --upgrade bioat
-# or via conda / mamba / microconda / micromamba
-# eg:
+# use conda
 conda install -c conda-forge bioat
 ```
 
