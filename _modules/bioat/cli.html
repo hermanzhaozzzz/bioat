@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.cli &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.cli</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.cli</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">bioat.cli</span>
+
+<span class="sd">This module provides the command line interface (CLI) for the BioAT (Bioinformatic Analysis Tools) toolkit.</span>
+<span class="sd">The BioAT toolkit is designed for bioinformatic analyses, allowing users to handle various biological data formats</span>
+<span class="sd">including BED, BAM, FASTA, FASTQ, and VCF.</span>
+
+<span class="sd">Usage Examples:</span>
+<span class="sd">    Example 1:</span>
+<span class="sd">        In shell:</span>
+<span class="sd">        $ bioat list</span>
+
+<span class="sd">        In Python console:</span>
+<span class="sd">        &gt;&gt;&gt; from bioat.cli import Cli</span>
+<span class="sd">        &gt;&gt;&gt; bioat = Cli()</span>
+<span class="sd">        &gt;&gt;&gt; bioat.list()</span>
+<span class="sd">        &gt;&gt;&gt; print(bioat.list())</span>
+
+<span class="sd">    Example 2:</span>
+<span class="sd">        In shell:</span>
+<span class="sd">        $ bioat about</span>
+<span class="sd">        In Python console:</span>
+<span class="sd">        &gt;&gt;&gt; from bioat.cli import Cli</span>
+<span class="sd">        &gt;&gt;&gt; bioat = Cli()</span>
+<span class="sd">        &gt;&gt;&gt; bioat.about()</span>
+<span class="sd">        &gt;&gt;&gt; print(bioat.about())</span>
+
+
+
+<span class="sd">Description:</span>
+<span class="sd">    The CLI interface allows users to access the functionalities of the BioAT package through</span>
+<span class="sd">    terminal commands or import it directly in Python scripts. The module provides various</span>
+<span class="sd">    tools for tasks such as mining CRISPRs, downloading metagenomic data, and retrieving</span>
+<span class="sd">    search results from Google Scholar.</span>
+
+<span class="sd">Commands:</span>
+<span class="sd">    - about: Displays information about the BioAT toolkit.</span>
+<span class="sd">    - list: Returns available groups and commands in a structured format.</span>
+<span class="sd">    - version: Returns the version information of the BioAT toolkit.</span>
+
+<span class="sd">Copyright:</span>
+<span class="sd">    For researchers: Freely applicable for academic research; citation is appreciated but not mandatory.</span>
+<span class="sd">    For commercial use: Not permitted without prior permission from the author.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">bioat</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">__VERSION__</span><span class="p">,</span>
+    <span class="n">BamTools</span><span class="p">,</span>
+    <span class="n">BedTools</span><span class="p">,</span>
+    <span class="n">CrisprTools</span><span class="p">,</span>
+    <span class="n">FastxTools</span><span class="p">,</span>
+    <span class="n">FoldTools</span><span class="p">,</span>
+    <span class="n">HiCTools</span><span class="p">,</span>
+    <span class="n">MetaTools</span><span class="p">,</span>
+    <span class="n">SearchTools</span><span class="p">,</span>
+    <span class="c1"># SystemTools,</span>
+    <span class="n">TableTools</span><span class="p">,</span>
+    <span class="n">TargetSeq</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">bioat.about</span> <span class="kn">import</span> <span class="n">__ABOUT__</span>
+
+
+<div class="viewcode-block" id="Cli">
+<a class="viewcode-back" href="../../bioat.html#bioat.cli.Cli">[docs]</a>
+<span class="k">class</span> <span class="nc">Cli</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cli interface of BioAT.</span>
+
+<span class="sd">    Brief:</span>
+<span class="sd">        - &quot;bioat&quot; is short for &quot;Bioinformatic Analysis Tools.&quot; It is a command-line toolkit and a Python package that can be used through this CLI interface in a terminal or via the `import` method in Python code.</span>
+<span class="sd">        - &quot;bioat&quot; has many subcommands to handle different bio-formats: BED, BAM, FASTA, FASTQ, VCF, etc.</span>
+<span class="sd">        - &quot;bioat&quot; can be used for mining CRISPRs, downloading metagenomes, and even reporting Google Scholar search results!</span>
+<span class="sd">        - For more information, run `$ bioat about`.</span>
+
+<span class="sd">    Copyright:</span>
+<span class="sd">        For researchers: freely applied to academic research. Please cite my work:</span>
+<span class="sd">            1. bibtex</span>
+<span class="sd">            2. software copyright</span>
+<span class="sd">        For commercial use:</span>
+<span class="sd">            NOT PERMITTED unless permission is obtained from the author.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    COMMAND:</span>
+<span class="sd">        Such as `bioat version`. This represents a direct command.</span>
+
+<span class="sd">    GROUPS:</span>
+<span class="sd">        Such as `bioat crispr`. This represents a group/bundle name for commands related to a specific topic.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        A demo to understand `bioat`:</span>
+
+<span class="sd">            bioat about</span>
+<span class="sd">                &lt;in shell&gt;:</span>
+<span class="sd">                    $ bioat about</span>
+<span class="sd">                &lt;in python console&gt;:</span>
+<span class="sd">                    &gt;&gt;&gt; from bioat.cli import Cli</span>
+<span class="sd">                    &gt;&gt;&gt; bioat = Cli()</span>
+<span class="sd">                    &gt;&gt;&gt; bioat.list()</span>
+<span class="sd">                    &gt;&gt;&gt; print(bioat.list())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># - Citation:</span>
+    <span class="c1">#     - Citation is not forcible and I would be appreciated if you wann to</span>
+    <span class="c1">#  do this.</span>
+    <span class="c1">#     - citation reference format:</span>
+    <span class="c1">#         [1] Huanan ZHAO. bioat, a Bioinformatic Analysis Tool kit (2023),</span>
+    <span class="c1"># https://github.com/hermanzhaozzzz/bioat</span>
+
+    <span class="c1"># &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bam</span> <span class="o">=</span> <span class="n">BamTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bed</span> <span class="o">=</span> <span class="n">BedTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crispr</span> <span class="o">=</span> <span class="n">CrisprTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastx</span> <span class="o">=</span> <span class="n">FastxTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="n">FoldTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hic</span> <span class="o">=</span> <span class="n">HiCTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">MetaTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search</span> <span class="o">=</span> <span class="n">SearchTools</span><span class="p">()</span>
+        <span class="c1"># self.system = SystemTools()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">TableTools</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_seq</span> <span class="o">=</span> <span class="n">TargetSeq</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Cli.about">
+<a class="viewcode-back" href="../../bioat.html#bioat.cli.Cli.about">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">about</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns information about the `bioat` tool.</span>
+
+<span class="sd">        This class method provides a description or metadata regarding</span>
+<span class="sd">        the `bioat` application, which may include version information,</span>
+<span class="sd">        author details, or usage instructions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Information about the `bioat` tool.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">__ABOUT__</span></div>
+
+
+<div class="viewcode-block" id="Cli.list">
+<a class="viewcode-back" href="../../bioat.html#bioat.cli.Cli.list">[docs]</a>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a formatted string of GROUPS and COMMANDS.</span>
+
+<span class="sd">        This method retrieves and formats the attributes and sub-attributes</span>
+<span class="sd">        of the instance, excluding private members (those starting with &quot;_&quot;).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A tree formatted string representing the available</span>
+<span class="sd">                 subcommands and their attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ! do not change OBJ method to CLASS method</span>
+        <span class="c1"># ! because some attr and methods do not exit before obj instantiation</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">att</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">att</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="k">for</span> <span class="n">sub_att</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">att</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_att</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                        <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  ├── </span><span class="si">{</span><span class="n">sub_att</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="Cli.version">
+<a class="viewcode-back" href="../../bioat.html#bioat.cli.Cli.version">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return version information.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The version information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">__VERSION__</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
