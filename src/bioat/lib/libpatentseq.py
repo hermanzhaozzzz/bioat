@@ -40,9 +40,9 @@ try:
     from playwright._impl._errors import TargetClosedError, TimeoutError
     from playwright.sync_api import Playwright, sync_playwright
 except (ImportError, ModuleNotFoundError) as e:
-    lm.set_level("warning")
-    lm.logger.warning(e)
-    lm.logger.warning(
+    lm.set_level("info")
+    lm.logger.info(e)
+    lm.logger.info(
         "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
     )
     sys.exit(0)

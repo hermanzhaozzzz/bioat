@@ -16,18 +16,32 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme myst-parser toml
+          pip install sphinx sphinx_rtd_theme myst-parser toml playwright
+          playwright install
           pip install .
+
+      - name: Validate documentation structure
+        run: |
+          if [ ! -f docs/index.rst ]; then echo "index.rst not found!"; exit 1; fi
 
       - name: Build documentation
         run: |
-          sphinx-build -b html docs/ docs/_build/html
+          sphinx-build -b html docs/ docs/_build/html || { echo "Build failed! Check logs."; exit 1; }
 
       - name: Deploy to GitHub Pages
+        if: success()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
