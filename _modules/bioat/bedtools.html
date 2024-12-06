@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.bedtools &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bioat.html">bioat package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.bedtools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.bedtools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">BioAt BedTools</span>
+<span class="sd"># todo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<div class="viewcode-block" id="BedTools">
+<a class="viewcode-back" href="../../bioat.html#bioat.bedtools.BedTools">[docs]</a>
+<span class="k">class</span> <span class="nc">BedTools</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bed toolbox.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="c1"># def random(</span>
+    <span class="c1">#     self,</span>
+    <span class="c1">#     kind=&quot;human&quot;,</span>
+    <span class="c1">#     length=200,</span>
+    <span class="c1">#     number=100,</span>
+    <span class="c1">#     fasta=None,</span>
+    <span class="c1">#     seed=0,</span>
+    <span class="c1">#     rm_n=True,</span>
+    <span class="c1"># ) -&gt; Bed:</span>
+    <span class="c1">#     &quot;&quot;&quot;Get random region</span>
+
+    <span class="c1">#     :param kind: Species:Tag, defaults to &quot;human&quot;</span>
+    <span class="c1">#     :type kind: str, optional</span>
+    <span class="c1">#     :param length: random region length, defaults to 200</span>
+    <span class="c1">#     :type length: int, optional</span>
+    <span class="c1">#     :param number: random region number, defaults to 100</span>
+    <span class="c1">#     :type number: int, optional</span>
+    <span class="c1">#     :param fasta: get random region from which genome, must be defined when rm_n=True, defaults to None</span>
+    <span class="c1">#     :type fasta: str, optional</span>
+    <span class="c1">#     :param seed: random seed, defaults to 0</span>
+    <span class="c1">#     :type seed: int, optional</span>
+    <span class="c1">#     :param rm_n: remove random region contains N base (It&#39;s often the telomere region), defaults to True</span>
+    <span class="c1">#     :type rm_n: bool, optional</span>
+    <span class="c1">#     :return: bed file</span>
+    <span class="c1">#     :rtype: Bed</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

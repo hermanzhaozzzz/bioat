@@ -1,0 +1,1016 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.lib.libfastx &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bioat.html">bioat package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.lib.libfastx</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.lib.libfastx</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">SeqIO</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libfastx&quot;</span><span class="p">)</span>
+
+<span class="n">AMINO_ACIDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ALA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ARG&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ASN&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ASP&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CYS&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GLU&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GLN&quot;</span><span class="p">:</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GLY&quot;</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HIS&quot;</span><span class="p">:</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ILE&quot;</span><span class="p">:</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LEU&quot;</span><span class="p">:</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LYS&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MET&quot;</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PHE&quot;</span><span class="p">:</span> <span class="s2">&quot;F&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PRO&quot;</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SER&quot;</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;THR&quot;</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TRP&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TYR&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;VAL&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">AMINO_ACIDS_EXTEND</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ABA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># α-氨基丁酸</span>
+    <span class="s2">&quot;ACE&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 乙酰基</span>
+    <span class="s2">&quot;AIB&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 2-氨基异丁酸</span>
+    <span class="s2">&quot;ALC&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 烯丙基丙氨酸</span>
+    <span class="s2">&quot;AYA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># N-乙酰基丙氨酸</span>
+    <span class="s2">&quot;DA2&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 2,3-二氨基丙酸</span>
+    <span class="s2">&quot;DAB&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># D-氨基丁酸</span>
+    <span class="s2">&quot;DAL&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># D-丙氨酸</span>
+    <span class="s2">&quot;DHA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 脱氢丙氨酸</span>
+    <span class="s2">&quot;SAR&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基甘氨酸</span>
+    <span class="s2">&quot;BAL&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># β-丙氨酸</span>
+    <span class="s2">&quot;CAF&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 半胱氨酸酰胺</span>
+    <span class="s2">&quot;CME&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 羧甲基化半胱氨酸</span>
+    <span class="s2">&quot;CSD&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 半胱氨酸二硫化物</span>
+    <span class="s2">&quot;CSO&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># S-羟基半胱氨酸</span>
+    <span class="s2">&quot;CSS&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 羧硫半胱氨酸</span>
+    <span class="s2">&quot;CSU&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># S-亚磺酰胺半胱氨酸</span>
+    <span class="s2">&quot;CSX&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 硫醇丙氨酸</span>
+    <span class="s2">&quot;CY1&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># S-羟甲基半胱氨酸</span>
+    <span class="s2">&quot;CYG&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 胱氨酸</span>
+    <span class="s2">&quot;CYX&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>  <span class="c1"># 双硫键连接的半胱氨酸</span>
+    <span class="s2">&quot;BHD&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>  <span class="c1"># β-羟基天冬氨酸</span>
+    <span class="s2">&quot;CGU&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>  <span class="c1"># γ-羧基谷氨酸</span>
+    <span class="s2">&quot;DGL&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>  <span class="c1"># D-谷氨酸</span>
+    <span class="s2">&quot;PCA&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>  <span class="c1"># 吡咯-2-氨基酸</span>
+    <span class="s2">&quot;GLZ&quot;</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>  <span class="c1"># 羧基甘氨酸</span>
+    <span class="s2">&quot;HSE&quot;</span><span class="p">:</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span>  <span class="c1"># 同亮氨酸（甲基化形式）</span>
+    <span class="s2">&quot;HIC&quot;</span><span class="p">:</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span>  <span class="c1"># β-羟基组氨酸</span>
+    <span class="s2">&quot;ALY&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># N-乙酰化赖氨酸</span>
+    <span class="s2">&quot;CMT&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基赖氨酸</span>
+    <span class="s2">&quot;KCX&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># 羧基赖氨酸</span>
+    <span class="s2">&quot;LGY&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># 乙酰化赖氨酸</span>
+    <span class="s2">&quot;M3L&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># 三甲基赖氨酸</span>
+    <span class="s2">&quot;MLY&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># ε-甲基赖氨酸</span>
+    <span class="s2">&quot;MLZ&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># 甲基化赖氨酸</span>
+    <span class="s2">&quot;NMM&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基赖氨酸</span>
+    <span class="s2">&quot;MLE&quot;</span><span class="p">:</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基亮氨酸</span>
+    <span class="s2">&quot;NLE&quot;</span><span class="p">:</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span>  <span class="c1"># 去甲硫氨酸</span>
+    <span class="s2">&quot;FME&quot;</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>  <span class="c1"># N-甲酰蛋氨酸</span>
+    <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>  <span class="c1"># 硒代蛋氨酸</span>
+    <span class="s2">&quot;OMT&quot;</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>  <span class="c1"># 羟甲基蛋氨酸</span>
+    <span class="s2">&quot;ASQ&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># 醋酸化天冬酰胺</span>
+    <span class="s2">&quot;BMA&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># β-D-甘露糖</span>
+    <span class="s2">&quot;DSN&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># D-天冬酰胺</span>
+    <span class="s2">&quot;FUC&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># 岩藻糖</span>
+    <span class="s2">&quot;MAN&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># 甘露糖</span>
+    <span class="s2">&quot;NAG&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># N-乙酰氨基葡萄糖</span>
+    <span class="s2">&quot;SIA&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># 唾液酸</span>
+    <span class="s2">&quot;HYP&quot;</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>  <span class="c1"># 羟脯氨酸</span>
+    <span class="s2">&quot;OHP&quot;</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>  <span class="c1"># 羟基化脯氨酸</span>
+    <span class="s2">&quot;PG1&quot;</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>  <span class="c1"># 羟脯氨酸</span>
+    <span class="s2">&quot;PR3&quot;</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>  <span class="c1"># 3,4-羟基脯氨酸</span>
+    <span class="s2">&quot;M3Q&quot;</span><span class="p">:</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基谷氨酰胺</span>
+    <span class="s2">&quot;MGN&quot;</span><span class="p">:</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基化谷氨酰胺</span>
+    <span class="s2">&quot;NRQ&quot;</span><span class="p">:</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span>  <span class="c1"># 糖化谷氨酰胺</span>
+    <span class="s2">&quot;QIL&quot;</span><span class="p">:</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span>  <span class="c1"># 甲基谷氨酰胺</span>
+    <span class="s2">&quot;MGG&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基精氨酸</span>
+    <span class="s2">&quot;ORN&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>  <span class="c1"># 鸟氨酸</span>
+    <span class="s2">&quot;GAL&quot;</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>  <span class="c1"># 半乳糖</span>
+    <span class="s2">&quot;SEP&quot;</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>  <span class="c1"># 磷酸丝氨酸</span>
+    <span class="s2">&quot;SHR&quot;</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>  <span class="c1"># 去氢丝氨酸</span>
+    <span class="s2">&quot;SUI&quot;</span><span class="p">:</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>  <span class="c1"># 过硫酸丝氨酸</span>
+    <span class="s2">&quot;TPO&quot;</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>  <span class="c1"># 磷酸化苏氨酸</span>
+    <span class="s2">&quot;4FW&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>  <span class="c1"># 5-氟代色氨酸</span>
+    <span class="s2">&quot;FTR&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>  <span class="c1"># 6-氟代色氨酸</span>
+    <span class="s2">&quot;HTR&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>  <span class="c1"># 羟基色氨酸</span>
+    <span class="s2">&quot;MLW&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>  <span class="c1"># N-甲基化色氨酸</span>
+    <span class="s2">&quot;PTR&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>  <span class="c1"># 磷酸酪氨酸</span>
+    <span class="s2">&quot;STY&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>  <span class="c1"># 硫代酪氨酸</span>
+    <span class="s2">&quot;TYI&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>  <span class="c1"># 碘酪氨酸</span>
+    <span class="s2">&quot;TYS&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>  <span class="c1"># 硫酸酪氨酸</span>
+    <span class="s2">&quot;LCY&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>  <span class="c1"># 羟基化酪氨酸</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_filter_fasta_length</span><span class="p">(</span><span class="n">contig</span><span class="p">,</span> <span class="n">lmin</span><span class="p">,</span> <span class="n">lmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">lmin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">lmax</span>
+    <span class="k">elif</span> <span class="n">lmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">lmin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">lmin</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">lmax</span>
+
+
+<div class="viewcode-block" id="cas_finder">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.crisprtools.cas_finder">[docs]</a>
+<span class="k">def</span> <span class="nf">cas_finder</span><span class="p">(</span>
+    <span class="n">input_fa</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_faa</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_contig_fa</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_crispr_info_tab</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lmin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extend</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">temp_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prodigal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prodigal_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;meta&quot;</span><span class="p">,</span>
+    <span class="n">pilercr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rm_temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># set logger</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;cas_finder&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pybedtools</span> <span class="kn">import</span> <span class="n">BedTool</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;pybedtools not installed, please exec `python -m pip install pybedtools` &quot;</span>
+            <span class="s2">&quot;or `conda install pybedtools`, then try again.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">workspace</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>  <span class="c1"># where I am</span>
+
+    <span class="k">if</span> <span class="n">temp_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">input_fa</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;./&quot;</span><span class="p">):</span>
+            <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">workspace</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">dirname</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">prodigal_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">):</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;prodigal mode </span><span class="si">{</span><span class="n">prodigal_mode</span><span class="si">}</span><span class="s2"> not supported, must be &#39;meta&#39; or &#39;single&#39;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">fa_input</span> <span class="o">=</span> <span class="n">input_fa</span>  <span class="c1"># input_fa = &#39;202155.assembled.fna&#39;</span>
+    <span class="n">fa_pep_cas</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>  <span class="c1"># output_faa, 不指定 | 指定</span>
+        <span class="n">workspace</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.pep.cas.faa&quot;</span> <span class="k">if</span> <span class="n">output_faa</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_faa</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">fa_crisper_contig</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>  <span class="c1"># output_contig_fa, 不指定 | 指定</span>
+        <span class="n">workspace</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.crisper.contig.fa&quot;</span>
+            <span class="k">if</span> <span class="n">output_contig_fa</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_contig_fa</span><span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># temp files</span>
+    <span class="n">f_pilercr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">.crispr.spacer.pilercr&quot;</span><span class="p">)</span>
+    <span class="n">fa_pep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.pep.faa&quot;</span><span class="p">)</span>
+    <span class="n">fa_filtered</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.filtered.fa&quot;</span><span class="p">)</span>
+    <span class="n">gff</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.gff&quot;</span><span class="p">)</span>
+    <span class="n">bed_pep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.pep.loc.bed&quot;</span><span class="p">)</span>
+    <span class="n">bed_crispr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.crispr.loc.bed&quot;</span><span class="p">)</span>
+    <span class="n">bed_cas</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_fa</span><span class="si">}</span><span class="s2">.cas.loc.bed&quot;</span><span class="p">)</span>
+    <span class="c1"># info</span>
+    <span class="n">assembly_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fa_input</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 0. filter contigs</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 1. cas &amp; protein annotation</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 2. get crispr loci</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 3. get protein cds</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 4. cas loci vs protein cds</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 5. get cas faa</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># PASS # 6. get all crispr contigs</span>
+    <span class="p">}</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 0. filter contigs</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;0.filter contigs&quot;</span><span class="p">)</span>
+        <span class="c1"># filter length of assembly contigs</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filter length of contigs from file @ </span><span class="si">{</span><span class="n">fa_input</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">contigs_input</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="n">contigs_output</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">contig</span>
+            <span class="k">for</span> <span class="n">contig</span> <span class="ow">in</span> <span class="n">contigs_input</span>
+            <span class="k">if</span> <span class="n">_filter_fasta_length</span><span class="p">(</span><span class="n">contig</span><span class="p">,</span> <span class="n">lmin</span><span class="p">,</span> <span class="n">lmax</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;writing filtered contigs to file @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># don&#39;t consider gz file. because it is a temp file.</span>
+        <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contigs_output</span><span class="p">,</span> <span class="n">fa_filtered</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># if fa_filtered is empty, just return empty fa_pep_cas</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;checking if @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fa_filtered</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># don&#39;t consider gz file. because it is a temp file.</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;fa_filtered @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2"> is empty! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fa_crisper_contig</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>  <span class="c1"># just return output file as an empty file</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 1. cas &amp; protein annotation</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;1.cas &amp; protein annotation&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;subprocess call for prodigal&quot;</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">prodigal</span><span class="p">,</span>
+                <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+                <span class="n">fa_pep</span><span class="p">,</span>
+                <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+                <span class="n">fa_filtered</span><span class="p">,</span>
+                <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+                <span class="n">prodigal_mode</span><span class="p">,</span>
+                <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;gff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+                <span class="n">gff</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;call has returned, check output @ </span><span class="si">{</span><span class="n">fa_pep</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># the output .pep.faa&#39;s header: &gt;name # start # stop # 1/-1 # prodigalInfo</span>
+        <span class="c1"># scaffold_1025_6</span>
+        <span class="c1"># the output .gff</span>
+        <span class="c1"># scaffold_1025 ID=1_1</span>
+        <span class="c1"># scaffold_1025 ID=1_2</span>
+        <span class="c1"># scaffold_1303 ID=2_1</span>
+        <span class="c1"># ...</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;subprocess call for pilercr&quot;</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>  <span class="c1"># don&#39;t export help doc for output crispr info</span>
+            <span class="p">[</span><span class="n">pilercr</span><span class="p">,</span> <span class="s2">&quot;-noinfo&quot;</span><span class="p">,</span> <span class="s2">&quot;-in&quot;</span><span class="p">,</span> <span class="n">fa_filtered</span><span class="p">,</span> <span class="s2">&quot;-out&quot;</span><span class="p">,</span> <span class="n">f_pilercr</span><span class="p">],</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;call has returned, check output @ </span><span class="si">{</span><span class="n">f_pilercr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># if fa_filtered is empty, just return empty fa_pep_cas</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;checking if @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 2.get crispr loci</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;2.get crispr loci&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_pilercr</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">wrapper_i</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="p">]</span>  <span class="c1"># skip empty line, drop &quot;\n&quot;</span>
+
+            <span class="n">parse_status</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">parse_detail</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">ls_detail</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="c1"># parse detail info</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                    <span class="s2">&quot;DETAIL REPORT&quot;</span>
+                <span class="p">):</span>  <span class="c1"># the first line to parse detail info</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find `DETAIL REPORT part`&quot;</span><span class="p">)</span>
+                    <span class="n">parse_detail</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;SUMMARY BY SIMILARITY&quot;</span><span class="p">):</span>  <span class="c1"># the end of detail info</span>
+                    <span class="n">parse_detail</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">parse_detail</span><span class="p">:</span>
+                    <span class="n">ls_detail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="c1"># parse repeat info</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                    <span class="s2">&quot;SUMMARY BY POSITION&quot;</span>
+                <span class="p">):</span>  <span class="c1"># the first line to parse repeat info</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find `SUMMARY BY POSITION part`&quot;</span><span class="p">)</span>
+                    <span class="n">parse_status</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">parse_status</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># when parse_status = True</span>
+                <span class="c1"># skip empty line when loading file (see beginning of the `loading`)</span>
+                <span class="c1"># then, the format to parse, eg.</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                # in</span>
+<span class="sd">                &gt;Ga0307431_1000033</span>
+<span class="sd">                Array          Sequence    Position      Length  # Copies  Repeat  Spacer    Distance  Consensus</span>
+<span class="sd">                =====  ================  ==========  ==========  ========  ======  ======  ==========  =========</span>
+<span class="sd">                    1  Ga0307431_100003       60530        1523        21      37      37              GTTT...AC</span>
+<span class="sd">                &gt;Ga0307431_1000385</span>
+<span class="sd">                Array          Sequence    Position      Length  # Copies  Repeat  Spacer    Distance  Consensus</span>
+<span class="sd">                =====  ================  ==========  ==========  ========  ======  ======  ==========  =========</span>
+<span class="sd">                    5  Ga0307431_100038          56        1025        16      30      36              CTTCCAATCCTACCTATGAGGAATTGAAAT</span>
+<span class="sd">                    6  Ga0307431_100038        1250         823        13      29      37         133  CTTCCAATCCTACCTATGAGGAATTGAAA</span>
+<span class="sd">                &gt;Ga0307431_1000754</span>
+<span class="sd">                Array          Sequence    Position      Length  # Copies  Repeat  Spacer    Distance  Consensus</span>
+<span class="sd">                =====  ================  ==========  ==========  ========  ======  ======  ==========  =========</span>
+<span class="sd">                   11  Ga0307431_100075       18230         366         6      36      30              GCTGTGATAGACCTCGATTTGTGGGGTAGTAACAGC</span>
+<span class="sd">                   12  Ga0307431_100075       20063         179         3      18      62        1437  ATGCCTAAGTATCTTAGG</span>
+<span class="sd">                # out</span>
+<span class="sd">                202155.assembled.fna_metacontig__Ga0307431_1000033	50828	72054	60828	62054	GTTT...AC	17	37	37	1</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
+                    <span class="n">contig</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="c1"># 2024-01-12 fix bug, if contig with space</span>
+                    <span class="c1"># contig = contig.replace(&quot; &quot;, &quot;_&quot;)</span>
+                    <span class="n">contig</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;find contig line, the contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Array&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=====&quot;</span><span class="p">):</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find annotation line, skip&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find a crispr array, try to parse it&quot;</span><span class="p">)</span>
+                <span class="c1"># when find a crispr array</span>
+                <span class="c1"># try to parse</span>
+                <span class="c1"># 2024-01-12 fix Sequence have space bug: invalid literal for int() with base 10: &#39;T&#39;</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">23</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">23</span><span class="p">:]</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="p">)</span>  <span class="c1"># split all symbol than can not see &#39;\t&#39;, &#39; &#39;, &#39;\n&#39;, et al.</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;splitted line info is: info = </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;info = </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">, info[1] = </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># assert contig == info[1]  # check contig name?  # pilercr返回的info[1]可能是contig的name的截短</span>
+                <span class="n">array_index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">crispr_start</span><span class="p">,</span> <span class="n">crispr_length</span> <span class="o">=</span> <span class="n">info</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">copies</span><span class="p">,</span> <span class="n">repeat</span><span class="p">,</span> <span class="n">spacer</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+                <span class="n">seq</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 因为Distance有可能为空，所以不放在一起解包</span>
+                <span class="n">array_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">array_index</span><span class="p">)</span>
+                <span class="n">crispr_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">crispr_start</span><span class="p">)</span>
+                <span class="n">crispr_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">crispr_length</span><span class="p">)</span>
+                <span class="n">copies</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">copies</span><span class="p">)</span>
+                <span class="n">repeat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">repeat</span><span class="p">)</span>
+                <span class="n">spacer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spacer</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;array_index = </span><span class="si">{</span><span class="n">array_index</span><span class="si">}</span><span class="s2">, contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_start = </span><span class="si">{</span><span class="n">crispr_start</span><span class="si">}</span><span class="s2">, crispr_length = </span><span class="si">{</span><span class="n">crispr_length</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">crispr_end</span> <span class="o">=</span> <span class="n">crispr_start</span> <span class="o">+</span> <span class="n">crispr_length</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="c1"># extending</span>
+                <span class="n">locus_start</span> <span class="o">=</span> <span class="n">crispr_start</span> <span class="o">-</span> <span class="n">extend</span> <span class="k">if</span> <span class="n">crispr_start</span> <span class="o">&gt;</span> <span class="n">extend</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="n">locus_end</span> <span class="o">=</span> <span class="n">crispr_end</span> <span class="o">+</span> <span class="n">extend</span>
+                <span class="c1"># write to loc_file</span>
+                <span class="n">line_out</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;assembly_id@</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">;contig_id@</span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chrom</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">locus_start</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chromStart</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">locus_end</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chromEnd</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_id@</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">array_index</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_start@</span><span class="si">{</span><span class="n">crispr_start</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_end@</span><span class="si">{</span><span class="n">crispr_end</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_extend_start@</span><span class="si">{</span><span class="n">locus_start</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_extend_end@</span><span class="si">{</span><span class="n">locus_end</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;repeat_seq@</span><span class="si">{</span><span class="n">seq</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;n_copies@</span><span class="si">{</span><span class="n">copies</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;n_repeats@</span><span class="si">{</span><span class="n">repeat</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;n_spacers@</span><span class="si">{</span><span class="n">spacer</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;0</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># score</span>
+                    <span class="s2">&quot;.</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># strand</span>
+                <span class="p">)</span>
+                <span class="n">wrapper_o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;2.additional job: writing crispr info table to @ </span><span class="si">{</span><span class="n">output_crispr_info_tab</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_detail</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="c1"># is empty</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="n">ls_detail</span> <span class="o">=</span> <span class="n">ls_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">ls_all</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">ls_temp</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">ls_rep_info</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">ls_detail</span><span class="p">:</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Array&quot;</span><span class="p">):</span>
+                        <span class="n">array_id</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Array &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">ls_temp</span><span class="p">:</span>
+                            <span class="n">ls_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls_temp</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
+                        <span class="n">contig_id</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                        <span class="n">ls_temp</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Pos&quot;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">repeat_seq_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span>
+                        <span class="n">repeat_length_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">spacer_length_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">ls_rep_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">repeat_seq_rep</span><span class="p">,</span> <span class="n">repeat_length_rep</span><span class="p">,</span> <span class="n">spacer_length_rep</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="n">ls_temp</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">contig_id</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">array_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">])</span>
+                <span class="n">ls_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls_temp</span><span class="p">)</span>
+
+                <span class="n">ls_df</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ls_all</span> <span class="ow">or</span> <span class="n">ls_all</span> <span class="o">==</span> <span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+                    <span class="c1"># don&#39;t consider gz file. because it is a temp file.</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;find no crispr info in @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2">! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">output_contig_fa</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_contig_fa</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span>
+                    <span class="k">return</span>  <span class="c1"># just return output file as an empty file</span>
+
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">one</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ls_all</span><span class="p">):</span>
+                    <span class="n">ls_one_info</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">ls_rep_info</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">one</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_one_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_one_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ls_one_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                        <span class="n">ls_one_info</span><span class="p">,</span>
+                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+                            <span class="s2">&quot;crispr_id&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;representative_repeat_seq&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;representative_repeat_length&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;representative_spacer_length&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;position&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;repeat_length&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">dentity&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;spacer_length&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;left_flank&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;repeat_mismatch&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;spacer_seq&quot;</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">ls_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+                <span class="n">df_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ls_df</span><span class="p">)</span>
+                <span class="n">df_all</span> <span class="o">=</span> <span class="n">df_all</span><span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;crispr_id&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;representative_repeat_seq&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;repeat_mismatch&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;representative_repeat_length&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;repeat_length&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;spacer_seq&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;representative_spacer_length&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;spacer_length&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;position&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">dentity&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;left_flank&quot;</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">]</span>
+                <span class="n">df_all</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 3.get protein locs</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;3.get protein loci&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gff</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_pep</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">wrapper_i</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="c1"># skip annotation lines wiht # and blank lines</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># DEBUG 这里的start和stop可能需要+-1？</span>
+                <span class="p">(</span>
+                    <span class="n">contig</span><span class="p">,</span>
+                    <span class="n">source</span><span class="p">,</span>
+                    <span class="n">feature</span><span class="p">,</span>
+                    <span class="n">start</span><span class="p">,</span>
+                    <span class="n">stop</span><span class="p">,</span>
+                    <span class="n">score</span><span class="p">,</span>
+                    <span class="n">strand</span><span class="p">,</span>
+                    <span class="n">phase</span><span class="p">,</span>
+                    <span class="n">atributes</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="n">info</span>
+                <span class="n">_temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atributes</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+                <span class="n">atributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_temp</span><span class="p">}</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">atributes</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">atributes</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="n">atributes_in_bed</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">atributes</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+                <span class="k">if</span> <span class="n">feature</span> <span class="o">!=</span> <span class="s2">&quot;CDS&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">strand</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+                <span class="c1"># write to loc_file</span>
+                <span class="n">line_out</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;assembly_id@</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">;contig_id@</span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chrom</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chromStart</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stop</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># chromEnd</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_id@</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_start@</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_end@</span><span class="si">{</span><span class="n">stop</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_predict_score@</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_strand@</span><span class="si">{</span><span class="n">strand</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;CDS_phase@</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Predigal_info@</span><span class="si">{</span><span class="n">atributes_in_bed</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1"># name</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">strand</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">wrapper_o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 4.cas locus vs protein locus</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;4.cas locus vs protein locus&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        -wo</span>
+<span class="sd">        Write the original A and B entries plus the number of base pairs of overlap</span>
+<span class="sd">            between the two features.</span>
+<span class="sd">            - Overlaps restricted by -f and -r.</span>
+<span class="sd">            - Only A features with overlap are reported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bed_a</span> <span class="o">=</span> <span class="n">BedTool</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">bed_pep</span><span class="p">)</span>
+        <span class="n">bed_b</span> <span class="o">=</span> <span class="n">BedTool</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">bed_crispr</span><span class="p">)</span>
+        <span class="n">bed_intersect</span> <span class="o">=</span> <span class="n">bed_a</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">bed_b</span><span class="p">,</span> <span class="n">wo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">bed_intersect</span><span class="o">.</span><span class="n">moveto</span><span class="p">(</span><span class="n">bed_cas</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;generate cas.bed file, check output @ </span><span class="si">{</span><span class="n">bed_cas</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># bed cas is now ready for fetch fasta of pep cas!</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 5.get cas candidate proteins</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;5.get cas candidate proteins&quot;</span><span class="p">)</span>
+        <span class="c1"># -----------------------------</span>
+        <span class="c1"># special part for a dict info</span>
+        <span class="c1"># -----------------------------</span>
+        <span class="c1"># load keys from cas bed</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_cas</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">contigs_cas</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="n">cas_loc_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">loc_info</span> <span class="ow">in</span> <span class="n">contigs_cas</span><span class="p">:</span>
+            <span class="n">dt_this</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">this_loc_info</span> <span class="o">=</span> <span class="n">loc_info</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+                <span class="n">dt_this</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+                <span class="n">dt_this</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+                <span class="n">dt_this</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="n">dt_this</span><span class="p">[</span><span class="s2">&quot;overlapped_base_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_loc_info</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+            <span class="c1"># cas_loc_info[dt_this[&quot;CDS_id&quot;].split(&quot;.fna_&quot;)[-1]] = dt_this</span>
+
+            <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">dt_this</span><span class="p">[</span><span class="s2">&quot;Predigal_info&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">):</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;ID&quot;</span><span class="p">:</span>
+                    <span class="n">CDS_id</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">break</span>
+            <span class="n">cas_loc_info</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dt_this</span><span class="p">[</span><span class="s2">&quot;contig_id&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">CDS_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_this</span>
+
+        <span class="c1"># crispr_ids = [&quot;_&quot;.join(i.split(&quot;_&quot;)[:-1]) for i in cas_loc_info.keys()]</span>
+        <span class="c1"># print(len(crispr_ids))</span>
+        <span class="c1"># lm.logger.debug(</span>
+        <span class="c1">#     f&#39;cas_loc_info = \n{cas_loc_info}\n&#39;</span>
+        <span class="c1"># )</span>
+
+        <span class="n">contigs_input</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fa_pep</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="n">contigs_output</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">contig</span> <span class="ow">in</span> <span class="n">contigs_input</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># header = Ga0307431_1014098_3</span>
+            <span class="n">contig</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;# &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">cas_loc_info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">cas_loc_info</span><span class="p">[</span><span class="n">header</span><span class="p">]</span>
+                <span class="n">contig</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;CDS_id&quot;</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+                <span class="p">)</span>
+                <span class="n">contigs_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fa_pep_cas</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contigs_output</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;generate cas.faa file, check output @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># 6.get all crispr contigs</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;6.get all crispr contigs&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">contigs_crispr</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="c1"># print(len(contigs_crispr))</span>
+        <span class="n">crispr_ids</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">contigs_crispr</span>
+        <span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">crispr_ids</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crispr_ids</span><span class="p">))</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">assembly_input</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="n">contigs_output</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">contig</span> <span class="ow">in</span> <span class="n">assembly_input</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">contig</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">crispr_ids</span><span class="p">:</span>
+                <span class="n">contigs_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">contigs_output</span><span class="p">:</span>
+            <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contigs_output</span><span class="p">,</span> <span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;generate crispr_scaffold.fa file, check output @ </span><span class="si">{</span><span class="n">fa_crisper_contig</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rm_temp</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing temp files @ </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f_pilercr</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fa_pep</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fa_filtered</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">gff</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">bed_pep</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">bed_cas</span><span class="p">)</span>
+
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cas13_finder">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.crisprtools.cas13_finder">[docs]</a>
+<span class="k">def</span> <span class="nf">cas13_finder</span><span class="p">(</span>
+    <span class="n">input_faa</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_faa</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lmin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># set logger</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;cas13_finder&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">workspace</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>  <span class="c1"># where I am</span>
+
+    <span class="n">fa_input</span> <span class="o">=</span> <span class="n">input_faa</span>  <span class="c1"># input_fa = &#39;202155.assembled.fna&#39;</span>
+    <span class="n">fa_pep_cas13</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">workspace</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_faa</span><span class="si">}</span><span class="s2">.with.HEPNs.faa&quot;</span> <span class="k">if</span> <span class="n">output_faa</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_faa</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># start to parse HEPN pattern</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">fa_cases</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+    <span class="n">fa_cases_filter_length</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cas</span> <span class="k">for</span> <span class="n">cas</span> <span class="ow">in</span> <span class="n">fa_cases</span> <span class="k">if</span> <span class="n">_filter_fasta_length</span><span class="p">(</span><span class="n">cas</span><span class="p">,</span> <span class="n">lmin</span><span class="p">,</span> <span class="n">lmax</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># pattern = re.compile(r&quot;R[NHD][A-Z]{3,5}H&quot;)</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;R[NHQD][A-Z]{3,5}H&quot;</span><span class="p">)</span>
+    <span class="c1"># pattern = re.compile(r&quot;(R[NHQD][A-Z]{3,5}H|H[A-Z]{3,5}[NHQD]R)&quot;)</span>
+    <span class="c1"># R: Arginine</span>
+    <span class="c1"># N: Asparagine</span>
+    <span class="c1"># H: Histidine</span>
+    <span class="c1"># Q: Glutarnine</span>
+    <span class="c1"># D: Asparticacid</span>
+    <span class="c1"># the pattern is based on three papers:</span>
+    <span class="c1"># 1.Anantharaman, V., Makarova, K. S., Burroughs, A. M., Koonin, E. V. &amp; Aravind, L. Comprehensive analysis of the HEPN superfamily: identification of novel roles in intra-genomic conflicts, defense, pathogenesis and RNA processing. Biol. Direct 8, 15 (2013).</span>
+    <span class="c1"># see ![](http://_pic.zhaohuanan.cc:7777/images/2024/01/08/20240108002122.png)</span>
+    <span class="c1"># 2.Xu, C. et al. Programmable RNA editing with compact CRISPR–Cas13 systems from uncultivated microbes. Nat. Methods 18, 499–506 (2021).</span>
+    <span class="c1"># see ![](http://_pic.zhaohuanan.cc:7777/images/2024/01/08/20240108004055.png)</span>
+    <span class="c1"># 3. what? for figure below</span>
+    <span class="c1"># see ![](http://_pic.zhaohuanan.cc:7777/images/2023/12/24/20231224215827.png)</span>
+
+    <span class="n">ls_fa_cases_out</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">fa_cas</span> <span class="ow">in</span> <span class="n">fa_cases_filter_length</span><span class="p">:</span>
+        <span class="c1"># matches = pattern.findall(string=str(fa_cas.seq))</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fa_cas</span><span class="o">.</span><span class="n">seq</span><span class="p">))</span>
+
+        <span class="n">ls_span</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">dt_span</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">dt_span</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+            <span class="n">dt_span</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()]</span>
+            <span class="n">ls_span</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_span</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_span</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;↓&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fa_cas.id = </span><span class="si">{</span><span class="n">fa_cas</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fa_cas.description = </span><span class="si">{</span><span class="n">fa_cas</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fa_cas.seq = </span><span class="si">{</span><span class="n">fa_cas</span><span class="o">.</span><span class="n">seq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fa_cas.length = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fa_cas</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;find pattern = r&#39;</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">re</span><span class="o">.</span><span class="n">pattern</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HEPN info = </span><span class="si">{</span><span class="n">ls_span</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ls_span</span><span class="p">):</span>
+                <span class="n">span</span> <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;;HEPN-</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">@[span=</span><span class="si">{</span><span class="n">span</span><span class="si">}</span><span class="s2">,target=</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">]&quot;</span>
+                <span class="n">fa_cas</span><span class="o">.</span><span class="n">description</span> <span class="o">+=</span> <span class="n">s</span>
+            <span class="n">fa_cas</span><span class="o">.</span><span class="n">description</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;;HEPN-count@</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ls_span</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;new fa_cas.description = </span><span class="si">{</span><span class="n">fa_cas</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ls_fa_cases_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fa_cas</span><span class="p">)</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fa_pep_cas13</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ls_fa_cases_out</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_this_fastx">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.crisprtools.format_this_fastx">[docs]</a>
+<span class="k">def</span> <span class="nf">format_this_fastx</span><span class="p">(</span>
+    <span class="n">old_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">new_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;format_this_fastx&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;start to format fastx file&quot;</span><span class="p">)</span>
+    <span class="n">f_input</span> <span class="o">=</span> <span class="n">old_file</span>
+    <span class="n">temp_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;.bioat_temp_</span><span class="si">{</span><span class="n">f_input</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># replace old file or write to new file!</span>
+    <span class="n">new_file</span> <span class="o">=</span> <span class="n">f_input</span> <span class="k">if</span> <span class="n">new_file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">new_file</span>
+
+    <span class="k">if</span> <span class="n">new_file</span> <span class="o">==</span> <span class="n">f_input</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;use --force to overwrite &lt;</span><span class="si">{</span><span class="n">f_input</span><span class="si">}</span><span class="s2">&gt;, or define --new_file&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">fasta</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+
+    <span class="n">iter_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fasta</span><span class="p">)</span>
+    <span class="n">handler_out</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">iter_out</span><span class="p">,</span> <span class="n">handler_out</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">handler_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rename </span><span class="si">{</span><span class="n">temp_file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">new_file</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done. Exit&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_length_distribution">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.crisprtools.calculate_length_distribution">[docs]</a>
+<span class="k">def</span> <span class="nf">calculate_length_distribution</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">,</span>
+    <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">plt_show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;calculate_length_distribution&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">.lengths&quot;</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;table file: </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">image</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">.lengths.pdf&quot;</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;image file: </span><span class="si">{</span><span class="n">image</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no exists length table, generate table file: </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
+            <span class="n">total_sequences</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">),</span>
+                <span class="n">total</span><span class="o">=</span><span class="n">total_sequences</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Processing sequences&quot;</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;exists length table: </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">, directly draw image: </span><span class="si">{</span><span class="n">image</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">])</span>
+
+    <span class="c1"># data = np.random.lognormal(mean=4.5, sigma=1.0, size=10000)  # 对数正态分布参数设置</span>
+    <span class="c1"># # 筛选出数据范围在10到10000之间的值</span>
+    <span class="c1"># data = data[(data &gt;= 10) &amp; (data &lt;= 10000)]</span>
+    <span class="c1"># df = pd.DataFrame()</span>
+    <span class="c1"># df[&#39;length&#39;] = data</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+    <span class="c1"># 分布图 (直方图) - 第一行，占据两列</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;plot histplot&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;.3&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span>
+    <span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">LogLocator</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">ScalarFormatter</span><span class="p">())</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">])</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Length Distribution (Log Scale)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Log10 of Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10000</span><span class="p">:</span>
+        <span class="c1"># box和violin的性能不好</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># 箱线图 - 第二行左列（非对数刻度，最大值设为10000）</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;plot boxplot&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightgreen&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Boxplot of Lengths&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Protein Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+    <span class="c1"># 小提琴图 - 第二行右列（非对数刻度，最大值设为10000）</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;plot violinplot&quot;</span><span class="p">)</span>
+    <span class="n">ax3</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightcoral&quot;</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Violin Plot of Lengths&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plt_show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

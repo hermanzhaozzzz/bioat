@@ -1,0 +1,984 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat package &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=27e171c2"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="bioat.lib package" href="bioat.lib.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">bioat package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html">bioat.lib package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-about-module">bioat.about module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.bamtools">bioat.bamtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.bamtools.BamTools"><code class="docutils literal notranslate"><span class="pre">BamTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.bamtools.BamTools.mpileup2table"><code class="docutils literal notranslate"><span class="pre">BamTools.mpileup2table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.bamtools.BamTools.remove_clip"><code class="docutils literal notranslate"><span class="pre">BamTools.remove_clip()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.bamtools.setup_signal_handling"><code class="docutils literal notranslate"><span class="pre">setup_signal_handling()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.bedtools">bioat.bedtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.bedtools.BedTools"><code class="docutils literal notranslate"><span class="pre">BedTools</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-cli-module">bioat.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.crisprtools">bioat.crisprtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.crisprtools.cas_finder"><code class="docutils literal notranslate"><span class="pre">cas_finder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.crisprtools.cas13_finder"><code class="docutils literal notranslate"><span class="pre">cas13_finder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.crisprtools.CrisprTools"><code class="docutils literal notranslate"><span class="pre">CrisprTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.crisprtools.CrisprTools.cas13_finder"><code class="docutils literal notranslate"><span class="pre">CrisprTools.cas13_finder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.crisprtools.CrisprTools.cas_finder"><code class="docutils literal notranslate"><span class="pre">CrisprTools.cas_finder()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.devtools">bioat.devtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.devtools.profile"><code class="docutils literal notranslate"><span class="pre">profile()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.exceptions">bioat.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatError"><code class="docutils literal notranslate"><span class="pre">BioatError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.exceptions.BioatError.__str__"><code class="docutils literal notranslate"><span class="pre">BioatError.__str__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatFileFormatError"><code class="docutils literal notranslate"><span class="pre">BioatFileFormatError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatFileNotCompleteError"><code class="docutils literal notranslate"><span class="pre">BioatFileNotCompleteError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatFileNotFoundError"><code class="docutils literal notranslate"><span class="pre">BioatFileNotFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatInvalidInputError"><code class="docutils literal notranslate"><span class="pre">BioatInvalidInputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatInvalidOptionError"><code class="docutils literal notranslate"><span class="pre">BioatInvalidOptionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatInvalidParameterError"><code class="docutils literal notranslate"><span class="pre">BioatInvalidParameterError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatMissingDependencyError"><code class="docutils literal notranslate"><span class="pre">BioatMissingDependencyError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatRuntimeError"><code class="docutils literal notranslate"><span class="pre">BioatRuntimeError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.exceptions.BioatValueError"><code class="docutils literal notranslate"><span class="pre">BioatValueError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.fastxtools">bioat.fastxtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.fastxtools.FastxTools"><code class="docutils literal notranslate"><span class="pre">FastxTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.fastxtools.FastxTools.filter_read_contains_n"><code class="docutils literal notranslate"><span class="pre">FastxTools.filter_read_contains_n()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.fastxtools.FastxTools.fmt_this"><code class="docutils literal notranslate"><span class="pre">FastxTools.fmt_this()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.fastxtools.FastxTools.mgi_parse_md5"><code class="docutils literal notranslate"><span class="pre">FastxTools.mgi_parse_md5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.fastxtools.FastxTools.plot_length_distribution"><code class="docutils literal notranslate"><span class="pre">FastxTools.plot_length_distribution()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.foldtools">bioat.foldtools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.foldtools.FoldTools"><code class="docutils literal notranslate"><span class="pre">FoldTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.foldtools.FoldTools.pdb2fasta"><code class="docutils literal notranslate"><span class="pre">FoldTools.pdb2fasta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.hictools">bioat.hictools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.hictools.HiCTools"><code class="docutils literal notranslate"><span class="pre">HiCTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.hictools.HiCTools.get_effective_resolutions"><code class="docutils literal notranslate"><span class="pre">HiCTools.get_effective_resolutions()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.logger">bioat.logger module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.logger.LoggerManager"><code class="docutils literal notranslate"><span class="pre">LoggerManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.LOG_FORMAT"><code class="docutils literal notranslate"><span class="pre">LoggerManager.LOG_FORMAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.__init__"><code class="docutils literal notranslate"><span class="pre">LoggerManager.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.add_stream_handler"><code class="docutils literal notranslate"><span class="pre">LoggerManager.add_stream_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.set_file"><code class="docutils literal notranslate"><span class="pre">LoggerManager.set_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.set_level"><code class="docutils literal notranslate"><span class="pre">LoggerManager.set_level()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.logger.LoggerManager.set_names"><code class="docutils literal notranslate"><span class="pre">LoggerManager.set_names()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-bioat.metatools">bioat.metatools module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bioat.metatools.MetaTools"><code class="docutils literal notranslate"><span class="pre">MetaTools</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.metatools.MetaTools.JGI_query"><code class="docutils literal notranslate"><span class="pre">MetaTools.JGI_query()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-searchtools-module">bioat.searchtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-systemtools-module">bioat.systemtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-tabletools-module">bioat.tabletools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bioat-target-seq-module">bioat.target_seq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">&lt;no title&gt;</a></li>
+      <li class="breadcrumb-item active">bioat package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/bioat.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bioat-package">
+<h1>bioat package<a class="headerlink" href="#bioat-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bioat.lib.html">bioat.lib package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libalignment">bioat.lib.libalignment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libalignment.get_aligned_seq"><code class="docutils literal notranslate"><span class="pre">get_aligned_seq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libalignment.get_alignment_info"><code class="docutils literal notranslate"><span class="pre">get_alignment_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libalignment.get_best_alignment"><code class="docutils literal notranslate"><span class="pre">get_best_alignment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libalignment.instantiate_pairwise_aligner"><code class="docutils literal notranslate"><span class="pre">instantiate_pairwise_aligner()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libcircos">bioat.lib.libcircos module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc"><code class="docutils literal notranslate"><span class="pre">Garc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.__setitem__"><code class="docutils literal notranslate"><span class="pre">Garc.__setitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.__getitem__"><code class="docutils literal notranslate"><span class="pre">Garc.__getitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.__init__"><code class="docutils literal notranslate"><span class="pre">Garc.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.calc_density"><code class="docutils literal notranslate"><span class="pre">Garc.calc_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnratio"><code class="docutils literal notranslate"><span class="pre">Garc.calc_nnratio()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnskew"><code class="docutils literal notranslate"><span class="pre">Garc.calc_nnskew()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Garc.colorlist"><code class="docutils literal notranslate"><span class="pre">Garc.colorlist</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle"><code class="docutils literal notranslate"><span class="pre">Gcircle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.__init__"><code class="docutils literal notranslate"><span class="pre">Gcircle.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.add_garc"><code class="docutils literal notranslate"><span class="pre">Gcircle.add_garc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.barplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.barplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.chord_plot"><code class="docutils literal notranslate"><span class="pre">Gcircle.chord_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.cmaps"><code class="docutils literal notranslate"><span class="pre">Gcircle.cmaps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.colors"><code class="docutils literal notranslate"><span class="pre">Gcircle.colors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.featureplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.featureplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.fillplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.fillplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.heatmap"><code class="docutils literal notranslate"><span class="pre">Gcircle.heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.lineplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.lineplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.save"><code class="docutils literal notranslate"><span class="pre">Gcircle.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.scatterplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.scatterplot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.set_garcs"><code class="docutils literal notranslate"><span class="pre">Gcircle.set_garcs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.setspine"><code class="docutils literal notranslate"><span class="pre">Gcircle.setspine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Gcircle.tickplot"><code class="docutils literal notranslate"><span class="pre">Gcircle.tickplot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tarc"><code class="docutils literal notranslate"><span class="pre">Tarc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tarc.__init__"><code class="docutils literal notranslate"><span class="pre">Tarc.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle"><code class="docutils literal notranslate"><span class="pre">Tcircle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.__getattr__"><code class="docutils literal notranslate"><span class="pre">Tcircle.__getattr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.__init__"><code class="docutils literal notranslate"><span class="pre">Tcircle.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.add_tarc"><code class="docutils literal notranslate"><span class="pre">Tcircle.add_tarc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.plot_highlight"><code class="docutils literal notranslate"><span class="pre">Tcircle.plot_highlight()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.plot_tree"><code class="docutils literal notranslate"><span class="pre">Tcircle.plot_tree()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.Tcircle.set_tarcs"><code class="docutils literal notranslate"><span class="pre">Tcircle.set_tarcs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.table_hg38_chromosome_length"><code class="docutils literal notranslate"><span class="pre">table_hg38_chromosome_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.table_hg38_cytoband"><code class="docutils literal notranslate"><span class="pre">table_hg38_cytoband()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.table_mm10_chromosome_length"><code class="docutils literal notranslate"><span class="pre">table_mm10_chromosome_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcircos.table_mm10_cytoband"><code class="docutils literal notranslate"><span class="pre">table_mm10_cytoband()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libcolor">bioat.lib.libcolor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcolor.convert_hex_to_rgb"><code class="docutils literal notranslate"><span class="pre">convert_hex_to_rgb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcolor.convert_rgb_to_hex"><code class="docutils literal notranslate"><span class="pre">convert_rgb_to_hex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcolor.make_color_list"><code class="docutils literal notranslate"><span class="pre">make_color_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcolor.map_color"><code class="docutils literal notranslate"><span class="pre">map_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcolor.plot_colortable"><code class="docutils literal notranslate"><span class="pre">plot_colortable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libcrispr">bioat.lib.libcrispr module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcrispr.cmp_align_list"><code class="docutils literal notranslate"><span class="pre">cmp_align_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libcrispr.run_target_seq_align"><code class="docutils literal notranslate"><span class="pre">run_target_seq_align()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libdataclasses">bioat.lib.libdataclasses module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Assembly"><code class="docutils literal notranslate"><span class="pre">Assembly</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Assembly.contigs"><code class="docutils literal notranslate"><span class="pre">Assembly.contigs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Assembly.length"><code class="docutils literal notranslate"><span class="pre">Assembly.length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Assembly.path"><code class="docutils literal notranslate"><span class="pre">Assembly.path</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bam"><code class="docutils literal notranslate"><span class="pre">Bam</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed"><code class="docutils literal notranslate"><span class="pre">Bed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.chromosome"><code class="docutils literal notranslate"><span class="pre">Bed.chromosome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.end"><code class="docutils literal notranslate"><span class="pre">Bed.end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.name"><code class="docutils literal notranslate"><span class="pre">Bed.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.score"><code class="docutils literal notranslate"><span class="pre">Bed.score</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.start"><code class="docutils literal notranslate"><span class="pre">Bed.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Bed.strand"><code class="docutils literal notranslate"><span class="pre">Bed.strand</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fasta.header"><code class="docutils literal notranslate"><span class="pre">Fasta.header</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fasta.length"><code class="docutils literal notranslate"><span class="pre">Fasta.length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fasta.sequence"><code class="docutils literal notranslate"><span class="pre">Fasta.sequence</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq"><code class="docutils literal notranslate"><span class="pre">Fastq</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq.extras"><code class="docutils literal notranslate"><span class="pre">Fastq.extras</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq.header"><code class="docutils literal notranslate"><span class="pre">Fastq.header</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq.is_valid"><code class="docutils literal notranslate"><span class="pre">Fastq.is_valid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq.quality"><code class="docutils literal notranslate"><span class="pre">Fastq.quality</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.Fastq.sequence"><code class="docutils literal notranslate"><span class="pre">Fastq.sequence</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libdataclasses.VCF"><code class="docutils literal notranslate"><span class="pre">VCF</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libdetect_seq">bioat.lib.libdetect_seq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libfastx">bioat.lib.libfastx module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libfastx.calculate_length_distribution"><code class="docutils literal notranslate"><span class="pre">calculate_length_distribution()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libfastx.cas13_finder"><code class="docutils literal notranslate"><span class="pre">cas13_finder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libfastx.cas_finder"><code class="docutils literal notranslate"><span class="pre">cas_finder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libfastx.format_this_fastx"><code class="docutils literal notranslate"><span class="pre">format_this_fastx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libjgi">bioat.lib.libjgi module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig"><code class="docutils literal notranslate"><span class="pre">JGIConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.FILENAME_CONFIG_PATH"><code class="docutils literal notranslate"><span class="pre">JGIConfig.FILENAME_CONFIG_PATH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.FILENAME_COOKIE"><code class="docutils literal notranslate"><span class="pre">JGIConfig.FILENAME_COOKIE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.FILENAME_TEMPLATE_LOG_FAIL"><code class="docutils literal notranslate"><span class="pre">JGIConfig.FILENAME_TEMPLATE_LOG_FAIL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.FILENAME_TEMPLATE_XML"><code class="docutils literal notranslate"><span class="pre">JGIConfig.FILENAME_TEMPLATE_XML</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.URL_JGI_FETCH_XML"><code class="docutils literal notranslate"><span class="pre">JGIConfig.URL_JGI_FETCH_XML</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.URL_JGI_LOGIN"><code class="docutils literal notranslate"><span class="pre">JGIConfig.URL_JGI_LOGIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.URL_JGI_MAIN"><code class="docutils literal notranslate"><span class="pre">JGIConfig.URL_JGI_MAIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.input_user_info"><code class="docutils literal notranslate"><span class="pre">JGIConfig.input_user_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.load_config"><code class="docutils literal notranslate"><span class="pre">JGIConfig.load_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIConfig.save_config"><code class="docutils literal notranslate"><span class="pre">JGIConfig.save_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIDoc"><code class="docutils literal notranslate"><span class="pre">JGIDoc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIDoc.DEFAULT_CATEGORIES"><code class="docutils literal notranslate"><span class="pre">JGIDoc.DEFAULT_CATEGORIES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIDoc.select_blurb"><code class="docutils literal notranslate"><span class="pre">JGIDoc.select_blurb</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIDoc.usage_example_blurb"><code class="docutils literal notranslate"><span class="pre">JGIDoc.usage_example_blurb</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIOperator"><code class="docutils literal notranslate"><span class="pre">JGIOperator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIOperator.download"><code class="docutils literal notranslate"><span class="pre">JGIOperator.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIOperator.parse_xml"><code class="docutils literal notranslate"><span class="pre">JGIOperator.parse_xml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libjgi.JGIOperator.query"><code class="docutils literal notranslate"><span class="pre">JGIOperator.query()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libpandas">bioat.lib.libpandas module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libpandas.set_option"><code class="docutils literal notranslate"><span class="pre">set_option()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#bioat-lib-libpatentseq-module">bioat.lib.libpatentseq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libpath">bioat.lib.libpath module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libpath.check_cmd"><code class="docutils literal notranslate"><span class="pre">check_cmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libpath.check_executable"><code class="docutils literal notranslate"><span class="pre">check_executable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libpdb">bioat.lib.libpdb module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libpdb.pdb2fasta"><code class="docutils literal notranslate"><span class="pre">pdb2fasta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libphylo">bioat.lib.libphylo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libplot">bioat.lib.libplot module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libplot.init_matplotlib"><code class="docutils literal notranslate"><span class="pre">init_matplotlib()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libplot.plot_colortable"><code class="docutils literal notranslate"><span class="pre">plot_colortable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libsnakemake">bioat.lib.libsnakemake module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libsnakemake.check_cmd"><code class="docutils literal notranslate"><span class="pre">check_cmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libsnakemake.check_read"><code class="docutils literal notranslate"><span class="pre">check_read()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libsnakemake.print_head"><code class="docutils literal notranslate"><span class="pre">print_head()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib.libspider">bioat.lib.libspider module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libspider.ProxyPool"><code class="docutils literal notranslate"><span class="pre">ProxyPool</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libspider.ProxyPool.delete_proxy"><code class="docutils literal notranslate"><span class="pre">ProxyPool.delete_proxy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="bioat.lib.html#bioat.lib.libspider.ProxyPool.get_proxy"><code class="docutils literal notranslate"><span class="pre">ProxyPool.get_proxy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="bioat.lib.html#bioat.lib.libspider.get_random_user_agents"><code class="docutils literal notranslate"><span class="pre">get_random_user_agents()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bioat.lib.html#module-bioat.lib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="bioat-about-module">
+<h2>bioat.about module<a class="headerlink" href="#bioat-about-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bioat.bamtools">
+<span id="bioat-bamtools-module"></span><h2>bioat.bamtools module<a class="headerlink" href="#module-bioat.bamtools" title="Link to this heading"></a></h2>
+<p>module of bamtools</p>
+<p>bioat bamtools &lt;command&gt; deal with SAM or BAM files</p>
+<dl>
+<dt>example 1:</dt><dd><dl>
+<dt>bioat list</dt><dd><dl>
+<dt>&lt;in shell&gt;:</dt><dd><p>$ bioat bam remove_clip –help</p>
+</dd>
+<dt>&lt;in python consolo&gt;:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bioat.cli</span> <span class="kn">import</span> <span class="n">Cli</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bioat</span> <span class="o">=</span> <span class="n">Cli</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">bioat</span><span class="o">.</span><span class="n">bam</span><span class="o">.</span><span class="n">remove_clip</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>example 2:</dt><dd><p>_example_</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.bamtools.BamTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.bamtools.</span></span><span class="sig-name descname"><span class="pre">BamTools</span></span><a class="reference internal" href="_modules/bioat/bamtools.html#BamTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.bamtools.BamTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bam toolbox.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.bamtools.BamTools.mpileup2table">
+<span class="sig-name descname"><span class="pre">mpileup2table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mpileup:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~_io.TextIOWrapper</span> <span class="pre">=</span> <span class="pre">&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation_number_threshold:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'__bioat_temp_dir'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_temp:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bioat/bamtools.html#BamTools.mpileup2table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.bamtools.BamTools.mpileup2table" title="Link to this definition"></a></dt>
+<dd><p>Converts an mpileup file to a structured info file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mpileup</strong> (<em>str</em>) – Path to the samtools mpileup format file.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em> | </em><em>TextIOWrapper</em>) – Path to the output file where parsed data will be stored. Defaults to standard output.</p></li>
+<li><p><strong>threads</strong> (<em>int</em>) – Number of threads to utilize for processing. Default is one less than the number of available CPU cores.</p></li>
+<li><p><strong>mutation_number_threshold</strong> (<em>int</em>) – Threshold for mutation information; set to 0 to include all sites.</p></li>
+<li><p><strong>temp_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory for temporary files. Defaults to a directory in ‘__bioat_temp_dir’.</p></li>
+<li><p><strong>remove_temp</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicator for whether to remove temporary files after processing. Defaults to True.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Level of logging. Options are ‘CRITICAL’, ‘ERROR’, ‘WARNING’, ‘INFO’, ‘DEBUG’, ‘NOTSET’.
+Defaults to ‘WARNING’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function does not return a value. It outputs a file based on the provided parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.bamtools.BamTools.remove_clip">
+<span class="sig-name descname"><span class="pre">remove_clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~_io.TextIOWrapper</span> <span class="pre">=</span> <span class="pre">&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdin&gt;'</span> <span class="pre">mode='r'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~_io.TextIOWrapper</span> <span class="pre">=</span> <span class="pre">&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fmt:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'SAM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_as_paired:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_clip:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/bamtools.html#BamTools.remove_clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.bamtools.BamTools.remove_clip" title="Link to this definition"></a></dt>
+<dd><p>Remove soft/hard clipped reads from a BAM/SAM file.</p>
+<p>This method removes soft/hard clipped reads from a BAM/SAM file. It can
+accept input from stdin and produce output to stdout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em><em> | </em><em>TextIOWrapper</em>) – BAM file sorted by query name with soft/hard clipped reads.
+Pipe stdin is supported, e.g.:
+[samtools view -h foo_sort_name.bam | bioat bam remove_clip &lt;flags&gt;].</p></li>
+<li><p><strong>output</strong> (<em>str</em><em> | </em><em>TextIOWrapper</em>) – BAM file sorted by query name without soft/hard clipped reads.
+Pipe stdout is supported, e.g.:
+[bioat bam remove_clip &lt;flags&gt; | wc -l]
+or [bioat bam remove_clip &lt;flags&gt; | samtools view ….].</p></li>
+<li><p><strong>threads</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads used by pysam and samtools core.
+Defaults to the number of CPU cores.</p></li>
+<li><p><strong>output_fmt</strong> (<em>str</em><em>, </em><em>optional</em>) – Format of the output file, can be “BAM” or “SAM”. Defaults to “SAM”.</p></li>
+<li><p><strong>remove_as_paired</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to determine whether to remove single clipped reads.
+If True, removes both the clipped read and its paired read. The input
+BAM/SAM must be sorted by name and have header [SO:queryname].
+If False, only removes the single clipped read.</p></li>
+<li><p><strong>max_clip</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of clips allowed per read. Defaults to 0.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Logging level for the process. Can be one of
+‘CRITICAL’, ‘ERROR’, ‘WARNING’, ‘INFO’, ‘DEBUG’, ‘NOTSET’.
+Defaults to “INFO”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.bamtools.setup_signal_handling">
+<span class="sig-prename descclassname"><span class="pre">bioat.bamtools.</span></span><span class="sig-name descname"><span class="pre">setup_signal_handling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/bamtools.html#setup_signal_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.bamtools.setup_signal_handling" title="Link to this definition"></a></dt>
+<dd><p>Setup signal handlers.</p>
+</dd></dl>
+
+</section>
+<section id="module-bioat.bedtools">
+<span id="bioat-bedtools-module"></span><h2>bioat.bedtools module<a class="headerlink" href="#module-bioat.bedtools" title="Link to this heading"></a></h2>
+<p>BioAt BedTools
+# todo</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.bedtools.BedTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.bedtools.</span></span><span class="sig-name descname"><span class="pre">BedTools</span></span><a class="reference internal" href="_modules/bioat/bedtools.html#BedTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.bedtools.BedTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bed toolbox.</p>
+</dd></dl>
+
+</section>
+<section id="bioat-cli-module">
+<h2>bioat.cli module<a class="headerlink" href="#bioat-cli-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-bioat.crisprtools">
+<span id="bioat-crisprtools-module"></span><h2>bioat.crisprtools module<a class="headerlink" href="#module-bioat.crisprtools" title="Link to this heading"></a></h2>
+<p>crisprtools.py</p>
+<p>This module provides a toolbox for mining CRISPR-related sequences in metagenomic data.
+It includes functionality for identifying Cas candidates associated with CRISPR loci
+and for annotating Cas13 candidates from protein sequences. The main class, <cite>CrisprTools</cite>,
+provides methods for calling external executables such as Prodigal and Pilercr for protein
+prediction and CRISPR identification.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><dl class="simple">
+<dt>CrisprTools: A class containing methods for identifying Cas candidates and Cas13</dt><dd><p>candidates from genomic data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.crisprtools.cas_finder">
+<span class="sig-prename descclassname"><span class="pre">bioat.crisprtools.</span></span><span class="sig-name descname"><span class="pre">cas_finder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libfastx.html#cas_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.crisprtools.cas_finder" title="Link to this definition"></a></dt>
+<dd><p>A method for de novo annotation of Cas candidates from CRISPR loci,
+utilizing input fasta files and producing various output files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.crisprtools.cas13_finder">
+<span class="sig-prename descclassname"><span class="pre">bioat.crisprtools.</span></span><span class="sig-name descname"><span class="pre">cas13_finder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libfastx.html#cas13_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.crisprtools.cas13_finder" title="Link to this definition"></a></dt>
+<dd><p>A method for the annotation of Cas13 candidates from protein
+fasta files.</p>
+</dd></dl>
+
+<dl class="simple">
+<dt>Usage:</dt><dd><p>To use this module, create an instance of <cite>CrisprTools</cite> and call the methods
+<cite>cas_finder</cite> or <cite>cas13_finder</cite> with the appropriate parameters to perform
+CRISPR analysis on your dataset.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.crisprtools.CrisprTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.crisprtools.</span></span><span class="sig-name descname"><span class="pre">CrisprTools</span></span><a class="reference internal" href="_modules/bioat/crisprtools.html#CrisprTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.crisprtools.CrisprTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>CRISPR mining toolbox.</p>
+<p>This class provides methods for performing CRISPR analysis on datasets, including
+finding Cas proteins and CRISPR sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.crisprtools.CrisprTools.cas13_finder">
+<span class="sig-name descname"><span class="pre">cas13_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_faa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_faa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/crisprtools.html#CrisprTools.cas13_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.crisprtools.CrisprTools.cas13_finder" title="Link to this definition"></a></dt>
+<dd><p>De novo annotation for Cas13 candidates from proteins.faa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_faa</strong> (<em>str</em>) – The input file containing Cas candidates in .faa format.</p></li>
+<li><p><strong>output_faa</strong> (<em>str</em><em>, </em><em>optional</em>) – The output file for Cas13 candidates in .faa format. Defaults to None.</p></li>
+<li><p><strong>lmin</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum length for a Cas candidate. Defaults to 200.</p></li>
+<li><p><strong>lmax</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum length for a Cas candidate. Defaults to 1500.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – The logging level. Options are ‘CRITICAL’, ‘ERROR’, ‘WARNING’, ‘INFO’, ‘DEBUG’, ‘NOTSET’. Defaults to ‘INFO’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.crisprtools.CrisprTools.cas_finder">
+<span class="sig-name descname"><span class="pre">cas_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_fa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_faa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_contig_fa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_crispr_info_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prodigal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prodigal_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'meta'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pilercr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/crisprtools.html#CrisprTools.cas_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.crisprtools.CrisprTools.cas_finder" title="Link to this definition"></a></dt>
+<dd><p>De novo annotation for Cas candidates from neighbors of CRISPR loci.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_fa</strong> (<em>str</em>) – Path to the input metagenome fasta file containing many contigs.</p></li>
+<li><p><strong>output_faa</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the de novo annotated Cas candidates.</p></li>
+<li><p><strong>output_contig_fa</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the whole contigs of de novo annotated Cas candidates.</p></li>
+<li><p><strong>output_crispr_info_tab</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the de novo annotated CRISPR info table (CSV format).</p></li>
+<li><p><strong>lmin</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum length for a contig. Defaults to 3000.</p></li>
+<li><p><strong>lmax</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum length for a contig. Defaults to None.</p></li>
+<li><p><strong>extend</strong> (<em>int</em><em>, </em><em>optional</em>) – Distance over which proteins are considered from the start/end of the CRISPR loci. Defaults to 10000.</p></li>
+<li><p><strong>temp_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to store temporary files. Defaults to None.</p></li>
+<li><p><strong>prodigal</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the Prodigal executable. Defaults to None.</p></li>
+<li><p><strong>prodigal_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for Prodigal annotation. Can be “meta” or “single”. Defaults to “meta”.</p></li>
+<li><p><strong>pilercr</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the Pilercr executable. Defaults to None.</p></li>
+<li><p><strong>rm_temp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, temporary files will be kept. Defaults to True.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Logging level; set to “DEBUG” to see logs from prodigal and pilercr. Defaults to “INFO”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioat.devtools">
+<span id="bioat-devtools-module"></span><h2>bioat.devtools module<a class="headerlink" href="#module-bioat.devtools" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.devtools.profile">
+<span class="sig-prename descclassname"><span class="pre">bioat.devtools.</span></span><span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/devtools.html#profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.devtools.profile" title="Link to this definition"></a></dt>
+<dd><p>Decorator for calculating the runtime of a function, over multiple iterations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – times to iter, defaults to 1</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bioat.exceptions">
+<span id="bioat-exceptions-module"></span><h2>bioat.exceptions module<a class="headerlink" href="#module-bioat.exceptions" title="Link to this heading"></a></h2>
+<p>This module contains custom exception classes for the bioat package.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for all custom exceptions in the bioat package.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatError.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatError.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatError.__str__" title="Link to this definition"></a></dt>
+<dd><p>Return a string representation of the exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatFileFormatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatFileFormatError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatFileFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatFileFormatError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for errors in file format.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatFileNotCompleteError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatFileNotCompleteError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatFileNotCompleteError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatFileNotCompleteError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised when a file is not complete.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatFileNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatFileNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatFileNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatFileNotFoundError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised when a required file is not found.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatInvalidInputError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatInvalidInputError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatInvalidInputError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatInvalidInputError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for invalid input errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatInvalidOptionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatInvalidOptionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatInvalidOptionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatInvalidOptionError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for invalid option errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatInvalidParameterError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatInvalidParameterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatInvalidParameterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatInvalidParameterError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for invalid parameter errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatMissingDependencyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatMissingDependencyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatMissingDependencyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatMissingDependencyError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised when a required dependency is missing.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatRuntimeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatRuntimeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatRuntimeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatRuntimeError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for runtime errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="bioat.exceptions.BioatValueError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.exceptions.</span></span><span class="sig-name descname"><span class="pre">BioatValueError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/exceptions.html#BioatValueError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.exceptions.BioatValueError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><code class="xref py py-class docutils literal notranslate"><span class="pre">BioatError</span></code></a></p>
+<p>Exception raised for errors related to values.</p>
+</dd></dl>
+
+</section>
+<section id="module-bioat.fastxtools">
+<span id="bioat-fastxtools-module"></span><h2>bioat.fastxtools module<a class="headerlink" href="#module-bioat.fastxtools" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.fastxtools.FastxTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.fastxtools.</span></span><span class="sig-name descname"><span class="pre">FastxTools</span></span><a class="reference internal" href="_modules/bioat/fastxtools.html#FastxTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.fastxtools.FastxTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>FASTA &amp; FASTQ toolbox.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.fastxtools.FastxTools.filter_read_contains_n">
+<span class="sig-name descname"><span class="pre">filter_read_contains_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;stdout&gt;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/fastxtools.html#FastxTools.filter_read_contains_n"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.fastxtools.FastxTools.filter_read_contains_n" title="Link to this definition"></a></dt>
+<dd><p>Filter reads that contain the ‘N’ base in FASTA or FASTQ formats.</p>
+<p>This function processes a given FASTA or FASTQ file and
+filters out reads that contain the ‘N’ base.
+The result is directed to an output file, or to stdout
+if no output file is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The name of the FASTA or FASTQ file to be processed.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The name of the output file. Defaults to stdout
+if not specified, and the format matches the input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.fastxtools.FastxTools.fmt_this">
+<span class="sig-name descname"><span class="pre">fmt_this</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/fastxtools.html#FastxTools.fmt_this"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.fastxtools.FastxTools.fmt_this" title="Link to this definition"></a></dt>
+<dd><p>Formats a FASTA file to improve readability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The input filename for the FASTA file.</p></li>
+<li><p><strong>new_file</strong> (<em>str</em><em> | </em><em>None</em>) – The output filename. If None, the <cite>file</cite> will be replaced. Default is None.</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – If True, forces the formatting even if the output file exists. Default is False.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em>) – The logging level for messages. Default is “WARNING”.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function calls ‘format_this_fastx’ to perform the actual formatting on the specified FASTA file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.fastxtools.FastxTools.mgi_parse_md5">
+<span class="sig-name descname"><span class="pre">mgi_parse_md5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/fastxtools.html#FastxTools.mgi_parse_md5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.fastxtools.FastxTools.mgi_parse_md5" title="Link to this definition"></a></dt>
+<dd><p>Converts a mgi-like MD5 file into a standard MD5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The name of the mgi-like MD5 file to read.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – The logging level to use.
+It can be INFO, DEBUG, WARNING, or ERROR. The default is WARNING.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.fastxtools.FastxTools.plot_length_distribution">
+<span class="sig-name descname"><span class="pre">plot_length_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plt_show</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/fastxtools.html#FastxTools.plot_length_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.fastxtools.FastxTools.plot_length_distribution" title="Link to this definition"></a></dt>
+<dd><p>Plots the length distribution of a FASTA file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The input filename for the FASTA file.</p></li>
+<li><p><strong>table</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The output filename for the length distribution table. Default is &lt;file&gt;.lengths.</p></li>
+<li><p><strong>image</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The output filename for the length distribution figure. Default is &lt;file&gt;.lengths.pdf.</p></li>
+<li><p><strong>plt_show</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, shows the plot. Default is False.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em>) – The logging level for messages. Default is “WARNING”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioat.foldtools">
+<span id="bioat-foldtools-module"></span><h2>bioat.foldtools module<a class="headerlink" href="#module-bioat.foldtools" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.foldtools.FoldTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.foldtools.</span></span><span class="sig-name descname"><span class="pre">FoldTools</span></span><a class="reference internal" href="_modules/bioat/foldtools.html#FoldTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.foldtools.FoldTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Folding toolbox.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.foldtools.FoldTools.pdb2fasta">
+<span class="sig-name descname"><span class="pre">pdb2fasta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/foldtools.html#FoldTools.pdb2fasta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.foldtools.FoldTools.pdb2fasta" title="Link to this definition"></a></dt>
+<dd><p>Converts a PDB file to a FASTA file.</p>
+<p>This function processes the provided PDB file and extracts protein, DNA,
+RNA sequences, and other molecules appropriately to create a FASTA file.</p>
+<dl class="simple">
+<dt>Details:</dt><dd><ol class="arabic simple">
+<li><p><strong>Proteins</strong>:
+The protein sequence for each chain will be extracted as “Chain X Protein”.</p></li>
+<li><p><strong>DNA and RNA</strong>:
+Bases for DNA (A, T, G, C) will be saved as “Chain X DNA”, and bases for RNA (A, U, G, C) will be saved as “Chain X RNA”.</p></li>
+<li><p><strong>Other molecules</strong>:
+Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as “Chain X Other molecules”.</p></li>
+<li><p><strong>Multi-chain complexes</strong>:
+The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – Input file path.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Output file path. If None, the output file will be named as the
+basename of the input file with a “.fa” extension. Defaults to None.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Logging level. Defaults to “WARNING”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioat.hictools">
+<span id="bioat-hictools-module"></span><h2>bioat.hictools module<a class="headerlink" href="#module-bioat.hictools" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.hictools.HiCTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.hictools.</span></span><span class="sig-name descname"><span class="pre">HiCTools</span></span><a class="reference internal" href="_modules/bioat/hictools.html#HiCTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.hictools.HiCTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hi-C toolbox.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.hictools.HiCTools.get_effective_resolutions">
+<span class="sig-name descname"><span class="pre">get_effective_resolutions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bioat.hictools.HiCTools.get_effective_resolutions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioat.logger">
+<span id="bioat-logger-module"></span><h2>bioat.logger module<a class="headerlink" href="#module-bioat.logger" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.logger.</span></span><span class="sig-name descname"><span class="pre">LoggerManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ERROR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fbt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.LOG_FORMAT">
+<span class="sig-name descname"><span class="pre">LOG_FORMAT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'%(asctime)s.%(msecs)03d</span> <span class="pre">-</span> <span class="pre">[%(name)s]</span> <span class="pre">-</span> <span class="pre">%(filename)s[line:%(lineno)4d]</span> <span class="pre">-</span> <span class="pre">%(levelname)+8s:</span> <span class="pre">%(message)s'</span></em><a class="headerlink" href="#bioat.logger.LoggerManager.LOG_FORMAT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ERROR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fbt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the LoggerManager with default log level and module name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Default logger level. Defaults to “ERROR”.</p></li>
+<li><p><strong>mod_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Module name. Defaults to “fbt”.</p></li>
+<li><p><strong>cls_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the class for which the logger is created.
+Defaults to None.</p></li>
+<li><p><strong>func_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the function for which the logger is created.
+Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.add_stream_handler">
+<span class="sig-name descname"><span class="pre">add_stream_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager.add_stream_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager.add_stream_handler" title="Link to this definition"></a></dt>
+<dd><p>Add a stream handler to the logger for writing logs to the console.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.set_file">
+<span class="sig-name descname"><span class="pre">set_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10485760</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager.set_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager.set_file" title="Link to this definition"></a></dt>
+<dd><p>Configure file logging for the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The name of the log file.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – File mode. Use ‘a’ for append or ‘w’ for overwrite. Defaults to “a”.</p></li>
+<li><p><strong>max_bytes</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum size of a single log file before rotation. Defaults to 10MB.</p></li>
+<li><p><strong>backup_count</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of backup files to keep. Defaults to 5.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.set_level">
+<span class="sig-name descname"><span class="pre">set_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager.set_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager.set_level" title="Link to this definition"></a></dt>
+<dd><p>Update the logging level dynamically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>log_level</strong> (<em>str</em>) – The new logging level.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.logger.LoggerManager.set_names">
+<span class="sig-name descname"><span class="pre">set_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/logger.html#LoggerManager.set_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.logger.LoggerManager.set_names" title="Link to this definition"></a></dt>
+<dd><p>Update the class and/or function context for the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls_name</strong> (<em>str</em><em>, </em><em>optional</em>) – New class name.</p></li>
+<li><p><strong>func_name</strong> (<em>str</em><em>, </em><em>optional</em>) – New function name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioat.metatools">
+<span id="bioat-metatools-module"></span><h2>bioat.metatools module<a class="headerlink" href="#module-bioat.metatools" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioat.metatools.MetaTools">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioat.metatools.</span></span><span class="sig-name descname"><span class="pre">MetaTools</span></span><a class="reference internal" href="_modules/bioat/metatools.html#MetaTools"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.metatools.MetaTools" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Metagenome toolbox.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioat.metatools.MetaTools.JGI_query">
+<span class="sig-name descname"><span class="pre">JGI_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_fails</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nretry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_get</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">just_query_xml</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">syntax_help</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">usage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/metatools.html#MetaTools.JGI_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.metatools.MetaTools.JGI_query" title="Link to this definition"></a></dt>
+<dd><p>JGI_query: Tool for downloading files from the JGI-IMG database.</p>
+<p>This function lists and retrieves files from JGI using the curl API and
+returns a list of all files available for download for a given query organism.</p>
+<p>The source code is adapted from <a class="reference external" href="https://github.com/glarue/jgi-query">https://github.com/glarue/jgi-query</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query_info</strong> (<em>str</em><em> | </em><em>None</em>) – Organism name formatted per JGI’s abbreviation.
+Example: ‘Nematostella vectensis’ is abbreviated by JGI as ‘Nemve1’.
+The correct abbreviation can be found by searching for the organism on JGI;
+the name used in the URL of the ‘Info’ page for that organism is
+the correct abbreviation. The full URL may also be used for this argument.</p></li>
+<li><p><strong>xml</strong> (<em>str</em><em> | </em><em>None</em>) – Specify a local XML file for the query instead of retrieving
+a new copy from JGI.</p></li>
+<li><p><strong>log_fails</strong> (<em>str</em><em> | </em><em>None</em>) – Log file containing URLs to retry downloading from in case of failure.</p></li>
+<li><p><strong>nretry</strong> (<em>int</em>) – Number of times to retry downloading files with errors.
+Use 0 to skip such files.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – Timeout (in seconds) for downloading. Set to -1 to disable.</p></li>
+<li><p><strong>regex</strong> (<em>str</em><em> | </em><em>None</em>) – Regex pattern to use for auto-selecting and downloading files
+without interaction.</p></li>
+<li><p><strong>all_get</strong> (<em>bool</em>) – If True, auto-select and download all files for the query
+without interaction.</p></li>
+<li><p><strong>overwrite_conf</strong> (<em>bool</em>) – If True, initiate configuration dialog to overwrite
+existing user/password configuration.</p></li>
+<li><p><strong>filter_files</strong> (<em>bool</em>) – Under development. Filter organism results by config categories
+instead of reporting all files listed by JGI for the query.</p></li>
+<li><p><strong>proxy_pool</strong> (<em>str</em><em> | </em><em>None</em>) – URL for the proxy pool, e.g., <a class="reference external" href="http://abc.com:port">http://abc.com:port</a>. See
+<a class="reference external" href="https://github.com/hermanzhaozzzz/proxy_pool">https://github.com/hermanzhaozzzz/proxy_pool</a>.</p></li>
+<li><p><strong>just_query_xml</strong> (<em>bool</em>) – Set True if you just want to save the XML file.</p></li>
+<li><p><strong>syntax_help</strong> (<em>bool</em>) – If True, provide syntax help in doc mode.</p></li>
+<li><p><strong>usage</strong> (<em>bool</em>) – If True, print verbose usage information and exit.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em>) – Set the logging level. Options include ‘CRITICAL’, ‘ERROR’,
+‘WARNING’, ‘INFO’, ‘DEBUG’, ‘NOTSET’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="bioat-searchtools-module">
+<h2>bioat.searchtools module<a class="headerlink" href="#bioat-searchtools-module" title="Link to this heading"></a></h2>
+</section>
+<section id="bioat-systemtools-module">
+<h2>bioat.systemtools module<a class="headerlink" href="#bioat-systemtools-module" title="Link to this heading"></a></h2>
+</section>
+<section id="bioat-tabletools-module">
+<h2>bioat.tabletools module<a class="headerlink" href="#bioat-tabletools-module" title="Link to this heading"></a></h2>
+</section>
+<section id="bioat-target-seq-module">
+<h2>bioat.target_seq module<a class="headerlink" href="#bioat-target-seq-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bioat.lib.html" class="btn btn-neutral float-right" title="bioat.lib package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

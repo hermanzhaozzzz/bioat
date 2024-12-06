@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.bamtools &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bioat.html">bioat package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.bamtools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.bamtools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;module of bamtools</span>
+
+<span class="sd">bioat bamtools &lt;command&gt; deal with SAM or BAM files</span>
+
+<span class="sd">example 1:</span>
+<span class="sd">    bioat list</span>
+<span class="sd">        &lt;in shell&gt;:</span>
+<span class="sd">            $ bioat bam remove_clip --help</span>
+<span class="sd">        &lt;in python consolo&gt;:</span>
+<span class="sd">            &gt;&gt;&gt; from bioat.cli import Cli</span>
+<span class="sd">            &gt;&gt;&gt; bioat = Cli()</span>
+<span class="sd">            &gt;&gt;&gt; help(bioat.bam.remove_clip)</span>
+
+<span class="sd">example 2:</span>
+<span class="sd">    _example_</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">SIG_DFL</span><span class="p">,</span> <span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">signal</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdin</span> <span class="k">as</span> <span class="n">STDIN</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span> <span class="k">as</span> <span class="n">STDOUT</span>
+
+<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.bamtools&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="setup_signal_handling">
+<a class="viewcode-back" href="../../bioat.html#bioat.bamtools.setup_signal_handling">[docs]</a>
+<span class="k">def</span> <span class="nf">setup_signal_handling</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup signal handlers.&quot;&quot;&quot;</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">SIG_DFL</span><span class="p">)</span></div>
+
+
+<span class="n">setup_signal_handling</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BamTools">
+<a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools">[docs]</a>
+<span class="k">class</span> <span class="nc">BamTools</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bam toolbox.&quot;&quot;&quot;</span>
+
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;BamTools&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="BamTools.mpileup2table">
+<a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools.mpileup2table">[docs]</a>
+    <span class="k">def</span> <span class="nf">mpileup2table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mpileup</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span>
+        <span class="n">mutation_number_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">temp_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;__bioat_temp_dir&quot;</span><span class="p">,</span>
+        <span class="n">remove_temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts an mpileup file to a structured info file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mpileup (str):</span>
+<span class="sd">                Path to the samtools mpileup format file.</span>
+<span class="sd">            output (str | TextIOWrapper):</span>
+<span class="sd">                Path to the output file where parsed data will be stored. Defaults to standard output.</span>
+<span class="sd">            threads (int):</span>
+<span class="sd">                Number of threads to utilize for processing. Default is one less than the number of available CPU cores.</span>
+<span class="sd">            mutation_number_threshold (int):</span>
+<span class="sd">                Threshold for mutation information; set to 0 to include all sites.</span>
+<span class="sd">            temp_dir (str, optional):</span>
+<span class="sd">                Directory for temporary files. Defaults to a directory in &#39;__bioat_temp_dir&#39;.</span>
+<span class="sd">            remove_temp (bool, optional):</span>
+<span class="sd">                Indicator for whether to remove temporary files after processing. Defaults to True.</span>
+<span class="sd">            log_level (str, optional):</span>
+<span class="sd">                Level of logging. Options are &#39;CRITICAL&#39;, &#39;ERROR&#39;, &#39;WARNING&#39;, &#39;INFO&#39;, &#39;DEBUG&#39;, &#39;NOTSET&#39;.</span>
+<span class="sd">                Defaults to &#39;WARNING&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None: This function does not return a value. It outputs a file based on the provided parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;mpileup2table&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_temp_split_bam</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="n">threads</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+            <span class="c1"># creat temp file name and open file</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Making temp files...&quot;</span><span class="p">)</span>
+
+            <span class="n">input_file_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mpileup</span><span class="p">)</span>
+
+            <span class="n">temp_filename_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">temp_file_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">threads</span><span class="p">):</span>
+                <span class="c1"># make filename</span>
+                <span class="n">temp_file_basename</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;temp_&quot;</span>
+                    <span class="o">+</span> <span class="n">input_file_basename</span>
+                    <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+                    <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+                <span class="p">)</span>
+                <span class="n">temp_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">temp_file_basename</span><span class="p">)</span>
+                <span class="n">temp_filename_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">)</span>
+
+                <span class="c1"># open file</span>
+                <span class="n">temp_file</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_file_name</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+                <span class="n">temp_file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
+
+            <span class="c1"># counting input file line number</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Counting input file...&quot;</span><span class="p">)</span>
+
+            <span class="n">total_input_line_num</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">input_file</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mpileup</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+                <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># count total_input_line_num</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+                <span class="n">total_input_line_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">total_input_line_num</span> <span class="o">%</span> <span class="n">threads</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">each_file_line_num</span> <span class="o">=</span> <span class="n">total_input_line_num</span> <span class="o">//</span> <span class="n">threads</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">each_file_line_num</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_input_line_num</span> <span class="o">//</span> <span class="n">threads</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">input_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+
+            <span class="c1"># split temp files</span>
+            <span class="c1"># write into output filename</span>
+            <span class="n">input_file</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mpileup</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+                <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+                <span class="n">file_index</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="n">each_file_line_num</span>
+                <span class="n">temp_file_list</span><span class="p">[</span><span class="n">file_index</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="c1"># close output filename</span>
+            <span class="n">input_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="p">[</span><span class="n">temp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="k">for</span> <span class="n">temp_file</span> <span class="ow">in</span> <span class="n">temp_file_list</span><span class="p">]</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Make temp files done!&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">temp_filename_list</span>
+
+        <span class="k">def</span> <span class="nf">_merge_out_bmat</span><span class="p">(</span><span class="n">temp_filename_list</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">remove_temp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="c1"># write header</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;chr_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;chr_index&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ref_base&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;del_count&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;insert_count&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ambiguous_count&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;deletion&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;insertion&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ambiguous&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mut_num&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># open temp bmat file</span>
+            <span class="k">for</span> <span class="n">temp_filename</span> <span class="ow">in</span> <span class="n">temp_filename_list</span><span class="p">:</span>
+                <span class="c1"># write file</span>
+                <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_filename</span> <span class="o">+</span> <span class="s2">&quot;.bmat.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_file</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">temp_file</span><span class="p">:</span>
+                        <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="c1"># remove temp files</span>
+            <span class="k">if</span> <span class="n">remove_temp</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">temp_filename</span> <span class="ow">in</span> <span class="n">temp_filename_list</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_filename</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_filename</span> <span class="o">+</span> <span class="s2">&quot;.bmat.gz&quot;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+
+        <span class="c1"># make temp files</span>
+        <span class="n">temp_filename_list</span> <span class="o">=</span> <span class="n">_temp_split_bam</span><span class="p">(</span>
+            <span class="n">mpileup</span><span class="o">=</span><span class="n">mpileup</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">,</span> <span class="n">temp_dir</span><span class="o">=</span><span class="n">temp_dir</span>
+        <span class="p">)</span>
+        <span class="c1"># multiple processing part</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing files...&quot;</span><span class="p">)</span>
+
+        <span class="n">procs_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">temp_mpileup</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temp_filename_list</span><span class="p">):</span>
+            <span class="n">temp_output</span> <span class="o">=</span> <span class="n">temp_mpileup</span> <span class="o">+</span> <span class="s2">&quot;.bmat.gz&quot;</span>
+            <span class="c1"># add multiprocess</span>
+            <span class="n">sub_proc</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">_run_mpileup_to_table</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">temp_mpileup</span><span class="p">,</span>
+                    <span class="n">temp_output</span><span class="p">,</span>
+                    <span class="n">mutation_number_threshold</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">procs_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_proc</span><span class="p">)</span>
+            <span class="n">sub_proc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">sub_proc</span> <span class="ow">in</span> <span class="n">procs_list</span><span class="p">:</span>
+            <span class="n">sub_proc</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+        <span class="c1"># merge output files</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Merging files...&quot;</span><span class="p">)</span>
+        <span class="n">_merge_out_bmat</span><span class="p">(</span>
+            <span class="n">temp_filename_list</span><span class="o">=</span><span class="n">temp_filename_list</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+            <span class="n">remove_temp</span><span class="o">=</span><span class="n">remove_temp</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done!...&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BamTools.remove_clip">
+<a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools.remove_clip">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_clip</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDIN</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span>
+        <span class="n">output_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SAM&quot;</span><span class="p">,</span>
+        <span class="n">remove_as_paired</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">max_clip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove soft/hard clipped reads from a BAM/SAM file.</span>
+
+<span class="sd">        This method removes soft/hard clipped reads from a BAM/SAM file. It can</span>
+<span class="sd">        accept input from stdin and produce output to stdout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input (str | TextIOWrapper): </span>
+<span class="sd">                BAM file sorted by query name with soft/hard clipped reads. </span>
+<span class="sd">                Pipe stdin is supported, e.g.:</span>
+<span class="sd">                [samtools view -h foo_sort_name.bam | bioat bam remove_clip &lt;flags&gt;].</span>
+<span class="sd">            output (str | TextIOWrapper): </span>
+<span class="sd">                BAM file sorted by query name without soft/hard clipped reads. </span>
+<span class="sd">                Pipe stdout is supported, e.g.:</span>
+<span class="sd">                [bioat bam remove_clip &lt;flags&gt; | wc -l] </span>
+<span class="sd">                or [bioat bam remove_clip &lt;flags&gt; | samtools view ....].</span>
+<span class="sd">            threads (int, optional): </span>
+<span class="sd">                Number of threads used by pysam and samtools core. </span>
+<span class="sd">                Defaults to the number of CPU cores.</span>
+<span class="sd">            output_fmt (str, optional): </span>
+<span class="sd">                Format of the output file, can be &quot;BAM&quot; or &quot;SAM&quot;. Defaults to &quot;SAM&quot;.</span>
+<span class="sd">            remove_as_paired (bool, optional): </span>
+<span class="sd">                Flag to determine whether to remove single clipped reads. </span>
+<span class="sd">                If True, removes both the clipped read and its paired read. The input </span>
+<span class="sd">                BAM/SAM must be sorted by name and have header [SO:queryname]. </span>
+<span class="sd">                If False, only removes the single clipped read.</span>
+<span class="sd">            max_clip (int, optional): </span>
+<span class="sd">                The maximum number of clips allowed per read. Defaults to 0.</span>
+<span class="sd">            log_level (str, optional): </span>
+<span class="sd">                Logging level for the process. Can be one of </span>
+<span class="sd">                &#39;CRITICAL&#39;, &#39;ERROR&#39;, &#39;WARNING&#39;, &#39;INFO&#39;, &#39;DEBUG&#39;, &#39;NOTSET&#39;. </span>
+<span class="sd">                Defaults to &quot;INFO&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;remove_clip&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pysam</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s1">&#39;remove_clip requires &quot;pysam&quot; as the backend for parsing BAM files. Please install it first.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">save</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span>
+            <span class="mi">0</span>
+        <span class="p">)</span>  <span class="c1"># https://github.com/pysam-developers/pysam/issues/939</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">):</span>
+            <span class="n">bam_in</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">check_sq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bam_in</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">check_sq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">pysam</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">save</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">so</span> <span class="o">=</span> <span class="n">bam_in</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;HD&quot;</span><span class="p">][</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">so</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">so</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">so</span> <span class="o">!=</span> <span class="s2">&quot;queryname&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">remove_as_paired</span><span class="p">:</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;When remove_as_paired is True, the input BAM|SAM must be sorted by&quot;</span>
+                        <span class="s2">&quot;name and has header [SO:queryname]!</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;your header: [SO:</span><span class="si">{</span><span class="n">so</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">so</span> <span class="o">!=</span> <span class="s2">&quot;coordinate&quot;</span><span class="p">:</span>
+                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;the input BAM|SAM must have header [SO:coordinate] or [SO:queryname]!</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;your header: [SO:</span><span class="si">{</span><span class="n">so</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;the input BAM|SAM must be sorted by name and has header [SO:queryname]!</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;your bam file does not have a header</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">):</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;you can add header to your input file by using `samtools view -h input.bam &gt; input_with_header.bam`&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">&quot;wb&quot;</span> <span class="k">if</span> <span class="n">output_fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;BAM&quot;</span> <span class="k">else</span> <span class="s2">&quot;w&quot;</span>
+        <span class="n">bam_out</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">bam_in</span><span class="p">)</span>
+
+        <span class="c1"># Iterate through reads.</span>
+        <span class="k">if</span> <span class="n">remove_as_paired</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;remove_as_paired is True, all paired clipped reads will be removed.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">read1</span><span class="p">,</span> <span class="n">read2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+            <span class="k">for</span> <span class="n">read</span> <span class="ow">in</span> <span class="n">bam_in</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">read</span><span class="o">.</span><span class="n">is_paired</span> <span class="ow">or</span> <span class="n">read</span><span class="o">.</span><span class="n">is_unmapped</span> <span class="ow">or</span> <span class="n">read</span><span class="o">.</span><span class="n">mate_is_unmapped</span><span class="p">:</span>
+                    <span class="c1"># or read.is_duplicate:</span>
+                    <span class="c1"># only use mapped paired reads</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># -------------------------------------------------------------------&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+                <span class="c1"># 如果先看到read1，将read1赋给read， 判断是否read1、read2都存在</span>
+                <span class="c1">#    不都存在：</span>
+                <span class="c1">#        即read2不存在，进入下个循环</span>
+                <span class="c1">#    都存在，判断query name是否一致</span>
+                <span class="c1"># -------------------------------------------------------------------&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+                <span class="k">if</span> <span class="n">read</span><span class="o">.</span><span class="n">is_read2</span><span class="p">:</span>
+                    <span class="c1"># if first is read2, then use it to find read2</span>
+                    <span class="n">read2</span> <span class="o">=</span> <span class="n">read</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># if first is read1, then use it to find read1, and next query</span>
+                    <span class="n">read1</span> <span class="o">=</span> <span class="n">read</span>
+                    <span class="n">read2</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># if read1 not None and read2 not None pass to below</span>
+                <span class="k">if</span> <span class="n">read1</span> <span class="ow">and</span> <span class="n">read2</span> <span class="ow">and</span> <span class="n">read1</span><span class="o">.</span><span class="n">query_name</span> <span class="o">==</span> <span class="n">read2</span><span class="o">.</span><span class="n">query_name</span><span class="p">:</span>
+                    <span class="c1"># print(&quot;found a pair!&quot;)</span>
+                    <span class="c1"># print(f&#39;Cigar: Read1-{read1.cigarstring}, Read2-{read1.cigarstring}&#39;)</span>
+                    <span class="c1"># print(read.get_cigar_stats())</span>
+                    <span class="n">softclip1</span> <span class="o">=</span> <span class="n">read1</span><span class="o">.</span><span class="n">get_cigar_stats</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>
+                    <span class="n">softclip2</span> <span class="o">=</span> <span class="n">read2</span><span class="o">.</span><span class="n">get_cigar_stats</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">remove_as_paired</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">softclip1</span> <span class="o">&lt;=</span> <span class="n">max_clip</span><span class="p">:</span>
+                            <span class="n">bam_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">read1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">softclip2</span> <span class="o">&lt;=</span> <span class="n">max_clip</span><span class="p">:</span>
+                            <span class="n">bam_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">read2</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">softclip1</span> <span class="o">&lt;=</span> <span class="n">max_clip</span> <span class="ow">and</span> <span class="n">softclip2</span> <span class="o">&lt;=</span> <span class="n">max_clip</span><span class="p">:</span>
+                            <span class="n">bam_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">read1</span><span class="p">)</span>
+                            <span class="n">bam_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">read2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                        <span class="s2">&quot;something wrong with read1/2 pairs, they may have different read id or there is None in them&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;read1=</span><span class="si">{</span><span class="n">read1</span><span class="si">}</span><span class="s2">, read2=</span><span class="si">{</span><span class="n">read2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;read1_id=</span><span class="si">{</span><span class="n">read1</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2">, read2_id=</span><span class="si">{</span><span class="n">read2</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">read</span> <span class="ow">in</span> <span class="n">bam_in</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">read</span><span class="o">.</span><span class="n">is_unmapped</span><span class="p">:</span>
+                    <span class="c1"># or read.is_duplicate:</span>
+                    <span class="c1"># only use mapped reads</span>
+                    <span class="k">continue</span>
+
+                <span class="n">softclip</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">get_cigar_stats</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">softclip</span> <span class="o">&lt;=</span> <span class="n">max_clip</span><span class="p">:</span>
+                    <span class="n">bam_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
+        <span class="n">bam_in</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">bam_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_run_mpileup_to_table</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="n">temp_output</span><span class="p">,</span> <span class="n">mutation_number_threshold</span><span class="p">):</span>
+    <span class="c1"># open input file</span>
+    <span class="n">temp_mpileup</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_mpileup</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># open output file</span>
+    <span class="n">temp_output</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># parse mpileup file</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">temp_mpileup</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">chr_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;Not&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="c1"># coverage &gt; 0</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bases</span><span class="p">):</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;^&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span>
+
+            <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;$&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">del_str_num</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="k">while</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="n">del_str_num</span> <span class="o">+=</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">delNum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">del_str_num</span><span class="p">)</span>
+                <span class="n">delSeq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delNum</span><span class="p">):</span>
+                    <span class="n">delSeq</span> <span class="o">+=</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">types</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delSeq</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="n">types</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">add_str_num</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+                <span class="k">while</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="n">add_str_num</span> <span class="o">+=</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">addNum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">add_str_num</span><span class="p">)</span>
+                <span class="n">addSeq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">addNum</span><span class="p">):</span>
+                    <span class="n">addSeq</span> <span class="o">+=</span> <span class="n">bases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">types</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addSeq</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="p">(</span><span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;,&quot;</span><span class="p">):</span>
+                <span class="n">types</span><span class="p">[</span><span class="n">ref</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                    <span class="n">types</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">types</span><span class="p">[</span><span class="s2">&quot;Not&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">adds</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">adds_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">adds</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">])</span>
+            <span class="n">adds_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">])</span>
+
+        <span class="n">dels</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">dels_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dels</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">])</span>
+            <span class="n">dels_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">])</span>
+
+        <span class="n">amb</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">amb_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Not&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">amb</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Not&quot;</span><span class="p">])</span>
+            <span class="n">amb_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Not&quot;</span><span class="p">])</span>
+
+        <span class="c1"># get other mutation number</span>
+        <span class="k">if</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="n">mut_num</span> <span class="o">=</span> <span class="n">types</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">types</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">types</span><span class="p">[</span><span class="s2">&quot;G&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">types</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">types</span><span class="p">[</span><span class="n">ref</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mut_num</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">out_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">chr_name</span><span class="p">,</span>
+            <span class="n">bp</span><span class="p">,</span>
+            <span class="n">ref</span><span class="p">,</span>
+            <span class="n">types</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">],</span>
+            <span class="n">types</span><span class="p">[</span><span class="s2">&quot;G&quot;</span><span class="p">],</span>
+            <span class="n">types</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">],</span>
+            <span class="n">types</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">],</span>
+            <span class="n">dels_count</span><span class="p">,</span>
+            <span class="n">adds_count</span><span class="p">,</span>
+            <span class="n">amb_count</span><span class="p">,</span>
+            <span class="n">dels</span><span class="p">,</span>
+            <span class="n">adds</span><span class="p">,</span>
+            <span class="n">amb</span><span class="p">,</span>
+            <span class="n">mut_num</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># make a filter</span>
+        <span class="k">if</span> <span class="n">mutation_number_threshold</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mut_num</span> <span class="o">&gt;=</span> <span class="n">mutation_number_threshold</span><span class="p">:</span>
+                <span class="n">temp_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">out_list</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temp_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">out_list</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">temp_mpileup</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">temp_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

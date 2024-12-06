@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.metatools &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bioat.html">bioat package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.metatools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.metatools</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">bioat.lib.libjgi</span> <span class="kn">import</span> <span class="n">JGIOperator</span>
+<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.metatools&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MetaTools">
+<a class="viewcode-back" href="../../bioat.html#bioat.metatools.MetaTools">[docs]</a>
+<span class="k">class</span> <span class="nc">MetaTools</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metagenome toolbox.&quot;&quot;&quot;</span>
+
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;MetaTools&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MetaTools.JGI_query">
+<a class="viewcode-back" href="../../bioat.html#bioat.metatools.MetaTools.JGI_query">[docs]</a>
+    <span class="k">def</span> <span class="nf">JGI_query</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">xml</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_fails</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nretry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">all_get</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">overwrite_conf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">filter_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">proxy_pool</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">just_query_xml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">syntax_help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">usage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;JGI_query: Tool for downloading files from the JGI-IMG database.</span>
+
+<span class="sd">        This function lists and retrieves files from JGI using the curl API and</span>
+<span class="sd">        returns a list of all files available for download for a given query organism.</span>
+
+<span class="sd">        The source code is adapted from https://github.com/glarue/jgi-query.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query_info (str | None):</span>
+<span class="sd">                Organism name formatted per JGI&#39;s abbreviation.</span>
+<span class="sd">                Example: &#39;Nematostella vectensis&#39; is abbreviated by JGI as &#39;Nemve1&#39;.</span>
+<span class="sd">                The correct abbreviation can be found by searching for the organism on JGI;</span>
+<span class="sd">                the name used in the URL of the &#39;Info&#39; page for that organism is</span>
+<span class="sd">                the correct abbreviation. The full URL may also be used for this argument.</span>
+<span class="sd">            xml (str | None):</span>
+<span class="sd">                Specify a local XML file for the query instead of retrieving</span>
+<span class="sd">                a new copy from JGI.</span>
+<span class="sd">            log_fails (str | None):</span>
+<span class="sd">                Log file containing URLs to retry downloading from in case of failure.</span>
+<span class="sd">            nretry (int):</span>
+<span class="sd">                Number of times to retry downloading files with errors.</span>
+<span class="sd">                Use 0 to skip such files.</span>
+<span class="sd">            timeout (int):</span>
+<span class="sd">                Timeout (in seconds) for downloading. Set to -1 to disable.</span>
+<span class="sd">            regex (str | None):</span>
+<span class="sd">                Regex pattern to use for auto-selecting and downloading files</span>
+<span class="sd">                without interaction.</span>
+<span class="sd">            all_get (bool):</span>
+<span class="sd">                If True, auto-select and download all files for the query</span>
+<span class="sd">                without interaction.</span>
+<span class="sd">            overwrite_conf (bool):</span>
+<span class="sd">                If True, initiate configuration dialog to overwrite</span>
+<span class="sd">                existing user/password configuration.</span>
+<span class="sd">            filter_files (bool):</span>
+<span class="sd">                Under development. Filter organism results by config categories</span>
+<span class="sd">                instead of reporting all files listed by JGI for the query.</span>
+<span class="sd">            proxy_pool (str | None):</span>
+<span class="sd">                URL for the proxy pool, e.g., http://abc.com:port. See</span>
+<span class="sd">                https://github.com/hermanzhaozzzz/proxy_pool.</span>
+<span class="sd">            just_query_xml (bool):</span>
+<span class="sd">                Set True if you just want to save the XML file.</span>
+<span class="sd">            syntax_help (bool):</span>
+<span class="sd">                If True, provide syntax help in doc mode.</span>
+<span class="sd">            usage (bool):</span>
+<span class="sd">                If True, print verbose usage information and exit.</span>
+<span class="sd">            log_level (str):</span>
+<span class="sd">                Set the logging level. Options include &#39;CRITICAL&#39;, &#39;ERROR&#39;,</span>
+<span class="sd">                &#39;WARNING&#39;, &#39;INFO&#39;, &#39;DEBUG&#39;, &#39;NOTSET&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Load or create JGI account info and</span>
+        <span class="c1"># auto check if user info needs to be overwritten.</span>
+
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">JGIOperator</span><span class="p">(</span>
+            <span class="n">query_info</span><span class="o">=</span><span class="n">query_info</span><span class="p">,</span>
+            <span class="n">xml</span><span class="o">=</span><span class="n">xml</span><span class="p">,</span>
+            <span class="n">log_fails</span><span class="o">=</span><span class="n">log_fails</span><span class="p">,</span>
+            <span class="n">nretry</span><span class="o">=</span><span class="n">nretry</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">regex</span><span class="o">=</span><span class="n">regex</span><span class="p">,</span>
+            <span class="n">all_get</span><span class="o">=</span><span class="n">all_get</span><span class="p">,</span>
+            <span class="n">overwrite_conf</span><span class="o">=</span><span class="n">overwrite_conf</span><span class="p">,</span>
+            <span class="n">filter_files</span><span class="o">=</span><span class="n">filter_files</span><span class="p">,</span>
+            <span class="n">proxy_pool</span><span class="o">=</span><span class="n">proxy_pool</span><span class="p">,</span>
+            <span class="n">just_query_xml</span><span class="o">=</span><span class="n">just_query_xml</span><span class="p">,</span>
+            <span class="n">syntax_help</span><span class="o">=</span><span class="n">syntax_help</span><span class="p">,</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span>
+            <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;JGI_query&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;run query&quot;</span><span class="p">)</span>
+        <span class="n">operator</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;parse xml to json&quot;</span><span class="p">)</span>
+        <span class="n">operator</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">()</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;start to download; calculate and display total size of selected data&quot;</span>
+        <span class="p">)</span>
+        <span class="n">operator</span><span class="o">.</span><span class="n">download</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

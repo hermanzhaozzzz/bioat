@@ -1,0 +1,553 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bioat.lib.libalignment &mdash; bioat Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=27e171c2"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            bioat
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bioat.html">bioat package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">bioat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">bioat.lib.libalignment</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for bioat.lib.libalignment</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Library for alignment, depends on Biopython</span>
+
+<span class="sd">author: Herman Huanan Zhao</span>
+<span class="sd">email: hermanzhaozzzz@gmail.com</span>
+<span class="sd">homepage: https://github.com/hermanzhaozzzz</span>
+
+<span class="sd">Library for alignment, depends on Biopython</span>
+
+<span class="sd">example 1:</span>
+<span class="sd">    bioat.lib.libalignment</span>
+<span class="sd">        &lt;in python consolo&gt;:</span>
+<span class="sd">            &gt;&gt;&gt; from bioat.lib.libalignment import instantiate_pairwise_aligner</span>
+<span class="sd">            &gt;&gt;&gt; aligner = instantiate_pairwise_aligner()</span>
+<span class="sd">            &gt;&gt;&gt; alignment = get_best_alignment(</span>
+<span class="sd">            &gt;&gt;&gt;     Seq(&quot;GGCACTGCGGCTGGAAAAAAAAAAAAAAAGT&quot;),</span>
+<span class="sd">            &gt;&gt;&gt;     Seq(&quot;GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT&quot;),</span>
+<span class="sd">            &gt;&gt;&gt;     aligner=aligner,</span>
+<span class="sd">            &gt;&gt;&gt;     consider_strand=True</span>
+<span class="sd">            &gt;&gt;&gt; )</span>
+<span class="sd">            &gt;&gt;&gt; res = get_aligned_seq(alignment, reverse=False)</span>
+<span class="sd">            &gt;&gt;&gt; print(res)</span>
+<span class="sd">            &gt;&gt;&gt; res = get_aligned_seq(alignment, reverse=True)</span>
+<span class="sd">            &gt;&gt;&gt; print(res)</span>
+<span class="sd">            &gt;&gt;&gt; res = get_alignment_info(alignment, reverse=False)</span>
+<span class="sd">            &gt;&gt;&gt; print(res)</span>
+<span class="sd">            &gt;&gt;&gt; res = get_alignment_info(alignment, reverse=True)</span>
+<span class="sd">            &gt;&gt;&gt; print(res)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">Bio.Align</span> <span class="kn">import</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">PairwiseAligner</span><span class="p">,</span> <span class="n">substitution_matrices</span>
+<span class="kn">from</span> <span class="nn">Bio.Seq</span> <span class="kn">import</span> <span class="n">Seq</span>
+
+<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libalignment&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="instantiate_pairwise_aligner">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.instantiate_pairwise_aligner">[docs]</a>
+<span class="k">def</span> <span class="nf">instantiate_pairwise_aligner</span><span class="p">(</span>
+    <span class="n">scoring_match</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">penalty_mismatch</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">penalty_gap_open</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">penalty_gap_extension</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">penalty_query_left_gap_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">penalty_query_right_gap_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;global&quot;</span><span class="p">,</span>
+    <span class="n">letn_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">score_matrix_dict</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PairwiseAligner</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a PairwiseAligner object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        scoring_match (float, optional): Scoring for matches. Defaults to 1.</span>
+<span class="sd">        penalty_mismatch (float, optional): Penalty for mismatches. Defaults to 0.8.</span>
+<span class="sd">        penalty_gap_open (float, optional): Penalty for opening a gap. Defaults to -5.</span>
+<span class="sd">        penalty_gap_extension (float, optional): Penalty for extending a gap. Defaults to -2.</span>
+<span class="sd">        penalty_query_left_gap_score (float, optional): Penalty for left query gap. Defaults to 0.</span>
+<span class="sd">        penalty_query_right_gap_score (float, optional): Penalty for right query gap. Defaults to 0.</span>
+<span class="sd">        mode (str, optional): Alignment mode, either &quot;global&quot; or &quot;local&quot;. Defaults to &quot;global&quot;.</span>
+<span class="sd">        letn_match (bool, optional): Whether to treat base &#39;N&#39; as a match. Defaults to False.</span>
+<span class="sd">        log_level (str, optional): Logging level. Defaults to &quot;DEBUG&quot;.</span>
+<span class="sd">        score_matrix_dict (dict, optional): Custom scoring matrix for bases or amino acids. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PairwiseAligner: An object instantiated from PairwiseAligner.</span>
+
+<span class="sd">    Details for `score_matrix_dict`:</span>
+<span class="sd">        You can use any base and any score, such as AGCTN, or 20AA + 2 abnormal AAs, </span>
+<span class="sd">        or any characters you want. For example:</span>
+
+<span class="sd">            score_matrix_dict = {</span>
+
+<span class="sd">                (&quot;A&quot;, &quot;A&quot;): scoring_match,</span>
+<span class="sd">                (&quot;A&quot;, &quot;G&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;A&quot;, &quot;C&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;A&quot;, &quot;T&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;A&quot;, &quot;N&quot;): scoring_match,</span>
+<span class="sd">                (&quot;G&quot;, &quot;A&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;G&quot;, &quot;G&quot;): scoring_match,</span>
+<span class="sd">                (&quot;G&quot;, &quot;C&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;G&quot;, &quot;T&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;G&quot;, &quot;N&quot;): scoring_match,</span>
+<span class="sd">                (&quot;C&quot;, &quot;A&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;C&quot;, &quot;G&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;C&quot;, &quot;C&quot;): scoring_match,</span>
+<span class="sd">                (&quot;C&quot;, &quot;T&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;C&quot;, &quot;N&quot;): scoring_match,</span>
+<span class="sd">                (&quot;T&quot;, &quot;A&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;T&quot;, &quot;G&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;T&quot;, &quot;C&quot;): penalty_mismatch,</span>
+<span class="sd">                (&quot;T&quot;, &quot;T&quot;): scoring_match,</span>
+<span class="sd">                (&quot;T&quot;, &quot;N&quot;): scoring_match,</span>
+<span class="sd">                (&quot;N&quot;, &quot;A&quot;): scoring_match,</span>
+<span class="sd">                (&quot;N&quot;, &quot;G&quot;): scoring_match,</span>
+<span class="sd">                (&quot;N&quot;, &quot;C&quot;): scoring_match,</span>
+<span class="sd">                (&quot;N&quot;, &quot;T&quot;): scoring_match,</span>
+<span class="sd">                (&quot;N&quot;, &quot;N&quot;): scoring_match</span>
+
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;instantiate_pairwise_aligner&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+    <span class="n">aligner</span> <span class="o">=</span> <span class="n">PairwiseAligner</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">letn_match</span> <span class="ow">and</span> <span class="n">score_matrix_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># !如果 letn_match为False，</span>
+        <span class="c1"># !并且未指定 score_matrix_dict</span>
+        <span class="c1"># !则考虑本流程</span>
+        <span class="c1"># !否则进入else中的自定义流程</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">match</span> <span class="o">=</span> <span class="n">scoring_match</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">mismatch</span> <span class="o">=</span> <span class="n">penalty_mismatch</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">open_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_open</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">extend_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_extension</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_left_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_right_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">wildcard</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">score_matrix_dict</span><span class="p">:</span>
+            <span class="n">score_matrix_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span> <span class="n">penalty_mismatch</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">):</span> <span class="n">scoring_match</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="n">substitution_matrix</span> <span class="o">=</span> <span class="n">substitution_matrices</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">score_matrix_dict</span>
+        <span class="p">)</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">substitution_matrix</span> <span class="o">=</span> <span class="n">substitution_matrix</span>
+        <span class="c1"># !自定义矩阵时，不可定义match和mismatch的打分，不然会出问题，在矩阵中给分即可</span>
+        <span class="c1"># !aligner.match = scoring_match</span>
+        <span class="c1"># !aligner.mismatch = penalty_mismatch</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">open_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_open</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">extend_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_extension</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_left_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_right_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">wildcard</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># !自定义的打分矩阵中如果有&quot;N&quot;，则wildcard最好注释掉</span>
+        <span class="c1"># !wildcard是一个特殊字符，用于在序列比对过程中表示一个可以与任何字符匹配的通配符</span>
+        <span class="c1"># !设置wildcard的目的通常是为了在处理包含未知或可变字符的序列时提高比对的灵活性</span>
+        <span class="c1"># !使用wildcard时需要谨慎，因为它可能会影响比对的准确性和生物学意义</span>
+        <span class="c1"># !可以将wildcard设置为&#39;N&#39;，这样在比对过程中，字符&#39;N&#39;将被视为与任何字符都匹配</span>
+
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">aligner</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aligner</span></div>
+
+
+
+<div class="viewcode-block" id="get_best_alignment">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_best_alignment">[docs]</a>
+<span class="k">def</span> <span class="nf">get_best_alignment</span><span class="p">(</span>
+    <span class="n">seq_a</span><span class="p">:</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">seq_b</span><span class="p">:</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">aligner</span><span class="p">:</span> <span class="n">PairwiseAligner</span><span class="p">,</span> <span class="n">consider_strand</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get best alignment by heightest alignment score</span>
+
+<span class="sd">    Get best alignment by heightest alignment score,</span>
+<span class="sd">    default to consider strand, that means, it will attempt to use</span>
+<span class="sd">    seq_b.reverse_complement() to align</span>
+
+<span class="sd">    :param seq_a: seq_a</span>
+<span class="sd">    :type seq_a: Seq</span>
+<span class="sd">    :param seq_b: seq_b</span>
+<span class="sd">    :type seq_b: Seq</span>
+<span class="sd">    :param aligner: aligner returns from instantiate_pairwise_aligner</span>
+<span class="sd">    :type aligner: PairwiseAligner</span>
+<span class="sd">    :param consider_strand: consider to use seq_b.reverse_complement() or not, defaults to True</span>
+<span class="sd">    :type consider_strand: bool, optional</span>
+<span class="sd">    :return: Alignment with a new attribute: alignment.is_a_reverse_complement_alignment (True / False)</span>
+<span class="sd">    :rtype: Alignment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alignments</span> <span class="o">=</span> <span class="n">aligner</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">seq_a</span><span class="p">,</span> <span class="n">seq_b</span><span class="p">)</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">alignments</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">final_alignment</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">consider_strand</span><span class="p">:</span>
+        <span class="n">alignments_rc</span> <span class="o">=</span> <span class="n">aligner</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">seq_a</span><span class="p">,</span> <span class="n">seq_b</span><span class="o">.</span><span class="n">reverse_complement</span><span class="p">())</span>
+        <span class="n">alignment_rc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">alignments_rc</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">alignment</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;=</span> <span class="n">alignment_rc</span><span class="o">.</span><span class="n">score</span><span class="p">:</span>
+            <span class="n">final_alignment</span> <span class="o">=</span> <span class="n">alignment</span>
+            <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_alignment</span> <span class="o">=</span> <span class="n">alignment_rc</span>
+            <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_alignment</span> <span class="o">=</span> <span class="n">alignment</span>
+        <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># obj add attr</span>
+    <span class="n">final_alignment</span><span class="o">.</span><span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">is_a_reverse_complement_alignment</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_alignment</span></div>
+
+
+
+<div class="viewcode-block" id="get_aligned_seq">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_aligned_seq">[docs]</a>
+<span class="k">def</span> <span class="nf">get_aligned_seq</span><span class="p">(</span>
+    <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">letn_match</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve aligned sequence information from a Bio.Align.Alignment object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        alignment (Bio.Align.Alignment): </span>
+<span class="sd">            A `Bio.Align.Alignment` object containing the alignment information.</span>
+<span class="sd">        reverse (bool, optional): </span>
+<span class="sd">            Whether to return reversed sequence information. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary containing the alignment details with the following keys:</span>
+<span class="sd">            - &#39;reference_seq&#39; (str): The aligned reference sequence.</span>
+<span class="sd">            - &#39;aln_info&#39; (str): The alignment information string, indicating matches (&#39;|&#39;), </span>
+<span class="sd">              mismatches (&#39;.&#39;), and gaps (&#39;-&#39;).</span>
+<span class="sd">            - &#39;target_seq&#39; (str): The aligned target sequence.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; result = get_aligned_seq(alignment)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;reference_seq&#39;: &#39;GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT&#39;,</span>
+<span class="sd">            &#39;aln_info&#39;:      &#39;--..|.|||||||||||||||||||||||--||&#39;,</span>
+<span class="sd">            &#39;target_seq&#39;:    &#39;--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT&#39;</span>
+<span class="sd">        }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">alignment</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">reference_seq</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[::</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="n">aln_info</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="n">target_seq</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">]),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">reference_seq</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[::</span><span class="mi">3</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">aln_info</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">target_seq</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">letn_match</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;reference_seq&quot;</span><span class="p">])</span>
+        <span class="c1"># change base N to match</span>
+        <span class="n">i_n_a</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;reference_seq&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;target_seq&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">i_n_b</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;target_seq&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;reference_seq&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">i_n</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">i_n_a</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">i_n_b</span><span class="p">))</span>
+        <span class="n">aln_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;aln_info&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">i_n</span><span class="p">):</span>
+            <span class="n">aln_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;★&quot;</span>
+        <span class="n">res</span><span class="p">[</span><span class="s2">&quot;aln_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">aln_list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="get_alignment_info">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_alignment_info">[docs]</a>
+<span class="k">def</span> <span class="nf">get_alignment_info</span><span class="p">(</span>
+    <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">,</span>
+    <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">letn_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze a Bio.Align.Alignment object to extract alignment metrics.</span>
+
+<span class="sd">    This function calculates the match count, mismatch count, gap count, alignment score,</span>
+<span class="sd">    and start and end indices for a given alignment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        alignment (Bio.Align.Alignment): A `Bio.Align.Alignment` object containing the alignment information.</span>
+<span class="sd">        reverse (bool, optional): Whether to return reversed sequence information. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list containing the following metrics:</span>
+
+<span class="sd">            - match_count (int): The number of matches in the alignment.</span>
+<span class="sd">            - mismatch_count (int): The number of mismatches in the alignment.</span>
+<span class="sd">            - gap_count (int): The number of gaps within the sgRNA alignment region. Note: This counts only gaps within the alignment region, not total gaps.</span>
+<span class="sd">            - alignment_score (float): The alignment score.</span>
+<span class="sd">            - start_index (int): The start index of the sgRNA alignment region.</span>
+<span class="sd">            - end_index (int): The end index of the sgRNA alignment region.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        The gap count specifically counts gaps within the sgRNA alignment region, not the total gaps in the entire sequence. </span>
+<span class="sd">        For example:</span>
+
+<span class="sd">            &gt;&gt;&gt; Reference:  AGTGGTAAGAAGAAGACGAGACATAATGAG</span>
+<span class="sd">            &gt;&gt;&gt;             ------||||||||||||||.|----||||</span>
+<span class="sd">            &gt;&gt;&gt; Target:     ------AAGAAGAAGACGAGCC----TGAG</span>
+
+<span class="sd">        In this example: Gap count = 4 (within sgRNA alignment region), not 10 (total gaps). </span>
+
+
+<span class="sd">    Example:</span>
+<span class="sd">        The returned list will be as follows: return_list = [match_count, mismatch_count, gap_count, alignment_score, start_index, end_index]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;get_alignment_info&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">aln_res</span> <span class="o">=</span> <span class="n">get_aligned_seq</span><span class="p">(</span>
+            <span class="n">alignment</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">letn_match</span><span class="o">=</span><span class="n">letn_match</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">aln_res</span> <span class="o">=</span> <span class="n">get_aligned_seq</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="n">letn_match</span><span class="o">=</span><span class="n">letn_match</span><span class="p">)</span>
+
+    <span class="n">reference_seq</span> <span class="o">=</span> <span class="n">aln_res</span><span class="p">[</span><span class="s2">&quot;reference_seq&quot;</span><span class="p">]</span>
+    <span class="n">aln_info</span> <span class="o">=</span> <span class="n">aln_res</span><span class="p">[</span><span class="s2">&quot;aln_info&quot;</span><span class="p">]</span>
+    <span class="n">target_seq</span> <span class="o">=</span> <span class="n">aln_res</span><span class="p">[</span><span class="s2">&quot;target_seq&quot;</span><span class="p">]</span>
+    <span class="n">aln_score</span> <span class="o">=</span> <span class="n">alignment</span><span class="o">.</span><span class="n">score</span>
+    <span class="n">target_seq_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_seq</span><span class="p">)</span>
+    <span class="n">target_seq_length_rm_gap</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_seq</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="n">aligned_coordinates</span> <span class="o">=</span> <span class="n">alignment</span><span class="o">.</span><span class="n">aligned</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="s2">&quot;is_a_reverse_complement_alignment&quot;</span><span class="p">):</span>
+        <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">alignment</span><span class="o">.</span><span class="n">is_a_reverse_complement_alignment</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;reference_seq = </span><span class="si">{</span><span class="n">reference_seq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;aln_info      = </span><span class="si">{</span><span class="n">aln_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_seq    = </span><span class="si">{</span><span class="n">target_seq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;aln_score     = </span><span class="si">{</span><span class="n">aln_score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_seq_length (remove gap) = </span><span class="si">{</span><span class="n">target_seq_length_rm_gap</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;is_a_reverse_complement_alignment = </span><span class="si">{</span><span class="n">is_a_reverse_complement_alignment</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;aligned_coordinates =</span><span class="se">\n</span><span class="si">{</span><span class="n">aligned_coordinates</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># define params</span>
+    <span class="n">ref_aln_start</span> <span class="o">=</span> <span class="n">target_seq_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_seq</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))</span>
+    <span class="n">ref_aln_end</span> <span class="o">=</span> <span class="n">ref_aln_start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">((</span><span class="n">target_seq</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)))</span>
+    <span class="n">match_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">mismatch_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">gap_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">parsed_target_bases</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">encounter_target_seq</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">base_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aln_info</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ---TTCTGCCTCTGGAGAGGG-GGAGGGGCCT---</span>
+<span class="sd">        -------|.|.|||..|-.||-||.||--------</span>
+<span class="sd">        -------GGCACTGCGG-TGGAGGTGG--------</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">encounter_target_seq</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">target_seq</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="c1"># if start with -</span>
+                <span class="c1"># not encounter with target_seq yet!</span>
+                <span class="c1"># print(idx, base_info)</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># find first aligned base</span>
+                <span class="c1"># encounter with target_seq!</span>
+                <span class="n">encounter_target_seq</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">encounter_target_seq</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">parsed_target_bases</span> <span class="o">&lt;</span> <span class="n">target_seq_length_rm_gap</span>
+        <span class="p">):</span>
+            <span class="c1"># from the same loop of [else: catch_start = True]</span>
+            <span class="c1"># parse start base and later base</span>
+            <span class="c1"># print(parsed_target_bases, target_seq_length_rm_gap, base_info)</span>
+            <span class="k">if</span> <span class="n">base_info</span> <span class="o">==</span> <span class="s2">&quot;|&quot;</span> <span class="ow">or</span> <span class="n">base_info</span> <span class="o">==</span> <span class="s2">&quot;★&quot;</span><span class="p">:</span>
+                <span class="c1"># match</span>
+                <span class="n">match_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">parsed_target_bases</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">base_info</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>  <span class="c1"># . instead of X after Biopython 1.8.0</span>
+                <span class="c1"># mismatch</span>
+                <span class="n">mismatch_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">parsed_target_bases</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">base_info</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="c1"># gap on reference_seq or target_seq</span>
+                <span class="n">gap_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">reference_seq</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                    <span class="c1"># gap on reference_seq</span>
+                    <span class="c1"># value base on target_seq</span>
+                    <span class="n">parsed_target_bases</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># gap on target_seq</span>
+                    <span class="c1"># no value base on target_seq</span>
+                    <span class="n">parsed_target_bases</span> <span class="o">+=</span> <span class="mi">0</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;find not surpported alignment symbol: </span><span class="si">{</span><span class="n">base_info</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> on the reference), check&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;whether Biopython &gt;= 1.8.0 or not&quot;</span>
+                <span class="p">)</span>
+                <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># parsed_target_bases = target_seq_length_rm_gap</span>
+            <span class="c1"># full target_seq bases were processed</span>
+            <span class="k">break</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">match_count</span><span class="o">=</span><span class="n">match_count</span><span class="p">,</span>
+        <span class="n">mismatch_count</span><span class="o">=</span><span class="n">mismatch_count</span><span class="p">,</span>
+        <span class="n">gap_count</span><span class="o">=</span><span class="n">gap_count</span><span class="p">,</span>
+        <span class="n">aln_score</span><span class="o">=</span><span class="n">aln_score</span><span class="p">,</span>
+        <span class="n">ref_aln_start</span><span class="o">=</span><span class="n">ref_aln_start</span><span class="p">,</span>
+        <span class="n">ref_aln_end</span><span class="o">=</span><span class="n">ref_aln_end</span><span class="p">,</span>
+        <span class="n">is_a_reverse_complement_alignment</span><span class="o">=</span><span class="n">is_a_reverse_complement_alignment</span><span class="p">,</span>
+        <span class="n">alignment</span><span class="o">=</span><span class="n">aln_res</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
