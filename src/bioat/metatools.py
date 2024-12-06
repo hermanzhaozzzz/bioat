@@ -1,12 +1,14 @@
 
 from bioat.lib.libjgi import JGIOperator
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.metatools"
+lm = LoggerManager(mod_name="bioat.metatools")
 
 
 class MetaTools:
     """Metagenome toolbox."""
+
+    lm.set_names(cls_name="MetaTools")
 
     def JGI_query(
         self,
@@ -93,16 +95,14 @@ class MetaTools:
             usage=usage,
             log_level=log_level,
         )
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="JGI_query",
-        )
-        logger.debug("run query")
+        lm.set_names(func_name="JGI_query")
+        lm.set_log_level(log_level)
+
+        lm.logger.debug("run query")
         operator.query()
-        logger.debug("parse xml to json")
+        lm.logger.debug("parse xml to json")
         operator.parse_xml()
-        logger.debug(
+        lm.logger.debug(
             "start to download; calculate and display total size of selected data"
         )
         operator.download()

@@ -9,7 +9,6 @@ from bioat._meta import (
     __PKG_NAME__,
     __AUTHOR__,
     __AUTHOR_EMAIL__,
-    __BAM_PARSER_BACKEND__,
     __DESCRIPTION__,
     __DOC_FORMAT__,
     __DOC_PAGE__,
@@ -17,7 +16,6 @@ from bioat._meta import (
     __ISSUE_PAGE__,
     __LICENSE__,
     __VERSION__,
-    pysam,
 )
 
 from bioat.exceptions import (
@@ -51,7 +49,6 @@ __all__ = [
     "__PKG_NAME__",
     "__AUTHOR__",
     "__AUTHOR_EMAIL__",
-    "__BAM_PARSER_BACKEND__",
     "__DESCRIPTION__",
     "__DOC_FORMAT__",
     "__DOC_PAGE__",

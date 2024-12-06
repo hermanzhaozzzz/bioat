@@ -4,9 +4,9 @@ from Bio.Align import PairwiseAligner
 from Bio.Seq import Seq
 
 from bioat.lib.libalignment import get_alignment_info
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = 'bioat.lib.libcrispr'
+lm = LoggerManager(mod_name="bioat.lib.libcrispr")
 
 # TARGET_REGIONS_LIB
 #     for target_seq alignment
@@ -128,12 +128,9 @@ def run_target_seq_align(
     ]
 
     """
-    # set logger
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="run_target_seq_align",
-    )
+    lm.set_names(func_name="run_target_seq_align")
+    lm.set_level(log_level)
+
 
     if PAM:
         # considering PAM
@@ -144,17 +141,17 @@ def run_target_seq_align(
 
         for idx, alignment in enumerate(alignments_pam):
             alignment_analysis_result = get_alignment_info(alignment, reverse=False)
-            logger.debug(f'alignment_analysis_result for PAM:\n{alignment_analysis_result}')
+            lm.logger.debug(f'alignment_analysis_result for PAM:\n{alignment_analysis_result}')
             ref_aln_start = alignment_analysis_result['ref_aln_start']
             ref_aln_end = alignment_analysis_result['ref_aln_end']
             aln_score = alignment_analysis_result['aln_score'] * PAM['weight']
             dt_PAMs[f'{ref_aln_start}_{ref_aln_end}'] = dict(aln_score=aln_score * PAM['weight'])
 
-        logger.debug(f'find PAMs on reference: {dt_PAMs}')
+        lm.logger.debug(f'find PAMs on reference: {dt_PAMs}')
 
         # add PAM left or right or any position
         target_seq = target_seq[:PAM['position']] + Seq(PAM['PAM']) + target_seq[PAM['position']:]
-        logger.info(f'find PAM on target_seq, target_seq is updated to: {str(target_seq)}')
+        lm.logger.info(f'find PAM on target_seq, target_seq is updated to: {str(target_seq)}')
 
     # alignment part
     alignments = aligner.align(ref_seq, target_seq)
@@ -163,14 +160,14 @@ def run_target_seq_align(
 
     for alignment in alignments:
         alignment_analysis_result = get_alignment_info(alignment, reverse=False)
-        logger.debug(f'alignment_analysis_result:\n{alignment_analysis_result}')
+        lm.logger.debug(f'alignment_analysis_result:\n{alignment_analysis_result}')
         alignment_results.append(alignment_analysis_result)
 
     if len(alignment_results) == 1:
-        logger.debug(f'find 1 alignment result:\n{alignment_results}')
+        lm.logger.debug(f'find 1 alignment result:\n{alignment_results}')
         return alignment_results[0]
     else:
-        logger.debug(f'find {len(alignment_results)} alignment results:\n{alignment_results}')
+        lm.logger.debug(f'find {len(alignment_results)} alignment results:\n{alignment_results}')
         df = pd.DataFrame(alignment_results)
         # if contain multiple alignment result with the same score, keep the best one;
         # sort reason score -> gap -> mismatch -> match

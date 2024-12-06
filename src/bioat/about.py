@@ -24,9 +24,9 @@ from bioat import (
     __DOC_PAGE__,
     __HOME_PAGE__,
     __ISSUE_PAGE__,
+    __PKG_NAME__,
     __VERSION__,
 )
-from bioat.logger import __PKG_NAME__
 
 __ABOUT__ = f"""\
 BioAT ({__PKG_NAME__})

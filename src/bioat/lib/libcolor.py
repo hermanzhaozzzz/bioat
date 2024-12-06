@@ -26,9 +26,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
 
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = 'bioat.lib.libcolor'
+lm = LoggerManager(mod_name="bioat.lib.libcolor")
 
 def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
 
@@ -143,20 +143,16 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
     RETURN
         <color_list>
     """
-    # set logger
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="make_color_list",
-    )
+    lm.set_names(func_name="make_color_list")
+    lm.set_level(log_level)
 
     return_fmt = return_fmt.upper()
     supported_fmt = ('HEX', 'RGB')
 
     if return_fmt not in supported_fmt:
-        logger.critical(
-            f'not supported color format: {return_fmt}\n'
-            f'supported_fmt = {supported_fmt}'
+        lm.logger.critical(
+            f"not supported color format: {return_fmt}\n"
+            f"supported_fmt = {supported_fmt}"
         )
     low_color = np.array(low_color_RGB)
     high_color = np.array(high_color_RGB)

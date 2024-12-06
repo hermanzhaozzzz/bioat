@@ -31,9 +31,9 @@ example 1:
 from Bio.Align import Alignment, PairwiseAligner, substitution_matrices
 from Bio.Seq import Seq
 
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.lib.libalignment"
+lm = LoggerManager(mod_name="bioat.lib.libalignment")
 
 
 def instantiate_pairwise_aligner(
@@ -104,11 +104,9 @@ def instantiate_pairwise_aligner(
                 ("N", "N"): scoring_match,
             }
     """
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="instantiate_pairwise_aligner",
-    )
+    lm.set_names(func_name="instantiate_pairwise_aligner")
+    lm.set_level(log_level)
+
     aligner = PairwiseAligner()
 
     if not letn_match and score_matrix_dict is None:
@@ -173,7 +171,7 @@ def instantiate_pairwise_aligner(
         # !使用wildcard时需要谨慎，因为它可能会影响比对的准确性和生物学意义
         # !可以将wildcard设置为'N'，这样在比对过程中，字符'N'将被视为与任何字符都匹配
 
-    logger.info(aligner)
+    lm.logger.info(aligner)
     return aligner
 
 
@@ -320,12 +318,8 @@ def get_alignment_info(
 
             The <start_index> and <end_index> are index related to sgRNA alignment string
     """
-    # set logger
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="get_alignment_info",
-    )
+    lm.set_names(func_name="get_alignment_info")
+    lm.set_level(log_level)
 
     if reverse:
         aln_res = get_aligned_seq(
@@ -348,15 +342,15 @@ def get_alignment_info(
     else:
         is_a_reverse_complement_alignment = None
 
-    logger.debug(f"reference_seq = {reference_seq}")
-    logger.debug(f"aln_info      = {aln_info}")
-    logger.debug(f"target_seq    = {target_seq}")
-    logger.debug(f"aln_score     = {aln_score}")
-    logger.debug(f"target_seq_length (remove gap) = {target_seq_length_rm_gap}")
-    logger.debug(
+    lm.logger.debug(f"reference_seq = {reference_seq}")
+    lm.logger.debug(f"aln_info      = {aln_info}")
+    lm.logger.debug(f"target_seq    = {target_seq}")
+    lm.logger.debug(f"aln_score     = {aln_score}")
+    lm.logger.debug(f"target_seq_length (remove gap) = {target_seq_length_rm_gap}")
+    lm.logger.debug(
         f"is_a_reverse_complement_alignment = {is_a_reverse_complement_alignment}"
     )
-    logger.debug(f"aligned_coordinates =\n{aligned_coordinates}")
+    lm.logger.debug(f"aligned_coordinates =\n{aligned_coordinates}")
 
     # define params
     ref_aln_start = target_seq_length - len(target_seq.lstrip("-"))
@@ -413,7 +407,7 @@ def get_alignment_info(
                     parsed_target_bases += 0
                     pass
             else:
-                logger.critical(
+                lm.logger.critical(
                     f"find not surpported alignment symbol: {base_info} ({idx} on the reference), check"
                     f"whether Biopython >= 1.8.0 or not"
                 )

@@ -23,10 +23,11 @@ example 2:
 
 import pandas as pd
 
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__all__ = ['set_option']
-__module_name__ = 'bioat.lib.libpandas'
+lm = LoggerManager(mod_name="bioat.lib.libpandas")
+
+__all__ = ["set_option"]
 
 
 def set_option(
@@ -37,29 +38,29 @@ def set_option(
     display_max_rows: int = 50,
     log_level="INFO",
 ):
-    logger = get_logger(
-        level=log_level, module_name=__module_name__, func_name="set_option"
-    )
+    lm.set_names(func_name="set_option")
+    lm.set_level(log_level)
+
     # 通过判断是否在notebook环境中，来选择不同的进度条
     try:
         from IPython.display import display
 
-        logger.info("set pandas from a notebook environment")
+        lm.logger.info("set pandas from a notebook environment")
         from tqdm.notebook import tqdm
     except ImportError:
-        logger.info("set pandas from a terminal environment")
+        lm.logger.info("set pandas from a terminal environment")
         from tqdm import tqdm
 
     if progres_bar:
-        logger.info("set pandas: tqdm.pandas")
+        lm.logger.info("set pandas: tqdm.pandas")
         tqdm.pandas()
-    logger.info(f'set pandas: max_colwidth={max_colwidth}')
+    lm.logger.info(f"set pandas: max_colwidth={max_colwidth}")
     pd.set_option("max_colwidth", max_colwidth)  # column最大宽度
-    logger.info(f'set pandas: display.width={display_width}')
+    lm.logger.info(f"set pandas: display.width={display_width}")
     pd.set_option("display.width", display_width)  # dataframe宽度
-    logger.info(f'set pandas: display.max_columns={display_max_columns}')
+    lm.logger.info(f"set pandas: display.max_columns={display_max_columns}")
     pd.set_option("display.max_columns", display_max_columns)  # column最大显示数
-    logger.info(f'set pandas: display.max_rows={display_max_rows}')
+    lm.logger.info(f"set pandas: display.max_rows={display_max_rows}")
     pd.set_option("display.max_rows", display_max_rows)  # row最大显示数
     return
 

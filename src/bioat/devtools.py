@@ -4,9 +4,9 @@ import time
 import psutil
 
 from bioat.exceptions import BioatInvalidParameterError
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.devtools"
+lm = LoggerManager(mod_name="bioat.devtools")
 
 
 def _elapsed_since(start):
@@ -33,9 +33,8 @@ def profile(num_iterations=1):
                 raise BioatInvalidParameterError(
                     "num_iterations must be a positive integer"
                 )
-            logger = get_logger(
-                level="INFO", module_name=__name__, func_name=func.__name__
-            )
+            lm.set_names(func_name=func.__name__)
+            lm.set_level("INFO")
 
             total_time = 0
             start_time = 0
@@ -62,7 +61,7 @@ def profile(num_iterations=1):
                 f"\tAverage  time: {avg_time:.9f}s\n"
                 f"\tMemory   diff: {mem_diff_mb:.2f} MB"
             )
-            logger.info(text)
+            lm.logger.info(text)
 
             return result
 

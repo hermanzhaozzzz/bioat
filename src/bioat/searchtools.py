@@ -10,13 +10,15 @@ from bs4 import BeautifulSoup
 
 from bioat import BioatInvalidOptionError
 from bioat.lib.libpatentseq import query_patent
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.searchtools"
+lm = LoggerManager(mod_name="bioat.searchtools")
 
 
 class SearchTools:
     """Search toolbox."""
+
+    lm.set_names(cls_name="SearchTools")
 
     def __init__(self):
         pass
@@ -62,11 +64,8 @@ class SearchTools:
         :param end_year: End year when searching. Default is current year
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="google_scholar",
-        )
+        lm.set_names(func_name="google_scholar")
+        lm.set_level(log_level)
 
         def get_citations(content):
             out = 0
@@ -93,13 +92,11 @@ class SearchTools:
                 from selenium.common.exceptions import StaleElementReferenceException
                 from selenium.webdriver.chrome.options import Options
             except ImportError as e:
-                logger.error(e)
-                logger.error(
-                    "Please install Selenium using `pip install selenium`"
-                )
+                lm.logger.error(e)
+                lm.logger.error("Please install Selenium using `pip install selenium`")
                 sys.exit(0)
 
-            logger.info("Loading...")
+            lm.logger.info("Loading...")
             options = Options()
             options.add_argument("disable-infobars")
             driver = webdriver.Chrome(options=options)
@@ -122,7 +119,7 @@ class SearchTools:
                     sleep(1)
                     get_element(driver, xpath, attempts=attempts, _count=_count + 1)
                 else:
-                    logger.warning("Element not found")
+                    lm.logger.warning("Element not found")
 
         def get_content_with_selenium(url):
             if "driver" not in globals():
@@ -135,7 +132,7 @@ class SearchTools:
             c = el.get_attribute("innerHTML")
 
             if any(kw in el.text for kw in ROBOT_KW):
-                logger.info(
+                lm.logger.info(
                     "Solve captcha manually and press enter here to continue..."
                 )
                 el = get_element(driver, "/html/body")
@@ -188,28 +185,23 @@ class SearchTools:
         for n in range(0, n_results, 10):
             # if start_year is None:
             url = GSCHOLAR_MAIN_URL.format(str(n), keyword.replace(" ", "+"))
-            logger = get_logger(
-                level=log_level,
-                module_name=__module_name__,
-                func_name="google_scholar",
-            )
 
-            logger.debug("Opening URL:", url)
+            lm.logger.debug("Opening URL:", url)
             # else:
             #    url=GSCHOLAR_URL_YEAR.format(str(n), keyword.replace(' ','+'), start_year=start_year, end_year=end_year)
 
-            logger.info("Loading next {} results".format(n + 10))
+            lm.logger.info("Loading next {} results".format(n + 10))
             page = session.get(url)  # , headers=headers)
             c = page.content
             if any(kw in c.decode("ISO-8859-1") for kw in ROBOT_KW):
-                logger.info(
+                lm.logger.info(
                     "Robot checking detected, handling with selenium (if installed)"
                 )
                 try:
                     c = get_content_with_selenium(url)
                 except Exception as e:
-                    logger.error("No success. The following error was raised:")
-                    logger.error(e)
+                    lm.logger.error("No success. The following error was raised:")
+                    lm.logger.error(e)
 
             # Create parser
             soup = BeautifulSoup(c, "html.parser", from_encoding="utf-8")
@@ -231,7 +223,7 @@ class SearchTools:
                 try:
                     citations.append(get_citations(str(div.format_string)))
                 except:
-                    logger.warning(
+                    lm.logger.warning(
                         "Number of citations not found for {}. Appending 0".format(
                             title[-1]
                         )
@@ -241,7 +233,7 @@ class SearchTools:
                 try:
                     year.append(get_year(div.find("div", {"class": "gs_a"}).text))
                 except:
-                    logger.warning(
+                    lm.logger.warning(
                         "Year not found for {}, appending 0".format(title[-1])
                     )
                     year.append(0)
@@ -361,12 +353,10 @@ class SearchTools:
         :param rm_fail_cookie: remove cookies from local if query fail, default is False
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="query_patent",
-        )
-        logger.info("Run query patent sequence from lens.org...")
+        lm.set_names(func_name="query_patent")
+        lm.set_level(log_level)
+
+        lm.logger.info("Run query patent sequence from lens.org...")
         query_patent(
             seq=seq,
             seq_header=query_name,

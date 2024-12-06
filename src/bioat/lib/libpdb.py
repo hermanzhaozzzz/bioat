@@ -8,9 +8,9 @@ from Bio.SeqRecord import SeqRecord
 
 from bioat.exceptions import BioatFileFormatError, BioatFileNotFoundError
 from bioat.lib.libfastx import AMINO_ACIDS, AMINO_ACIDS_EXTEND
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.lib.libpdb"
+lm = LoggerManager(mod_name="bioat.lib.libpdb")
 
 
 def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
@@ -32,9 +32,9 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
         output_fasta (str | None, optional): output file path. If None, the output file will be named as the basename of the input file with a ".fa" extension. Defaults to None.
         log_level (str, optional): log level. Defaults to "WARNING".
     """
-    logger = get_logger(
-        level=log_level, module_name=__module_name__, func_name="pdb2fasta"
-    )
+    lm.set_names(func_name="pdb2fasta")
+    lm.set_level(log_level)
+
     # 设置输出文件名
     if output_fasta is None:
         if pdb_file.endswith(".gz"):
@@ -42,7 +42,7 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
         else:
             idx = ".".join(os.path.basename(pdb_file).split(".")[:-1])
         output_fasta = f"{idx}.fa" if idx else "output.fa"
-        logger.debug(f"Output is not defined, set output to {output_fasta}")
+        lm.logger.debug(f"Output is not defined, set output to {output_fasta}")
     else:
         assert output_fasta.endswith(".fa"), "Output file must have a '.fa' extension"
         idx = ".".join(os.path.basename(output_fasta).split(".fa")[:-1])
@@ -70,7 +70,7 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
     # 遍历结构中的所有模型和链，提取序列
     for model in structure:
         for chain in model:
-            logger.debug(f"processing chain {chain.id}")
+            lm.logger.debug(f"processing chain {chain.id}")
             # 找出当前链中所有氨基酸的编号范围
             residue_ids = [residue.id[1] for residue in chain]
 
@@ -141,4 +141,4 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
     # 将所有链的序列保存为 FASTA 文件
     SeqIO.write(records, output_fasta, "fasta")
     input_handler.close()
-    logger.info(f"FASTA saved to: {output_fasta}")
+    lm.logger.info(f"FASTA saved to: {output_fasta}")

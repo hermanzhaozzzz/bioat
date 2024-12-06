@@ -24,13 +24,15 @@ import sys
 
 import pandas as pd
 
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = 'bioat.tabletools'
+lm = LoggerManager(mod_name="bioat.tabletools")
 
 
 class TableTools:
     """To integrate tables."""
+
+    lm.set_names(cls_name="TableTools")
 
     def __init__(self):
         pass
@@ -58,17 +60,17 @@ class TableTools:
         :param output_header: True | False, output table has header or not
         :param log_level: log status
         """
-        logger = get_logger(
-            level=log_level, module_name=__module_name__, func_name="merge"
-        )
+        lm.set_names(func_name="merge")
+        lm.set_level(log_level)
+
         # fix params
         inputs = list(inputs) if isinstance(inputs, tuple) else inputs.split(',')
         tags = list(tags) if isinstance(tags, tuple) else tags.split(',')
 
-        logger.debug(f'input_fmt={input_fmt}')
-        logger.debug(f'output_fmt={output_fmt}')
-        logger.debug(f'input_header={input_header}')
-        logger.debug(f'output_header={output_header}')
+        lm.logger.debug(f"input_fmt={input_fmt}")
+        lm.logger.debug(f"output_fmt={output_fmt}")
+        lm.logger.debug(f"input_header={input_header}")
+        lm.logger.debug(f"output_header={output_header}")
 
         input_header = 0 if input_header else None
         output = sys.stdout if output == sys.stdout.name else output
@@ -112,13 +114,13 @@ class TableTools:
         :param compress: True | False, gzip the output table or not
         :param log_level: log status
         """
-        logger = get_logger(
-            level=log_level, module_name=__module_name__, func_name="split"
-        )
-        logger.debug(f'input_fmt={input_fmt}')
-        logger.debug(f'output_fmt={output_fmt}')
-        logger.debug(f'input_header={input_header}')
-        logger.debug(f'output_header={output_header}')
+        lm.set_names(func_name="split")
+        lm.set_level(log_level)
+
+        lm.logger.debug(f"input_fmt={input_fmt}")
+        lm.logger.debug(f"output_fmt={output_fmt}")
+        lm.logger.debug(f"input_header={input_header}")
+        lm.logger.debug(f"output_header={output_header}")
         # fix params
         input_header = 0 if input_header else None
         output_prefix = output_prefix if output_prefix else f'{input}_'

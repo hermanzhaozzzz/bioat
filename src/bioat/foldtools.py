@@ -1,11 +1,13 @@
 from bioat.lib.libpdb import pdb2fasta
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.foldtools"
+lm = LoggerManager(mod_name="bioat.foldtools")
 
 
 class FoldTools:
     """Folding toolbox."""
+
+    lm.set_names(cls_name="FoldTools")
 
     def __init__(self):
         pass
@@ -29,8 +31,9 @@ class FoldTools:
             output (str | None, optional): output file path. If None, the output file will be named as the basename of the input file with a ".fa" extension. Defaults to None.
             log_level (str, optional): log level. Defaults to "WARNING".
         """
-        logger = get_logger(level=log_level, module_name=__module_name__)
-        logger.debug(f"""\
+        lm.set_names(func_name="pdb2fasta")
+        lm.set_level(log_level)
+        lm.logger.debug(f"""\
 Params:
 -------
 input: {input}

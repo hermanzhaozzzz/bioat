@@ -26,9 +26,9 @@ from signal import SIG_DFL, SIGPIPE, signal
 from sys import stdin as STDIN
 from sys import stdout as STDOUT
 
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.bamtools"
+lm = LoggerManager(mod_name="bioat.bamtools")
 
 def setup_signal_handling():
     """Setup signal handlers."""
@@ -39,6 +39,7 @@ setup_signal_handling()
 class BamTools:
     """Bam toolbox."""
 
+    lm.set_names(cls_name="BamTools")
     def __init__(self):
         pass
 
@@ -74,16 +75,12 @@ class BamTools:
         Returns:
             None: This function does not return a value. It outputs a file based on the provided parameters.
         """
-
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="mpileup2table",
-        )
+        lm.set_names(func_name="mpileup2table")
+        lm.set_level(log_level)
 
         def _temp_split_bam(mpileup, threads, temp_dir):
             # creat temp file name and open file
-            logger.debug("Making temp files...")
+            lm.logger.debug("Making temp files...")
 
             input_file_basename = os.path.basename(mpileup)
 
@@ -111,7 +108,7 @@ class BamTools:
                 temp_file_list.append(temp_file)
 
             # counting input file line number
-            logger.debug("Counting input file...")
+            lm.logger.debug("Counting input file...")
 
             total_input_line_num = 0
             input_file = (
@@ -130,7 +127,7 @@ class BamTools:
                 each_file_line_num = (total_input_line_num // threads) + 1
 
             input_file.close()
-            logger.debug("Done!")
+            lm.logger.debug("Done!")
 
             # split temp files
             # write into output filename
@@ -147,7 +144,7 @@ class BamTools:
             # close output filename
             input_file.close()
             [temp_file.close() for temp_file in temp_file_list]
-            logger.debug("Make temp files done!")
+            lm.logger.debug("Make temp files done!")
 
             return temp_filename_list
 
@@ -196,7 +193,7 @@ class BamTools:
             mpileup=mpileup, threads=threads, temp_dir=temp_dir
         )
         # multiple processing part
-        logger.debug("Parsing files...")
+        lm.logger.debug("Parsing files...")
 
         procs_list = []
 
@@ -216,15 +213,15 @@ class BamTools:
 
         for sub_proc in procs_list:
             sub_proc.join()
-        logger.debug("Done!")
+        lm.logger.debug("Done!")
         # merge output files
-        logger.debug("Merging files...")
+        lm.logger.debug("Merging files...")
         _merge_out_bmat(
             temp_filename_list=temp_filename_list,
             output=output,
             remove_temp=remove_temp,
         )
-        logger.debug("Done!...")
+        lm.logger.debug("Done!...")
 
     def remove_clip(
         self,
@@ -271,20 +268,14 @@ class BamTools:
                 Logging level for the process. Can be one of
                 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.
         """
+        lm.set_names(func_name="remove_clip")
+        lm.set_level(log_level)
 
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="remove_clip",
-        )
-        from bioat import __BAM_PARSER_BACKEND__, pysam
-
-        logger.debug(
-            f"Using {__BAM_PARSER_BACKEND__} as the backend for parsing BAM files."
-        )
-        if __BAM_PARSER_BACKEND__ == "bamnostic":
-            logger.warning(
-                f'{__module_name__} requires "pysam" but not "bamnostic" as the backend for parsing BAM files. Please install it first.'
+        try:
+            import pysam
+        except ImportError:
+            lm.logger.error(
+                'remove_clip requires "pysam" as the backend for parsing BAM files. Please install it first.'
             )
             sys.exit(0)
         save = pysam.set_verbosity(
@@ -305,7 +296,7 @@ class BamTools:
         if so:
             if so != "queryname":
                 if remove_as_paired:
-                    logger.error(
+                    lm.logger.error(
                         "When remove_as_paired is True, the input BAM|SAM must be sorted by"
                         "name and has header [SO:queryname]!\n"
                         f"your header: [SO:{so}]\n"
@@ -313,18 +304,18 @@ class BamTools:
                     exit(1)
                 else:
                     if so != "coordinate":
-                        logger.warning(
+                        lm.logger.warning(
                             "the input BAM|SAM must have header [SO:coordinate] or [SO:queryname]!\n"
                             f"your header: [SO:{so}]\n"
                         )
 
         else:
-            logger.warning(
+            lm.logger.warning(
                 "the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
                 "your bam file does not have a header\n"
             )
             if isinstance(input, TextIOWrapper):
-                logger.warning(
+                lm.logger.warning(
                     "you can add header to your input file by using `samtools view -h input.bam > input_with_header.bam`"
                 )
 
@@ -333,7 +324,7 @@ class BamTools:
 
         # Iterate through reads.
         if remove_as_paired:
-            logger.info(
+            lm.logger.info(
                 "remove_as_paired is True, all paired clipped reads will be removed."
             )
             read1, read2 = None, None
@@ -377,11 +368,11 @@ class BamTools:
                             bam_out.write(read1)
                             bam_out.write(read2)
                 else:
-                    logger.fatal(
+                    lm.logger.fatal(
                         "something wrong with read1/2 pairs, they may have different read id or there is None in them"
                     )
-                    logger.fatal(f"read1={read1}, read2={read2}")
-                    logger.fatal(
+                    lm.logger.fatal(f"read1={read1}, read2={read2}")
+                    lm.logger.fatal(
                         f"read1_id={read1.query_name}, read2_id={read2.query_name}"
                     )
                     exit(1)

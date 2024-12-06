@@ -5,13 +5,14 @@ import pandas as pd
 
 from bioat.exceptions import BioatFileFormatError, BioatFileNotCompleteError
 from bioat.lib.libfastx import calculate_length_distribution, format_this_fastx
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.fastxtools"
+lm = LoggerManager(mod_name="bioat.fastxtools")
 
 
 class FastxTools:
     """FASTA & FASTQ toolbox."""
+    lm.set_names(cls_name="FastxTools")
 
     def __init__(self):
         self.fastx = None
@@ -64,12 +65,8 @@ class FastxTools:
                 It can be INFO, DEBUG, WARNING, or ERROR. The default is WARNING.
 
         """
-
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="mgi_parse_md5",
-        )
+        lm.set_names(func_name="mgi_parse_md5")
+        lm.set_level(log_level)
         try:
             df = pd.read_csv(
                 file,
@@ -81,11 +78,11 @@ class FastxTools:
             df.columns = ["md5", "filename"]
             df.md5 = df.md5.map(lambda x: x.lower())
         except ValueError as e:
-            logger.error(BioatFileFormatError(e))
+            lm.logger.error(BioatFileFormatError(e))
             exit(1)
         df.filename = df.filename + ".gz"
         to_path = file.replace(".txt", "") + ".fix.md5"
-        logger.info(f"write to {to_path}")
+        lm.logger.info(f"write to {to_path}")
         df.to_csv(to_path, header=False, index=False, sep="\t")
 
     @staticmethod
@@ -97,11 +94,9 @@ class FastxTools:
             i.e. print(next(obj)) -> ['header', 'seq', 'info', 'quality']
         :rtype: generator
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="_load_fastx_generator",
-        )
+        lm.set_names(func_name="_load_fastx_generator")
+        lm.set_level(log_level)
+
         f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
         # FASTQ @  | FASTA >
         symbol = f.read(1)
@@ -109,7 +104,7 @@ class FastxTools:
         f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
 
         if symbol == "@":
-            logger.debug("detect FASTQ file")
+            lm.logger.debug("detect FASTQ file")
             read = []
             line = f.readline().rstrip()
 
@@ -163,7 +158,7 @@ class FastxTools:
             # return ls
 
         elif symbol == ">":
-            logger.debug("detect FASTA file")
+            lm.logger.debug("detect FASTA file")
             read = []
             seq = ""
             line = f.readline().rstrip()
@@ -192,7 +187,7 @@ class FastxTools:
                             seq = ""  # 重置 seq 这个 str
                         else:
                             f.close()
-                            logger.error(
+                            lm.logger.error(
                                 BioatFileNotCompleteError("The file may be incomplete!")
                             )
                             exit(1)
@@ -207,7 +202,7 @@ class FastxTools:
             # return ls
         else:
             f.close()
-            logger.error(
+            lm.logger.error(
                 BioatFileFormatError(
                     "Input line one must starts with `@` for FASTQ or `>` for FASTA!"
                 )

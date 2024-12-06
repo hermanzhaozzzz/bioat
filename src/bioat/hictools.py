@@ -4,14 +4,15 @@ import time
 import pandas as pd
 
 from bioat.devtools import profile
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = 'bioat.hictools'
+lm = LoggerManager(mod_name="bioat.hictools")
 
 
 class HiCTools:
     """Hi-C toolbox."""
 
+    lm.set_names(cls_name="HiCTools")
     def __init__(self):
         pass
 
@@ -32,12 +33,10 @@ class HiCTools:
         :param output: table_output, TSV file
         :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="get_effective_resolutions",
-        )
-        logger.debug('Develop mode is on')
+        lm.set_names(func_name="get_effective_resolutions")
+        lm.set_level(log_level)
+
+        lm.logger.debug("Develop mode is on")
         # load ref genome lengths
         df_chromosome = pd.read_csv(
             genome_index,
@@ -71,11 +70,11 @@ class HiCTools:
                 chunk = reader.get_chunk(10_000_000)
                 chunks.append(chunk)
             except StopIteration:
-                logger.debug("pandas reader iteration is done.")
+                lm.logger.debug("pandas reader iteration is done.")
                 break
 
         df_valid_pairs = pd.concat(chunks, ignore_index=True)
-        logger.debug(df_valid_pairs.info(memory_usage='deep'))
+        lm.logger.debug(df_valid_pairs.info(memory_usage="deep"))
         # 思路：二分法确认new_bin下线
         output = open(output, 'wt')
         write_lines = 0

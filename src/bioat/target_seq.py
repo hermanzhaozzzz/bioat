@@ -41,15 +41,17 @@ from bioat.lib.libalignment import instantiate_pairwise_aligner
 from bioat.lib.libcolor import convert_hex_to_rgb, make_color_list, map_color
 from bioat.lib.libcrispr import TARGET_SEQ_LIB, run_target_seq_align
 from bioat.lib.libpandas import set_option
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = 'bioat.target_seq'
+lm = LoggerManager(mod_name="bioat.target_seq")
 
 set_option(log_level='ERROR')
 
 
 class TargetSeq:
     """Target Deep Sequencing toolbox."""
+
+    lm.set_names(cls_name="TargetSeq")
 
     def __init__(self):
         pass
@@ -123,36 +125,37 @@ class TargetSeq:
             --input_table test_sorted.mpileup.info.tsv \
             --output_fig test_sorted.mpileup.info.pdf\n
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="region_heatmap",
-        )
+        lm.set_names(func_name="region_heatmap")
+        lm.set_log_level(log_level)
 
         if get_built_in_target_seq:
-            logger.info(
+            lm.logger.info(
                 "You can use <key> in built-in <target_seq> to represent your target_seq:\n"
                 + "\t<key>\t<target_seq>\n"
                 + "".join([f"\t{k}\t{v}\n" for k, v in TARGET_SEQ_LIB.items()])
             )
-            logger.info('exit because of the defination for get_built_in_target_seq')
+            lm.logger.info("exit because of the defination for get_built_in_target_seq")
             exit(0)
         else:
             # set sgRNA info
-            logger.debug(f'load target_seq = {target_seq}')
+            lm.logger.debug(f"load target_seq = {target_seq}")
 
             if target_seq in TARGET_SEQ_LIB:
-                logger.debug(f'target_seq information is abtained from the <key>={target_seq}')
+                lm.logger.debug(
+                    f"target_seq information is abtained from the <key>={target_seq}"
+                )
                 target_seq = TARGET_SEQ_LIB[target_seq]
-                logger.debug(f'target_seq is refered to {target_seq}')
+                lm.logger.debug(f"target_seq is refered to {target_seq}")
             elif target_seq is None:
                 pass
             elif isinstance(target_seq, str):
-                logger.debug(f'target_seq is refered to {target_seq}')
+                lm.logger.debug(f"target_seq is refered to {target_seq}")
             else:
-                logger.error("<target_seq> should be set as:"
-                             "DNA sequence / <key> in <get_built_in_target_seq> / None,"
-                             f"but your <target_seq> is {target_seq}")
+                lm.logger.error(
+                    "<target_seq> should be set as:"
+                    "DNA sequence / <key> in <get_built_in_target_seq> / None,"
+                    f"but your <target_seq> is {target_seq}"
+                )
                 exit(1)
 
         # set alignment
@@ -164,7 +167,10 @@ class TargetSeq:
         else:
             df_bases = pd.read_csv(input_table, sep="\t", header=None)
 
-        logger.debug('df_bases.head(10):\n' + tabulate(df_bases.head(10), headers='keys', tablefmt='psql'))
+        lm.logger.debug(
+            "df_bases.head(10):\n"
+            + tabulate(df_bases.head(10), headers="keys", tablefmt="psql")
+        )
 
         # ref_seq & ref_seq_rc
         if reference_seq:
@@ -176,14 +182,16 @@ class TargetSeq:
                     raise BioatFileFormatError
 
             ref_seq = Seq(reference_seq)
-            logger.debug(f'load ref_seq from parameter:\n{ref_seq}')
+            lm.logger.debug(f"load ref_seq from parameter:\n{ref_seq}")
         else:
             ref_seq = Seq("".join(df_bases.ref_base))
-            logger.debug(f'load ref_seq from df_bases.ref_base:\n{ref_seq}')
+            lm.logger.debug(f"load ref_seq from df_bases.ref_base:\n{ref_seq}")
 
-        logger.debug(f'Seq object for ref_seq:\n{ref_seq}')
+        lm.logger.debug(f"Seq object for ref_seq:\n{ref_seq}")
         ref_seq_rc = ref_seq.reverse_complement()
-        logger.debug(f'Seq object for ref_seq_rc (reverse_complement):\n{ref_seq_rc}')
+        lm.logger.debug(
+            f"Seq object for ref_seq_rc (reverse_complement):\n{ref_seq_rc}"
+        )
 
         # target_seq
         if target_seq is None:
@@ -199,37 +207,39 @@ class TargetSeq:
                 target_seq = Seq(target_seq.upper())
                 PAM = {'PAM': PAM, 'position': len(target_seq), 'weight': PAM_priority_weight}
         else:
-            logger.debug(f'no PAM sequence is defined from target_seq = {target_seq}')
+            lm.logger.debug(
+                f"no PAM sequence is defined from target_seq = {target_seq}"
+            )
             target_seq = Seq(target_seq)
             PAM = None
 
-        logger.info(f'parse target_seq: target_seq={target_seq}, PAM={PAM}')
+        lm.logger.info(f"parse target_seq: target_seq={target_seq}, PAM={PAM}")
 
         # fwd alignment & rev alignment
         # 为了判断target_seq (sgRNA) 是设计在fwd还是rev链上
         if not PAM:
-            logger.info('use PAMless mode to align')
+            lm.logger.info("use PAMless mode to align")
             fwd = run_target_seq_align(ref_seq, target_seq, aligner)
-            logger.debug(f'final_align_forward:\n{fwd}')
+            lm.logger.debug(f"final_align_forward:\n{fwd}")
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
-            logger.debug(f'final_align_reverse:\n{rev}')
+            lm.logger.debug(f"final_align_reverse:\n{rev}")
         else:
-            logger.info("use PAM mode to align")
+            lm.logger.info("use PAM mode to align")
             # fwd = run_target_seq_align(ref_seq, target_seq, aligner, PAM=PAM)
-            # logger.debug(f'final_align_forward:\n{fwd}')
+            # lm.logger.debug(f'final_align_forward:\n{fwd}')
             # rev = run_target_seq_align(ref_seq_rc, target_seq, aligner, PAM=PAM)
-            # logger.debug(f'final_align_reverse:\n{rev}')
+            # lm.logger.debug(f'final_align_reverse:\n{rev}')
             fwd = run_target_seq_align(ref_seq, target_seq, aligner)
-            logger.debug(f'final_align_forward:\n{fwd}')
+            lm.logger.debug(f"final_align_forward:\n{fwd}")
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
-            logger.debug(f'final_align_reverse:\n{rev}')
+            lm.logger.debug(f"final_align_reverse:\n{rev}")
 
         # get fwd alignment info
         reference_seq = fwd['alignment']['reference_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         align_info = fwd['alignment']['aln_info'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         target_seq = fwd['alignment']['target_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         aln_score = fwd['aln_score']
-        logger.info(
+        lm.logger.info(
             f"Forward best alignment:\n"
             f"reference  : {reference_seq}\n"
             f"align_info : {align_info}\n"
@@ -237,12 +247,12 @@ class TargetSeq:
             f"align_score: {aln_score}"
         )
         # get rev alignment info
-        logger.info(rev)
+        lm.logger.info(rev)
         reference_seq_rev = rev['alignment']['reference_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         align_info_rev = rev['alignment']['aln_info'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         target_seq_rev = rev['alignment']['target_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         aln_score_rev = rev['aln_score']
-        logger.info(
+        lm.logger.info(
             f"Reverse best alignment:\n"
             f"reference  : {reference_seq_rev}\n"
             f"align_info : {align_info_rev}\n"
@@ -264,7 +274,7 @@ class TargetSeq:
                 target_seq = target_seq_rev
                 aln_score = aln_score_rev
         else:
-            logger.critical("Alignment Error!")
+            lm.logger.critical("Alignment Error!")
             exit(1)
 
         # mark aligned all bases in target_seq
@@ -291,8 +301,10 @@ class TargetSeq:
         aln_end = aln['ref_aln_end']
 
         # update target_seq_aln
-        logger.debug(f'target_seq_aln (before update) = {target_seq_aln}')
-        logger.debug(f'target_seq_aln_insert (before update) = {target_seq_aln_insert}')
+        lm.logger.debug(f"target_seq_aln (before update) = {target_seq_aln}")
+        lm.logger.debug(
+            f"target_seq_aln_insert (before update) = {target_seq_aln_insert}"
+        )
 
         for idx, ref_base in enumerate(reference_seq):
 
@@ -307,23 +319,25 @@ class TargetSeq:
                 ref_gap_count += 1
                 ref_del_str += target_seq[idx]  # for continuous gap
                 target_seq_aln_insert[aln_start + idx] = target_seq[idx]
-        logger.debug(
+        lm.logger.debug(
             "update target_seq_aln: show ''.join(target_seq_aln)\n"
             f"target_seq_aln = {''.join(target_seq_aln)}\n"
             f"target_seq     = {target_seq}"
         )
-        logger.debug("update target_seq_aln: Done")
-        logger.debug(f'target_seq_aln (after update) = {target_seq_aln}')
-        logger.debug(f'target_seq_aln_insert (after update) = {target_seq_aln_insert}')
+        lm.logger.debug("update target_seq_aln: Done")
+        lm.logger.debug(f"target_seq_aln (after update) = {target_seq_aln}")
+        lm.logger.debug(
+            f"target_seq_aln_insert (after update) = {target_seq_aln_insert}"
+        )
 
         # if reverse alignment
         if aln_direction == "Reverse Alignment":
             # illustrate reverse alignment as forward alignment
             target_seq_aln = target_seq_aln[::-1]
             target_seq_aln_insert = target_seq_aln_insert[::-1]
-            logger.debug("use reverse alignment")
-            logger.debug(f'target_seq_aln = {target_seq_aln}')
-            logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
+            lm.logger.debug("use reverse alignment")
+            lm.logger.debug(f"target_seq_aln = {target_seq_aln}")
+            lm.logger.debug(f"target_seq_aln_insert = {target_seq_aln_insert}")
 
         # add PAM info
 
@@ -346,7 +360,10 @@ class TargetSeq:
         possible_target_region_end = min(aln_end + region_extend_length, ref_seq_length)  # 266: 0~255 266 - 1
         plot_region = (possible_target_region_start, possible_target_region_end)
         df_bases_select = df_bases.iloc[plot_region[0]: plot_region[1], :]
-        logger.debug('df_bases_select:\n' + tabulate(df_bases_select, headers='keys', tablefmt='psql'))
+        lm.logger.debug(
+            "df_bases_select:\n"
+            + tabulate(df_bases_select, headers="keys", tablefmt="psql")
+        )
 
         # make plot
         # set color
@@ -379,22 +396,22 @@ class TargetSeq:
         # max_color: max color to plot heatmap with RGB format
         color_list = make_color_list(min_color, max_color, len(color_break) - 1, "HEX")
         color_list = ["#FFFFFF"] + color_list
-        logger.debug(f'color_list = {color_list}')
+        lm.logger.debug(f"color_list = {color_list}")
 
         # get plot info
         total_box_count = plot_region[1] - plot_region[0]
 
         # calculate base info and fix zero
         base_sum_count = df_bases_select.loc[:, ["A", "G", "C", "T"]].sum(axis=1).astype(int)
-        logger.debug(f'base_sum_count =\n{base_sum_count.values}')
+        lm.logger.debug(f"base_sum_count =\n{base_sum_count.values}")
         total_sum_count = df_bases_select[["A", "G", "C", "T", "del_count", "insert_count"]].sum(axis=1).astype(int)
-        logger.debug(f'total_sum_count =\n{total_sum_count.values}')
+        lm.logger.debug(f"total_sum_count =\n{total_sum_count.values}")
         # fix 0 -> ["A.ratio", list(df_bases_select["A"] / base_sum_count)]
         base_sum_count[base_sum_count == 0] = 1
         total_sum_count[total_sum_count == 0] = 1
 
         # make plot size
-        logger.debug(f'aln =\n{aln}')
+        lm.logger.debug(f"aln =\n{aln}")
 
         if indel_plot_state:
             panel_height_coef = [.5, .9, .9] + [.5] * 6 + [.5] * 6
@@ -436,46 +453,48 @@ class TargetSeq:
         # get box and space info
         box_height_list = np.array(panel_height_coef) * panel_box_heigth
         panel_space_list = np.array(panel_space_coef) * panel_space
-        logger.debug(f'box_height_list = {box_height_list}')
-        logger.debug(f'panel_space_list = {panel_space_list}')
+        lm.logger.debug(f"box_height_list = {box_height_list}")
+        lm.logger.debug(f"panel_space_list = {panel_space_list}")
 
         # calculate figure total width and height
         figure_width = total_box_count * panel_box_width + \
                        (total_box_count - 1) * panel_box_space + panel_box_width * 2
         figure_height = sum(box_height_list) + sum(panel_space_list)
 
-        logger.debug(f'figure_width = {figure_width}')
-        logger.debug(f'figure_height = {figure_height}')
+        lm.logger.debug(f"figure_width = {figure_width}")
+        lm.logger.debug(f"figure_height = {figure_height}")
 
         # make all box_x
         box_x_vec = np.arange(0, figure_width + panel_box_width, panel_box_width + panel_box_space)
         box_x_vec = box_x_vec[:(len(ref_seq) + 1)]
-        # logger.debug(f'box_x_vec (x for each column) =\n{box_x_vec}')
+        # lm.logger.debug(f'box_x_vec (x for each column) =\n{box_x_vec}')
 
         # make box border
         if box_border_plot_state:
             box_edgecolor = "#AAAAAA"
             box_linestyle = "-"
             box_linewidth = 2
-            logger.debug(f'box_border_plot_state = {box_border_plot_state}')
-            logger.debug(f'box_edgecolor = {box_edgecolor}')
-            logger.debug(f'box_linestyle = {box_linestyle}')
-            logger.debug(f'box_linewidth = {box_linewidth}')
+            lm.logger.debug(f"box_border_plot_state = {box_border_plot_state}")
+            lm.logger.debug(f"box_edgecolor = {box_edgecolor}")
+            lm.logger.debug(f"box_linestyle = {box_linestyle}")
+            lm.logger.debug(f"box_linewidth = {box_linewidth}")
         else:
             box_edgecolor = "#FFFFFF"
             box_linestyle = "None"
             box_linewidth = 0
-            logger.debug(f'box_border_plot_state = {box_border_plot_state}')
-            logger.debug(f'box_edgecolor = {box_edgecolor}')
-            logger.debug(f'box_linestyle = {box_linestyle}')
-            logger.debug(f'box_linewidth = {box_linewidth}')
+            lm.logger.debug(f"box_border_plot_state = {box_border_plot_state}")
+            lm.logger.debug(f"box_edgecolor = {box_edgecolor}")
+            lm.logger.debug(f"box_linestyle = {box_linestyle}")
+            lm.logger.debug(f"box_linewidth = {box_linewidth}")
 
         # make box_y initialize
         current_y = 0
 
-        logger.debug('start to plot')
+        lm.logger.debug("start to plot")
         fig = plt.figure(figsize=(figure_width * 1.1, figure_height * 1.1))
-        logger.debug(f'set new figure, figsize = ({figure_width * 1.1}, {figure_height * 1.1})')
+        lm.logger.debug(
+            f"set new figure, figsize = ({figure_width * 1.1}, {figure_height * 1.1})"
+        )
 
         plt.set_loglevel("info")
         # will show matplotlib debug log with logging
@@ -484,9 +503,9 @@ class TargetSeq:
         plt.xlim([0, figure_width])
         plt.ylim([-figure_height, 0])
         plt.axis("off")
-        logger.debug(f'plt.xlim([0, {figure_width}])')
-        logger.debug(f'plt.ylim([-{figure_height}, 0])')
-        logger.debug('plt.axis("off")')
+        lm.logger.debug(f"plt.xlim([0, {figure_width}])")
+        lm.logger.debug(f"plt.ylim([-{figure_height}, 0])")
+        lm.logger.debug('plt.axis("off")')
 
         # make plot
         text_list = []
@@ -576,7 +595,7 @@ class TargetSeq:
                     box_ratio = plot_data_list[panel_index][1] / base_sum_count
 
                 box_color_list = map_color(box_ratio, color_break, color_list)
-                logger.debug(f'get box_color_list for {panel_name}')
+                lm.logger.debug(f"get box_color_list for {panel_name}")
 
                 for index, box_value in enumerate(plot_data_list[panel_index][1]):
                     box_color = box_color_list[index]
@@ -642,10 +661,10 @@ class TargetSeq:
                     current_y = current_y - (box_height_list[panel_index] + panel_space_list[panel_index])
 
         # plot box
-        logger.debug("plot rectangles")
+        lm.logger.debug("plot rectangles")
         ax.add_collection(PatchCollection(patches, match_original=True))
 
-        logger.debug("plot text on each rectangle")
+        lm.logger.debug("plot text on each rectangle")
         for text_x, text_y, text_info, text_fontsize in text_list:
             plt.text(
                 x=text_x, y=text_y, s=text_info, horizontalalignment='center', verticalalignment='center',
@@ -745,11 +764,8 @@ class TargetSeq:
             --labels condition1,condition2,condition3 \
             --target_seq HEK4 \n
         """
-        logger = get_logger(
-            level=log_level,
-            module_name=__module_name__,
-            func_name="region_heatmap_compare",
-        )
+        lm.set_names(func_name="region_heatmap_compare")
+        lm.set_level(log_level)
 
         base_color_dict = {"A": "#04E3E3", "T": "#F9B874", "C": "#B9E76B", "G": "#F53798", "N": "#DDEAF6"}
 
@@ -763,56 +779,62 @@ class TargetSeq:
 
         # check whether return built-in information
         if get_built_in_target_seq:
-            logger.info(
+            lm.logger.info(
                 "You can use <key> in built-in <target_seq> to represent your target_seq:\n"
                 + "\t<key>\t<target_seq>\n"
                 + "".join([f"\t{k}\t{v}\n" for k, v in TARGET_SEQ_LIB.items()])
             )
-            logger.info('exit because of the defination for get_built_in_target_seq')
+            lm.logger.info("exit because of the defination for get_built_in_target_seq")
             exit(0)
         else:
             # set target_seq(sgRNA) info
-            logger.debug(f'load target_seq = {target_seq}')
+            lm.logger.debug(f"load target_seq = {target_seq}")
 
             if target_seq in TARGET_SEQ_LIB:
-                logger.debug(f'target_seq information is abtained from the <key>={target_seq}')
+                lm.logger.debug(
+                    f"target_seq information is abtained from the <key>={target_seq}"
+                )
                 target_seq = TARGET_SEQ_LIB[target_seq]
-                logger.debug(f'target_seq is refered to {target_seq}')
+                lm.logger.debug(f"target_seq is refered to {target_seq}")
             elif target_seq is None:
                 pass
             elif isinstance(target_seq, str):
-                logger.debug(f'target_seq is refered to {target_seq}')
+                lm.logger.debug(f"target_seq is refered to {target_seq}")
             else:
-                logger.error("<target_seq> should be set as:"
-                             "DNA sequence / <key> in <get_built_in_target_seq> / None,"
-                             f"but your <target_seq> is {target_seq}")
+                lm.logger.error(
+                    "<target_seq> should be set as:"
+                    "DNA sequence / <key> in <get_built_in_target_seq> / None,"
+                    f"but your <target_seq> is {target_seq}"
+                )
                 exit(1)
         # check if nothing to output
         outputs = (output_fig_heatmap, output_fig_count_ratio, output_table_heatmap, output_table_count_ratio)
 
         if not [i for i in outputs if i is not None]:
-            logger.error("outputs should be set as free combination of (output_fig_heatmap, output_fig_count_ratio, "
-                         "output_table_heatmap, output_table_count_ratio), but none of outputs was defined")
+            lm.logger.error(
+                "outputs should be set as free combination of (output_fig_heatmap, output_fig_count_ratio, "
+                "output_table_heatmap, output_table_count_ratio), but none of outputs was defined"
+            )
             exit(1)
         # check parameter: to_base
         # check to_base:  tuple for A G C T Ins Del or combine like A G T Ins
         default_bases = ('A', 'G', 'C', 'T', 'Ins', 'Del')
-        logger.debug('check to_base parameter')
+        lm.logger.debug("check to_base parameter")
         for base in to_base:
             if base not in default_bases:
-                logger.error('check to_base parameter')
-                logger.error(f'{base} not in {default_bases}')
+                lm.logger.error("check to_base parameter")
+                lm.logger.error(f"{base} not in {default_bases}")
                 raise BioatInvalidOptionError
-        logger.debug(f'to_base was defined as {to_base}')
+        lm.logger.debug(f"to_base was defined as {to_base}")
 
         # check parameter: count_ratio
         default_count_ratio_choices = ('count', 'ratio', 'all')
-        logger.debug('check count_ratio parameter')
+        lm.logger.debug("check count_ratio parameter")
         if count_ratio not in default_count_ratio_choices:
-            logger.error('check count_ratio parameter')
-            logger.error(f'{count_ratio} not in {default_count_ratio_choices}')
+            lm.logger.error("check count_ratio parameter")
+            lm.logger.error(f"{count_ratio} not in {default_count_ratio_choices}")
             raise BioatInvalidOptionError
-        logger.debug(f'count_ratio was defined as {count_ratio}')
+        lm.logger.debug(f"count_ratio was defined as {count_ratio}")
 
         # parse parameter: input_tables
         if isinstance(input_tables, tuple):
@@ -821,7 +843,7 @@ class TargetSeq:
             input_tables = input_tables.replace(' ', '').replace('\t', '').strip().split(',')
         else:
             raise BioatInvalidInputError
-        logger.debug(f'parse tables... {input_tables}')
+        lm.logger.debug(f"parse tables... {input_tables}")
 
         # parse parameter: labels, if labels is None, labels value will be input_tables names
         if isinstance(labels, tuple):
@@ -830,7 +852,7 @@ class TargetSeq:
             labels = labels.replace(' ', '').replace('\t', '').strip().split(',') if labels else input_tables
         else:
             raise BioatInvalidInputError
-        logger.debug(f'parse labels... {labels}')
+        lm.logger.debug(f"parse labels... {labels}")
 
         # set alignment
         aligner = instantiate_pairwise_aligner(*local_alignment_scoring_matrix)
@@ -843,7 +865,10 @@ class TargetSeq:
             df['label'] = label
             ls.append(df)
         df_bases = pd.concat(ls)
-        logger.debug('df_bases.head(10):\n' + tabulate(df_bases.head(8), headers='keys', tablefmt='psql'))
+        lm.logger.debug(
+            "df_bases.head(10):\n"
+            + tabulate(df_bases.head(8), headers="keys", tablefmt="psql")
+        )
 
         # parse parameter: reference_seq, if reference_seq is None, reference_seq value will be derived from df_bases
         if reference_seq:
@@ -855,13 +880,15 @@ class TargetSeq:
                     raise BioatFileFormatError
 
             ref_seq = Seq(reference_seq)
-            logger.debug(f'load ref_seq from parameter:\n{ref_seq}')
+            lm.logger.debug(f"load ref_seq from parameter:\n{ref_seq}")
         else:
             ref_seq = Seq("".join(df_bases.query('label==@labels[0]').ref_base))
-            logger.debug(f'load ref_seq from df_bases.ref_base:\n{ref_seq}')
-        logger.debug(f'Seq object for ref_seq:\n{ref_seq}')
+            lm.logger.debug(f"load ref_seq from df_bases.ref_base:\n{ref_seq}")
+        lm.logger.debug(f"Seq object for ref_seq:\n{ref_seq}")
         ref_seq_rc = ref_seq.reverse_complement()
-        logger.debug(f'Seq object for ref_seq_rc (reverse_complement):\n{ref_seq_rc}')
+        lm.logger.debug(
+            f"Seq object for ref_seq_rc (reverse_complement):\n{ref_seq_rc}"
+        )
 
         # parse parameter: target_seq
         if target_seq is None:
@@ -877,32 +904,34 @@ class TargetSeq:
                 target_seq = Seq(target_seq.upper())
                 PAM = {'PAM': PAM, 'position': len(target_seq), 'weight': PAM_priority_weight}
         else:
-            logger.debug(f'no PAM sequence is defined from target_seq = {target_seq}')
+            lm.logger.debug(
+                f"no PAM sequence is defined from target_seq = {target_seq}"
+            )
             target_seq = Seq(target_seq)
             PAM = None
-        logger.info(f'parse target_seq: target_seq={target_seq}, PAM={PAM}')
+        lm.logger.info(f"parse target_seq: target_seq={target_seq}, PAM={PAM}")
 
         # fwd alignment & rev alignment
         # 为了判断target_seq (sgRNA) 是设计在fwd还是rev链上
         if not PAM:
-            logger.info('use PAMless mode to align')
+            lm.logger.info("use PAMless mode to align")
             fwd = run_target_seq_align(ref_seq, target_seq, aligner)
-            logger.debug(f'final_align_forward:\n{fwd}')
+            lm.logger.debug(f"final_align_forward:\n{fwd}")
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner)
-            logger.debug(f'final_align_reverse:\n{rev}')
+            lm.logger.debug(f"final_align_reverse:\n{rev}")
         else:
-            logger.info("use PAM mode to align")
+            lm.logger.info("use PAM mode to align")
             fwd = run_target_seq_align(ref_seq, target_seq, aligner, PAM=PAM)
-            logger.debug(f'final_align_forward:\n{fwd}')
+            lm.logger.debug(f"final_align_forward:\n{fwd}")
             rev = run_target_seq_align(ref_seq_rc, target_seq, aligner, PAM=PAM)
-            logger.debug(f'final_align_reverse:\n{rev}')
+            lm.logger.debug(f"final_align_reverse:\n{rev}")
 
         # get fwd alignment info
         reference_seq = fwd['alignment']['reference_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         align_info = fwd['alignment']['aln_info'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         target_seq = fwd['alignment']['target_seq'][fwd['ref_aln_start']: fwd['ref_aln_end'] + 1]
         aln_score = fwd['aln_score']
-        logger.info(
+        lm.logger.info(
             f"Forward best alignment:\n"
             f"reference  : {reference_seq}\n"
             f"align_info : {align_info}\n"
@@ -914,7 +943,7 @@ class TargetSeq:
         align_info_rev = rev['alignment']['aln_info'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         target_seq_rev = rev['alignment']['target_seq'][rev['ref_aln_start']: rev['ref_aln_end'] + 1]
         aln_score_rev = rev['aln_score']
-        logger.info(
+        lm.logger.info(
             f"Reverse best alignment:\n"
             f"reference  : {reference_seq_rev}\n"
             f"align_info : {align_info_rev}\n"
@@ -936,7 +965,7 @@ class TargetSeq:
                 target_seq = target_seq_rev
                 aln_score = aln_score_rev
         else:
-            logger.critical("Alignment Error!")
+            lm.logger.critical("Alignment Error!")
             exit(1)
 
         # mark aligned all bases in target_seq
@@ -963,8 +992,10 @@ class TargetSeq:
         aln_end = aln['ref_aln_end']
 
         # update target_seq_aln
-        logger.debug(f'target_seq_aln (before update) = {target_seq_aln}')
-        logger.debug(f'target_seq_aln_insert (before update) = {target_seq_aln_insert}')
+        lm.logger.debug(f"target_seq_aln (before update) = {target_seq_aln}")
+        lm.logger.debug(
+            f"target_seq_aln_insert (before update) = {target_seq_aln_insert}"
+        )
 
         for idx, ref_base in enumerate(reference_seq):
 
@@ -979,29 +1010,34 @@ class TargetSeq:
                 ref_gap_count += 1
                 ref_del_str += target_seq[idx]  # for continuous gap
                 target_seq_aln_insert[aln_start + idx] = target_seq[idx]
-        logger.debug(
+        lm.logger.debug(
             "update target_seq_aln: show ''.join(target_seq_aln)\n"
             f"target_seq_aln = {''.join(target_seq_aln)}\n"
             f"target_seq     = {target_seq}"
         )
-        logger.debug("update target_seq_aln: Done")
-        logger.debug(f'target_seq_aln (after update) = {target_seq_aln}')
-        logger.debug(f'target_seq_aln_insert (after update) = {target_seq_aln_insert}')
+        lm.logger.debug("update target_seq_aln: Done")
+        lm.logger.debug(f"target_seq_aln (after update) = {target_seq_aln}")
+        lm.logger.debug(
+            f"target_seq_aln_insert (after update) = {target_seq_aln_insert}"
+        )
 
         # if reverse alignment
         if aln_direction == "Reverse Alignment":
             # illustrate reverse alignment as forward alignment
             target_seq_aln = target_seq_aln[::-1]
             target_seq_aln_insert = target_seq_aln_insert[::-1]
-            logger.debug("use reverse alignment")
-            logger.debug(f'target_seq_aln = {target_seq_aln}')
-            logger.debug(f'target_seq_aln_insert = {target_seq_aln_insert}')
+            lm.logger.debug("use reverse alignment")
+            lm.logger.debug(f"target_seq_aln = {target_seq_aln}")
+            lm.logger.debug(f"target_seq_aln_insert = {target_seq_aln_insert}")
 
         possible_target_region_start = max(aln_start - region_extend_length, 0)
         possible_target_region_end = min(aln_end + region_extend_length, ref_seq_length)  # 266: 0~255 266 - 1
         plot_region = (possible_target_region_start, possible_target_region_end)
         df_bases_select = df_bases.iloc[plot_region[0]: plot_region[1], :]
-        logger.debug('df_bases_select:\n' + tabulate(df_bases_select, headers='keys', tablefmt='psql'))
+        lm.logger.debug(
+            "df_bases_select:\n"
+            + tabulate(df_bases_select, headers="keys", tablefmt="psql")
+        )
 
         # ---------------------------------------------------------------->>>>>
         # load .bmat file
@@ -1052,7 +1088,10 @@ class TargetSeq:
         possible_target_region_end = min(aln_end + region_extend_length, ref_seq_length)  # 266: 0~255 266 - 1
         plot_region = (possible_target_region_start, possible_target_region_end)
         df_bases_select = df_bmat_all.iloc[plot_region[0]: plot_region[1], :]
-        logger.debug('df_bases_select:\n' + tabulate(df_bases_select, headers='keys', tablefmt='psql'))
+        lm.logger.debug(
+            "df_bases_select:\n"
+            + tabulate(df_bases_select, headers="keys", tablefmt="psql")
+        )
 
         # make plot
         # set color
@@ -1097,8 +1136,8 @@ class TargetSeq:
             color_list = make_color_list(low_color, high_color, len(color_break) - 1, "Hex")
             color_list = ["#FFFFFF"] + color_list
         except:
-            logger.debug(low_color, high_color)
-            logger.debug(color_break)
+            lm.logger.debug(low_color, high_color)
+            lm.logger.debug(color_break)
 
         # get plot info
         total_box_count = plot_region[1] - plot_region[0]
@@ -1237,8 +1276,8 @@ class TargetSeq:
                 total_box_count - 1) * panel_box_space + panel_box_width * 2
         figure_height = sum(box_height_list) + sum(panel_space_list)
 
-        logger.debug(f'figure_width = {figure_width}')
-        logger.debug(f'figure_height = {figure_height}')
+        lm.logger.debug(f"figure_width = {figure_width}")
+        lm.logger.debug(f"figure_height = {figure_height}")
 
         # make all box_x
         box_x_vec = np.arange(0, figure_width + panel_box_width, panel_box_width + panel_box_space)
@@ -1281,10 +1320,12 @@ class TargetSeq:
             dt_base = {'A': [], 'G': [], 'C': [], 'T': []}
             for info in heatmap_mut_direction:
                 dt_base[info[0]] += info[1]
-            logger.debug('[mut_direction] for heatmap: %s' % dt_base)
-            logger.debug('[label_panel] for heatmap: %s' % label_panel)
-            logger.debug('[region_extend_length] for heatmap: %s' % region_extend_length)
-            logger.debug('[block_ref] for Target-seq multiplot: %s' % block_ref)
+            lm.logger.debug("[mut_direction] for heatmap: %s" % dt_base)
+            lm.logger.debug("[label_panel] for heatmap: %s" % label_panel)
+            lm.logger.debug(
+                "[region_extend_length] for heatmap: %s" % region_extend_length
+            )
+            lm.logger.debug("[block_ref] for Target-seq multiplot: %s" % block_ref)
 
             ls_col_not_null = df_matrix.columns[-(df_matrix.loc['Target_seq', :] == '')].tolist()
             ls_col_all = df_matrix.columns.tolist()
@@ -1336,8 +1377,8 @@ class TargetSeq:
             df_ratio_all.columns = label_panel
 
             try:
-                logger.debug('Catch NA: {}'.format(df_ratio_all.isna().sum().sum()))
-                logger.debug(df_ratio_all.head())
+                lm.logger.debug("Catch NA: {}".format(df_ratio_all.isna().sum().sum()))
+                lm.logger.debug(df_ratio_all.head())
                 # print(f'df_matrix.T = \n{df_matrix.T}')
                 df_ratio_all.index = df_matrix.T['Ref_index'][ls_bl_select_df_sample].map(float).map(int).tolist()
                 df_ratio_all['Target_seq'] = df_matrix.T['Target_seq'][ls_bl_select_df_sample].tolist()
@@ -1356,16 +1397,16 @@ class TargetSeq:
             df_ratio_all = df_ratio_all[['Target_seq', 'Ref_seq', 'On-Target', 'Reference'] + label_panel].T.copy()
 
             df_onTarget_Ref = df_ratio_all.iloc[:2, :].fillna(' ')
-            logger.debug(f'df_onTarget_Ref: \n{df_onTarget_Ref}')
+            lm.logger.debug(f"df_onTarget_Ref: \n{df_onTarget_Ref}")
             # exit()
             # print(df_onTarget_Ref == '')
             df_onTarget_Ref_color = df_ratio_all.iloc[:2, :].fillna('').map(plot_agct)
-            logger.debug(f'df_onTarget_Ref_color: \n{df_onTarget_Ref_color}')
+            lm.logger.debug(f"df_onTarget_Ref_color: \n{df_onTarget_Ref_color}")
             # exit()
-            logger.debug(f'df_ratio_all: \n{df_ratio_all}')
+            lm.logger.debug(f"df_ratio_all: \n{df_ratio_all}")
             # exit()
             df_plot = df_ratio_all.iloc[2:, :].copy()
-            logger.debug(f'df_plot: \n{df_plot}')
+            lm.logger.debug(f"df_plot: \n{df_plot}")
             # print(f'df_plot: \n{df_plot}')
             # exit()
             df_plot.iloc[2:, :] = df_plot.iloc[2:, :].astype(float) * 100
@@ -1385,14 +1426,17 @@ class TargetSeq:
             ls_color_top = ['#0A306A'] * 20
             ls_color_bottom = ['#EFEFEF'] * 5 + ['#DDEAF6'] * 5 + ['#A9CEE4'] * 5 + ['#87BDDB'] * 5
             ls_color = ls_color_bottom + ls_color_middle + ls_color_top
-            logger.debug(f'ls_color: {ls_color}')
+            lm.logger.debug(f"ls_color: {ls_color}")
             # exit()
 
             df_onTarget_Ref_tmp = df_onTarget_Ref.T
             df_onTarget_Ref_tmp.loc[df_onTarget_Ref_tmp['Target_seq'].isnull(), 'Target_seq'] = pd.NA
             df_onTarget_Ref = df_onTarget_Ref_tmp.T
             df_plot_rec = df_plot.copy()
-            logger.debug('df_plot_rec:\n' + tabulate(df_plot_rec, headers='keys', tablefmt='psql'))
+            lm.logger.debug(
+                "df_plot_rec:\n"
+                + tabulate(df_plot_rec, headers="keys", tablefmt="psql")
+            )
 
             # heatmap颜色，去map_hex_for_matrix函数中调整
             def map_hex_for_matrix(x):
@@ -1405,7 +1449,7 @@ class TargetSeq:
                         continue
                 return ls_color[ls_break.index(value) - 1]
 
-            logger.debug(f'df_plot_rec: \n{df_plot_rec}')
+            lm.logger.debug(f"df_plot_rec: \n{df_plot_rec}")
             # print(f'df_plot_rec: \n{df_plot_rec}')
             # exit()
             df_plot_rec.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(map_hex_for_matrix)
@@ -1440,8 +1484,8 @@ class TargetSeq:
             plt.axis("off")
 
             # export heatmap values
-            logger.debug("export heatmap reference table...")
-            logger.debug(f'df_plot_rec: \n{df_plot_rec.index}')
+            lm.logger.debug("export heatmap reference table...")
+            lm.logger.debug(f"df_plot_rec: \n{df_plot_rec.index}")
             # exit()
             for row in range(df_plot_rec.shape[0]):
                 row_name = df_plot_rec.index[row]
@@ -1512,7 +1556,7 @@ class TargetSeq:
             site_x = df_plot.shape[1] + 1
             site_y = -figure_height_heatmap * 0.1 - 1
             step_scale = 0.1
-            logger.debug('[cbar_scale]: %s' % step_scale)
+            lm.logger.debug("[cbar_scale]: %s" % step_scale)
 
             for color in ls_color:
                 site_y += step_scale

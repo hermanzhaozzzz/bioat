@@ -5,9 +5,9 @@ from bioat.exceptions import (
     BioatInvalidParameterError,
     BioatMissingDependencyError,
 )
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
 
-__module_name__ = "bioat.lib.libpath"
+lm = LoggerManager(mod_name="bioat.lib.libpath")
 
 HOME = os.path.expanduser("~")
 
@@ -21,18 +21,18 @@ def check_cmd(x, log_level="WARNING") -> bool:
     Returns:
         bool: True if the command is executable and found in PATH, False otherwise.
     """
-    logger = get_logger(
-        level=log_level, module_name=__module_name__, func_name="check_cmd"
-    )
-    logger.info("Checking command '%s'", x)
+    lm.set_names(func_name="check_cmd")
+    lm.set_level(log_level)
+
+    lm.logger.info("Checking command '%s'", x)
     result = any(
         os.access(os.path.join(path, x), os.X_OK)
         for path in os.environ["PATH"].split(os.pathsep)
     )
     if result:
-        logger.info("Command '%s' is available", x)
+        lm.logger.info("Command '%s' is available", x)
     else:
-        logger.warning("Command '%s' is not available", x)
+        lm.logger.warning("Command '%s' is not available", x)
     return result
 
 
