@@ -7,9 +7,12 @@ build:
 
 python:
   install:
-    - path: .
-      extra_requirements:
-        - docs
+    - method: poetry
 
 sphinx:
   configuration: docs/conf.py
+
+build:
+  commands:
+    - pip install poetry
+    - poetry install --extras docs
