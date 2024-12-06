@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-from bioat import BioatInvalidOptionError
+from bioat.exceptions import BioatInvalidOptionError
 from bioat.lib.libpatentseq import query_patent
 from bioat.logger import LoggerManager
 

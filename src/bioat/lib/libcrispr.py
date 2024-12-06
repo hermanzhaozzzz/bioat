@@ -35,24 +35,26 @@ TARGET_SEQ_LIB = {
 
 
 def cmp_align_list(aln_a: dict, aln_b: dict):
-    """
-    INPUT
-        like [17, 3, 0, 73.0, 1, 22 'AAGAAGAAGACGAGTCTGCA', '||||||||||||||X|||XX', 'AAGAAGAAGACGAGCCTGAG']
-        {
-            'match_count': 26,
-            'mismatch_count': 3,
-            'gap_count': 4,
-            'aln_score': 96.0,
-            'ref_aln_start': 0,
-            'ref_aln_end': 32,
-            'alignment': {
-                'reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT',
-                'aln_info':      '--..|.|||||||||||||||||||||||--||',
-                'target_seq':    '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'
-            }
-        }
-    HELP
-        compare function for align_list
+    """Compare function for alignment lists.
+
+    This function processes alignment data and performs comparisons based on the input structure.
+
+    Args:
+        input_data (list | dict): 
+            The alignment data to be processed. Can be provided as:
+            - A list, e.g.: [17, 3, 0, 73.0, 1, 22, 'AAGAAGAAGACGAGTCTGCA', '||||||||||||||X|||XX', 'AAGAAGAAGACGAGCCTGAG']
+            - A dictionary, e.g.: {'match_count': 26, 'mismatch_count': 3, 'gap_count': 4, 'aln_score': 96.0, 'ref_aln_start': 0, 'ref_aln_end': 32, 'alignment': {'reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT','aln_info': '--..|.|||||||||||||||||||||||--||', 'target_seq': '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'}}
+
+    Returns:
+        None: The function does not return a value but performs comparisons.
+
+    Example:
+        >>> compare_alignments([
+        ...     17, 3, 0, 73.0, 1, 22, 
+        ...     'AAGAAGAAGACGAGTCTGCA', 
+        ...     '||||||||||||||X|||XX', 
+        ...     'AAGAAGAAGACGAGCCTGAG'
+        ... ])
     """
 
     # sort reason score -> gap -> mismatch -> match
@@ -100,34 +102,42 @@ def run_target_seq_align(
         PAM: dict = None,
         log_level='WARNING'
 ) -> list:
-    """global alignment for target_seq
+    """Perform global alignment for the target sequence.
 
-    :param ref_seq: a Seq object from BioPython, reference sequence for the targeted deep sequencing
-    :param target_seq: a Seq object from BioPython, target region sequence for the editing window, usually the sgRNA
-        sequencing without PAM
-    :param aligner: an obj from BioPython pairwise alignment
-    :param PAM: a dict like {'PAM': 'AGG', 'position': 20, 'weight': 1.0},
-        position is the insertion site of target_seq,
-        weight is the priority, PAM alignment score will multiply by this weight.
-    :return: a list: list contains some dict, each one is an alignment result.
-    [
-        {
-            'match_count': 26,
-            'mismatch_count': 3,
-            'gap_count': 4,
-            'aln_score': 96.0,
-            'ref_aln_start': 0,
-            'ref_aln_end': 32,
-            'alignment': {
-                'reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT',
-                'aln_info':      '--..|.|||||||||||||||||||||||--||',
-                'target_seq':    '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'
-            }
-        },
-        ...
-    ]
+    This function performs global alignment between a reference sequence and a target sequence (usually the sgRNA sequence without PAM) using the specified aligner.
+
+    Args:
+        ref_seq (Seq): 
+            A Seq object from BioPython representing the reference sequence 
+            for the targeted deep sequencing.
+        target_seq (Seq): 
+            A Seq object from BioPython representing the target region sequence 
+            for the editing window (usually the sgRNA sequence without PAM).
+        aligner (object): 
+            A PairwiseAligner object from BioPython used for performing the alignment.
+        PAM (dict, optional): 
+            A dictionary containing PAM information with the following keys:
+            - 'PAM' (str): The PAM sequence (e.g., "AGG").
+            - 'position' (int): The insertion site of `target_seq`.
+            - 'weight' (float): The priority weight for PAM alignment. The alignment score will be multiplied by this weight.
+            - Example: {'PAM': 'AGG', 'position': 20, 'weight': 1.0}.
+
+    Returns:
+        list[dict]: 
+            A list of dictionaries, each containing alignment results. Each dictionary has the following keys:
+            - 'match_count' (int): The number of matching bases in the alignment.
+            - 'mismatch_count' (int): The number of mismatched bases.
+            - 'gap_count' (int): The number of gaps.
+            - 'aln_score' (float): The alignment score.
+            - 'ref_aln_start' (int): The starting position of the alignment on the reference sequence.
+            - 'ref_aln_end' (int): The ending position of the alignment on the reference sequence.
+            - 'alignment' (dict): The alignment details containing:'reference_seq' (str): The aligned reference sequence.'aln_info' (str): The alignment information (e.g., matches, mismatches, and gaps).'target_seq' (str): The aligned target sequence.
+
+    Example:
+        An example alignment result might look like this:[{'match_count': 26,'mismatch_count': 3,'gap_count': 4,'aln_score': 96.0,'ref_aln_start': 0,'ref_aln_end': 32,'alignment': {'reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT','aln_info': '--..|.|||||||||||||||||||||||--||','target_seq': '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'}}]
 
     """
+
     lm.set_names(func_name="run_target_seq_align")
     lm.set_level(log_level)
 

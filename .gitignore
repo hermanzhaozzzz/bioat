@@ -55,3 +55,23 @@ slurm-*.out
 # Others
 /tmpdir_*/
 .localized
+
+# Sphinx文档相关
+docs/_build/
+docs/_static/
+docs/_templates/
+docs/*.rst
+docs/*.md
+
+# Git相关
+*.orig
+*.rej
+*.patch
+*.diff
+
+# 缓存和日志
+.ruff_cache/
+*.log
+
+# 配置的运行目录
+.run/

@@ -145,6 +145,7 @@
 #     log_verbose=logging.DEBUG,
 # ) -> dict:
 #     """get each base mutation count info from the input list (site_idx_list)
+
 #     Args:
 #         site_idx_list (list):
 #             It is a list format like:

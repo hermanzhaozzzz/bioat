@@ -18,14 +18,10 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
 
     This function processes the provided PDB file and extracts protein, DNA,
     RNA sequences, and other molecules appropriately to create a FASTA file.
-    1. Proteins:
-        The protein sequence for each chain will be extracted as Chain X Protein.
-    2. DNA and RNA:
-        Bases for DNA (A, T, G, C) will be saved as Chain X DNA and bases for RNA (A, U, G, C) will be saved as Chain X RNA.
-    3. Other molecules:
-        Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as Chain X Other molecules.
-    4. Multi-chain complexes:
-        The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
+    1. Proteins:The protein sequence for each chain will be extracted as Chain X Protein.
+    2. DNA and RNA: Bases for DNA (A, T, G, C) will be saved as Chain X DNA and bases for RNA (A, U, G, C) will be saved as Chain X RNA.
+    3. Other molecules: Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as Chain X Other molecules.
+    4. Multi-chain complexes: The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
 
     Args:
         pdb_file (str): input file path.

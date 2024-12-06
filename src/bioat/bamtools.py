@@ -233,40 +233,40 @@ class BamTools:
         max_clip: int = 0,
         log_level: str = "WARNING",
     ):
-        """Remove (paired or single) softclip reads in BAM file.
+        """Remove soft/hard clipped reads from a BAM/SAM file.
 
-        This method removes soft/hard clipped reads from a BAM/SAM file.
-        It can accept input from stdin and produce output to stdout.
+        This method removes soft/hard clipped reads from a BAM/SAM file. It can
+        accept input from stdin and produce output to stdout.
 
         Args:
-            input (str | TextIOWrapper):
-                BAM file sorted by query name with soft/hard clipped reads.
-                Pipe stdin is supported,
-                e.g., [samtools view -h foo_sort_name.bam | bioat bam remove_clip <flags>].
+            input (str | TextIOWrapper): 
+                BAM file sorted by query name with soft/hard clipped reads. 
+                Pipe stdin is supported, e.g.:
+                [samtools view -h foo_sort_name.bam | bioat bam remove_clip <flags>].
+            output (str | TextIOWrapper): 
+                BAM file sorted by query name without soft/hard clipped reads. 
+                Pipe stdout is supported, e.g.:
+                [bioat bam remove_clip <flags> | wc -l] 
+                or [bioat bam remove_clip <flags> | samtools view ....].
+            threads (int, optional): 
+                Number of threads used by pysam and samtools core. 
+                Defaults to the number of CPU cores.
+            output_fmt (str, optional): 
+                Format of the output file, can be "BAM" or "SAM". Defaults to "SAM".
+            remove_as_paired (bool, optional): 
+                Flag to determine whether to remove single clipped reads. 
+                If True, removes both the clipped read and its paired read. The input 
+                BAM/SAM must be sorted by name and have header [SO:queryname]. 
+                If False, only removes the single clipped read.
+            max_clip (int, optional): 
+                The maximum number of clips allowed per read. Defaults to 0.
+            log_level (str, optional): 
+                Logging level for the process. Can be one of 
+                'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'. 
+                Defaults to "INFO".
 
-            output (str | TextIOWrapper):
-                BAM file sorted by query name without soft/hard clipped reads.
-                Pipe stdout is supported,
-                e.g., [bioat bam remove_clip <flags> | wc -l]
-                    or [bioat bam remove_clip <flags> | samtools view ....].
-
-            threads (int):
-                Number of threads used by pysam and samtools core. Defaults to the number of CPU cores.
-
-            output_fmt (str):
-                Format of the output file, can be "BAM" or "SAM". Default is "SAM".
-
-            remove_as_paired (bool):
-                Flag that determines whether to remove single clipped reads.
-                If True, removes both the clipped read and its paired read, the input BAM|SAM must be sorted by name and has header [SO:queryname];
-                if False, only removes the single clipped read.
-
-            max_clip (int):
-                The maximum number of clips allowed per read.
-
-            log_level (str):
-                Logging level for the process. Can be one of
-                'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.
+        Returns:
+            None
         """
         lm.set_names(func_name="remove_clip")
         lm.set_level(log_level)

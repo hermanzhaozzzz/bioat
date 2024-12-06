@@ -1218,24 +1218,16 @@ class Gcircle:
         """Visualize interrelationships between data.
 
         Args:
-            start_list (tuple): Start data location of linked data.
-                The tuple is composed of four parameters:
-                - `arc_id` (str): The ID of the first Garc class object to be compared.
-                  The ID should be in `Gcircle` object's `garc_dict`.
-                - `edge_position1` (int): The minimal x coordinate on the Garc class object
-                  when the plot is drawn on the rectangular coordinates.
-                - `edge_position2` (int): The maximal x coordinate on the Garc class object
-                  when the plot is drawn on the rectangular coordinates.
+            start_list (tuple): Start data location of linked data. The tuple is composed of four parameters:
+                - `arc_id` (str): The ID of the first Garc class object to be compared. The ID should be in `Gcircle` object's `garc_dict`.
+                - `edge_position1` (int): The minimal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.
+                - `edge_position2` (int): The maximal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.
                 - `raxis_position` (int): The base height for the drawing chord.
 
-            end_list (tuple): End data location of linked data.
-                The tuple is composed of four parameters:
-                - `arc_id` (str): The ID of the second Garc class object to be compared.
-                  The ID should be in `Gcircle` object's `garc_dict`.
-                - `edge_position1` (int): The minimal x coordinate on the Garc class object
-                  when the plot is drawn on the rectangular coordinates.
-                - `edge_position2` (int): The maximal x coordinate on the Garc class object
-                  when the plot is drawn on the rectangular coordinates.
+            end_list (tuple): End data location of linked data. The tuple is composed of four parameters:
+                - `arc_id` (str): The ID of the second Garc class object to be compared. the ID should be in `Gcircle` object's `garc_dict`.
+                - `edge_position1` (int): The minimal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.
+                - `edge_position2` (int): The maximal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.
                 - `raxis_position` (int): The base height for the drawing chord.
 
             facecolor (str or tuple, optional):

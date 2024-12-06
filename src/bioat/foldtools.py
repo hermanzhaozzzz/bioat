@@ -17,19 +17,28 @@ class FoldTools:
 
         This function processes the provided PDB file and extracts protein, DNA,
         RNA sequences, and other molecules appropriately to create a FASTA file.
-        1. Proteins:
-            The protein sequence for each chain will be extracted as Chain X Protein.
-        2. DNA and RNA:
-            Bases for DNA (A, T, G, C) will be saved as Chain X DNA and bases for RNA (A, U, G, C) will be saved as Chain X RNA.
-        3. Other molecules:
-            Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as Chain X Other molecules.
-        4. Multi-chain complexes:
-            The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
+
+        Details:
+            1. **Proteins**: 
+               The protein sequence for each chain will be extracted as "Chain X Protein".
+            2. **DNA and RNA**:
+               Bases for DNA (A, T, G, C) will be saved as "Chain X DNA", and bases for RNA (A, U, G, C) will be saved as "Chain X RNA".
+            3. **Other molecules**:
+               Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as "Chain X Other molecules".
+            4. **Multi-chain complexes**:
+               The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
 
         Args:
-            input (str): input file path.
-            output (str | None, optional): output file path. If None, the output file will be named as the basename of the input file with a ".fa" extension. Defaults to None.
-            log_level (str, optional): log level. Defaults to "WARNING".
+            input (str): 
+                Input file path.
+            output (str, optional): 
+                Output file path. If None, the output file will be named as the 
+                basename of the input file with a ".fa" extension. Defaults to None.
+            log_level (str, optional): 
+                Logging level. Defaults to "WARNING".
+
+        Returns:
+            None
         """
         lm.set_names(func_name="pdb2fasta")
         lm.set_level(log_level)

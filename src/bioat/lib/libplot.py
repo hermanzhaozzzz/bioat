@@ -35,12 +35,13 @@ import pandas as pd
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from matplotlib.patches import Rectangle
 
-from bioat.exceptions import BioatError, BioatRuntimeWarning
+from bioat.exceptions import BioatError, BioatRuntimeError
 from bioat.lib.libpath import HOME
-from bioat.logger import get_logger
+from bioat.logger import LoggerManager
+
+lm = LoggerManager(mod_name="bioat.lib.libplot")
 
 __all__ = ["init_matplotlib", "plot_colortable"]
-__module_name__ = "bioat.lib.libplot"
 
 BIOAT_DEFAULT_FONTS_DATAPATH = os.path.join(os.path.dirname(__file__), "libplot")
 BIOAT_DEFAULT_FONTS = [
@@ -59,11 +60,9 @@ def _copy_fonts(refresh=False, log_level="warning"):
     :type log_level: string
     :raises FileNotFoundError: if not found which site-packages to copy fonts to
     """
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="_copy_fonts",
-    )
+    lm.set_names(func_name="_copy_fonts")
+    lm.set_level(log_level)
+
     if refresh:
         files_to_remove = glob(os.path.join(HOME, ".cache", "matplotlib", "fontlist*"))
         for file in files_to_remove:
@@ -75,22 +74,22 @@ def _copy_fonts(refresh=False, log_level="warning"):
                 to_path = i
                 break
         if not to_path:
-            logger.warning(BioatRuntimeWarning("site-packages not found in sys.path"))
+            lm.logger.warning(BioatRuntimeError("site-packages not found in sys.path"))
             return
         to_path = [i for i in sys.path if i.endswith("site-packages")][0]
         to_path = os.path.join(
             to_path, "matplotlib", "mpl-data", "fonts", "ttf"
         )
         from_path = BIOAT_DEFAULT_FONTS_DATAPATH
-        logger.debug(f"Copying fonts from {from_path} to {to_path}")
+        lm.logger.debug(f"Copying fonts from {from_path} to {to_path}")
         for font in BIOAT_DEFAULT_FONTS:
             shutil.copyfile(
                 os.path.join(from_path, font),
                 os.path.join(to_path, font),
             )
-        logger.debug("Fonts copied successfully")
+        lm.logger.debug("Fonts copied successfully")
     except Exception as e:
-        logger.error(BioatError(f"Failed to copy fonts: {e}"))
+        lm.logger.error(BioatError(f"Failed to copy fonts: {e}"))
 
 
 def init_matplotlib(
@@ -113,25 +112,23 @@ def init_matplotlib(
     :param set_backend_svg: whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend, defaults to 'none'
     :type set_backend_svg: str, optional
     :raises BioatError: if failed to copy fonts
-    :raises BioatRuntimeWarning: if site-packages not found in sys.path
+    :raises BioatRuntimeError: if site-packages not found in sys.path
     """
-    logger = get_logger(
-        level=log_level,
-        module_name=__module_name__,
-        func_name="init_matplotlib",
-    )
-    logger.info('Initializing matplotlib')
+    lm.set_names(func_name="init_matplotlib")
+    lm.set_level(log_level)
+
+    lm.logger.info('Initializing matplotlib')
     _copy_fonts(refresh=refresh, log_level=log_level)
-    logger.info(
+    lm.logger.info(
         f"set: plt.style.use('{style}')\n"
         "# set matplotlib style theme\n"
         "# ref: https://matplotlib.org/stable/api/style_api.html"
     )
     plt.style.use(style)
 
-    logger.info(f"set: plt.rcParams['font.family'] = '{font}'")
+    lm.logger.info(f"set: plt.rcParams['font.family'] = '{font}'")
     plt.rcParams["font.family"] = font
-    logger.info(f"set: plt.rcParams['font.sans-serif'] = ['{font}']")
+    lm.logger.info(f"set: plt.rcParams['font.sans-serif'] = ['{font}']")
     plt.rcParams["font.sans-serif"] = [font]
 
     # set backends
@@ -140,25 +137,25 @@ def init_matplotlib(
     set_backend_svg = kwargs.get("set_backend_svg", "none")
 
     if set_backend_pdf:
-        logger.info(
+        lm.logger.info(
             f"set: plt.rcParams['pdf.use14corefonts'] = {set_backend_pdf} \n"
             "# whether to use core fonts for the PDF backend\n"
             "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)"
         )
         plt.rcParams["pdf.use14corefonts"] = set_backend_pdf
     if set_backend_ps:
-        logger.info(
+        lm.logger.info(
             f"set: plt.rcParams['ps.useafm'] = {set_backend_ps}\n"
             "# whether to use core fonts for the PS backend"
         )
         plt.rcParams["ps.useafm"] = set_backend_ps
     if set_backend_svg:
-        logger.info(
+        lm.logger.info(
             f"set: plt.rcParams['svg.fonttype'] = '{set_backend_svg}'\n"
             "# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend"
         )
         plt.rcParams["svg.fonttype"] = set_backend_svg
-    logger.info("matplotlib initialized successfully")
+    lm.logger.info("matplotlib initialized successfully")
 
 
 def plot_colortable(colors, *, ncols=4):

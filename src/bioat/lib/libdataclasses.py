@@ -1,8 +1,3 @@
-"""Doc.
-dataclasses:
-    - https://docs.python.org/zh-cn/3/library/dataclasses.html
-    - python version >= 3.7.0, PEP 557, PEP 526
-"""
 from dataclasses import dataclass
 
 

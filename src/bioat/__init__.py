@@ -18,18 +18,6 @@ from bioat._meta import (
     __VERSION__,
 )
 
-from bioat.exceptions import (
-    BioatFileFormatError,
-    BioatFileNotCompleteError,
-    BioatFileNotFoundError,
-    BioatInvalidInputError,
-    BioatInvalidOptionError,
-    BioatInvalidParameterError,
-    BioatMissingDependencyError,
-    BioatRuntimeError,
-    BioatValueError,
-)
-
 from bioat.bamtools import BamTools
 from bioat.bedtools import BedTools
 from bioat.crisprtools import CrisprTools
@@ -67,14 +55,4 @@ __all__ = [
     "SystemTools",
     "TableTools",
     "TargetSeq",
-    "BioatFileFormatError",
-    "BioatFileNotCompleteError",
-    "BioatFileNotFoundError",
-    "BioatInvalidInputError",
-    "BioatInvalidOptionError",
-    "BioatInvalidParameterError",
-    "BioatMissingDependencyError",
-    "BioatRuntimeError",
-    "BioatValueError",
-    "pysam",
 ]

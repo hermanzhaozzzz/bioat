@@ -48,35 +48,29 @@ def instantiate_pairwise_aligner(
     score_matrix_dict: None | dict = None,
     log_level="DEBUG",
 ) -> PairwiseAligner:
-    """Returns a PairwiseAligner object
+    """Returns a PairwiseAligner object.
 
-    :param scoring_match: scoring_match, defaults to 1
-    :type scoring_match: float, optional
-    :param penalty_mismatch: penalty_mismatch, defaults to 0.8
-    :type penalty_mismatch: float, optional
-    :param penalty_gap_open: penalty_gap_open, defaults to -5
-    :type penalty_gap_open: float, optional
-    :param penalty_gap_extension: penalty_gap_extension, defaults to -2
-    :type penalty_gap_extension: float, optional
-    :param penalty_query_left_gap_score: penalty_query_left_gap_score, defaults to 0
-    :type penalty_query_left_gap_score: float, optional
-    :param penalty_query_right_gap_score: penalty_query_right_gap_score, defaults to 0
-    :type penalty_query_right_gap_score: float, optional
-    :param mode: global or local, defaults to "global"
-    :type mode: str, optional
-    :param letn_match: let base N as match or not, defaults to False
-    :type letn_match: bool, optional
-    :param log_level: log_level, defaults to "DEBUG"
-    :type log_level: str, optional
-    :param score_matrix_dict: DIY scoring matrix and other NT or AA, defaults to None
-    :type score_matrix_dict: dict, optional
-    :return: an object instantiated from PairwiseAligner
-    :rtype: PairwiseAligner
+    Args:
+        scoring_match (float, optional): Scoring for matches. Defaults to 1.
+        penalty_mismatch (float, optional): Penalty for mismatches. Defaults to 0.8.
+        penalty_gap_open (float, optional): Penalty for opening a gap. Defaults to -5.
+        penalty_gap_extension (float, optional): Penalty for extending a gap. Defaults to -2.
+        penalty_query_left_gap_score (float, optional): Penalty for left query gap. Defaults to 0.
+        penalty_query_right_gap_score (float, optional): Penalty for right query gap. Defaults to 0.
+        mode (str, optional): Alignment mode, either "global" or "local". Defaults to "global".
+        letn_match (bool, optional): Whether to treat base 'N' as a match. Defaults to False.
+        log_level (str, optional): Logging level. Defaults to "DEBUG".
+        score_matrix_dict (dict, optional): Custom scoring matrix for bases or amino acids. Defaults to None.
 
-    details for score_matrix_dict:
-        you can use any base and any score, such as AGCTN, or 20AA + 2abnormalAA
-        or ?:(), whatever character you want.
+    Returns:
+        PairwiseAligner: An object instantiated from PairwiseAligner.
+
+    Details for `score_matrix_dict`:
+        You can use any base and any score, such as AGCTN, or 20AA + 2 abnormal AAs, 
+        or any characters you want. For example:
+
             score_matrix_dict = {
+
                 ("A", "A"): scoring_match,
                 ("A", "G"): penalty_mismatch,
                 ("A", "C"): penalty_mismatch,
@@ -101,7 +95,8 @@ def instantiate_pairwise_aligner(
                 ("N", "G"): scoring_match,
                 ("N", "C"): scoring_match,
                 ("N", "T"): scoring_match,
-                ("N", "N"): scoring_match,
+                ("N", "N"): scoring_match
+
             }
     """
     lm.set_names(func_name="instantiate_pairwise_aligner")
@@ -226,16 +221,30 @@ def get_best_alignment(
 def get_aligned_seq(
     alignment: Alignment, reverse: bool = False, letn_match=False
 ) -> dict:
-    """Get_aligned_seq.
+    """Retrieve aligned sequence information from a Bio.Align.Alignment object.
 
-    :param alignment: Bio.Align.Alignment object
-    :param reverse: return reversed seq info or not
-    :return: dict, like this:
-         {
+    Args:
+        alignment (Bio.Align.Alignment): 
+            A `Bio.Align.Alignment` object containing the alignment information.
+        reverse (bool, optional): 
+            Whether to return reversed sequence information. Defaults to False.
+
+    Returns:
+        dict: A dictionary containing the alignment details with the following keys:
+            - 'reference_seq' (str): The aligned reference sequence.
+            - 'aln_info' (str): The alignment information string, indicating matches ('|'), 
+              mismatches ('.'), and gaps ('-').
+            - 'target_seq' (str): The aligned target sequence.
+
+    Example:
+        >>> result = get_aligned_seq(alignment)
+        >>> print(result)
+        {
             'reference_seq': 'GGCACTGCGGCTGGAAAAAAAAAAAAAAA--GT',
             'aln_info':      '--..|.|||||||||||||||||||||||--||',
             'target_seq':    '--GGCAGCGGCTGGAAAAAAAAAAAAAAAAGGT'
         }
+
     """
     ls = []
 
@@ -285,38 +294,39 @@ def get_alignment_info(
     letn_match=False,
     log_level="WARNING",
 ):
-    """
+    """Analyze a Bio.Align.Alignment object to extract alignment metrics.
 
-    :param alignment: Bio.Align.Alignment object
-    :param reverse: return reversed seq info or not
-    :return:
-            1. match count
-            2. mismatch count
-            3. gap count
-            4. alignment.score
-    :doc:
-            The gap count should be the num of gap contain in sgRNA alignment region.
+    This function calculates the match count, mismatch count, gap count, alignment score,
+    and start and end indices for a given alignment.
 
-            e.g.
+    Args:
+        alignment (Bio.Align.Alignment): A `Bio.Align.Alignment` object containing the alignment information.
+        reverse (bool, optional): Whether to return reversed sequence information. Defaults to False.
 
-            AGTGGTAAGAAGAAGACGAGACATAATGAG
-            ------||||||||||||||.|----||||
-            ------AAGAAGAAGACGAGCC----TGAG
+    Returns:
+        list: A list containing the following metrics:
 
-            gap count should be 4, rather than 10.
+            - match_count (int): The number of matches in the alignment.
+            - mismatch_count (int): The number of mismatches in the alignment.
+            - gap_count (int): The number of gaps within the sgRNA alignment region. Note: This counts only gaps within the alignment region, not total gaps.
+            - alignment_score (float): The alignment score.
+            - start_index (int): The start index of the sgRNA alignment region.
+            - end_index (int): The end index of the sgRNA alignment region.
 
-            add return info, start_index, end_index, now the retrun list will be
+    Notes:
+        The gap count specifically counts gaps within the sgRNA alignment region, not the total gaps in the entire sequence. 
+        For example:
 
-            return_list = [
-                match_count,
-                mismatch_count,
-                gap_count,
-                alignment.score,
-                start_index,
-                end_index
-            ]
+            >>> Reference:  AGTGGTAAGAAGAAGACGAGACATAATGAG
+            >>>             ------||||||||||||||.|----||||
+            >>> Target:     ------AAGAAGAAGACGAGCC----TGAG
 
-            The <start_index> and <end_index> are index related to sgRNA alignment string
+        In this example: Gap count = 4 (within sgRNA alignment region), not 10 (total gaps). 
+
+
+    Example:
+        The returned list will be as follows: return_list = [match_count, mismatch_count, gap_count, alignment_score, start_index, end_index]
+
     """
     lm.set_names(func_name="get_alignment_info")
     lm.set_level(log_level)

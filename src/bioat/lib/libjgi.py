@@ -198,7 +198,7 @@ class JGIConfig:
             "script?\n([y]es, [n]o, [r]estart): "
         )
 
-        self.info["categories"]: list[str] = JGIDoc.DEFAULT_CATEGORIES
+        self.info["categories"] = JGIDoc.DEFAULT_CATEGORIES
 
         while True:  # catch invalid responses
             choice = input(input_blurb)
@@ -1345,7 +1345,7 @@ class JGIOperator:
         lm.set_level(self.log_level)
 
         tar_pattern = "tar.gz$"  # matches tar.gz
-        gz_pattern = "(?<!tar)\.gz$"  # excludes tar.gz
+        gz_pattern = r"(?<!tar)\.gz$"
         endings_map = {"tar": (tarfile, "r:gz", ".tar.gz"), "gz": (gzip, "rb", ".gz")}
         relative_name = os.path.basename(file_path)
         if re.search(tar_pattern, file_path):
@@ -1434,7 +1434,8 @@ class JGIOperator:
         """
         # Remove platform-dependent timezone substring
         # of the general form "xxT"
-        tz_pattern = re.compile("\s[A-Z]{3}\s")
+
+        tz_pattern = re.compile(r"\s[A-Z]{3}\s")
         time_string = tz_pattern.sub(" ", time_string)
         # get the desired time info
         time_info = time.strptime(time_string, "%a %b %d %H:%M:%S %Y")
