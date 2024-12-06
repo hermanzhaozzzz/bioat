@@ -39,5 +39,5 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 
 ## Doc
 
-See [Doc](https://hermanzhaozzzz.github.io/bioat/)
+See [Doc](https://bioat.readthedocs.io/en/latest/)
 
