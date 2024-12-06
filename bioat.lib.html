@@ -44,49 +44,98 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bioat.html">bioat package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="bioat.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">bioat.lib package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libalignment">bioat.lib.libalignment module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libcircos">bioat.lib.libcircos module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libcolor">bioat.lib.libcolor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libcrispr">bioat.lib.libcrispr module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libdataclasses">bioat.lib.libdataclasses module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libdetect_seq">bioat.lib.libdetect_seq module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libfastx">bioat.lib.libfastx module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libjgi">bioat.lib.libjgi module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libpandas">bioat.lib.libpandas module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#bioat-lib-libpatentseq-module">bioat.lib.libpatentseq module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libpath">bioat.lib.libpath module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libpdb">bioat.lib.libpdb module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libphylo">bioat.lib.libphylo module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libplot">bioat.lib.libplot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libsnakemake">bioat.lib.libsnakemake module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib.libspider">bioat.lib.libspider module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-bioat.lib">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bioat.html">bioat package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">bioat.lib package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libalignment">bioat.lib.libalignment module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libalignment.get_aligned_seq"><code class="docutils literal notranslate"><span class="pre">get_aligned_seq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libalignment.get_alignment_info"><code class="docutils literal notranslate"><span class="pre">get_alignment_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libalignment.get_best_alignment"><code class="docutils literal notranslate"><span class="pre">get_best_alignment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libalignment.instantiate_pairwise_aligner"><code class="docutils literal notranslate"><span class="pre">instantiate_pairwise_aligner()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libcircos">bioat.lib.libcircos module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.Garc"><code class="docutils literal notranslate"><span class="pre">Garc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.Gcircle"><code class="docutils literal notranslate"><span class="pre">Gcircle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.Tarc"><code class="docutils literal notranslate"><span class="pre">Tarc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.Tcircle"><code class="docutils literal notranslate"><span class="pre">Tcircle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.table_hg38_chromosome_length"><code class="docutils literal notranslate"><span class="pre">table_hg38_chromosome_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.table_hg38_cytoband"><code class="docutils literal notranslate"><span class="pre">table_hg38_cytoband()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.table_mm10_chromosome_length"><code class="docutils literal notranslate"><span class="pre">table_mm10_chromosome_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcircos.table_mm10_cytoband"><code class="docutils literal notranslate"><span class="pre">table_mm10_cytoband()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-about-module">bioat.about module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.bamtools">bioat.bamtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.bedtools">bioat.bedtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-cli-module">bioat.cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.crisprtools">bioat.crisprtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.devtools">bioat.devtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.exceptions">bioat.exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.fastxtools">bioat.fastxtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.foldtools">bioat.foldtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.hictools">bioat.hictools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.logger">bioat.logger module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-bioat.metatools">bioat.metatools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-searchtools-module">bioat.searchtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-systemtools-module">bioat.systemtools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-tabletools-module">bioat.tabletools module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#bioat-target-seq-module">bioat.target_seq module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bioat.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libcolor">bioat.lib.libcolor module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcolor.convert_hex_to_rgb"><code class="docutils literal notranslate"><span class="pre">convert_hex_to_rgb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcolor.convert_rgb_to_hex"><code class="docutils literal notranslate"><span class="pre">convert_rgb_to_hex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcolor.make_color_list"><code class="docutils literal notranslate"><span class="pre">make_color_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcolor.map_color"><code class="docutils literal notranslate"><span class="pre">map_color()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcolor.plot_colortable"><code class="docutils literal notranslate"><span class="pre">plot_colortable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libcrispr">bioat.lib.libcrispr module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcrispr.cmp_align_list"><code class="docutils literal notranslate"><span class="pre">cmp_align_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libcrispr.run_target_seq_align"><code class="docutils literal notranslate"><span class="pre">run_target_seq_align()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libdataclasses">bioat.lib.libdataclasses module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.Assembly"><code class="docutils literal notranslate"><span class="pre">Assembly</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.Bam"><code class="docutils literal notranslate"><span class="pre">Bam</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.Bed"><code class="docutils literal notranslate"><span class="pre">Bed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.Fastq"><code class="docutils literal notranslate"><span class="pre">Fastq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libdataclasses.VCF"><code class="docutils literal notranslate"><span class="pre">VCF</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libdetect_seq">bioat.lib.libdetect_seq module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libfastx">bioat.lib.libfastx module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libfastx.calculate_length_distribution"><code class="docutils literal notranslate"><span class="pre">calculate_length_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libfastx.cas13_finder"><code class="docutils literal notranslate"><span class="pre">cas13_finder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libfastx.cas_finder"><code class="docutils literal notranslate"><span class="pre">cas_finder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libfastx.format_this_fastx"><code class="docutils literal notranslate"><span class="pre">format_this_fastx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libjgi">bioat.lib.libjgi module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libjgi.JGIConfig"><code class="docutils literal notranslate"><span class="pre">JGIConfig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libjgi.JGIDoc"><code class="docutils literal notranslate"><span class="pre">JGIDoc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libjgi.JGIOperator"><code class="docutils literal notranslate"><span class="pre">JGIOperator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libpandas">bioat.lib.libpandas module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libpandas.set_option"><code class="docutils literal notranslate"><span class="pre">set_option()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bioat-lib-libpatentseq-module">bioat.lib.libpatentseq module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libpath">bioat.lib.libpath module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libpath.check_cmd"><code class="docutils literal notranslate"><span class="pre">check_cmd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libpath.check_executable"><code class="docutils literal notranslate"><span class="pre">check_executable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libpdb">bioat.lib.libpdb module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libpdb.pdb2fasta"><code class="docutils literal notranslate"><span class="pre">pdb2fasta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libphylo">bioat.lib.libphylo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libplot">bioat.lib.libplot module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libplot.init_matplotlib"><code class="docutils literal notranslate"><span class="pre">init_matplotlib()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libplot.plot_colortable"><code class="docutils literal notranslate"><span class="pre">plot_colortable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libsnakemake">bioat.lib.libsnakemake module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libsnakemake.check_cmd"><code class="docutils literal notranslate"><span class="pre">check_cmd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libsnakemake.check_read"><code class="docutils literal notranslate"><span class="pre">check_read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libsnakemake.print_head"><code class="docutils literal notranslate"><span class="pre">print_head()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib.libspider">bioat.lib.libspider module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libspider.ProxyPool"><code class="docutils literal notranslate"><span class="pre">ProxyPool</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bioat.lib.libspider.get_random_user_agents"><code class="docutils literal notranslate"><span class="pre">get_random_user_agents()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-bioat.lib">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -105,7 +154,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="contents.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">&lt;no title&gt;</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Modules</a></li>
           <li class="breadcrumb-item"><a href="bioat.html">bioat package</a></li>
       <li class="breadcrumb-item active">bioat.lib package</li>
       <li class="wy-breadcrumbs-aside">
