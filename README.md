@@ -9,23 +9,19 @@ Package license: Apache-2.0
 
 Summary: **bioat**, a python **package** & **command line toolkit** for Bioinformatics and data science!
 
+## About author
+
+> author: [赵华男 | Huanan Herman Zhao](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
+>
+> email: hermanzhaozzzz@gmail.com
+>
+> [Zhihu](https://www.zhihu.com/people/hymanzhaozzzz) | [BLOG](http://zhaohuanan.cc)
+
+
 ## Current build status
-
-<table><tr><td>All platforms:</td>
-    <td>
-      <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23719&branchName=main">
-        <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/bioat-feedstock?branchName=main">
-      </a>
-    </td>
-  </tr>
-</table>
-
-## Current release info
-
-| Name | Downloads | Version | Platforms |
-| --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-bioat-green.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) |
-
+| Name | Downloads | Version | Platforms | Test |
+| --- | --- | --- | --- | --- |
+|[![Conda Recipe](https://img.shields.io/badge/recipe-bioat-green.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/bioat.svg)](https://anaconda.org/conda-forge/bioat) | [![Azure Pipelines](https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/bioat-feedstock?branchName=main)](https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=23719&branchName=main) |
 
 ## Installation
 ```shell
@@ -51,10 +47,7 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 ```
 [circos plot](docs/demo_circos-plot.ipynb)
 
-## About author
+## Doc
 
-> author: [赵华男 | Huanan Herman Zhao](https://scholar.google.com/citations?user=ojSVoWQAAAAJ&hl=en)
->
-> email: hermanzhaozzzz@gmail.com
->
-> [Zhihu](https://www.zhihu.com/people/hymanzhaozzzz) | [BLOG](http://zhaohuanan.cc)
+See [Doc](https://hermanzhaozzzz.github.io/bioat/)
+
