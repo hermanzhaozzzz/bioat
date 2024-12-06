@@ -11,11 +11,10 @@ build:
 # Install dependencies using Poetry
 python:
   install:
-    - method: poetry
     - method: pip
       path: .
-      extra_requirements:
-        - docs
+      requirements: docs/requirements.txt
+
 
 # Sphinx configuration
 sphinx:
