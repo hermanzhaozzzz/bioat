@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; bioat Documentation</title>
+  <title>QuickStart &mdash; bioat Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="&lt;no title&gt;" href="modules.html" />
-    <link rel="prev" title="Welcome to bioat’s documentation!" href="contents.html" /> 
+    <link rel="prev" title="Welcome to BioAT Documentation!" href="contents.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,7 +43,12 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">QuickStart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="bioat.html">bioat package</a></li>
 </ul>
 
@@ -61,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="contents.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">QuickStart</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/QuickStart.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -71,13 +76,46 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p># QuickStart</p>
+  <section id="quickstart">
+<h1>QuickStart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
+<p>This is the QuickStart guide for the project.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>To install <cite>bioat</cite>, run the following commands:</p>
+<p>Supported platforms: Linux / MacOS (intel &amp; arm64) / Windows.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install using pip</span>
+pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>bioat
+
+<span class="c1"># Install using conda</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>bioat
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>Below are some example commands to use <cite>bioat</cite>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># List commands</span>
+bioat<span class="w"> </span>list
+
+<span class="c1"># Check version</span>
+bioat<span class="w"> </span>version
+
+<span class="c1"># Check information about bioat</span>
+bioat<span class="w"> </span>about
+
+<span class="c1"># Example usage</span>
+bioat<span class="w"> </span>bam<span class="w"> </span>remove_clip<span class="w"> </span>--help
+samtools<span class="w"> </span>view<span class="w"> </span>-h<span class="w"> </span>test_sorted_n.bam<span class="w"> </span><span class="p">|</span><span class="w"> </span>bioat<span class="w"> </span>bam<span class="w"> </span>remove_clip<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</pre></div>
+</div>
+</section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="contents.html" class="btn btn-neutral float-left" title="Welcome to bioat’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contents.html" class="btn btn-neutral float-left" title="Welcome to BioAT Documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="modules.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
