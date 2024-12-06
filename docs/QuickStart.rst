@@ -21,7 +21,15 @@ Supported platforms: Linux / MacOS (intel & arm64) / Windows.
 Usage
 -----
 
-Below are some example commands to use `bioat`.
+As a Python library:
+
+.. code-block:: python
+
+    from bioat import about
+
+    print(about)
+
+Below are some example commands to use `bioat` as a CLI tool:
 
 .. code-block:: shell
 
