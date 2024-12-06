@@ -4,7 +4,12 @@ version: 2
 python:
   version: 3.10
   install:
-    - method: poetry
+    - requirements: docs/requirements.txt  # 确保此路径正确，列出所有依赖
 
 sphinx:
-  configuration: docs/conf.py
+  configuration: docs/conf.py  # 确保指向正确的 conf.py 文件路径
+
+build:
+  commands:
+    - pip install -r docs/requirements.txt  # 强制安装依赖，确保环境一致
+    - sphinx-build -b html docs/ docs/_build/html  # 手动运行构建命令
