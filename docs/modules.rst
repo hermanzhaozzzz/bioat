@@ -6,4 +6,3 @@ Modules
    :caption: Submodules:
 
    bioat
-   bioat.lib
