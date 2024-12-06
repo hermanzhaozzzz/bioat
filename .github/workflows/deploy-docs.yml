@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme myst-parser
+          pip install sphinx sphinx_rtd_theme myst-parser toml
           pip install .
 
       - name: Build documentation
