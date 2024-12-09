@@ -15,7 +15,7 @@ class LoggerManager:
     def __init__(
         self,
         log_level: str = "ERROR",
-        mod_name: str = "fbt",
+        mod_name: str = "bioat.logger",
         cls_name: str | None = None,
         func_name: str | None = None,
     ):
