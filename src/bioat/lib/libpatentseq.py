@@ -39,13 +39,15 @@ lm = LoggerManager(mod_name="bioat.lib.libpatentseq")
 try:
     from playwright._impl._errors import TargetClosedError, TimeoutError
     from playwright.sync_api import Playwright, sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
 except (ImportError, ModuleNotFoundError) as e:
     lm.set_level("info")
     lm.logger.info(e)
     lm.logger.info(
         "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
     )
-    sys.exit(0)
+    PLAYWRIGHT_AVAILABLE = False
+    Playwright = None
 
     # class Playwright:
     #     """Fake class to avoid install plawright"""
@@ -508,6 +510,8 @@ def query_patent(
     rm_fail_cookie: bool = False,
     log_level: str = "INFO",
 ):
+    if not PLAYWRIGHT_AVAILABLE:
+        return
     with sync_playwright() as playwright:
         run(
             playwright,
