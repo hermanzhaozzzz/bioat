@@ -35,6 +35,7 @@ class LoggerManager:
         self.cls_name = cls_name
         self.func_name = func_name
         self.logger = self._create_logger()
+        self.logger.propagate = False
 
     def _get_log_level(self, log_level: str) -> int:
         """Parse and return the logging level."""
@@ -95,7 +96,7 @@ class LoggerManager:
                 debug=dict(color="blue"),
             ),
         )
-
+        logger.propagate = False
         return logger
 
     def set_names(self, cls_name: str | None = None, func_name: str | None = None):
@@ -109,6 +110,7 @@ class LoggerManager:
         self.cls_name = cls_name
         self.func_name = func_name
         self.logger.name = self._get_logger_name()
+        self.logger.propagate = False
 
     def set_level(self, log_level: str):
         """
@@ -139,6 +141,7 @@ class LoggerManager:
             ),
             reconfigure=True,
         )
+        self.logger.propagate = False
 
     def set_file(
         self,
@@ -184,6 +187,7 @@ class LoggerManager:
         # Set file log format
         file_handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
         self.logger.addHandler(file_handler)
+        self.logger.propagate = False
 
     def add_stream_handler(self):
         """
@@ -194,6 +198,7 @@ class LoggerManager:
             stream_handler = logging.StreamHandler()
             stream_handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
             self.logger.addHandler(stream_handler)
+            self.logger.propagate = False
 
 
 if __name__ == "__main__":
