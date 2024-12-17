@@ -75,6 +75,9 @@ function create_conda_recipe {
     else
         echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新... 这里会显示上一次更新的最新版本而不是本次提交的版本(不是错误)"
         cd staged-recipes
+        git add -A 
+        git checkout main 
+        git checkout main
         git pull origin main --rebase
         cd ..
     fi
@@ -259,7 +262,7 @@ function main {
     echo "git commit -m \"Update to $VERSION\""
     git commit -m "Update to $VERSION"
     echo "git push origin $VERSION"
-    git push origin $VERSION
+    git push origin $VERSION -f
     echo "~~~~~~~~~~~~~~>>>>>"
     cd ..
     echo "cd `pwd`"
