@@ -231,6 +231,13 @@ function main {
         echo "本地缺少 bioat-feedstock 仓库, 重新从 conda-forge 官方仓库[的我的fork仓库]克隆到本地..."
         echo "git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git"
         git clone git@github.com:hermanzhaozzzz/bioat-feedstock.git
+        echo "本地存在 bioat-feedstock 仓库, 尝试拉取官方仓库更新..."
+        cd bioat-feedstock
+        git checkout main
+        git remote add upstream https://github.com/conda-forge/bioat-feedstock.git >/dev/null 2>&1
+        git fetch upstream
+        git rebase upstream/main
+        cd ..
     else
         echo "~~~~~~~~~~~~~~>>>>>"
         echo "本地存在 bioat-feedstock 仓库, 尝试拉取官方仓库更新..."
@@ -263,6 +270,10 @@ function main {
     git commit -m "Update to $VERSION"
     echo "git push origin $VERSION"
     git push origin $VERSION -f
+    echo "${VERSION} 已提交,切换到主分支"
+    git checkout main
+    echo "删除本地的 $VERSION 分支,因为已经提交到官方仓库"
+    git branch -D $VERSION
     echo "~~~~~~~~~~~~~~>>>>>"
     cd ..
     echo "cd `pwd`"
@@ -276,6 +287,7 @@ function main {
     echo "[step4] 点击 Create pull request"
     echo "[step5] 自动化测试通过后, 点击 Merge pull request"
     echo "[step6] 在PR下添加一个Comments, 内容 [⭐️ @conda-forge-admin, please rerender ⭐️] 通知 conda-forge 重新渲染"
+    echo "[step7] 选择 hermanzhaozzzz/bioat-feedstock 的$VERSION 分支, 点击 Delete branch按钮删除分支, 完成发布."
     echo "⭐️"
     echo "按照Pull request successfully merged and closed提示点击Delete branch按钮删除 hermanzhaozzzz/bioat-feedstock/$VERSION 分支"
     echo "⭐️"
