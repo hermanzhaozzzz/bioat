@@ -7,11 +7,16 @@ import subprocess
 
 import pytest
 
-from bioat import __BAM_PARSER_BACKEND__
 from bioat.cli import Cli
 from bioat.lib.libpath import check_cmd
 
 from ._pytest_meta import DATA_PATH
+try:
+    import pysam
+except ImportError:
+    __BAM_PARSER_BACKEND__ = False
+else:
+    __BAM_PARSER_BACKEND__ = True
 
 bioat_cli = Cli()
 
@@ -94,8 +99,8 @@ def test_remove_clip():
         pytest.skip: If the BAM parser backend is 'bamnostic'.
     """
 
-    if __BAM_PARSER_BACKEND__ == "bamnostic":
-        pytest.skip("bamnostic backend does not support remove_clip")
+    if not __BAM_PARSER_BACKEND__:
+        pytest.skip("pysam should be installed for this test")
 
     bioat_cli.bam.remove_clip(
         input=BAM_SORTN_FILE,
@@ -126,8 +131,8 @@ def test_cli_remove_clip_sortn():
         None
     """
 
-    if __BAM_PARSER_BACKEND__ == "bamnostic":
-        pytest.skip("bamnostic backend does not support remove_clip")
+    if not __BAM_PARSER_BACKEND__:
+        pytest.skip("pysam should be installed for this test")
 
     # Command line arguments for the subprocess run.
     args = [
@@ -165,8 +170,8 @@ def test_cli_remove_clip_sortn_pipe():
         pytest.SkipException: If the bamnostic backend is in use or
         if samtools is not installed.
     """
-    if __BAM_PARSER_BACKEND__ == "bamnostic":
-        pytest.skip("bamnostic backend does not support remove_clip")
+    if not __BAM_PARSER_BACKEND__:
+        pytest.skip("pysam should be installed for this test")
     if not check_cmd("samtools"):
         pytest.skip("samtools is not installed")
 
@@ -199,8 +204,8 @@ def test_cli_remove_clip_sortn_pipe2():
     Raises:
         pytest.skip: If the bamnostic backend is used or if samtools is not installed.
     """
-    if __BAM_PARSER_BACKEND__ == "bamnostic":
-        pytest.skip("bamnostic backend does not support remove_clip")
+    if not __BAM_PARSER_BACKEND__:
+        pytest.skip("pysam should be installed for this test")
     if not check_cmd("samtools"):
         pytest.skip("samtools is not installed")
 
@@ -237,8 +242,8 @@ def test_cli_remove_clip_sortp_pipe():
         pytest.SkipException: if the bamnostic backend is used or if
         `samtools` is not installed.
     """
-    if __BAM_PARSER_BACKEND__ == "bamnostic":
-        pytest.skip("bamnostic backend does not support remove_clip")
+    if not __BAM_PARSER_BACKEND__:
+        pytest.skip("pysam should be installed for this test")
     if not check_cmd("samtools"):
         pytest.skip("samtools is not installed")
 
