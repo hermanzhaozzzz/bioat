@@ -35,25 +35,7 @@ from bioat.logger import LoggerManager
 
 lm = LoggerManager(mod_name="bioat.lib.libpatentseq")
 
-
-try:
-    from playwright._impl._errors import TargetClosedError, TimeoutError
-    from playwright.sync_api import Playwright, sync_playwright
-    PLAYWRIGHT_AVAILABLE = True
-except (ImportError, ModuleNotFoundError) as e:
-    lm.set_level("info")
-    lm.logger.info(e)
-    lm.logger.info(
-        "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
-    )
-    PLAYWRIGHT_AVAILABLE = False
-    Playwright = None
-
-    # class Playwright:
-    #     """Fake class to avoid install plawright"""
-
-    #     pass
-
+__all__ = ["run"]
 
 STATUS = "RUN"
 SEQ_HEADER = None
@@ -65,9 +47,8 @@ IP_ERRORS = (
     "NS_ERROR_PROXY_FORBIDDEN",
 )
 
-
-def save_cookies(context, log_level):
-    lm.set_names(func_name="save_cookies")
+def _save_cookies(context, log_level):
+    lm.set_names(func_name="_save_cookies")
     lm.set_level(log_level)
 
     # 保存 cookies
@@ -81,9 +62,9 @@ def save_cookies(context, log_level):
         f.write(str(int(time.time())))
 
 
-def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
+def _load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
     # 加载 cookies
-    lm.set_names(func_name="load_cookies")
+    lm.set_names(func_name="_load_cookies")
     lm.set_level(log_level)
 
     try:
@@ -121,8 +102,8 @@ def load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
                 return None
 
 
-def remove_cookie(log_level):
-    lm.set_names(func_name="remove_cookie")
+def _remove_cookie(log_level):
+    lm.set_names(func_name="_remove_cookie")
     lm.set_level(log_level)
 
     lm.logger.info("Removing cookie")
@@ -134,7 +115,7 @@ def remove_cookie(log_level):
 
 
 def run(
-    playwright: Playwright,
+    playwright,
     username,
     password,
     seq,
@@ -149,6 +130,21 @@ def run(
 ) -> None:
     lm.set_names(func_name="run")
     lm.set_level(log_level)
+    try:
+        from playwright._impl._errors import TargetClosedError, TimeoutError
+        from playwright.sync_api import Playwright
+
+        assert isinstance(playwright, Playwright)
+    except (ImportError, ModuleNotFoundError) as e:
+        lm.set_level("info")
+        lm.logger.info(e)
+        lm.logger.info(
+            "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
+        )
+        return None
+    except AssertionError as e:
+        lm.logger.info(e)
+        return None
 
     account = {
         "username": username,
@@ -202,7 +198,7 @@ def run(
     )
     lm.logger.debug("Try to load cookies")
 
-    context = load_cookies(browser, proxy_ip, log_level)
+    context = _load_cookies(browser, proxy_ip, log_level)
 
     # context = None
     if context is None:  # need login
@@ -278,7 +274,7 @@ def run(
                 time.sleep(20)
                 page1.close()
 
-                save_cookies(context, log_level)
+                _save_cookies(context, log_level)
                 break  # to else for break
             except TimeoutError as e:
                 lm.logger.debug("context close")
@@ -364,7 +360,7 @@ def run(
                     )
                     if rm_fail_cookie:
                         lm.logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
-                        remove_cookie(log_level)
+                        _remove_cookie(log_level)
                     else:
                         lm.logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
                         lm.logger.warning("User set to not remove cookies.")
@@ -510,8 +506,15 @@ def query_patent(
     rm_fail_cookie: bool = False,
     log_level: str = "INFO",
 ):
-    if not PLAYWRIGHT_AVAILABLE:
-        return
+    try:
+        from playwright.sync_api import sync_playwright
+    except (ImportError, ModuleNotFoundError) as e:
+        lm.set_level("info")
+        lm.logger.info(e)
+        lm.logger.info(
+            "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
+        )
+        return None
     with sync_playwright() as playwright:
         run(
             playwright,

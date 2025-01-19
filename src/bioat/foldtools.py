@@ -1,4 +1,4 @@
-from bioat.lib.libpdb import pdb2fasta
+from bioat.lib.libpdb import pdb2fasta, show_ref_cut
 from bioat.logger import LoggerManager
 
 lm = LoggerManager(mod_name="bioat.foldtools")
@@ -12,6 +12,55 @@ class FoldTools:
     def __init__(self):
         pass
 
+    def show_ref_cut(
+        self,
+        ref_seq: str,
+        cut_seq: str,
+        ref_pdb: str,
+        cut_pdb: str | None = None,
+        ref_color="blue",
+        cut_color="green",
+        gap_color="red",
+        log_level="WARNING",
+    ):
+        """
+        Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
+
+        Args:
+            ref_seq (str): Amino acid sequence content for the ref protein.
+            cut_seq (str): Amino acid sequence content for the cut protein
+            ref_pdb (str): Path to the PDB file of the reference structure.
+            cut_pdb (str): Path to the PDB file of the cut structure.
+            gap_color (str): Color for gaps or removed residues.
+            ref_color (str): Color for reference residues.
+            cut_color (str): Color for cut residues.
+        """
+        lm.set_names(func_name="show_ref_cut")
+        lm.set_level(log_level)
+        show_ref_cut(
+            ref_seq=ref_seq,
+            cut_seq=cut_seq,
+            ref_pdb=ref_pdb,
+            cut_pdb=cut_pdb,
+            ref_color=ref_color,
+            cut_color=cut_color,
+            gap_color=gap_color,
+            log_level=log_level,
+        )
+        lm.logger.debug(
+            f"""\
+Params:
+-------
+ref_seq: {ref_seq}
+cut_seq: {cut_seq}
+ref_pdb: {ref_pdb}
+cut_pdb: {cut_pdb}
+ref_color: {ref_color}
+cut_color: {cut_color}
+gap_color: {gap_color}
+log_level: {log_level}"""
+        )
+
     def pdb2fasta(self, input: str, output: str | None = None, log_level="WARNING"):
         """Converts a PDB file to a FASTA file.
 
@@ -19,7 +68,7 @@ class FoldTools:
         RNA sequences, and other molecules appropriately to create a FASTA file.
 
         Details:
-            1. **Proteins**: 
+            1. **Proteins**:
                The protein sequence for each chain will be extracted as "Chain X Protein".
             2. **DNA and RNA**:
                Bases for DNA (A, T, G, C) will be saved as "Chain X DNA", and bases for RNA (A, U, G, C) will be saved as "Chain X RNA".
@@ -29,12 +78,12 @@ class FoldTools:
                The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
 
         Args:
-            input (str): 
+            input (str):
                 Input file path.
-            output (str, optional): 
-                Output file path. If None, the output file will be named as the 
+            output (str, optional):
+                Output file path. If None, the output file will be named as the
                 basename of the input file with a ".fa" extension. Defaults to None.
-            log_level (str, optional): 
+            log_level (str, optional):
                 Logging level. Defaults to "WARNING".
 
         Returns:
@@ -42,10 +91,12 @@ class FoldTools:
         """
         lm.set_names(func_name="pdb2fasta")
         lm.set_level(log_level)
-        lm.logger.debug(f"""\
+        lm.logger.debug(
+            f"""\
 Params:
 -------
 input: {input}
 output: {output}
-log_level: {log_level}""")
+log_level: {log_level}"""
+        )
         pdb2fasta(pdb_file=input, output_fasta=output, log_level=log_level)

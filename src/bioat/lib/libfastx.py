@@ -788,11 +788,15 @@ def format_this_fastx(
     # replace old file or write to new file!
     new_file = f_input if new_file is None else new_file
 
-    if new_file == f_input:
-        if not force:
-            lm.logger.error(
-                f"use --force to overwrite <{f_input}>, or define --new_file"
-            )
+    if new_file == f_input and not force:
+        operate = input(
+            f"Warning: will overwrite {f_input}, continue? (y/n) [use --force to overwrite directly]"
+        )
+
+        if operate.lower() == "y":
+            pass
+        else:
+            lm.logger.warning("Aborted, exit.")
             sys.exit(1)
 
     handler = (
