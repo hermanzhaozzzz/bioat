@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libalignment &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -98,17 +98,17 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">Bio.Align</span> <span class="kn">import</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">PairwiseAligner</span><span class="p">,</span> <span class="n">substitution_matrices</span>
-<span class="kn">from</span> <span class="nn">Bio.Seq</span> <span class="kn">import</span> <span class="n">Seq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Align</span><span class="w"> </span><span class="kn">import</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">PairwiseAligner</span><span class="p">,</span> <span class="n">substitution_matrices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Seq</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seq</span>
 
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libalignment&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="instantiate_pairwise_aligner">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.instantiate_pairwise_aligner">[docs]</a>
-<span class="k">def</span> <span class="nf">instantiate_pairwise_aligner</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">instantiate_pairwise_aligner</span><span class="p">(</span>
     <span class="n">scoring_match</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">penalty_mismatch</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
     <span class="n">penalty_gap_open</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span>
@@ -245,7 +245,7 @@
 
 <div class="viewcode-block" id="get_best_alignment">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_best_alignment">[docs]</a>
-<span class="k">def</span> <span class="nf">get_best_alignment</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_best_alignment</span><span class="p">(</span>
     <span class="n">seq_a</span><span class="p">:</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">seq_b</span><span class="p">:</span> <span class="n">Seq</span><span class="p">,</span> <span class="n">aligner</span><span class="p">:</span> <span class="n">PairwiseAligner</span><span class="p">,</span> <span class="n">consider_strand</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get best alignment by heightest alignment score</span>
@@ -296,7 +296,7 @@
 
 <div class="viewcode-block" id="get_aligned_seq">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_aligned_seq">[docs]</a>
-<span class="k">def</span> <span class="nf">get_aligned_seq</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_aligned_seq</span><span class="p">(</span>
     <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">letn_match</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve aligned sequence information from a Bio.Align.Alignment object.</span>
@@ -369,7 +369,7 @@
 
 <div class="viewcode-block" id="get_alignment_info">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.get_alignment_info">[docs]</a>
-<span class="k">def</span> <span class="nf">get_alignment_info</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_alignment_info</span><span class="p">(</span>
     <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">,</span>
     <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">letn_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

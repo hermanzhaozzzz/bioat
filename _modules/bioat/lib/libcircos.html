@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libcircos &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -72,21 +72,21 @@
 <span class="sd">Adapt from https://github.com/ponnhide/pyCircos</span>
 <span class="sd">and thanks for this github user.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
 
-<span class="kn">import</span> <span class="nn">Bio</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
-<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">Phylo</span><span class="p">,</span> <span class="n">SeqIO</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpath</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Phylo</span><span class="p">,</span> <span class="n">SeqIO</span>
 
 <span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.max_open_warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ps.fonttype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
@@ -107,7 +107,7 @@
 
 <div class="viewcode-block" id="Garc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc">[docs]</a>
-<span class="k">class</span> <span class="nc">Garc</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Garc</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representation for an arc section in a graphic circle.</span>
 
 <span class="sd">    Attributes:</span>
@@ -129,19 +129,19 @@
 
 <div class="viewcode-block" id="Garc.__setitem__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.__setitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span></div>
 
 
 <div class="viewcode-block" id="Garc.__getitem__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Garc.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arc_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -258,7 +258,7 @@
 
 <div class="viewcode-block" id="Garc.calc_density">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_density">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates density values in a sliding window based on given positions.</span>
 
 <span class="sd">        Args:</span>
@@ -309,7 +309,7 @@
 
 <div class="viewcode-block" id="Garc.calc_nnratio">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnratio">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_nnratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the ratio of nucleotide base frequencies for two specified bases over multiple windows along a sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -368,7 +368,7 @@
 
 <div class="viewcode-block" id="Garc.calc_nnskew">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnskew">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_nnskew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnskew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along</span>
 <span class="sd">        the sequence.</span>
@@ -413,7 +413,7 @@
 
 <div class="viewcode-block" id="Gcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle">[docs]</a>
-<span class="k">class</span> <span class="nc">Gcircle</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gcircle</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a </span>
 <span class="sd">    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot) </span>
@@ -425,13 +425,13 @@
     <span class="c1"># colors = [&quot;#4E79A7&quot;,&quot;#F2BE2B&quot;,&quot;#E15759&quot;,&quot;#76B7B2&quot;,&quot;#59A14F&quot;,&quot;#EDC948&quot;,&quot;#B07AA1&quot;,&quot;#FF9DA7&quot;,&quot;#9C755F&quot;,&quot;#BAB0AC&quot;]</span>
     <span class="n">cmaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greens</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;garc_dict&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span>
 
 <div class="viewcode-block" id="Gcircle.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the circular map.</span>
 
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="Gcircle.add_garc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.add_garc">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_garc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">garc</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_garc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">garc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new Garc class object to the garc_dict.</span>
 
 <span class="sd">        Args:</span>
@@ -473,7 +473,7 @@
 
 <div class="viewcode-block" id="Gcircle.set_garcs">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.set_garcs">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_garcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_garcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize arc rectangles for Garc class objects in .garc_dict.</span>
 
 <span class="sd">        This method draws the arc rectangles of the Garc class objects in the drawing space.</span>
@@ -588,7 +588,7 @@
 
 <div class="viewcode-block" id="Gcircle.setspine">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.setspine">[docs]</a>
-    <span class="k">def</span> <span class="nf">setspine</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setspine</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
@@ -638,7 +638,7 @@
 
 <div class="viewcode-block" id="Gcircle.lineplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.lineplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">lineplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lineplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">data</span><span class="p">,</span>
@@ -744,7 +744,7 @@
 
 <div class="viewcode-block" id="Gcircle.fillplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.fillplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">fillplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fillplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">data</span><span class="p">,</span>
@@ -868,7 +868,7 @@
 
 <div class="viewcode-block" id="Gcircle.scatterplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.scatterplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">scatterplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scatterplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">data</span><span class="p">,</span>
@@ -976,7 +976,7 @@
 
 <div class="viewcode-block" id="Gcircle.barplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.barplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">barplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">barplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">data</span><span class="p">,</span>
@@ -1132,7 +1132,7 @@
 
 <div class="viewcode-block" id="Gcircle.heatmap">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.heatmap">[docs]</a>
-    <span class="k">def</span> <span class="nf">heatmap</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">heatmap</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">data</span><span class="p">,</span>
@@ -1239,7 +1239,7 @@
 
 <div class="viewcode-block" id="Gcircle.featureplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.featureplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">featureplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">featureplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">feature_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1337,7 +1337,7 @@
 
 <div class="viewcode-block" id="Gcircle.chord_plot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.chord_plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">chord_plot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chord_plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start_list</span><span class="p">,</span> <span class="n">end_list</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize interrelationships between data.</span>
@@ -1412,7 +1412,7 @@
 
 <div class="viewcode-block" id="Gcircle.tickplot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.tickplot">[docs]</a>
-    <span class="k">def</span> <span class="nf">tickplot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tickplot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1528,7 +1528,7 @@
                 <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_label_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the rotation angle for a label based on its position and orientation.</span>
 
 <span class="sd">        Args:</span>
@@ -1558,7 +1558,7 @@
 
 <div class="viewcode-block" id="Gcircle.save">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.save">[docs]</a>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the figure object of the Gcircle class to a file.</span>
 
 <span class="sd">        Args:</span>
@@ -1587,10 +1587,10 @@
 
 <div class="viewcode-block" id="Tarc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tarc">[docs]</a>
-<span class="k">class</span> <span class="nc">Tarc</span><span class="p">(</span><span class="n">Garc</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tarc</span><span class="p">(</span><span class="n">Garc</span><span class="p">):</span>
 <div class="viewcode-block" id="Tarc.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tarc.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arc_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1673,7 +1673,7 @@
         <span class="n">Garc</span><span class="o">.</span><span class="n">_arcnum</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_col_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_col_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">taxa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">get_terminals</span><span class="p">()</span>
         <span class="n">depths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">depths</span><span class="p">()</span>
         <span class="n">max_label_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">taxon</span><span class="p">))</span> <span class="k">for</span> <span class="n">taxon</span> <span class="ow">in</span> <span class="n">taxa</span><span class="p">)</span>
@@ -1689,11 +1689,11 @@
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_col_positions</span> <span class="o">=</span> <span class="n">positions</span>
 
-    <span class="k">def</span> <span class="nf">_get_row_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_row_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">taxa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">get_terminals</span><span class="p">()</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="p">{</span><span class="n">taxon</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">taxon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">taxa</span><span class="p">)}</span>
 
-        <span class="k">def</span> <span class="nf">calc_row</span><span class="p">(</span><span class="n">clade</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">calc_row</span><span class="p">(</span><span class="n">clade</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">subclade</span> <span class="ow">in</span> <span class="n">clade</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">subclade</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
                     <span class="n">calc_row</span><span class="p">(</span><span class="n">subclade</span><span class="p">)</span>
@@ -1716,7 +1716,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">nonterminal_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clade_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
 
-    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thetalim</span><span class="p">,</span> <span class="n">rlim</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thetalim</span><span class="p">,</span> <span class="n">rlim</span><span class="p">):</span>
         <span class="n">col_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_positions</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">row_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_row_positions</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">row_min</span><span class="p">,</span> <span class="n">row_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">row_values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">row_values</span><span class="p">)</span>
@@ -1739,7 +1739,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_row_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">theta_positions</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">r_positions</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_plot_tree</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ax</span><span class="p">,</span>
         <span class="n">thetalim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1811,7 +1811,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_highlight</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please run `plot_tree` before running `plot_highlight`&quot;</span><span class="p">)</span>
 
@@ -1923,7 +1923,7 @@
 
 <div class="viewcode-block" id="Tcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle">[docs]</a>
-<span class="k">class</span> <span class="nc">Tcircle</span><span class="p">(</span><span class="n">Gcircle</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tcircle</span><span class="p">(</span><span class="n">Gcircle</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tcircle class is the subclass of Gcircle. All methods implemented in the</span>
 <span class="sd">    Gcircle class also can be used. Then, the two additional methods set_tarc,</span>
@@ -1932,7 +1932,7 @@
 
 <div class="viewcode-block" id="Tcircle.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the circular mapping object.</span>
 
 <span class="sd">        Args:</span>
@@ -1946,7 +1946,7 @@
 
 <div class="viewcode-block" id="Tcircle.__getattr__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.__getattr__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves attributes of the object.</span>
 
 <span class="sd">        Args:</span>
@@ -1961,7 +1961,7 @@
 
 <div class="viewcode-block" id="Tcircle.add_tarc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.add_tarc">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_tarc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_tarc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a new Tarc or Garc object to the tarc_dict.</span>
 
 <span class="sd">        Args:</span>
@@ -1976,7 +1976,7 @@
 
 <div class="viewcode-block" id="Tcircle.set_tarcs">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.set_tarcs">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_tarcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tarcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualizes the arc rectangles of Tarc objects in the .garc_dict.</span>
 
 <span class="sd">        After execution, no new Tarc objects can be added to garc_dict,</span>
@@ -2051,7 +2051,7 @@
 
 <div class="viewcode-block" id="Tcircle.plot_tree">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.plot_tree">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_tree</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tarc_id</span><span class="p">,</span>
         <span class="n">rlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span><span class="p">),</span>
@@ -2126,7 +2126,7 @@
 
 <div class="viewcode-block" id="Tcircle.plot_highlight">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.plot_highlight">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc_id</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc_id</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add highlight for a specific clade under the given internal clade.</span>
 
 <span class="sd">        Args:</span>
@@ -2160,25 +2160,25 @@
 
 <div class="viewcode-block" id="table_hg38_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_chromosome_length">[docs]</a>
-<span class="k">def</span> <span class="nf">table_hg38_chromosome_length</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_chromosome_length</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;hg38_chromosome_length.csv&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="table_hg38_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_cytoband">[docs]</a>
-<span class="k">def</span> <span class="nf">table_hg38_cytoband</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_cytoband</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;hg38_cytoBand.csv&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="table_mm10_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_chromosome_length">[docs]</a>
-<span class="k">def</span> <span class="nf">table_mm10_chromosome_length</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_chromosome_length</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;mm10_chromosome_length.csv&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="table_mm10_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_cytoband">[docs]</a>
-<span class="k">def</span> <span class="nf">table_mm10_cytoband</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_cytoband</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;mm10_cytoBand.csv&#39;</span><span class="p">))</span></div>
 
 

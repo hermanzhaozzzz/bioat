@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.metatools &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -69,22 +69,22 @@
              
   <h1>Source code for bioat.metatools</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libjgi</span> <span class="kn">import</span> <span class="n">JGIOperator</span>
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libjgi</span><span class="w"> </span><span class="kn">import</span> <span class="n">JGIOperator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.metatools&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MetaTools">
 <a class="viewcode-back" href="../../bioat.html#bioat.metatools.MetaTools">[docs]</a>
-<span class="k">class</span> <span class="nc">MetaTools</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetaTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Metagenome toolbox.&quot;&quot;&quot;</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;MetaTools&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MetaTools.JGI_query">
 <a class="viewcode-back" href="../../bioat.html#bioat.metatools.MetaTools.JGI_query">[docs]</a>
-    <span class="k">def</span> <span class="nf">JGI_query</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">JGI_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">query_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">xml</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.exceptions &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -90,12 +90,12 @@
 
 <div class="viewcode-block" id="BioatError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for all custom exceptions in the bioat package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># 使用列表来收集消息，避免多次字符串拼接</span>
         <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
@@ -108,7 +108,7 @@
 
 <div class="viewcode-block" id="BioatError.__str__">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatError.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a string representation of the exception.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -119,7 +119,7 @@
 
 <div class="viewcode-block" id="BioatFileFormatError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatFileFormatError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatFileFormatError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatFileFormatError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for errors in file format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -129,7 +129,7 @@
 
 <div class="viewcode-block" id="BioatFileNotCompleteError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatFileNotCompleteError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatFileNotCompleteError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatFileNotCompleteError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised when a file is not complete.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -139,7 +139,7 @@
 
 <div class="viewcode-block" id="BioatFileNotFoundError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatFileNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatFileNotFoundError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatFileNotFoundError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised when a required file is not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -149,7 +149,7 @@
 
 <div class="viewcode-block" id="BioatInvalidInputError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatInvalidInputError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatInvalidInputError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatInvalidInputError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for invalid input errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -159,7 +159,7 @@
 
 <div class="viewcode-block" id="BioatInvalidOptionError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatInvalidOptionError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatInvalidOptionError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatInvalidOptionError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for invalid option errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -168,7 +168,7 @@
 
 <div class="viewcode-block" id="BioatInvalidParameterError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatInvalidParameterError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatInvalidParameterError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatInvalidParameterError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for invalid parameter errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -179,7 +179,7 @@
 
 <div class="viewcode-block" id="BioatMissingDependencyError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatMissingDependencyError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatMissingDependencyError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatMissingDependencyError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised when a required dependency is missing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -189,7 +189,7 @@
 
 <div class="viewcode-block" id="BioatRuntimeError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatRuntimeError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatRuntimeError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatRuntimeError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for runtime errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -199,7 +199,7 @@
 
 <div class="viewcode-block" id="BioatValueError">
 <a class="viewcode-back" href="../../bioat.html#bioat.exceptions.BioatValueError">[docs]</a>
-<span class="k">class</span> <span class="nc">BioatValueError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BioatValueError</span><span class="p">(</span><span class="n">BioatError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for errors related to values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.bamtools &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -85,24 +85,24 @@
 <span class="sd">    _example_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
-<span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">SIG_DFL</span><span class="p">,</span> <span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">signal</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdin</span> <span class="k">as</span> <span class="n">STDIN</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span> <span class="k">as</span> <span class="n">STDOUT</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextIOWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">SIG_DFL</span><span class="p">,</span> <span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">signal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdin</span> <span class="k">as</span> <span class="n">STDIN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdout</span> <span class="k">as</span> <span class="n">STDOUT</span>
 
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.bamtools&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="setup_signal_handling">
 <a class="viewcode-back" href="../../bioat.html#bioat.bamtools.setup_signal_handling">[docs]</a>
-<span class="k">def</span> <span class="nf">setup_signal_handling</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_signal_handling</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup signal handlers.&quot;&quot;&quot;</span>
     <span class="n">signal</span><span class="p">(</span><span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">SIG_DFL</span><span class="p">)</span></div>
 
@@ -111,16 +111,16 @@
 
 <div class="viewcode-block" id="BamTools">
 <a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools">[docs]</a>
-<span class="k">class</span> <span class="nc">BamTools</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BamTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Bam toolbox.&quot;&quot;&quot;</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;BamTools&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="BamTools.mpileup2table">
 <a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools.mpileup2table">[docs]</a>
-    <span class="k">def</span> <span class="nf">mpileup2table</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mpileup2table</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpileup</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDOUT</span><span class="p">,</span>
@@ -155,7 +155,7 @@
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;mpileup2table&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_temp_split_bam</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="n">threads</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_temp_split_bam</span><span class="p">(</span><span class="n">mpileup</span><span class="p">,</span> <span class="n">threads</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
             <span class="c1"># creat temp file name and open file</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Making temp files...&quot;</span><span class="p">)</span>
 
@@ -225,7 +225,7 @@
 
             <span class="k">return</span> <span class="n">temp_filename_list</span>
 
-        <span class="k">def</span> <span class="nf">_merge_out_bmat</span><span class="p">(</span><span class="n">temp_filename_list</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">remove_temp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_merge_out_bmat</span><span class="p">(</span><span class="n">temp_filename_list</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">remove_temp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
@@ -303,7 +303,7 @@
 
 <div class="viewcode-block" id="BamTools.remove_clip">
 <a class="viewcode-back" href="../../bioat.html#bioat.bamtools.BamTools.remove_clip">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_clip</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_clip</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDIN</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TextIOWrapper</span> <span class="o">=</span> <span class="n">STDOUT</span><span class="p">,</span>
@@ -352,7 +352,7 @@
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">pysam</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pysam</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s1">&#39;remove_clip requires &quot;pysam&quot; as the backend for parsing BAM files. Please install it first.&#39;</span>
@@ -473,7 +473,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_run_mpileup_to_table</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="n">temp_output</span><span class="p">,</span> <span class="n">mutation_number_threshold</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_mpileup_to_table</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="n">temp_output</span><span class="p">,</span> <span class="n">mutation_number_threshold</span><span class="p">):</span>
     <span class="c1"># open input file</span>
     <span class="n">temp_mpileup</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_mpileup</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>

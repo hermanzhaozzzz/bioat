@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.fastxtools &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,31 +68,31 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.fastxtools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">bioat.exceptions</span> <span class="kn">import</span> <span class="n">BioatFileFormatError</span><span class="p">,</span> <span class="n">BioatFileNotCompleteError</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libfastx</span> <span class="kn">import</span> <span class="n">calculate_length_distribution</span><span class="p">,</span> <span class="n">format_this_fastx</span>
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatFileFormatError</span><span class="p">,</span> <span class="n">BioatFileNotCompleteError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libfastx</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_length_distribution</span><span class="p">,</span> <span class="n">format_this_fastx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.fastxtools&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FastxTools">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools">[docs]</a>
-<span class="k">class</span> <span class="nc">FastxTools</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FastxTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;FASTA &amp; FASTQ toolbox.&quot;&quot;&quot;</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;FastxTools&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fastx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="FastxTools.fmt_this">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools.fmt_this">[docs]</a>
-    <span class="k">def</span> <span class="nf">fmt_this</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fmt_this</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Formats a FASTA file to improve readability.</span>
@@ -112,7 +112,7 @@
 
 <div class="viewcode-block" id="FastxTools.plot_length_distribution">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools.plot_length_distribution">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_length_distribution</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_length_distribution</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -136,7 +136,7 @@
 
 <div class="viewcode-block" id="FastxTools.mgi_parse_md5">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools.mgi_parse_md5">[docs]</a>
-    <span class="k">def</span> <span class="nf">mgi_parse_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mgi_parse_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a mgi-like MD5 file into a standard MD5 file.</span>
 
 <span class="sd">        Args:</span>
@@ -167,7 +167,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_fastx_generator</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_fastx_generator</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param str file: path of input &lt;fastq | fastq.gz | fastx | fastx.gz&gt;</span>
@@ -294,7 +294,7 @@
     <span class="c1"># CLI subcommand for filtering sequences</span>
 <div class="viewcode-block" id="FastxTools.filter_read_contains_n">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools.filter_read_contains_n">[docs]</a>
-    <span class="k">def</span> <span class="nf">filter_read_contains_n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_read_contains_n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter reads that contain the &#39;N&#39; base in FASTA or FASTQ formats.</span>
 
 <span class="sd">        This function processes a given FASTA or FASTQ file and</span>

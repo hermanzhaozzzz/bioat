@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libspider &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,21 +68,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.lib.libspider</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 
 <div class="viewcode-block" id="ProxyPool">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libspider.ProxyPool">[docs]</a>
-<span class="k">class</span> <span class="nc">ProxyPool</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProxyPool</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="c1"># self.url = &quot;http://zhaohuanan.cc:5010&quot;</span>
 
 <div class="viewcode-block" id="ProxyPool.get_proxy">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libspider.ProxyPool.get_proxy">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">/get/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -91,7 +91,7 @@
 
 <div class="viewcode-block" id="ProxyPool.delete_proxy">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libspider.ProxyPool.delete_proxy">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">proxy</span><span class="p">:</span>
             <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">/delete/?proxy=</span><span class="si">{</span><span class="n">proxy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -117,7 +117,7 @@
 
 <div class="viewcode-block" id="get_random_user_agents">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libspider.get_random_user_agents">[docs]</a>
-<span class="k">def</span> <span class="nf">get_random_user_agents</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_random_user_agents</span><span class="p">():</span>
     <span class="n">user_agents</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36 OPR/26.0.1656.60&#39;</span><span class="p">,</span>
         <span class="s1">&#39;Opera/8.0 (Windows NT 5.1; U; en)&#39;</span><span class="p">,</span>

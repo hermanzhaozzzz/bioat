@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.crisprtools &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -93,13 +93,13 @@
 <span class="sd">    CRISPR analysis on your dataset.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">bioat.lib.libfastx</span> <span class="kn">import</span> <span class="n">cas13_finder</span><span class="p">,</span> <span class="n">cas_finder</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libpath</span> <span class="kn">import</span> <span class="n">check_executable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libfastx</span><span class="w"> </span><span class="kn">import</span> <span class="n">cas13_finder</span><span class="p">,</span> <span class="n">cas_finder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_executable</span>
 
 
 <div class="viewcode-block" id="CrisprTools">
 <a class="viewcode-back" href="../../bioat.html#bioat.crisprtools.CrisprTools">[docs]</a>
-<span class="k">class</span> <span class="nc">CrisprTools</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CrisprTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CRISPR mining toolbox.</span>
 
 <span class="sd">    This class provides methods for performing CRISPR analysis on datasets, including</span>
@@ -109,12 +109,12 @@
 <span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="CrisprTools.cas_finder">
 <a class="viewcode-back" href="../../bioat.html#bioat.crisprtools.CrisprTools.cas_finder">[docs]</a>
-    <span class="k">def</span> <span class="nf">cas_finder</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cas_finder</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_fa</span><span class="p">,</span>
         <span class="n">output_faa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -175,7 +175,7 @@
 
 <div class="viewcode-block" id="CrisprTools.cas13_finder">
 <a class="viewcode-back" href="../../bioat.html#bioat.crisprtools.CrisprTools.cas13_finder">[docs]</a>
-    <span class="k">def</span> <span class="nf">cas13_finder</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cas13_finder</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_faa</span><span class="p">,</span> <span class="n">output_faa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lmin</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;De novo annotation for Cas13 candidates from proteins.faa.</span>

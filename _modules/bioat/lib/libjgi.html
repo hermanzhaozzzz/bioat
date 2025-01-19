@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libjgi &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,36 +68,36 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.lib.libjgi</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">tarfile</span>
-<span class="kn">import</span> <span class="nn">textwrap</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">md5</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
-<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">ChunkedEncodingError</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">urllib3.exceptions</span> <span class="kn">import</span> <span class="n">InvalidChunkLength</span><span class="p">,</span> <span class="n">ProtocolError</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChunkedEncodingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib3.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidChunkLength</span><span class="p">,</span> <span class="n">ProtocolError</span>
 
-<span class="kn">from</span> <span class="nn">bioat.exceptions</span> <span class="kn">import</span> <span class="n">BioatInvalidOptionError</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libpath</span> <span class="kn">import</span> <span class="n">HOME</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libspider</span> <span class="kn">import</span> <span class="n">ProxyPool</span><span class="p">,</span> <span class="n">get_random_user_agents</span>
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidOptionError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">HOME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libspider</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProxyPool</span><span class="p">,</span> <span class="n">get_random_user_agents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libjgi&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="JGIDoc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIDoc">[docs]</a>
-<span class="k">class</span> <span class="nc">JGIDoc</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JGIDoc</span><span class="p">:</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;JGIDoc&quot;</span><span class="p">)</span>
     <span class="n">DEFAULT_CATEGORIES</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;ESTs&quot;</span><span class="p">,</span>
@@ -158,7 +158,7 @@
 
 <div class="viewcode-block" id="JGIConfig">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIConfig">[docs]</a>
-<span class="k">class</span> <span class="nc">JGIConfig</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JGIConfig</span><span class="p">:</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;JGIConfig&quot;</span><span class="p">)</span>
     <span class="n">URL_JGI_MAIN</span> <span class="o">=</span> <span class="s2">&quot;https://genome.jgi.doe.gov&quot;</span>  <span class="c1"># url home for jgi-img database</span>
     <span class="n">URL_JGI_LOGIN</span> <span class="o">=</span> <span class="s2">&quot;https://signon.jgi.doe.gov/signon/create&quot;</span>  <span class="c1"># url login</span>
@@ -168,7 +168,7 @@
     <span class="n">FILENAME_COOKIE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME</span><span class="p">,</span> <span class="s2">&quot;.bioat&quot;</span><span class="p">,</span> <span class="s2">&quot;JGI&quot;</span><span class="p">,</span> <span class="s2">&quot;cookie&quot;</span><span class="p">)</span>
     <span class="n">FILENAME_CONFIG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME</span><span class="p">,</span> <span class="s2">&quot;.bioat&quot;</span><span class="p">,</span> <span class="s2">&quot;JGI&quot;</span><span class="p">,</span> <span class="s2">&quot;account.conf&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite_conf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite_conf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;__init__&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
@@ -204,7 +204,7 @@
 
 <div class="viewcode-block" id="JGIConfig.load_config">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIConfig.load_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads &quot;user&quot;, &quot;password&quot; and &quot;categories&quot; entries</span>
 <span class="sd">        from config file.</span>
@@ -234,7 +234,7 @@
 
 <div class="viewcode-block" id="JGIConfig.input_user_info">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIConfig.input_user_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">input_user_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_user_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dialog with user to gather user information for</span>
 <span class="sd">        use with the curl query. Returns a dict.</span>
@@ -293,7 +293,7 @@
 
 <div class="viewcode-block" id="JGIConfig.save_config">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIConfig.save_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a config file &lt;config_path&gt; using</span>
 <span class="sd">        credentials from dict &lt;config_info&gt;.</span>
@@ -323,9 +323,9 @@
 
 <div class="viewcode-block" id="JGIOperator">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIOperator">[docs]</a>
-<span class="k">class</span> <span class="nc">JGIOperator</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JGIOperator</span><span class="p">:</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;JGIOperator&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="c1"># pick one from three</span>
             <span class="n">query_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -399,7 +399,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_cookie</span><span class="p">()</span>
 
     <span class="c1"># step 01 print and exit</span>
-    <span class="k">def</span> <span class="nf">_run_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checker for doc mode.</span>
 
 <span class="sd">        print syntax_help and/or usage if these parameters are defined. And then, exit progress.</span>
@@ -419,7 +419,7 @@
             <span class="c1"># finally exit</span>
 
     <span class="c1"># step 02 update self.query_info and self.log_fails and followed by self.login</span>
-    <span class="k">def</span> <span class="nf">_parse_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checker for input.</span>
 
 <span class="sd">        A checker for this rule: ONLY ONE of the parameters (&#39;query_info&#39;, &#39;xml&#39; and &#39;log_fails&#39;) can be specified;</span>
@@ -494,7 +494,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Done. exit.&quot;</span><span class="p">)</span>
 
     <span class="c1"># step 03 login</span>
-    <span class="k">def</span> <span class="nf">_load_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_load_cookie&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
 
@@ -596,7 +596,7 @@
     <span class="c1"># step 04 query</span>
 <div class="viewcode-block" id="JGIOperator.query">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIOperator.query">[docs]</a>
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;query&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
         <span class="c1"># prepare info</span>
@@ -658,7 +658,7 @@
     <span class="c1"># step 05 parse xml info to update url</span>
 <div class="viewcode-block" id="JGIOperator.parse_xml">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIOperator.parse_xml">[docs]</a>
-    <span class="k">def</span> <span class="nf">parse_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Moves through the xml document &lt;xml_file&gt; and returns information</span>
 <span class="sd">        about matches to elements in &lt;DESIRED_CATEGORIES&gt; if</span>
@@ -745,7 +745,7 @@
     <span class="c1"># step 06 download from url</span>
 <div class="viewcode-block" id="JGIOperator.download">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libjgi.JGIOperator.download">[docs]</a>
-    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;download&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
 
@@ -880,7 +880,7 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_byte_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_byte_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts a number of bytes to a more human-readable</span>
 <span class="sd">        format.</span>
@@ -899,7 +899,7 @@
         <span class="n">size_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adjusted</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">size_string</span>
 
-    <span class="k">def</span> <span class="nf">_clean_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exit_message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exit_code</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rm_cookie</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rm_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exit_message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exit_code</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rm_cookie</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rm_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform a sys.exit() while removing temporary files and</span>
 <span class="sd">        informing the user.</span>
@@ -927,7 +927,7 @@
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">exit_message</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">exit_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_for_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_for_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses hex code at the beginning of a file to try to determine if it&#39;s an</span>
 <span class="sd">        XML file or not. This seems to be occasionally necessary; if pulling</span>
@@ -958,7 +958,7 @@
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;cheker for xml: compressed file&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_check_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">md5_hash</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">md5_hash</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_check_md5&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">md5_hash</span><span class="p">:</span>
@@ -976,7 +976,7 @@
                 <span class="n">ret_val</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">ret_val</span>
 
-    <span class="k">def</span> <span class="nf">_check_sizeInBytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sizeInBytes</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_sizeInBytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sizeInBytes</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_check_sizeInBytes&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
 
@@ -995,7 +995,7 @@
                 <span class="n">ret_val</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">ret_val</span>
 
-    <span class="k">def</span> <span class="nf">_decision_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decision_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_decision_tree&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
 
@@ -1110,7 +1110,7 @@
         <span class="c1"># lm.logger.debug(f&#39;self._urls_to_get = {str(self._urls_to_get)[:1000]}...(omit)...&#39;)</span>
         <span class="c1"># lm.logger.debug(f&#39;self._dict_to_get = {str(self._dict_to_get)[:1000]}...(omit)...&#39;)</span>
 
-    <span class="k">def</span> <span class="nf">_decompress_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file_list</span><span class="p">,</span> <span class="n">keep_original</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decompress_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_file_list</span><span class="p">,</span> <span class="n">keep_original</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Decompresses list of files, and deletes compressed</span>
 <span class="sd">        copies unless &lt;keep_original&gt; is True.</span>
@@ -1123,7 +1123,7 @@
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">local_file_list</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_extract_file</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">keep_original</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_download_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_download_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attempts to download a file from JGI servers using cURL.</span>
 
@@ -1374,7 +1374,7 @@
                     <span class="k">continue</span>  <span class="c1"># next try</span>
         <span class="k">return</span> <span class="n">filename</span><span class="p">,</span> <span class="n">success</span>
 
-    <span class="k">def</span> <span class="nf">_download_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_download_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attempts download command on a list of partial file</span>
 <span class="sd">        URLs (completed by download_from_url()).</span>
@@ -1433,7 +1433,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">broken_urls</span><span class="p">,</span> <span class="n">broken_files</span>
 
-    <span class="k">def</span> <span class="nf">_extract_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">keep_compressed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">keep_compressed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Native Python file decompression for tar.gz and .gz files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1459,7 +1459,7 @@
                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># single file, extract into working directory</span>
                     <span class="n">destination</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
 
-                <span class="k">def</span> <span class="nf">is_within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">is_within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
                     <span class="n">abs_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
                     <span class="n">abs_target</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
@@ -1467,7 +1467,7 @@
 
                     <span class="k">return</span> <span class="n">prefix</span> <span class="o">==</span> <span class="n">abs_directory</span>
 
-                <span class="k">def</span> <span class="nf">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">safe_extract</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">getmembers</span><span class="p">():</span>
                         <span class="n">member_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_within_directory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">member_path</span><span class="p">):</span>
@@ -1491,7 +1491,7 @@
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;remove compressed files&quot;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_format_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">filter_found</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">filter_found</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reformats the output from xml_hunt()</span>
 
@@ -1521,7 +1521,7 @@
                 <span class="n">output</span><span class="p">[</span><span class="n">top</span><span class="p">][</span><span class="n">parent</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
 
-    <span class="k">def</span> <span class="nf">_format_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_string</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_string</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parses the timestamp string from an XML document</span>
 <span class="sd">        of the form &quot;Thu Feb 27 16:38:54 PST 2014&quot;</span>
@@ -1538,7 +1538,7 @@
         <span class="c1"># year = str(time_info.tm_year)</span>
         <span class="k">return</span> <span class="n">time_info</span>
 
-    <span class="k">def</span> <span class="nf">_get_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">sizes_by_url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">sizes_by_url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a dictionary of url:sizes from</span>
 <span class="sd">        output of get_file_list()</span>
@@ -1557,7 +1557,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_get_sizes</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">sizes_by_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sizes_by_url</span>
 
-    <span class="k">def</span> <span class="nf">_get_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">fns</span><span class="p">,</span> <span class="n">buffer_size</span><span class="o">=</span><span class="mi">65536</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_md5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">fns</span><span class="p">,</span> <span class="n">buffer_size</span><span class="o">=</span><span class="mi">65536</span><span class="p">):</span>
         <span class="nb">hash</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">fns</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -1569,7 +1569,7 @@
 
         <span class="k">return</span> <span class="nb">hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_sizeInBytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_sizeInBytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">file_size_in_bytes</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
@@ -1577,7 +1577,7 @@
 
         <span class="k">return</span> <span class="n">file_size_in_bytes</span>
 
-    <span class="k">def</span> <span class="nf">_get_regex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_regex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get regex pattern from user, compile and return.</span>
 
@@ -1599,7 +1599,7 @@
 
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_user_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_user_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get user file selection choice(s)</span>
 
@@ -1642,7 +1642,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">choice</span>
 
-    <span class="k">def</span> <span class="nf">_is_broken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">min_size_bytes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">md5_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizeInBytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_broken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">min_size_bytes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">md5_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizeInBytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rudimentary check to see if a file appears to be broken.</span>
 
@@ -1669,7 +1669,7 @@
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;File is intact.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_parse_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parses the user choice string and returns a dictionary</span>
 <span class="sd">        of categories (keys) and choices within each category</span>
@@ -1711,7 +1711,7 @@
                     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">add_range</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_selections</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_xml_hunt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_xml_hunt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets list of all XML entries with &quot;filename&quot; attribute,</span>
 <span class="sd">        and returns a dictionary of the file attributes keyed</span>
@@ -1754,7 +1754,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exit with error </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">matches</span>
 
-    <span class="k">def</span> <span class="nf">_uniqueify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_uniqueify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes a list of child XML elements (dicts of attribs) as</span>
 <span class="sd">        returns a filtered list of only unique filenames for a given</span>

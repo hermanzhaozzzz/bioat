@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.devtools &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,22 +68,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.devtools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
 
-<span class="kn">from</span> <span class="nn">bioat.exceptions</span> <span class="kn">import</span> <span class="n">BioatInvalidParameterError</span>
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidParameterError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.devtools&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_elapsed_since</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_elapsed_since</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Mm:%Ss&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_get_process_memory</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_process_memory</span><span class="p">():</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
     <span class="n">mem_info</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">memory_info</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">mem_info</span><span class="o">.</span><span class="n">rss</span>
@@ -91,7 +91,7 @@
 
 <div class="viewcode-block" id="profile">
 <a class="viewcode-back" href="../../bioat.html#bioat.devtools.profile">[docs]</a>
-<span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="n">num_iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">(</span><span class="n">num_iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator for calculating the runtime of a function, over multiple iterations.</span>
 
@@ -99,8 +99,8 @@
 <span class="sd">    :type num_iterations: int, optional</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">inner_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_iterations</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
                     <span class="s2">&quot;num_iterations must be a positive integer&quot;</span>

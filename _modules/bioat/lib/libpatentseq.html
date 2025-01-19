@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libpatentseq &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -90,40 +90,22 @@
 <span class="sd">    _example_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">bioat.lib.libpandas</span> <span class="kn">import</span> <span class="n">set_option</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libpath</span> <span class="kn">import</span> <span class="n">HOME</span>
-<span class="kn">from</span> <span class="nn">bioat.lib.libspider</span> <span class="kn">import</span> <span class="n">ProxyPool</span>
-<span class="kn">from</span> <span class="nn">bioat.logger</span> <span class="kn">import</span> <span class="n">LoggerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_option</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">HOME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libspider</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProxyPool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libpatentseq&quot;</span><span class="p">)</span>
 
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">playwright._impl._errors</span> <span class="kn">import</span> <span class="n">TargetClosedError</span><span class="p">,</span> <span class="ne">TimeoutError</span>
-    <span class="kn">from</span> <span class="nn">playwright.sync_api</span> <span class="kn">import</span> <span class="n">Playwright</span><span class="p">,</span> <span class="n">sync_playwright</span>
-    <span class="n">PLAYWRIGHT_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Unable to import playwright. please exec `python -m pip install playwright`, then try again.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">PLAYWRIGHT_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">Playwright</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="c1"># class Playwright:</span>
-    <span class="c1">#     &quot;&quot;&quot;Fake class to avoid install plawright&quot;&quot;&quot;</span>
-
-    <span class="c1">#     pass</span>
-
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]</span>
 
 <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;RUN&quot;</span>
 <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="kc">None</span>
@@ -135,11 +117,8 @@
     <span class="s2">&quot;NS_ERROR_PROXY_FORBIDDEN&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
-
-<div class="viewcode-block" id="save_cookies">
-<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpatentseq.save_cookies">[docs]</a>
-<span class="k">def</span> <span class="nf">save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">):</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;save_cookies&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">):</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_save_cookies&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="c1"># 保存 cookies</span>
@@ -150,15 +129,12 @@
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">storage_state</span><span class="p">))</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving cookie time to </span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())))</span></div>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())))</span>
 
 
-
-<div class="viewcode-block" id="load_cookies">
-<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpatentseq.load_cookies">[docs]</a>
-<span class="k">def</span> <span class="nf">load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">object</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">object</span><span class="p">:</span>
     <span class="c1"># 加载 cookies</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;load_cookies&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_load_cookies&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -193,14 +169,11 @@
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="n">context</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span></div>
+                <span class="k">return</span> <span class="kc">None</span>
 
 
-
-<div class="viewcode-block" id="remove_cookie">
-<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpatentseq.remove_cookie">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">):</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;remove_cookie&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">):</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_remove_cookie&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing cookie&quot;</span><span class="p">)</span>
@@ -208,14 +181,13 @@
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cookies are not found, skip remove.&quot;</span><span class="p">)</span></div>
-
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cookies are not found, skip remove.&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="run">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpatentseq.run">[docs]</a>
-<span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
-    <span class="n">playwright</span><span class="p">:</span> <span class="n">Playwright</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+    <span class="n">playwright</span><span class="p">,</span>
     <span class="n">username</span><span class="p">,</span>
     <span class="n">password</span><span class="p">,</span>
     <span class="n">seq</span><span class="p">,</span>
@@ -230,6 +202,21 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;run&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">playwright._impl._errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TargetClosedError</span><span class="p">,</span> <span class="ne">TimeoutError</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">playwright.sync_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Playwright</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">playwright</span><span class="p">,</span> <span class="n">Playwright</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Unable to import playwright. please exec `python -m pip install playwright`, then try again.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">account</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
@@ -283,7 +270,7 @@
     <span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Try to load cookies&quot;</span><span class="p">)</span>
 
-    <span class="n">context</span> <span class="o">=</span> <span class="n">load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">_load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
 
     <span class="c1"># context = None</span>
     <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># need login</span>
@@ -359,7 +346,7 @@
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
                 <span class="n">page1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-                <span class="n">save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
+                <span class="n">_save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
                 <span class="k">break</span>  <span class="c1"># to else for break</span>
             <span class="k">except</span> <span class="ne">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
@@ -445,7 +432,7 @@
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">rm_fail_cookie</span><span class="p">:</span>
                         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="n">remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+                        <span class="n">_remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;User set to not remove cookies.&quot;</span><span class="p">)</span>
@@ -505,7 +492,7 @@
     <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;RUN&quot;</span>
     <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="n">seq_header</span>
 
-    <span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">STATUS</span>
         <span class="k">global</span> <span class="n">SEQ_HEADER</span>
 
@@ -579,9 +566,7 @@
 
 
 
-<div class="viewcode-block" id="query_patent">
-<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpatentseq.query_patent">[docs]</a>
-<span class="k">def</span> <span class="nf">query_patent</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_patent</span><span class="p">(</span>
     <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">seq_header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -594,8 +579,15 @@
     <span class="n">rm_fail_cookie</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">PLAYWRIGHT_AVAILABLE</span><span class="p">:</span>
-        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">playwright.sync_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">sync_playwright</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Unable to import playwright. please exec `python -m pip install playwright`, then try again.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
     <span class="k">with</span> <span class="n">sync_playwright</span><span class="p">()</span> <span class="k">as</span> <span class="n">playwright</span><span class="p">:</span>
         <span class="n">run</span><span class="p">(</span>
             <span class="n">playwright</span><span class="p">,</span>
@@ -610,8 +602,7 @@
             <span class="n">local_browser</span><span class="o">=</span><span class="n">local_browser</span><span class="p">,</span>
             <span class="n">rm_fail_cookie</span><span class="o">=</span><span class="n">rm_fail_cookie</span><span class="p">,</span>
             <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
+        <span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.logger &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,25 +68,25 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.logger</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">logging.handlers</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging.handlers</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">coloredlogs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">coloredlogs</span>
 
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">BioatInvalidParameterError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidParameterError</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LoggerManager&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="LoggerManager">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager">[docs]</a>
-<span class="k">class</span> <span class="nc">LoggerManager</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LoggerManager</span><span class="p">:</span>
     <span class="n">LOG_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> - [</span><span class="si">%(name)s</span><span class="s2">] - </span><span class="si">%(filename)s</span><span class="s2">[line:</span><span class="si">%(lineno)4d</span><span class="s2">] - </span><span class="si">%(levelname)+8s</span><span class="s2">: </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
 
 <div class="viewcode-block" id="LoggerManager.__init__">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
         <span class="n">mod_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bioat.logger&quot;</span><span class="p">,</span>
@@ -112,7 +112,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_log_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_log_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse and return the logging level.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">log_level</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">logging</span><span class="o">.</span><span class="n">_nameToLevel</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
@@ -121,7 +121,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">_nameToLevel</span><span class="p">[</span><span class="n">log_level</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
 
-    <span class="k">def</span> <span class="nf">_get_logger_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_logger_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the logger name based on module, class, and function.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_name</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mod_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -132,7 +132,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_name</span>
 
-    <span class="k">def</span> <span class="nf">_create_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and configure the logger.&quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger_name</span><span class="p">()</span>
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -176,7 +176,7 @@
 
 <div class="viewcode-block" id="LoggerManager.set_names">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.set_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the class and/or function context for the logger.</span>
 
@@ -192,7 +192,7 @@
 
 <div class="viewcode-block" id="LoggerManager.set_level">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.set_level">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the logging level dynamically.</span>
 
@@ -226,7 +226,7 @@
 
 <div class="viewcode-block" id="LoggerManager.set_file">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.set_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
@@ -275,7 +275,7 @@
 
 <div class="viewcode-block" id="LoggerManager.add_stream_handler">
 <a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.add_stream_handler">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_stream_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_stream_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a stream handler to the logger for writing logs to the console.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

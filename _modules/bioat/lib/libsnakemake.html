@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libsnakemake &mdash; bioat Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -68,12 +68,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.lib.libsnakemake</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 
 <div class="viewcode-block" id="check_cmd">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libsnakemake.check_cmd">[docs]</a>
-<span class="k">def</span> <span class="nf">check_cmd</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_cmd</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
         <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
@@ -83,7 +83,7 @@
 
 <div class="viewcode-block" id="print_head">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libsnakemake.print_head">[docs]</a>
-<span class="k">def</span> <span class="nf">print_head</span><span class="p">(</span><span class="n">SAMPLES</span><span class="p">,</span> <span class="n">MODE</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_head</span><span class="p">(</span><span class="n">SAMPLES</span><span class="p">,</span> <span class="n">MODE</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------</span><span class="se">\n</span><span class="s1">SAMPLES:&#39;</span><span class="p">)</span>
     <span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">SAMPLES</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------</span><span class="se">\n</span><span class="s1">MODE:&#39;</span><span class="p">)</span>
@@ -94,7 +94,7 @@
 
 <div class="viewcode-block" id="check_read">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libsnakemake.check_read">[docs]</a>
-<span class="k">def</span> <span class="nf">check_read</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_read</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;PE&quot;</span><span class="p">:</span>
         <span class="n">read</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;R1&#39;</span><span class="p">,</span> <span class="s1">&#39;R2&#39;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;SE&quot;</span><span class="p">:</span>
