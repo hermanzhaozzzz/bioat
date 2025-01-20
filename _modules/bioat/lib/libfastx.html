@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=48106516"></script>
+      <script src="../../../_static/documentation_options.js?v=9e420a66"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -86,7 +86,31 @@
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libfastx&quot;</span><span class="p">)</span>
 
-<span class="n">AMINO_ACIDS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">AMINO_ACIDS_1CODE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="s2">&quot;ARG&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="s2">&quot;ASN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="s2">&quot;ASP&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="s2">&quot;CYS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="s2">&quot;GLN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;E&quot;</span><span class="p">:</span> <span class="s2">&quot;GLU&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="s2">&quot;GLY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="s2">&quot;HIS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="s2">&quot;ILE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="s2">&quot;LEU&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="s2">&quot;LYS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="s2">&quot;MET&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="s2">&quot;PHE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;P&quot;</span><span class="p">:</span> <span class="s2">&quot;PRO&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;SER&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="s2">&quot;THR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="s2">&quot;TRP&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;TYR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V&quot;</span><span class="p">:</span> <span class="s2">&quot;VAL&quot;</span><span class="p">,</span>
+    <span class="c1"># &quot;X&quot;: &quot;ALA&quot;,</span>
+<span class="p">}</span>
+
+<span class="n">AMINO_ACIDS_3CODE</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;ALA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ARG&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ASN&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>
@@ -108,7 +132,7 @@
     <span class="s2">&quot;TYR&quot;</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VAL&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="n">AMINO_ACIDS_EXTEND</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">AMINO_ACIDS_3CODE_EXTEND</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;ABA&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># α-氨基丁酸</span>
     <span class="s2">&quot;ACE&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 乙酰基</span>
     <span class="s2">&quot;AIB&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>  <span class="c1"># 2-氨基异丁酸</span>

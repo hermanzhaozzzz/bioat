@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=48106516"></script>
+      <script src="_static/documentation_options.js?v=9e420a66"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -1184,6 +1184,27 @@ e.g. [0.01, 0.1, 0.5, 1] make all real num into 5 intervals, (-Inf,0.01], (0.01,
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libcolor.map_colors_between_two">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libcolor.</span></span><span class="sig-name descname"><span class="pre">map_colors_between_two</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libcolor.html#map_colors_between_two"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libcolor.map_colors_between_two" title="Link to this definition"></a></dt>
+<dd><p>在两个指定颜色之间根据数值映射生成颜色。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_color</strong> (<em>str</em>) – 起始颜色，格式为 ‘#RRGGBB’。</p></li>
+<li><p><strong>target_color</strong> (<em>str</em>) – 结束颜色，格式为 ‘#RRGGBB’。</p></li>
+<li><p><strong>values</strong> (<em>list</em><em> or </em><em>array</em>) – 数值数组，范围可为任意值。</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>对应颜色数组（#RRGGBB 格式）。</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="bioat.lib.libcolor.plot_colortable">
 <span class="sig-prename descclassname"><span class="pre">bioat.lib.libcolor.</span></span><span class="sig-name descname"><span class="pre">plot_colortable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libcolor.html#plot_colortable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libcolor.plot_colortable" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1613,9 +1634,38 @@ homepage: <a class="reference external" href="https://github.com/hermanzhaozzzz"
 <span class="sig-prename descclassname"><span class="pre">bioat.lib.libpath.</span></span><span class="sig-name descname"><span class="pre">check_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bioat/lib/libpath.html#check_executable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpath.check_executable" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libpath.is_path">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpath.</span></span><span class="sig-name descname"><span class="pre">is_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpath.html#is_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpath.is_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-bioat.lib.libpdb">
 <span id="bioat-lib-libpdb-module"></span><h2>bioat.lib.libpdb module<a class="headerlink" href="#module-bioat.lib.libpdb" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libpdb.align_cut2ref">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">align_cut2ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ref'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#align_cut2ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.align_cut2ref" title="Link to this definition"></a></dt>
+<dd><p>Align pdb to ref using the CA atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>Bio.PDB.Structure.Structure</em>) – Path to the PDB file of the ref structure.</p></li>
+<li><p><strong>pdb</strong> (<em>str</em><em> or </em><em>Bio.PDB.Structure.Structure</em>) – Path to the PDB file of the pdb structure.</p></li>
+<li><p><strong>gap_indices</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of indices of gaps in the cut structure.</p></li>
+<li><p><strong>label1</strong> (<em>str</em><em>, </em><em>optional</em>) – ref label. Defaults to “structure1”.</p></li>
+<li><p><strong>label2</strong> (<em>str</em><em>, </em><em>optional</em>) – pdb label. Defaults to “structure2”.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Log level. Defaults to “WARNING”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The aligned pdb structure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bio.PDB.Structure.Structure</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="bioat.lib.libpdb.pdb2fasta">
 <span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">pdb2fasta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fasta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEBUG'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#pdb2fasta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.pdb2fasta" title="Link to this definition"></a></dt>
@@ -1642,19 +1692,39 @@ log_level (str, optional): log level. Defaults to “WARNING”.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bioat.lib.libpdb.show_ref_cut">
-<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">show_ref_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'blue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'green'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#show_ref_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.show_ref_cut" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">show_ref_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Seq</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'blue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_color_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_value_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'green'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cartoon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cartoon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cartoon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_value_random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#show_ref_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.show_ref_cut" title="Link to this definition"></a></dt>
 <dd><p>Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ref_seq</strong> (<em>str</em>) – Amino acid sequence content for the ref protein.</p></li>
-<li><p><strong>cut_seq</strong> (<em>str</em>) – Amino acid sequence content for the cut protein</p></li>
-<li><p><strong>ref_pdb</strong> (<em>str</em>) – Path to the PDB file of the reference structure.</p></li>
-<li><p><strong>cut_pdb</strong> (<em>str</em>) – Path to the PDB file of the cut structure.</p></li>
-<li><p><strong>gap_color</strong> (<em>str</em>) – Color for gaps or removed residues.</p></li>
-<li><p><strong>ref_color</strong> (<em>str</em>) – Color for reference residues.</p></li>
-<li><p><strong>cut_color</strong> (<em>str</em>) – Color for cut residues.</p></li>
+<li><p><strong>ref_seq</strong> (<em>str</em><em> or </em><em>Seq</em>) – Amino acid sequence content for the ref protein.</p></li>
+<li><p><strong>ref_pdb</strong> (<em>str</em><em> or </em><em>Bio.PDB.Structure.Structure</em>) – Path to the PDB file of the reference structure.</p></li>
+<li><p><strong>cut_seq</strong> (<em>str</em><em>, </em><em>Seq</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Amino acid sequence content for the cut protein.</p></li>
+<li><p><strong>cut_pdb</strong> (<em>str</em><em>, </em><em>Bio.PDB.Structure.Structure</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Path to the PDB file of the cut structure.</p></li>
+<li><p><strong>ref_color</strong> (<em>str</em><em>, </em><em>optional</em>) – Color for reference residues.</p></li>
+<li><p><strong>ref_color_base</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – ref_color_base will be used as base color, and ref_color will be used as target color. If None, do not apply color mapping. Defaults to None.</p></li>
+<li><p><strong>ref_value_dict</strong> (<em>dict</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {‘V_0’: 0.4177215189873418, ‘S_1’: 0.8185654008438819, ‘K_2’: 0.9915611814345991, ‘G_3’: 0.42616033755274263, …}</p></li>
+<li><p><strong>cut_color</strong> (<em>str</em><em>, </em><em>optional</em>) – Color for cut residues.</p></li>
+<li><p><strong>gap_color</strong> (<em>str</em><em>, </em><em>optional</em>) – Color for gaps or removed residues.</p></li>
+<li><p><strong>ref_style</strong> (<em>str</em><em>, </em><em>optional</em>) – “stick”, “sphere”, “cartoon”, or “line”</p></li>
+<li><p><strong>cut_style</strong> (<em>str</em><em>, </em><em>optional</em>) – “stick”, “sphere”, “cartoon”, or “line”</p></li>
+<li><p><strong>gap_style</strong> (<em>str</em><em>, </em><em>optional</em>) – “stick”, “sphere”, “cartoon”, or “line”</p></li>
+<li><p><strong>ref_value_random</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, ref_value_dict will be randomly generated. Defaults to False.</p></li>
+<li><p><strong>output_fig</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Output figure file path. If None, the figure will not be saved in html format. Defaults to None.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Log level. Defaults to “WARNING”.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libpdb.structure_to_string">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">structure_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#structure_to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.structure_to_string" title="Link to this definition"></a></dt>
+<dd><p>将 Bio.PDB.Structure.Structure 对象转换为 PDB 格式的字符串。</p>
+<dl class="simple">
+<dt>参数:</dt><dd><p>structure (Bio.PDB.Structure.Structure): 待转换的结构对象。</p>
+</dd>
+<dt>返回:</dt><dd><p>str: PDB 格式的字符串。</p>
 </dd>
 </dl>
 </dd></dl>

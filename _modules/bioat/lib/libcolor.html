@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=48106516"></script>
+      <script src="../../../_static/documentation_options.js?v=9e420a66"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -92,6 +92,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mcolors</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rectangle</span>
@@ -250,6 +251,33 @@
             <span class="n">color_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">rgb_color</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">color_list</span></div>
+
+
+<div class="viewcode-block" id="map_colors_between_two">
+<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcolor.map_colors_between_two">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_colors_between_two</span><span class="p">(</span><span class="n">base_color</span><span class="p">,</span> <span class="n">target_color</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    在两个指定颜色之间根据数值映射生成颜色。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        base_color (str): 起始颜色，格式为 &#39;#RRGGBB&#39;。</span>
+<span class="sd">        target_color (str): 结束颜色，格式为 &#39;#RRGGBB&#39;。</span>
+<span class="sd">        values (list or array): 数值数组，范围可为任意值。</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        list: 对应颜色数组（#RRGGBB 格式）。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 创建自定义线性颜色映射</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="s2">&quot;custom_cmap&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">base_color</span><span class="p">,</span> <span class="n">target_color</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 归一化数据到 [0, 1]</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="c1"># 映射数值到颜色</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcolors</span><span class="o">.</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">colors</span></div>
 
 
 
