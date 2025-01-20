@@ -73,13 +73,9 @@ function create_conda_recipe {
         echo "本地缺少staged-recipes仓库,重新从conda-forge官方仓库克隆到本地..."
         git clone https://github.com/conda-forge/staged-recipes.git
     else
-        echo "本地存在staged-recipes仓库,尝试拉取conda-forge官方仓库更新... 这里会显示上一次更新的最新版本而不是本次提交的版本(不是错误)"
-        cd staged-recipes
-        git add -A 
-        git checkout main 
-        git checkout main
-        git pull origin main --rebase
-        cd ..
+        echo "本地存在staged-recipes仓库,删除后拉取"
+        /bin/rm -rf staged-recipes
+        git clone https://github.com/conda-forge/staged-recipes.git
     fi
 
     echo "开始使用grayskull创建本次更新的 Conda 配方(recipe)文件,见下面的grayskull日志(建议等待120s以上以同步bioat的pypi版本更新状态)..."
