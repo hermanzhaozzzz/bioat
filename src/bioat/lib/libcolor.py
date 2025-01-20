@@ -22,6 +22,7 @@ example 2:
 
 import math
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
@@ -166,6 +167,30 @@ def make_color_list(low_color_RGB, high_color_RGB, length_out=20, return_fmt="HE
             color_list.append(tuple(rgb_color))
 
     return color_list
+
+def map_colors_between_two(base_color, target_color, values):
+    """
+    在两个指定颜色之间根据数值映射生成颜色。
+
+    Args:
+        base_color (str): 起始颜色，格式为 '#RRGGBB'。
+        target_color (str): 结束颜色，格式为 '#RRGGBB'。
+        values (list or array): 数值数组，范围可为任意值。
+
+    Return:
+        list: 对应颜色数组（#RRGGBB 格式）。
+    """
+    # 创建自定义线性颜色映射
+    cmap = mcolors.LinearSegmentedColormap.from_list(
+        "custom_cmap", [base_color, target_color]
+    )
+
+    # 归一化数据到 [0, 1]
+    norm = mcolors.Normalize(vmin=min(values), vmax=max(values))
+
+    # 映射数值到颜色
+    colors = [mcolors.rgb2hex(cmap(norm(value))) for value in values]
+    return colors
 
 
 if __name__ == '__main':

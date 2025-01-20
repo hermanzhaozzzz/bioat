@@ -16,7 +16,31 @@ from bioat.logger import LoggerManager
 
 lm = LoggerManager(mod_name="bioat.lib.libfastx")
 
-AMINO_ACIDS = {
+AMINO_ACIDS_1CODE = {
+    "A": "ALA",
+    "R": "ARG",
+    "N": "ASN",
+    "D": "ASP",
+    "C": "CYS",
+    "Q": "GLN",
+    "E": "GLU",
+    "G": "GLY",
+    "H": "HIS",
+    "I": "ILE",
+    "L": "LEU",
+    "K": "LYS",
+    "M": "MET",
+    "F": "PHE",
+    "P": "PRO",
+    "S": "SER",
+    "T": "THR",
+    "W": "TRP",
+    "Y": "TYR",
+    "V": "VAL",
+    # "X": "ALA",
+}
+
+AMINO_ACIDS_3CODE = {
     "ALA": "A",
     "ARG": "R",
     "ASN": "N",
@@ -38,7 +62,7 @@ AMINO_ACIDS = {
     "TYR": "Y",
     "VAL": "V",
 }
-AMINO_ACIDS_EXTEND = {
+AMINO_ACIDS_3CODE_EXTEND = {
     "ABA": "A",  # α-氨基丁酸
     "ACE": "A",  # 乙酰基
     "AIB": "A",  # 2-氨基异丁酸

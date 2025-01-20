@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from bioat.exceptions import (
     BioatInvalidOptionError,
@@ -10,6 +11,10 @@ from bioat.logger import LoggerManager
 lm = LoggerManager(mod_name="bioat.lib.libpath")
 
 HOME = os.path.expanduser("~")
+
+
+def is_path(string):
+    return Path(string).exists()
 
 
 def check_cmd(x, log_level="WARNING") -> bool:
