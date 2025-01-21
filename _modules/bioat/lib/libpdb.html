@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9e420a66"></script>
+      <script src="../../../_static/documentation_options.js?v=3a3a8e7f"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -160,20 +160,19 @@
     <span class="n">ref</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span><span class="n">label1</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">ref</span>
     <span class="n">cut</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span><span class="n">label2</span><span class="p">,</span> <span class="n">cut</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">cut</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">cut</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span>
-    <span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Invalid input format. ref and cut must be both str or Bio.PDB.Structure.Structure&quot;</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">)</span>
+    <span class="p">),</span> <span class="s2">&quot;Invalid input format. ref and cut must be both str or Bio.PDB.Structure.Structure&quot;</span>
 
     <span class="c1"># 选择对齐的原子 (e.g., CA)</span>
     <span class="n">atoms1</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">]</span>
     <span class="n">atoms1</span> <span class="o">=</span> <span class="p">[</span><span class="n">atoms1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms1</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gap_indices</span><span class="p">]</span>
     <span class="n">atoms2</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">cut</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">]</span>
 
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms2</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;The number of CA atoms in ref and cut are not equal.&quot;</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">atoms2</span>
+    <span class="p">),</span> <span class="s2">&quot;The number of CA atoms in ref and cut are not equal.&quot;</span>
     <span class="c1"># 使用 Biopython 的 Superimposer 进行对齐</span>
     <span class="n">super_imposer</span> <span class="o">=</span> <span class="n">Superimposer</span><span class="p">()</span>
     <span class="n">super_imposer</span><span class="o">.</span><span class="n">set_atoms</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">)</span>
@@ -310,17 +309,17 @@
         <span class="p">)</span>
         <span class="n">cut_seq</span><span class="p">,</span> <span class="n">cut_label</span><span class="p">,</span> <span class="n">cut_pdb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_pdb</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Invalid input format. ref_pdb must be Bio.PDB.Structure&quot;</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span>
+    <span class="p">),</span> <span class="s2">&quot;Invalid input format. ref_pdb must be Bio.PDB.Structure&quot;</span>
 
     <span class="k">if</span> <span class="n">cut_pdb</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cut_pdb</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Invalid input format. cut_pdb must be Bio.PDB.Structure&quot;</span>
-        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">cut_pdb</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span>
+        <span class="p">),</span> <span class="s2">&quot;Invalid input format. cut_pdb must be Bio.PDB.Structure&quot;</span>
 
     <span class="c1"># show ref_pdb</span>
-    <span class="n">view</span> <span class="o">=</span> <span class="n">py3Dmol</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">py3Dmol</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
     <span class="n">label_ypos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span>
     <span class="n">view</span><span class="o">.</span><span class="n">addModel</span><span class="p">(</span><span class="n">structure_to_string</span><span class="p">(</span><span class="n">ref_pdb</span><span class="p">),</span> <span class="s2">&quot;pdb&quot;</span><span class="p">)</span>
     <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
@@ -406,7 +405,7 @@
         <span class="n">view</span><span class="o">.</span><span class="n">addLabel</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;RMSD: </span><span class="si">{</span><span class="n">rmsd</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;fontColor&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fontColor&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;fontSize&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
                 <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">label_ypos</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">30</span><span class="p">},</span>
             <span class="p">},</span>
