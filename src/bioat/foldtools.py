@@ -1,3 +1,5 @@
+import inspect
+
 import Bio
 from Bio.Seq import Seq
 
@@ -32,6 +34,7 @@ class FoldTools:
         ref_value_random: bool = False,
         output_fig: str | None = None,
         log_level="WARNING",
+        **kwargs,
     ):
         """
         Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
@@ -53,6 +56,8 @@ class FoldTools:
             output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
             log_level (str, optional): Log level. Defaults to "WARNING".
         """
+        print(f"Calling show_ref_cut with {kwargs}")
+        print(f"Actual show_ref_cut module: {inspect.getmodule(show_ref_cut)}")
         lm.set_names(func_name="show_ref_cut")
         lm.set_level(log_level)
         show_ref_cut(

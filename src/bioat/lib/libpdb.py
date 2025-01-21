@@ -85,20 +85,19 @@ def align_cut2ref(
     ref = parser.get_structure(label1, ref) if isinstance(ref, str) else ref
     cut = parser.get_structure(label2, cut) if isinstance(cut, str) else cut
 
-    assert isinstance(ref, Bio.PDB.Structure.Structure) and isinstance(
-        cut, Bio.PDB.Structure.Structure
-    ), (
-        "Invalid input format. ref and cut must be both str or Bio.PDB.Structure.Structure"
-    )
+    assert (
+        isinstance(ref, Bio.PDB.Structure.Structure)
+        and isinstance(cut, Bio.PDB.Structure.Structure)
+    ), "Invalid input format. ref and cut must be both str or Bio.PDB.Structure.Structure"
 
     # 选择对齐的原子 (e.g., CA)
     atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
     atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
     atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
 
-    assert len(atoms1) == len(atoms2), (
-        "The number of CA atoms in ref and cut are not equal."
-    )
+    assert len(atoms1) == len(
+        atoms2
+    ), "The number of CA atoms in ref and cut are not equal."
     # 使用 Biopython 的 Superimposer 进行对齐
     super_imposer = Superimposer()
     super_imposer.set_atoms(atoms1, atoms2)
@@ -232,17 +231,17 @@ def show_ref_cut(
         )
         cut_seq, cut_label, cut_pdb = None, None, None
 
-    assert isinstance(ref_pdb, Bio.PDB.Structure.Structure), (
-        "Invalid input format. ref_pdb must be Bio.PDB.Structure"
-    )
+    assert isinstance(
+        ref_pdb, Bio.PDB.Structure.Structure
+    ), "Invalid input format. ref_pdb must be Bio.PDB.Structure"
 
     if cut_pdb:
-        assert isinstance(cut_pdb, Bio.PDB.Structure), (
-            "Invalid input format. cut_pdb must be Bio.PDB.Structure"
-        )
+        assert isinstance(
+            cut_pdb, Bio.PDB.Structure.Structure
+        ), "Invalid input format. cut_pdb must be Bio.PDB.Structure"
 
     # show ref_pdb
-    view = py3Dmol.view(width=600, height=600)
+    view = py3Dmol.view(width=1000, height=1000)
     label_ypos = -15
     view.addModel(structure_to_string(ref_pdb), "pdb")
     view.setStyle(
@@ -328,7 +327,7 @@ def show_ref_cut(
         view.addLabel(
             f"RMSD: {rmsd:.2f}",
             {
-                "fontColor": "black",
+                "fontColor": "white",
                 "fontSize": 14,
                 "position": {"x": -30, "y": label_ypos, "z": -30},
             },
