@@ -343,7 +343,7 @@ def show_ref_cut(
         # 保存为 SVG 文件
         with open(output_fig, "w") as f:
             f.write(view._make_html())
-        return view.show()
+    return view.show()
 
 
 def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
