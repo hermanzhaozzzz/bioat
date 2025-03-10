@@ -33,6 +33,7 @@ scikit-learn = ">=1.0.2"
 scipy = ">=1.7.3"
 seaborn = ">=0.13.2"
 py3dmol = ">=2.4.2"
+ipykernel = "^6.29.5"
 
 [tool.poetry.extras]
 docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "myst-parser", "toml"]
