@@ -1,7 +1,7 @@
 # ref https://github.com/python-poetry/poetry/blob/main/pyproject.toml
 [tool.poetry]
 name = "bioat"
-version = "0.14.3"
+version = "0.14.3a"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
 license = "Apache-2.0"
 authors = ["Huanan Herman Zhao <hermanzhaozzzz@gmail.com>"]
