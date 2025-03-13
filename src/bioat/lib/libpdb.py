@@ -108,8 +108,7 @@ def align_cut2ref(
         "RMSD": rmsd,
     }
 
-# load ref_seq
-def load_seq(seq, label=None):
+def _load_seq(seq, label=None):
     if isinstance(seq, str) and is_path(seq):
         seq = next(SeqIO.parse(seq, "fasta"))
         label = seq.id if label is None else label
@@ -185,7 +184,7 @@ def show_ref_cut(
         isinstance(ref_color_base, str) and isinstance(ref_value_dict, dict)
     ), "ref_color_base and ref_value_dict must be both None or both not None"
 
-    ref_seq, ref_label = load_seq(ref_seq, "ref")
+    ref_seq, ref_label = _load_seq(ref_seq, "ref")
 
     # load ref_pdb
     parser = PDBParser(QUIET=True)
@@ -219,7 +218,7 @@ def show_ref_cut(
             ref_seqs_fix.append(ref_seq)
             ref_labels.append(ref_label)
             # 执行Sequence Alignment并得到gaps的位置
-            cut_seq, cut_label = load_seq(cut_seq, "cut")
+            cut_seq, cut_label = _load_seq(cut_seq, "cut")
             cut_seqs_fix.append(cut_seq)
             if cut_labels:
                 if isinstance(cut_labels, list):
@@ -287,17 +286,15 @@ def show_ref_cut(
         width=600 * col * scale,
         height=600 * row * scale,
         viewergrid=(row, col) if n > 1 else None,
+        linked=True,  # 是否同步网格间的分子运动
     )
     lm.logger.debug(f"viewergrid: ({row}, {col})")
     viewers = [(i // col, i % col) for i in range(n)]
     lm.logger.debug(f"viewers = {viewers}")
 
     for i, viewer in enumerate(viewers):
-        # lm.logger.debug(f"viewer = {viewer}")
-        print(f"viewer = {viewer}")
-        print(f"i = {i}")
-        # view = add_one_submodel(
-        add_one_submodel(
+        lm.logger.debug(f"viewer = {viewer}")
+        _add_one_submodel(
             view=view,
             ref_seq=ref_seqs_fix[i],
             ref_pdb=ref_pdbs_fix[i],
@@ -320,9 +317,7 @@ def show_ref_cut(
             annotate=annotate,
             viewer=viewer,
         )
-    # 确保所有子视图都已完成模型添加和样式设置
-    # view.render()  # 显式调用渲染
-    view.show()
+
     if output_fig:
         assert output_fig.endswith(".html"), "Output file must have a '.html' extension"
         # 保存为 SVG 文件
@@ -330,10 +325,15 @@ def show_ref_cut(
             f.write(view._make_html())
     # display(HTML(view._make_html()))
     # view.show()
-    return view.png()
+    # 确保所有子视图都已完成模型添加和样式设置
+    # view.render()  # 显式调用渲染
+    # view.show()
+    # return view.png()
+    # view.zoomTo()
+    return view.show()
 
 
-def add_one_submodel(
+def _add_one_submodel(
     view,
     ref_seq,
     ref_pdb,
@@ -492,7 +492,7 @@ def add_one_submodel(
     # 聚焦显示
     # Finalize the view
     view.zoomTo(viewer=viewer)
-    view.render(viewer=viewer)
+    # view.render(viewer=viewer)
 
 
 def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
