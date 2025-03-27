@@ -41,3 +41,25 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 
 See [Doc](https://bioat.readthedocs.io/en/latest/)
 
+## Citation
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15093444.svg)](https://doi.org/10.5281/zenodo.15093444)
+
+```latex
+@software{huanan_herman_zhao_2025_15093444,
+  author       = {Huanan Herman Zhao},
+  title        = {hermanzhaozzzz/bioat: v0.14.4},
+  month        = mar,
+  year         = 2025,
+  publisher    = {Zenodo},
+  version      = {v0.14.4},
+  doi          = {10.5281/zenodo.15093444},
+  url          = {https://doi.org/10.5281/zenodo.15093444},
+  swhid        = {swh:1:dir:19b60f4b0b93f490798727c05ab41a3222b555a1
+                   ;origin=https://doi.org/10.5281/zenodo.15093443;vi
+                   sit=swh:1:snp:793130e9e84df8cf427ab2b6a69c0dc77146
+                   1e6a;anchor=swh:1:rel:dc0fa360dfdaf99222cf7db99e8e
+                   e9e898ac1c64;path=hermanzhaozzzz-bioat-4b611f2
+                  },
+}
+```
+
