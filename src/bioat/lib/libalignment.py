@@ -191,7 +191,26 @@ def get_best_alignment(
     :rtype: Alignment
     """
     alignments = aligner.align(seq_a, seq_b)
-    alignment = sorted(alignments, key=lambda x: x.score, reverse=True)[0]
+    # ! // sort alignments by score
+    # ! old
+    # alignment = sorted(alignments, key=lambda x: x.score, reverse=True)[0]
+    # ! new
+    alns = []
+    scores = []
+    for aln in alignments:
+        alns.append(aln)
+        scores.append(aln.score)
+        if len(alns) >= 100:
+            # ! break the loop if more than 100 alignments
+            # ! this is a bug fix, in case of too many alignments
+            # ! with too many memory occupied
+            break
+    # find max score index
+    max_index = scores.index(max(scores))
+    # get max score alignment
+    alignment = alns[max_index]
+    # ! sort alignments by score //
+
     is_a_reverse_complement_alignment = None
     final_alignment = None
 
