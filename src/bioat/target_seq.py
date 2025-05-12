@@ -128,7 +128,7 @@ class TargetSeq:
             >>> bioat target_seq region_heatmap --input_table test_sorted.mpileup.info.tsv --output_fig test_sorted.mpileup.info.pdf
         """
         lm.set_names(func_name="region_heatmap")
-        lm.set_log_level(log_level)
+        lm.set_level(log_level)
 
         if get_built_in_target_seq:
             lm.logger.info(

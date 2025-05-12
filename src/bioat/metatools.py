@@ -96,7 +96,7 @@ class MetaTools:
             log_level=log_level,
         )
         lm.set_names(func_name="JGI_query")
-        lm.set_log_level(log_level)
+        lm.set_level(log_level)
 
         lm.logger.debug("run query")
         operator.query()
