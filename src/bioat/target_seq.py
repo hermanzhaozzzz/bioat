@@ -869,7 +869,7 @@ class TargetSeq:
 
         # parse parameter: input_tables
         if isinstance(input_tables, tuple):
-            input_tables = [i.strip() for i in input_tables]
+            input_tables = [str(i).strip() for i in input_tables]
         elif isinstance(input_tables, str):
             input_tables = input_tables.replace(' ', '').replace('\t', '').strip().split(',')
         else:
@@ -878,7 +878,7 @@ class TargetSeq:
 
         # parse parameter: labels, if labels is None, labels value will be input_tables names
         if isinstance(labels, tuple):
-            labels = [i.strip() for i in labels]
+            labels = [str(i).strip() for i in labels]
         elif isinstance(labels, str):
             labels = labels.replace(' ', '').replace('\t', '').strip().split(',') if labels else input_tables
         else:
