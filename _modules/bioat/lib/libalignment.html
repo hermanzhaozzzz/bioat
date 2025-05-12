@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=c64b94d8"></script>
+      <script src="../../../_static/documentation_options.js?v=4befc426"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -266,7 +266,26 @@
 <span class="sd">    :rtype: Alignment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alignments</span> <span class="o">=</span> <span class="n">aligner</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">seq_a</span><span class="p">,</span> <span class="n">seq_b</span><span class="p">)</span>
-    <span class="n">alignment</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">alignments</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># ! // sort alignments by score</span>
+    <span class="c1"># ! old</span>
+    <span class="c1"># alignment = sorted(alignments, key=lambda x: x.score, reverse=True)[0]</span>
+    <span class="c1"># ! new</span>
+    <span class="n">alns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">aln</span> <span class="ow">in</span> <span class="n">alignments</span><span class="p">:</span>
+        <span class="n">alns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aln</span><span class="p">)</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aln</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alns</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="c1"># ! break the loop if more than 100 alignments</span>
+            <span class="c1"># ! this is a bug fix, in case of too many alignments</span>
+            <span class="c1"># ! with too many memory occupied</span>
+            <span class="k">break</span>
+    <span class="c1"># find max score index</span>
+    <span class="n">max_index</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+    <span class="c1"># get max score alignment</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="n">alns</span><span class="p">[</span><span class="n">max_index</span><span class="p">]</span>
+    <span class="c1"># ! sort alignments by score //</span>
+
     <span class="n">is_a_reverse_complement_alignment</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">final_alignment</span> <span class="o">=</span> <span class="kc">None</span>
 
