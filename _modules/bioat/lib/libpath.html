@@ -86,7 +86,11 @@
 <div class="viewcode-block" id="is_path">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpath.is_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_path</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span></div>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">string</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span></div>
 
 
 
