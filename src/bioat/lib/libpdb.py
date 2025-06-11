@@ -104,7 +104,7 @@ def _align_cut2ref(
         Bio.PDB.Structure.Structure: The aligned pdb structure.
     """
     # 读取 PDB 文件
-    ref, cut = load_structure(ref, label1), load_structure(cut, label2)
+    ref, cut = load_structure(ref, label1)[0], load_structure(cut, label2)[0]
 
     # 选择对齐的原子 (e.g., CA)
     atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
@@ -124,9 +124,37 @@ def _align_cut2ref(
 
     return {
         label1: ref,
-        label2: cut,
+        label2: cut,  # 坐标已对齐
         "RMSD": rmsd,
     }
+
+def _map_ref_colors(ref_map_colors, ref_map_values, ref_map_value_random):
+    # fix color mapping
+    assert (ref_map_colors is None and ref_map_values is None) or (
+        isinstance(ref_map_colors, tuple)
+        and isinstance(ref_map_values, dict)
+        and len(ref_map_colors) == 2
+    ), "ref_color_base and ref_map_values must be both None or both not None"
+
+    if ref_map_colors and ref_map_values:
+        values = []
+        res_names = []
+        res_idxes = []
+        for k, v in ref_map_values.items():
+            res_name, res_idx = k.split("_")
+            assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
+            res_idx = int(res_idx)
+            values.append(v)
+            res_names.append(res_name)
+            res_idxes.append(res_idx)
+        if not ref_map_value_random:
+            color1, color2 = ref_map_colors
+            colors = map_colors_between_two(color1, color2, values)
+        else:
+            colors = map_colors_between_two(color1, color2, np.random.rand(len(values)))
+        return colors, res_names, res_idxes
+    else:
+        return None, None, None
 
 
 def show_ref_cut(
@@ -135,14 +163,14 @@ def show_ref_cut(
     cut_seq: str | Seq | None = None,
     cut_pdb: str | Bio.PDB.Structure.Structure | None = None,
     ref_color: str = "blue",
-    ref_color_base: str | None = None,
-    ref_value_dict: dict | None = None,
+    ref_map_colors: tuple[str] | None = None,
+    ref_map_values: dict | None = None,
     cut_color="green",
     gap_color="red",
     ref_style="cartoon",
     cut_style="cartoon",
     gap_style="cartoon",
-    ref_value_random: bool = False,
+    ref_map_value_random: bool = False,
     output_fig: str | None = None,
     log_level="WARNING",
 ):
@@ -155,51 +183,28 @@ def show_ref_cut(
         cut_seq (str, Seq or None, optional): Amino acid sequence content for the cut protein.
         cut_pdb (str, Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.
         ref_color (str, optional): Color for reference residues.
-        ref_color_base (str or None, optional): ref_color_base will be used as base color, and ref_color will be used as target color. If None, do not apply color mapping. Defaults to None.
-        ref_value_dict (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
+        ref_map_colors (tuple, optional): ref_map_colors[0] will be used as base color, and ref_map_colors[1] will be used as target color. If None, do not apply color mapping. Defaults to None.
+        ref_map_values (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_map_values = {"M_0": 0.0,"V_1": 0.0,"S_2": 0.0,"K_3": 0.0,"G_4": 0.0,"E_5": 0.0,"M_233": 1.0,"D_234": 1.0,"E_235": 1.0,"L_236": 1.0,"Y_237": 1.0,"K_238": 1.0}
         cut_color (str, optional): Color for cut residues.
         gap_color (str, optional): Color for gaps or removed residues.
         ref_style (str, optional): "stick", "sphere", "cartoon", or "line"
         cut_style (str, optional): "stick", "sphere", "cartoon", or "line"
         gap_style (str, optional): "stick", "sphere", "cartoon", or "line"
-        ref_value_random (bool, optional): If True, ref_value_dict will be randomly generated. Defaults to False.
+        ref_map_value_random (bool, optional): If True, ref_map_values will be randomly generated. Defaults to False.
         output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
         log_level (str, optional): Log level. Defaults to "WARNING".
     """
     lm.set_names(func_name="show_ref_cut")
     lm.set_level(log_level)
 
-    # fix color mapping
-    assert (ref_color_base is None and ref_value_dict is None) or (
-        isinstance(ref_color_base, str) and isinstance(ref_value_dict, dict)
-    ), "ref_color_base and ref_value_dict must be both None or both not None"
-
-    if ref_value_dict:
-        values = []
-        res_names = []
-        res_idxes = []
-        for k, v in ref_value_dict.items():
-            res_name, res_idx = k.split("_")
-            assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
-            res_idx = int(res_idx)
-            values.append(v)
-            res_names.append(res_name)
-            res_idxes.append(res_idx)
-        if not ref_value_random:
-            colors = map_colors_between_two(ref_color_base, ref_color, values)
-        else:
-            colors = map_colors_between_two(
-                ref_color_base, ref_color, np.random.rand(len(values))
-            )
-
     ref_seq, ref_label = _load_seq(ref_seq, "ref")
+    ref_pdb, ref_label = load_structure(ref_pdb, ref_label)
+    assert isinstance(ref_pdb, Bio.PDB.Structure.Structure), (
+        "Invalid input format. ref_pdb must be Bio.PDB.Structure"
+    )
 
-    # load ref_pdb
-    parser = PDBParser(QUIET=True)
-    ref_pdb = (
-        ref_pdb
-        if isinstance(ref_pdb, Bio.PDB.Structure.Structure)
-        else parser.get_structure(ref_label, ref_pdb)
+    colors, res_names, res_idxes = _map_ref_colors(
+        ref_map_colors, ref_map_values, ref_map_value_random
     )
 
     gap_indices, rmsd = [], None
@@ -210,12 +215,12 @@ def show_ref_cut(
         # Perform alignment
         aligner = instantiate_pairwise_aligner(
             scoring_match=5,
-            penalty_mismatch=-1,
+            penalty_mismatch=-100,
             penalty_gap_open=-1,
             penalty_gap_extension=0,
             penalty_query_left_gap_score=0,
             penalty_query_right_gap_score=0,
-            log_level="WARNING",
+            log_level=log_level,
         )
         alignment = get_best_alignment(
             seq_a=ref_seq, seq_b=cut_seq, aligner=aligner, consider_strand=False
@@ -231,23 +236,18 @@ def show_ref_cut(
             ref_pdb = res[ref_label]
             cut_pdb = res[cut_label]
             rmsd = res["RMSD"]
+
+            assert isinstance(cut_pdb, Bio.PDB.Structure.Structure), (
+                "Invalid input format. cut_pdb must be Bio.PDB.Structure"
+            )
     else:
         lm.logger.info(
             "Cut sequence is not provided, skip alignment and annotation for gaps, and just show ref visualization."
         )
         cut_seq, cut_label, cut_pdb = None, None, None
 
-    assert isinstance(ref_pdb, Bio.PDB.Structure.Structure), (
-        "Invalid input format. ref_pdb must be Bio.PDB.Structure"
-    )
-
-    if cut_pdb:
-        assert isinstance(cut_pdb, Bio.PDB.Structure.Structure), (
-            "Invalid input format. cut_pdb must be Bio.PDB.Structure"
-        )
-
     # show ref_pdb
-    view = py3Dmol.view(width=1000, height=1000)
+    view = py3Dmol.view(width=500, height=500)
     label_ypos = -15
     view.addModel(structure_to_string(ref_pdb), "pdb")
     view.setStyle(
@@ -271,7 +271,7 @@ def show_ref_cut(
         },
     )
     # 标记ref 值的颜色
-    if ref_color_base is not None:
+    if ref_map_colors is not None:
         for i in range(len(colors)):
             idx = res_idxes[i]
             res = res_names[i]
@@ -282,7 +282,7 @@ def show_ref_cut(
             )
         label_ypos -= 5
         view.addLabel(
-            f"[{ref_label}] values: {ref_color_base} (0) to {ref_color} (1)",
+            f"[{ref_label}] values: {ref_map_colors[0]} (0) to {ref_map_colors[1]} (1)",
             {
                 "fontColor": ref_color,
                 "fontSize": 14,
@@ -363,13 +363,13 @@ def show_ref_cut2(
     cut_labels: List[str] | str | None = None,
     ref_color: str = "red",
     ref_color_base: str | None = None,
-    ref_value_dict: dict | None = None,
+    ref_map_values: dict | None = None,
     cut_color="lightgray",
     gap_color="purple",
     ref_style="cartoon",
     cut_style="cartoon",
     gap_style="cartoon",
-    ref_value_random: bool = False,
+    ref_map_value_random: bool = False,
     output_fig: str | None = None,
     col: int = 3,
     scale: float = 1.0,
@@ -387,13 +387,13 @@ def show_ref_cut2(
         cut_labels (str or None, optional): Label for the cut proteins. If None, the label will be set to "cut".
         ref_color (str, optional): Color for reference residues.
         ref_color_base (str or None, optional): ref_color_base will be used as base color, and ref_color will be used as target color. If None, do not apply color mapping. Defaults to None.
-        ref_value_dict (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
+        ref_map_values (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_map_values = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
         cut_color (str, optional): Color for cut residues.
         gap_color (str, optional): Color for gaps or removed residues.
         ref_style (str, optional): "stick", "sphere", "cartoon", or "line"
         cut_style (str, optional): "stick", "sphere", "cartoon", or "line"
         gap_style (str, optional): "stick", "sphere", "cartoon", or "line"
-        ref_value_random (bool, optional): If True, ref_value_dict will be randomly generated. Defaults to False.
+        ref_map_value_random (bool, optional): If True, ref_map_values will be randomly generated. Defaults to False.
         output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
         col (int, optional): Number of columns for the visualization. Defaults to 3.
         log_level (str, optional): Log level. Defaults to "WARNING".
@@ -412,9 +412,9 @@ def show_ref_cut2(
     )
 
     # fix color mapping
-    assert (ref_color_base is None and ref_value_dict is None) or (
-        isinstance(ref_color_base, str) and isinstance(ref_value_dict, dict)
-    ), "ref_color_base and ref_value_dict must be both None or both not None"
+    assert (ref_color_base is None and ref_map_values is None) or (
+        isinstance(ref_color_base, str) and isinstance(ref_map_values, dict)
+    ), "ref_color_base and ref_map_values must be both None or both not None"
 
     ref_seq, ref_label = _load_seq(ref_seq, "ref")
 
@@ -536,8 +536,8 @@ def show_ref_cut2(
             cut_label=cut_labels_fix[i],
             ref_color=ref_color,
             ref_color_base=ref_color_base,
-            ref_value_dict=ref_value_dict,
-            ref_value_random=ref_value_random,
+            ref_map_values=ref_map_values,
+            ref_map_value_random=ref_map_value_random,
             cut_color=cut_color,
             gap_color=gap_color,
             gap_indices=gap_indices[i],
@@ -575,8 +575,8 @@ def _add_one_submodel(
     cut_label,
     ref_color,
     ref_color_base,
-    ref_value_dict,
-    ref_value_random,
+    ref_map_values,
+    ref_map_value_random,
     cut_color,
     gap_color,
     gap_indices,
@@ -594,18 +594,18 @@ def _add_one_submodel(
     label_zpos = -30
 
     colors = None
-    if ref_value_dict:
+    if ref_map_values:
         values = []
         res_names = []
         res_idxes = []
-        for k, v in ref_value_dict.items():
+        for k, v in ref_map_values.items():
             res_name, res_idx = k.split("_")
             assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
             res_idx = int(res_idx)
             values.append(v)
             res_names.append(res_name)
             res_idxes.append(res_idx)
-        if not ref_value_random:
+        if not ref_map_value_random:
             colors = map_colors_between_two(ref_color_base, ref_color, values)
         else:
             colors = map_colors_between_two(
@@ -855,5 +855,33 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
 
 
 if __name__ == "__main__":
-    # ref_seq
-    pass
+    ref_seq = "data/pdb/EGFP_4EUL_ref.fa"
+    cut_seq = "data/pdb/EGFP_4EUL_cut1.fa"
+    ref_pdb = "data/pdb/EGFP_4EUL_ref.pdb"
+    cut_pdb = "data/pdb/EGFP_4EUL_cut1.pdb"
+    ref_map_values = {
+        "M_0": 0.0,
+        "V_1": 0.890295358649789,
+        "S_2": 0.270042194092827,
+        "K_3": 0.24050632911392406,
+        "G_4": 0.8523206751054853,
+        "E_5": 0.5991561181434599,
+        "K_238": 0.5316455696202531,
+    }
+    show_ref_cut(
+        ref_seq=ref_seq,
+        ref_pdb=ref_pdb,
+        cut_seq=cut_seq,
+        cut_pdb=cut_pdb,
+        ref_color="red",
+        ref_map_colors=("black", "blue"),
+        ref_map_values=ref_map_values,
+        cut_color="green",
+        gap_color="red",
+        ref_style="cartoon",
+        cut_style="cartoon",
+        gap_style="cartoon",
+        ref_map_value_random=False,
+        output_fig=None,
+        log_level="DEBUG",
+    )

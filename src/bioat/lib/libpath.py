@@ -14,7 +14,11 @@ HOME = os.path.expanduser("~")
 
 
 def is_path(string):
-    return Path(string).exists()
+    if isinstance(string, Path):
+        return True
+    if isinstance(string, str) and ("/" in string or "\\" in string):
+        return True
+    return
 
 
 def check_cmd(x, log_level="WARNING") -> bool:
