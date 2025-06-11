@@ -872,6 +872,17 @@ files = [
 ]
 
 [[package]]
+name = "json-log-formatter"
+version = "1.1.1"
+description = "JSON log formatter"
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "json_log_formatter-1.1.1.tar.gz", hash = "sha256:0815e3b4469e5c79cf3f6dc8a0613ba6601f4a7464f85ba03655cfa6e3e17d10"},
+]
+
+[[package]]
 name = "jupyter-client"
 version = "8.6.3"
 description = "Jupyter protocol implementation and client libraries"
@@ -2459,4 +2470,4 @@ docs = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10.0, <3.13.0"
-content-hash = "095662844c6645709b7f1cd805da8502251d9f44ac1511e3377e519ee8b27408"
+content-hash = "b446eca2abfa11a94e612c3482f08258673a69e7d1d3acc3e93c4c1e828790ca"

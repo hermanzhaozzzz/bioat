@@ -31,82 +31,10 @@ from bioat.lib.libfastx import (
 from bioat.lib.libpath import is_path
 from bioat.logger import LoggerManager
 
+__all__ = ["load_structure", "structure_to_string"]
+
 lm = LoggerManager(mod_name="bioat.lib.libpdb")
 lm.set_level("DEBUG")
-
-
-def structure_to_string(structure: Bio.PDB.Structure.Structure):
-    """
-    将 Bio.PDB.Structure.Structure 对象转换为 PDB 格式的字符串。
-
-    参数:
-        structure (Bio.PDB.Structure.Structure): 待转换的结构对象。
-
-    返回:
-        str: PDB 格式的字符串。
-    """
-    pdb_io = PDBIO()
-    pdb_io.set_structure(structure)
-
-    # 使用 StringIO 保存到内存中的字符串
-    pdb_string = StringIO()
-    pdb_io.save(pdb_string)
-
-    # 返回字符串
-    return pdb_string.getvalue()
-
-
-# 对齐函数
-def align_cut2ref(
-    ref: str | Bio.PDB.Structure.Structure,
-    cut: str | Bio.PDB.Structure.Structure,
-    gap_indices: list[int],
-    label1="ref",
-    label2="cut",
-):
-    """Align pdb to ref using the CA atoms.
-
-    Args:
-        ref (str or Bio.PDB.Structure.Structure): Path to the PDB file of the ref structure.
-        pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the pdb structure.
-        gap_indices (list[int]): List of indices of gaps in the cut structure.
-        label1 (str, optional): ref label. Defaults to "structure1".
-        label2 (str, optional): pdb label. Defaults to "structure2".
-        log_level (str, optional): Log level. Defaults to "WARNING".
-
-    Returns:
-        Bio.PDB.Structure.Structure: The aligned pdb structure.
-    """
-    # 读取 PDB 文件
-    parser = PDBParser(QUIET=True)
-
-    ref = parser.get_structure(label1, ref) if isinstance(ref, str) else ref
-    cut = parser.get_structure(label2, cut) if isinstance(cut, str) else cut
-
-    assert (
-        isinstance(ref, Bio.PDB.Structure.Structure)
-        and isinstance(cut, Bio.PDB.Structure.Structure)
-    ), "Invalid input format. ref and cut must be both str or Bio.PDB.Structure.Structure"
-
-    # 选择对齐的原子 (e.g., CA)
-    atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
-    atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
-    atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
-
-    assert len(atoms1) == len(
-        atoms2
-    ), "The number of CA atoms in ref and cut are not equal."
-    # 使用 Biopython 的 Superimposer 进行对齐
-    super_imposer = Superimposer()
-    super_imposer.set_atoms(atoms1, atoms2)
-    super_imposer.apply(cut.get_atoms())  # 修改 pdb 的坐标
-    rmsd = super_imposer.rms
-
-    return {
-        label1: ref,
-        label2: cut,
-        "RMSD": rmsd,
-    }
 
 def _load_seq(seq, label=None):
     if isinstance(seq, str) and is_path(seq):
@@ -120,7 +48,311 @@ def _load_seq(seq, label=None):
     return seq, label
 
 
+def load_structure(structure, label=None):
+    if isinstance(structure, str) and is_path(structure):
+        parser = PDBParser(QUIET=True)
+        structure = parser.get_structure(label, structure)
+    elif isinstance(structure, Bio.PDB.Structure.Structure):
+        label = structure.id if label is None else label
+    else:
+        raise BioatInvalidParameterError(
+            f"Invalid structure format. structure: {structure}. "
+            "file path or Bio.PDB.Structure.Structure is expected."
+        )
+    return structure, label
+
+
+def structure_to_string(structure: Bio.PDB.Structure.Structure):
+    """Convert Bio.PDB.Structure.Structure to string.
+
+    Args:
+        structure (Bio.PDB.Structure.Structure): Structure object to convert.
+
+    Returns:
+        str: PDB context。
+    """
+    pdb_io = PDBIO()
+    pdb_io.set_structure(structure)
+
+    # 使用 StringIO 保存到内存中的字符串
+    pdb_string = StringIO()
+    pdb_io.save(pdb_string)
+
+    # 返回字符串
+    return pdb_string.getvalue()
+
+
+# 对齐函数
+def _align_cut2ref(
+    ref: str | Bio.PDB.Structure.Structure,
+    cut: str | Bio.PDB.Structure.Structure,
+    gap_indices: list[int],
+    label1="ref",
+    label2="cut",
+) -> dict:
+    """Align cutted pdb to ref pdb using the CA atoms.
+
+    Args:
+        ref (str or Bio.PDB.Structure.Structure): Path to the PDB file of the ref structure.
+        pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the pdb structure.
+        gap_indices (list[int]): List of indices of gaps in the cut structure.
+        label1 (str, optional): ref label. Defaults to "structure1".
+        label2 (str, optional): pdb label. Defaults to "structure2".
+        log_level (str, optional): Log level. Defaults to "WARNING".
+
+    Returns:
+        Bio.PDB.Structure.Structure: The aligned pdb structure.
+    """
+    # 读取 PDB 文件
+    ref, cut = load_structure(ref, label1), load_structure(cut, label2)
+
+    # 选择对齐的原子 (e.g., CA)
+    atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
+    atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
+    atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
+
+    assert len(atoms1) == len(atoms2), (
+        "The number of CA atoms in pdb1 and pdb2 are not equal. "
+        "Use ref and cut pdbs predicted by AlphaFold2/ESMFold or other tools "
+        "but not pdb downloaded from <PDB database> to ensure the CA atoms are aligned."
+    )
+    # 使用 Biopython 的 Superimposer 进行对齐
+    super_imposer = Superimposer()
+    super_imposer.set_atoms(atoms1, atoms2)
+    super_imposer.apply(cut.get_atoms())  # 修改 pdb 的坐标
+    rmsd = super_imposer.rms
+
+    return {
+        label1: ref,
+        label2: cut,
+        "RMSD": rmsd,
+    }
+
+
 def show_ref_cut(
+    ref_seq: str | Seq,
+    ref_pdb: str | Bio.PDB.Structure.Structure,
+    cut_seq: str | Seq | None = None,
+    cut_pdb: str | Bio.PDB.Structure.Structure | None = None,
+    ref_color: str = "blue",
+    ref_color_base: str | None = None,
+    ref_value_dict: dict | None = None,
+    cut_color="green",
+    gap_color="red",
+    ref_style="cartoon",
+    cut_style="cartoon",
+    gap_style="cartoon",
+    ref_value_random: bool = False,
+    output_fig: str | None = None,
+    log_level="WARNING",
+):
+    """
+    Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
+
+    Args:
+        ref_seq (str or Seq): Amino acid sequence content for the ref protein.
+        ref_pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the reference structure.
+        cut_seq (str, Seq or None, optional): Amino acid sequence content for the cut protein.
+        cut_pdb (str, Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.
+        ref_color (str, optional): Color for reference residues.
+        ref_color_base (str or None, optional): ref_color_base will be used as base color, and ref_color will be used as target color. If None, do not apply color mapping. Defaults to None.
+        ref_value_dict (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
+        cut_color (str, optional): Color for cut residues.
+        gap_color (str, optional): Color for gaps or removed residues.
+        ref_style (str, optional): "stick", "sphere", "cartoon", or "line"
+        cut_style (str, optional): "stick", "sphere", "cartoon", or "line"
+        gap_style (str, optional): "stick", "sphere", "cartoon", or "line"
+        ref_value_random (bool, optional): If True, ref_value_dict will be randomly generated. Defaults to False.
+        output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
+        log_level (str, optional): Log level. Defaults to "WARNING".
+    """
+    lm.set_names(func_name="show_ref_cut")
+    lm.set_level(log_level)
+
+    # fix color mapping
+    assert (ref_color_base is None and ref_value_dict is None) or (
+        isinstance(ref_color_base, str) and isinstance(ref_value_dict, dict)
+    ), "ref_color_base and ref_value_dict must be both None or both not None"
+
+    if ref_value_dict:
+        values = []
+        res_names = []
+        res_idxes = []
+        for k, v in ref_value_dict.items():
+            res_name, res_idx = k.split("_")
+            assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
+            res_idx = int(res_idx)
+            values.append(v)
+            res_names.append(res_name)
+            res_idxes.append(res_idx)
+        if not ref_value_random:
+            colors = map_colors_between_two(ref_color_base, ref_color, values)
+        else:
+            colors = map_colors_between_two(
+                ref_color_base, ref_color, np.random.rand(len(values))
+            )
+
+    ref_seq, ref_label = _load_seq(ref_seq, "ref")
+
+    # load ref_pdb
+    parser = PDBParser(QUIET=True)
+    ref_pdb = (
+        ref_pdb
+        if isinstance(ref_pdb, Bio.PDB.Structure.Structure)
+        else parser.get_structure(ref_label, ref_pdb)
+    )
+
+    gap_indices, rmsd = [], None
+
+    if cut_seq:
+        # 执行Sequence Alignment并得到gaps的位置
+        cut_seq, cut_label = _load_seq(cut_seq, "cut")
+        # Perform alignment
+        aligner = instantiate_pairwise_aligner(
+            scoring_match=5,
+            penalty_mismatch=-1,
+            penalty_gap_open=-1,
+            penalty_gap_extension=0,
+            penalty_query_left_gap_score=0,
+            penalty_query_right_gap_score=0,
+            log_level="WARNING",
+        )
+        alignment = get_best_alignment(
+            seq_a=ref_seq, seq_b=cut_seq, aligner=aligner, consider_strand=False
+        )
+        alignment_dict = get_aligned_seq(alignment, reverse=False, letn_match=False)
+        gap_indices = [
+            i for i, n in enumerate(alignment_dict["target_seq"]) if n == "-"
+        ]
+
+        if cut_pdb:
+            # 执行PDB Alignment并得对齐后的PDB文件和RMSD
+            res = _align_cut2ref(ref_pdb, cut_pdb, gap_indices, ref_label, cut_label)
+            ref_pdb = res[ref_label]
+            cut_pdb = res[cut_label]
+            rmsd = res["RMSD"]
+    else:
+        lm.logger.info(
+            "Cut sequence is not provided, skip alignment and annotation for gaps, and just show ref visualization."
+        )
+        cut_seq, cut_label, cut_pdb = None, None, None
+
+    assert isinstance(ref_pdb, Bio.PDB.Structure.Structure), (
+        "Invalid input format. ref_pdb must be Bio.PDB.Structure"
+    )
+
+    if cut_pdb:
+        assert isinstance(cut_pdb, Bio.PDB.Structure.Structure), (
+            "Invalid input format. cut_pdb must be Bio.PDB.Structure"
+        )
+
+    # show ref_pdb
+    view = py3Dmol.view(width=1000, height=1000)
+    label_ypos = -15
+    view.addModel(structure_to_string(ref_pdb), "pdb")
+    view.setStyle(
+        {"model": 0},
+        {
+            ref_style: {
+                "arrows": True,
+                "tubes": True,
+                "style": "oval",
+                "color": ref_color,
+            },
+        },
+    )
+    label_ypos -= 5
+    view.addLabel(
+        f"[{ref_label}]: {ref_color}",
+        {
+            "fontColor": ref_color,
+            "fontSize": 14,
+            "position": {"x": -30, "y": label_ypos, "z": -30},
+        },
+    )
+    # 标记ref 值的颜色
+    if ref_color_base is not None:
+        for i in range(len(colors)):
+            idx = res_idxes[i]
+            res = res_names[i]
+            color = colors[i]
+            view.addStyle(
+                {"model": 0, "resi": idx + 1, "resn": AMINO_ACIDS_1CODE[res]},
+                {ref_style: {"color": color, "radius": 0.5}},
+            )
+        label_ypos -= 5
+        view.addLabel(
+            f"[{ref_label}] values: {ref_color_base} (0) to {ref_color} (1)",
+            {
+                "fontColor": ref_color,
+                "fontSize": 14,
+                "position": {"x": -30, "y": label_ypos, "z": -30},
+            },
+        )
+    # 标记gaps的颜色
+    if gap_indices:
+        for idx, res in enumerate(alignment_dict["reference_seq"]):
+            # 标记 gap位置的颜色
+            if idx in gap_indices:
+                view.addStyle(
+                    {"model": 0, "resi": idx + 1, "resn": AMINO_ACIDS_1CODE[res]},
+                    {gap_style: {"color": gap_color, "radius": 0.5}},
+                )
+        label_ypos -= 5
+        view.addLabel(
+            f"gaps: {gap_color}",
+            {
+                "fontColor": gap_color,
+                "fontSize": 14,
+                "position": {"x": -30, "y": label_ypos, "z": -30},
+            },
+        )
+    if cut_pdb and rmsd:
+        view.addModel(structure_to_string(cut_pdb), "pdb")
+        view.setStyle(
+            {"model": 1},
+            {
+                cut_style: {
+                    "arrows": True,
+                    "tubes": True,
+                    "style": "oval",
+                    "color": cut_color,
+                },
+            },
+        )
+        label_ypos -= 5
+        view.addLabel(
+            f"{cut_label}: {cut_color}",
+            {
+                "fontColor": cut_color,
+                "fontSize": 14,
+                "position": {"x": -30, "y": label_ypos, "z": -30},
+            },
+        )
+        label_ypos -= 5
+        view.addLabel(
+            f"RMSD: {rmsd:.2f}",
+            {
+                "fontColor": "white",
+                "fontSize": 14,
+                "position": {"x": -30, "y": label_ypos, "z": -30},
+            },
+        )
+
+    # 聚焦显示
+    # Finalize the view
+    view.zoomTo()
+
+    if output_fig:
+        assert output_fig.endswith(".html"), "Output file must have a '.html' extension"
+
+        # 保存为 SVG 文件
+        with open(output_fig, "w") as f:
+            f.write(view._make_html())
+    return view.show()
+
+
+def show_ref_cut2(
     ref_seq: str | Seq,
     ref_pdb: str | Bio.PDB.Structure.Structure,
     cut_seq: List[str | Seq] | str | Seq | None = None,
@@ -242,7 +474,7 @@ def show_ref_cut(
 
             if cut_pdb:
                 # 执行PDB Alignment并得对齐后的PDB文件和RMSD
-                res = align_cut2ref(
+                res = _align_cut2ref(
                     ref_pdb, cut_pdb, gap_indices[idx], ref_label, cut_label
                 )
                 ref_pdbs_fix.append(res[ref_label])
