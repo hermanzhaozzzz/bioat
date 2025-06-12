@@ -36,6 +36,7 @@ class FoldTools:
         col: int = 4,
         scale: float = 1.0,
         annotate: bool = True,
+        text_interval: int = 5,
         log_level="WARNING",
         **kwargs,
     ):
@@ -60,6 +61,7 @@ class FoldTools:
             col (int, optional): Number of columns for the visualization. Defaults to 3.
             scale (float, optional): Scale factor for the visualization. Defaults to 1.0.
             annotate (bool, optional): Whether to annotate the visualization with labels. Defaults to True.
+            text_interval (int, optional): The interval between text annotations. Defaults to 5.
             log_level (str, optional): Log level. Defaults to "WARNING".
         """
         print(f"Calling show_ref_cut with {kwargs}")
@@ -84,6 +86,7 @@ class FoldTools:
             col=col,
             scale=scale,
             annotate=annotate,
+            text_interval=text_interval,
             log_level=log_level,
         )
         lm.logger.debug(
@@ -107,6 +110,7 @@ output_fig : {output_fig},
 col: {col},
 scale: {scale},
 annotate: {annotate},
+text_interval: {text_interval},
 log_level: {log_level}"""
         )
 

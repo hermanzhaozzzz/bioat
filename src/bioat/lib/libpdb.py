@@ -181,6 +181,7 @@ def show_ref_cut(
     col: int = 4,
     scale: float = 1.0,
     annotate: bool = True,
+    text_interval: int = 5,
     log_level="WARNING",
 ):
     """
@@ -205,6 +206,7 @@ def show_ref_cut(
         col (int, optional): Number of columns for the visualization. Defaults to 3.
         scale (float, optional): Scale factor for the visualization. Defaults to 1.0.
         annotate (bool, optional): Whether to annotate the visualization with labels. Defaults to True.
+        text_interval (int, optional): The interval between text annotations. Defaults to 5.
         log_level (str, optional): Log level. Defaults to "WARNING".
     """
     lm.set_names(func_name="show_ref_cut")
@@ -341,6 +343,7 @@ def show_ref_cut(
             alignment_dict=alignment_dicts[i],
             rmsd=rmsds[i],
             annotate=annotate,
+            text_interval=text_interval,
             viewer=viewer,
         )
 
@@ -372,6 +375,7 @@ def _add_one_submodel(
     alignment_dict,
     rmsd,
     annotate,
+    text_interval,
     viewer,
 ):
     # for annotation
@@ -420,7 +424,7 @@ def _add_one_submodel(
         },
         viewer=viewer,
     )
-    label_ypos -= 5
+    label_ypos -= text_interval
     view.addLabel(
         f"{ref_label}: {ref_color}",
         {
@@ -443,7 +447,7 @@ def _add_one_submodel(
                 viewer=viewer,
             )
         if annotate:
-            label_ypos -= 5
+            label_ypos -= text_interval
             view.addLabel(
                 f"{ref_label} values: {ref_color} (0) to {ref_color} (1)",
                 {
@@ -464,7 +468,7 @@ def _add_one_submodel(
                     viewer=viewer,
                 )
         if annotate:
-            label_ypos -= 5
+            label_ypos -= text_interval
             view.addLabel(
                 f"gaps: {gap_color}",
                 {
@@ -489,21 +493,11 @@ def _add_one_submodel(
             viewer=viewer,
         )
         if annotate:
-            label_ypos -= 5
+            label_ypos -= text_interval
             view.addLabel(
-                f"{cut_label}: {cut_color}",
+                f"{cut_label}: {cut_color}\tRMSD: {rmsd:.2f}",
                 {
                     "fontColor": cut_color,
-                    "fontSize": 14,
-                    "position": {"x": label_xpos, "y": label_ypos, "z": label_zpos},
-                },
-                viewer=viewer,
-            )
-            label_ypos -= 5
-            view.addLabel(
-                f"RMSD: {rmsd:.2f}",
-                {
-                    "fontColor": "white",
                     "fontSize": 14,
                     "position": {"x": label_xpos, "y": label_ypos, "z": label_zpos},
                 },
