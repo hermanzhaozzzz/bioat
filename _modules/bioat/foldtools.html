@@ -12,7 +12,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=13e65a98"></script>
+      <script src="../../_static/documentation_options.js?v=b79ede81"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -110,6 +110,7 @@
         <span class="n">col</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">text_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -134,6 +135,7 @@
 <span class="sd">            col (int, optional): Number of columns for the visualization. Defaults to 3.</span>
 <span class="sd">            scale (float, optional): Scale factor for the visualization. Defaults to 1.0.</span>
 <span class="sd">            annotate (bool, optional): Whether to annotate the visualization with labels. Defaults to True.</span>
+<span class="sd">            text_interval (int, optional): The interval between text annotations. Defaults to 5.</span>
 <span class="sd">            log_level (str, optional): Log level. Defaults to &quot;WARNING&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling show_ref_cut with </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -158,6 +160,7 @@
             <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
             <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
             <span class="n">annotate</span><span class="o">=</span><span class="n">annotate</span><span class="p">,</span>
+            <span class="n">text_interval</span><span class="o">=</span><span class="n">text_interval</span><span class="p">,</span>
             <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -181,6 +184,7 @@
 <span class="s2">col: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">,</span>
 <span class="s2">scale: </span><span class="si">{</span><span class="n">scale</span><span class="si">}</span><span class="s2">,</span>
 <span class="s2">annotate: </span><span class="si">{</span><span class="n">annotate</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">text_interval: </span><span class="si">{</span><span class="n">text_interval</span><span class="si">}</span><span class="s2">,</span>
 <span class="s2">log_level: </span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span></div>
 
