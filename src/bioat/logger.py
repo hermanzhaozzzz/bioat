@@ -4,7 +4,6 @@ import os
 import threading
 
 import coloredlogs
-import json_log_formatter
 
 from bioat.exceptions import BioatInvalidParameterError
 
@@ -138,16 +137,6 @@ class LoggerManager:
         handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
         self.logger.addHandler(handler)
 
-    def set_json_file(self, file: str, mode="a"):
-        """设置 JSON 格式的文件日志输出"""
-        os.makedirs(os.path.dirname(file), exist_ok=True)
-        self._remove_handler_type(logging.FileHandler)
-
-        handler = logging.FileHandler(file, mode=mode)
-        formatter = json_log_formatter.JSONFormatter()
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-
     def _remove_handler_type(self, handler_type):
         """内部方法：移除已有的特定 handler 类型"""
         self.logger.handlers = [
@@ -212,15 +201,6 @@ if __name__ == "__main__":
             assert "test file log entry" in content
     print("✅ 文件日志写入 OK:", file_path)
 
-    # 测试 JSON 日志
-    with tempfile.TemporaryDirectory() as tmpdir:
-        json_path = os.path.join(tmpdir, "log.json")
-        lm.set_json_file(json_path)
-        lm.logger.error("json log message")
-        with open(json_path) as f:
-            line = f.readline()
-            assert '"message": "json log message"' in line
-    print("✅ JSON 文件日志 OK:", json_path)
 
     # 测试 add_stream_handler 不重复
     # 仅统计 StreamHandler 类型的 handler 数量
@@ -252,8 +232,6 @@ if __name__ == "__main__":
     lm.set_names(cls_name="MyClass", func_name="run")
     lm.logger.debug("With class+func name.")
 
-    # 使用 JSON 文件日志
-    lm.set_json_file("logs/bioat_log.json")
 
     # 静态方式快速获取 logger
     logger = LoggerManager.get_logger("bioat.io", "INFO")

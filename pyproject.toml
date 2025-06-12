@@ -1,7 +1,7 @@
 # ref https://github.com/python-poetry/poetry/blob/main/pyproject.toml
 [tool.poetry]
 name = "bioat"
-version = "0.15.3"
+version = "0.15.3a"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
 license = "Apache-2.0"
 authors = ["Huanan Herman Zhao <hermanzhaozzzz@gmail.com>"]
@@ -35,7 +35,6 @@ seaborn = ">=0.13.2"
 py3dmol = ">=2.4.2"
 ipykernel = ">=6.0.0"
 ipython = "<9.0.0"
-json-log-formatter = "^1.1.1"
 
 [tool.poetry.extras]
 docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "myst-parser", "toml"]
