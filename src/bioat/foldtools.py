@@ -24,15 +24,18 @@ class FoldTools:
         cut_seq: str | Seq | None = None,
         cut_pdb: str | Bio.PDB.Structure.Structure | None = None,
         ref_color: str = "blue",
-        ref_color_base: str | None = None,
-        ref_value_dict: dict | None = None,
+        ref_map_colors: tuple[str] | None = None,
+        ref_map_values: dict | None = None,
         cut_color="green",
         gap_color="red",
         ref_style="cartoon",
         cut_style="cartoon",
         gap_style="cartoon",
-        ref_value_random: bool = False,
+        ref_map_value_random: bool = False,
         output_fig: str | None = None,
+        col: int = 4,
+        scale: float = 1.0,
+        annotate: bool = True,
         log_level="WARNING",
         **kwargs,
     ):
@@ -45,15 +48,18 @@ class FoldTools:
             cut_seq (str, Seq or None, optional): Amino acid sequence content for the cut protein.
             cut_pdb (str, Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.
             ref_color (str, optional): Color for reference residues.
-            ref_color_base (str or None, optional): ref_color_base will be used as base color, and ref_color will be used as target color. If None, do not apply color mapping. Defaults to None.
-            ref_value_dict (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
+            ref_map_colors (tuple[str, str] or None, optional): ref_map_colors will be used as color bar from ref_map_colors[0] to ref_map_colors[1]. If None, do not apply color mapping. Defaults to None.
+            ref_map_values (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
             cut_color (str, optional): Color for cut residues.
             gap_color (str, optional): Color for gaps or removed residues.
             ref_style (str, optional): "stick", "sphere", "cartoon", or "line"
             cut_style (str, optional): "stick", "sphere", "cartoon", or "line"
             gap_style (str, optional): "stick", "sphere", "cartoon", or "line"
-            ref_value_random (bool, optional): If True, ref_value_dict will be randomly generated. Defaults to False.
+            ref_map_value_random (bool, optional): If True, ref_value_dict will be randomly generated. Defaults to False.
             output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
+            col (int, optional): Number of columns for the visualization. Defaults to 3.
+            scale (float, optional): Scale factor for the visualization. Defaults to 1.0.
+            annotate (bool, optional): Whether to annotate the visualization with labels. Defaults to True.
             log_level (str, optional): Log level. Defaults to "WARNING".
         """
         print(f"Calling show_ref_cut with {kwargs}")
@@ -66,15 +72,18 @@ class FoldTools:
             ref_pdb=ref_pdb,
             cut_pdb=cut_pdb,
             ref_color=ref_color,
-            ref_color_base=ref_color_base,
-            ref_value_dict=ref_value_dict,
+            ref_map_colors=ref_map_colors,
+            ref_map_values=ref_map_values,
             cut_color=cut_color,
             gap_color=gap_color,
             ref_style=ref_style,
             cut_style=cut_style,
             gap_style=gap_style,
-            ref_value_random=ref_value_random,
+            ref_map_value_random=ref_map_value_random,
             output_fig=output_fig,
+            col=col,
+            scale=scale,
+            annotate=annotate,
             log_level=log_level,
         )
         lm.logger.debug(
@@ -86,14 +95,18 @@ ref_pdb: {ref_pdb}
 cut_seq: {cut_seq}
 cut_pdb: {cut_pdb}
 ref_color: {ref_color}
-ref_color_base: {ref_color_base}
+ref_map_colors: {ref_map_colors}
+ref_map_values: {ref_map_values}
 cut_color: {cut_color}
 gap_color: {gap_color}
 ref_style: {ref_style}
 cut_style: {cut_style}
 gap_style: {gap_style}
-ref_value_random: {ref_value_random},
+ref_map_value_random: {ref_map_value_random},
 output_fig : {output_fig},
+col: {col},
+scale: {scale},
+annotate: {annotate},
 log_level: {log_level}"""
         )
 
