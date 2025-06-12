@@ -12,7 +12,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=d86fca55"></script>
+      <script src="../../_static/documentation_options.js?v=4451fed2"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -74,7 +74,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">coloredlogs</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json_log_formatter</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidParameterError</span>
 
@@ -228,19 +227,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="LoggerManager.set_json_file">
-<a class="viewcode-back" href="../../bioat.html#bioat.logger.LoggerManager.set_json_file">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_json_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;设置 JSON 格式的文件日志输出&quot;&quot;&quot;</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_handler_type</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">)</span>
-
-        <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-        <span class="n">formatter</span> <span class="o">=</span> <span class="n">json_log_formatter</span><span class="o">.</span><span class="n">JSONFormatter</span><span class="p">()</span>
-        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span></div>
-
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_remove_handler_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;内部方法：移除已有的特定 handler 类型&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span>
@@ -309,15 +295,6 @@
             <span class="k">assert</span> <span class="s2">&quot;test file log entry&quot;</span> <span class="ow">in</span> <span class="n">content</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ 文件日志写入 OK:&quot;</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
 
-    <span class="c1"># 测试 JSON 日志</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
-        <span class="n">json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;log.json&quot;</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_json_file</span><span class="p">(</span><span class="n">json_path</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;json log message&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-            <span class="k">assert</span> <span class="s1">&#39;&quot;message&quot;: &quot;json log message&quot;&#39;</span> <span class="ow">in</span> <span class="n">line</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ JSON 文件日志 OK:&quot;</span><span class="p">,</span> <span class="n">json_path</span><span class="p">)</span>
 
     <span class="c1"># 测试 add_stream_handler 不重复</span>
     <span class="c1"># 仅统计 StreamHandler 类型的 handler 数量</span>
@@ -349,8 +326,6 @@
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;MyClass&quot;</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;run&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;With class+func name.&quot;</span><span class="p">)</span>
 
-    <span class="c1"># 使用 JSON 文件日志</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_json_file</span><span class="p">(</span><span class="s2">&quot;logs/bioat_log.json&quot;</span><span class="p">)</span>
 
     <span class="c1"># 静态方式快速获取 logger</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;bioat.io&quot;</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
