@@ -12,7 +12,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b79ede81"></script>
+      <script src="../../_static/documentation_options.js?v=806654eb"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -68,9 +68,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.foldtools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Seq</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seq</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdb2fasta</span><span class="p">,</span> <span class="n">show_ref_cut</span>
@@ -83,8 +81,6 @@
 <a class="viewcode-back" href="../../bioat.html#bioat.foldtools.FoldTools">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FoldTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Folding toolbox.&quot;&quot;&quot;</span>
-
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;FoldTools&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -112,7 +108,6 @@
         <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">text_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.</span>
@@ -138,10 +133,6 @@
 <span class="sd">            text_interval (int, optional): The interval between text annotations. Defaults to 5.</span>
 <span class="sd">            log_level (str, optional): Log level. Defaults to &quot;WARNING&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling show_ref_cut with </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Actual show_ref_cut module: </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">show_ref_cut</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;show_ref_cut&quot;</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
         <span class="n">show_ref_cut</span><span class="p">(</span>
             <span class="n">ref_seq</span><span class="o">=</span><span class="n">ref_seq</span><span class="p">,</span>
             <span class="n">cut_seq</span><span class="o">=</span><span class="n">cut_seq</span><span class="p">,</span>
@@ -162,30 +153,6 @@
             <span class="n">annotate</span><span class="o">=</span><span class="n">annotate</span><span class="p">,</span>
             <span class="n">text_interval</span><span class="o">=</span><span class="n">text_interval</span><span class="p">,</span>
             <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<span class="s2">Params:</span>
-<span class="s2">-------</span>
-<span class="s2">ref_seq: </span><span class="si">{</span><span class="n">ref_seq</span><span class="si">}</span>
-<span class="s2">ref_pdb: </span><span class="si">{</span><span class="n">ref_pdb</span><span class="si">}</span>
-<span class="s2">cut_seq: </span><span class="si">{</span><span class="n">cut_seq</span><span class="si">}</span>
-<span class="s2">cut_pdb: </span><span class="si">{</span><span class="n">cut_pdb</span><span class="si">}</span>
-<span class="s2">ref_color: </span><span class="si">{</span><span class="n">ref_color</span><span class="si">}</span>
-<span class="s2">ref_map_colors: </span><span class="si">{</span><span class="n">ref_map_colors</span><span class="si">}</span>
-<span class="s2">ref_map_values: </span><span class="si">{</span><span class="n">ref_map_values</span><span class="si">}</span>
-<span class="s2">cut_color: </span><span class="si">{</span><span class="n">cut_color</span><span class="si">}</span>
-<span class="s2">gap_color: </span><span class="si">{</span><span class="n">gap_color</span><span class="si">}</span>
-<span class="s2">ref_style: </span><span class="si">{</span><span class="n">ref_style</span><span class="si">}</span>
-<span class="s2">cut_style: </span><span class="si">{</span><span class="n">cut_style</span><span class="si">}</span>
-<span class="s2">gap_style: </span><span class="si">{</span><span class="n">gap_style</span><span class="si">}</span>
-<span class="s2">ref_map_value_random: </span><span class="si">{</span><span class="n">ref_map_value_random</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">output_fig : </span><span class="si">{</span><span class="n">output_fig</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">col: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">scale: </span><span class="si">{</span><span class="n">scale</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">annotate: </span><span class="si">{</span><span class="n">annotate</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">text_interval: </span><span class="si">{</span><span class="n">text_interval</span><span class="si">}</span><span class="s2">,</span>
-<span class="s2">log_level: </span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -219,16 +186,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;pdb2fasta&quot;</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<span class="s2">Params:</span>
-<span class="s2">-------</span>
-<span class="s2">input: </span><span class="si">{</span><span class="nb">input</span><span class="si">}</span>
-<span class="s2">output: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span>
-<span class="s2">log_level: </span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
-        <span class="p">)</span>
         <span class="n">pdb2fasta</span><span class="p">(</span><span class="n">pdb_file</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output_fasta</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span></div>
 </div>
 

@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=b79ede81"></script>
+      <script src="../../../_static/documentation_options.js?v=806654eb"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -98,7 +98,7 @@
     <span class="n">AMINO_ACIDS_3CODE</span><span class="p">,</span>
     <span class="n">AMINO_ACIDS_3CODE_EXTEND</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;load_structure&quot;</span><span class="p">,</span> <span class="s2">&quot;structure_to_string&quot;</span><span class="p">,</span> <span class="s2">&quot;show_ref_cut&quot;</span><span class="p">]</span>
@@ -106,8 +106,8 @@
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libpdb&quot;</span><span class="p">)</span>
 <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_load_seq</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_path</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_seq</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_file</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">):</span>
         <span class="n">seq</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">))</span>
         <span class="n">label</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">label</span>
         <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">seq</span>
@@ -120,8 +120,8 @@
 
 <div class="viewcode-block" id="load_structure">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpdb.load_structure">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_path</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_file</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">PDBParser</span><span class="p">(</span><span class="n">QUIET</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">structure</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">structure</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
@@ -165,22 +165,63 @@
     <span class="n">gap_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">label1</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span>
     <span class="n">label2</span><span class="o">=</span><span class="s2">&quot;cut&quot;</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Align cutted pdb to ref pdb using the CA atoms.</span>
+<span class="sd">    Aligns a truncated protein structure (cut) to its full-length reference structure (ref)</span>
+<span class="sd">    using Cα atoms and Biopython&#39;s Superimposer. Residues that are deleted in the cut structure</span>
+<span class="sd">    must be specified using `gap_indices` (i.e., their positions in the reference structure).</span>
+
+<span class="sd">    This function:</span>
+<span class="sd">    - Extracts all Cα atoms from `ref` and `cut`</span>
+<span class="sd">    - Removes atoms from `ref` at the indices listed in `gap_indices`</span>
+<span class="sd">    - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`</span>
+<span class="sd">    - Modifies the `cut` structure in-place to match the aligned orientation</span>
+<span class="sd">    - Returns both structures and the RMSD value of the alignment</span>
+
+<span class="sd">    It assumes:</span>
+<span class="sd">    - One-to-one correspondence between residues after gap removal</span>
+<span class="sd">    - Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        Given:</span>
+<span class="sd">            ref = &quot;CRISPRCRISPR&quot;</span>
+<span class="sd">            cut = &quot;CRISRCIPR&quot;</span>
+<span class="sd">            gap_indices = [4, 7, 9]</span>
+
+<span class="sd">        Then:</span>
+<span class="sd">            aln_ref = CRISPRCRISPR</span>
+<span class="sd">            aln_cut = CRIS-RC-I-PR</span>
+<span class="sd">                          *  * *</span>
+<span class="sd">                      012345678901</span>
+<span class="sd">                        (aligned by removing ref[4], ref[7], ref[9])</span>
+<span class="sd">        Finally, the function will return:</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;ref&quot;: aln_ref structure,  # unaltered ref structure</span>
+<span class="sd">                &quot;cut&quot;: fixed_cut structure,  # fix cut coords in-place</span>
+<span class="sd">                &quot;RMSD&quot;: 0.123  # example RMSD value</span>
+<span class="sd">            }</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        ref (str or Bio.PDB.Structure.Structure): Path to the PDB file of the ref structure.</span>
-<span class="sd">        pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the pdb structure.</span>
-<span class="sd">        gap_indices (list[int]): List of indices of gaps in the cut structure.</span>
-<span class="sd">        label1 (str, optional): ref label. Defaults to &quot;structure1&quot;.</span>
-<span class="sd">        label2 (str, optional): pdb label. Defaults to &quot;structure2&quot;.</span>
-<span class="sd">        log_level (str, optional): Log level. Defaults to &quot;WARNING&quot;.</span>
+<span class="sd">        ref (str or Bio.PDB.Structure.Structure): Reference structure path or loaded Structure.</span>
+<span class="sd">        cut (str or Bio.PDB.Structure.Structure): Truncated structure path or loaded Structure.</span>
+<span class="sd">        gap_indices (list[int]): Indices (0-based) in ref of residues that are deleted in cut.</span>
+<span class="sd">        label1 (str, optional): Name for the reference structure. Default is &quot;ref&quot;.</span>
+<span class="sd">        label2 (str, optional): Name for the cut structure. Default is &quot;cut&quot;.</span>
+<span class="sd">        log_level (str, optional): Logging level. Default is &quot;WARNING&quot;.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Bio.PDB.Structure.Structure: The aligned pdb structure.</span>
+<span class="sd">        dict: {</span>
+<span class="sd">            label1: Bio.PDB.Structure.Structure (unaltered),</span>
+<span class="sd">            label2: Bio.PDB.Structure.Structure (aligned in-place),</span>
+<span class="sd">            &quot;RMSD&quot;: float</span>
+<span class="sd">        }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># 读取 PDB 文件</span>
-    <span class="n">ref</span><span class="p">,</span> <span class="n">cut</span> <span class="o">=</span> <span class="n">load_structure</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">label1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">load_structure</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="n">label2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ref</span><span class="p">,</span> <span class="n">cut</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">load_structure</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">label1</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">load_structure</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="n">label2</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">)</span>
 
     <span class="c1"># 选择对齐的原子 (e.g., CA)</span>
     <span class="n">atoms1</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">]</span>
@@ -197,11 +238,14 @@
     <span class="n">super_imposer</span><span class="o">.</span><span class="n">set_atoms</span><span class="p">(</span><span class="n">atoms1</span><span class="p">,</span> <span class="n">atoms2</span><span class="p">)</span>
     <span class="n">super_imposer</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cut</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">())</span>  <span class="c1"># 修改 pdb 的坐标</span>
     <span class="n">rmsd</span> <span class="o">=</span> <span class="n">super_imposer</span><span class="o">.</span><span class="n">rms</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;RMSD (strict, remove gaps in </span><span class="si">{</span><span class="n">label1</span><span class="si">}</span><span class="s2">) between </span><span class="si">{</span><span class="n">label1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">label2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rmsd</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">label1</span><span class="p">:</span> <span class="n">ref</span><span class="p">,</span>
         <span class="n">label2</span><span class="p">:</span> <span class="n">cut</span><span class="p">,</span>  <span class="c1"># 坐标已对齐</span>
-        <span class="s2">&quot;RMSD&quot;</span><span class="p">:</span> <span class="n">rmsd</span><span class="p">,</span>
+        <span class="s2">&quot;RMSD&quot;</span><span class="p">:</span> <span class="n">rmsd</span><span class="p">,</span>  <span class="c1"># it should be close to the result of pymol cmd.align(&quot;cut and name CA&quot;, &quot;ref and name CA&quot;, cutoff=10.0, cycles=0)[0]</span>
     <span class="p">}</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_map_ref_colors</span><span class="p">(</span><span class="n">ref_map_colors</span><span class="p">,</span> <span class="n">ref_map_values</span><span class="p">,</span> <span class="n">ref_map_value_random</span><span class="p">):</span>
@@ -289,21 +333,45 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;show_ref_cut&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Params:</span>
+<span class="s2">-------</span>
+<span class="s2">ref_seq: </span><span class="si">{</span><span class="n">ref_seq</span><span class="si">}</span>
+<span class="s2">ref_pdb: </span><span class="si">{</span><span class="n">ref_pdb</span><span class="si">}</span>
+<span class="s2">cut_seq: </span><span class="si">{</span><span class="n">cut_seq</span><span class="si">}</span>
+<span class="s2">cut_pdb: </span><span class="si">{</span><span class="n">cut_pdb</span><span class="si">}</span>
+<span class="s2">ref_color: </span><span class="si">{</span><span class="n">ref_color</span><span class="si">}</span>
+<span class="s2">ref_map_colors: </span><span class="si">{</span><span class="n">ref_map_colors</span><span class="si">}</span>
+<span class="s2">ref_map_values: </span><span class="si">{</span><span class="n">ref_map_values</span><span class="si">}</span>
+<span class="s2">cut_color: </span><span class="si">{</span><span class="n">cut_color</span><span class="si">}</span>
+<span class="s2">gap_color: </span><span class="si">{</span><span class="n">gap_color</span><span class="si">}</span>
+<span class="s2">ref_style: </span><span class="si">{</span><span class="n">ref_style</span><span class="si">}</span>
+<span class="s2">cut_style: </span><span class="si">{</span><span class="n">cut_style</span><span class="si">}</span>
+<span class="s2">gap_style: </span><span class="si">{</span><span class="n">gap_style</span><span class="si">}</span>
+<span class="s2">ref_map_value_random: </span><span class="si">{</span><span class="n">ref_map_value_random</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">output_fig : </span><span class="si">{</span><span class="n">output_fig</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">col: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">scale: </span><span class="si">{</span><span class="n">scale</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">annotate: </span><span class="si">{</span><span class="n">annotate</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">text_interval: </span><span class="si">{</span><span class="n">text_interval</span><span class="si">}</span><span class="s2">,</span>
+<span class="s2">log_level: </span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="p">)</span>
 
-    <span class="n">ref_seq</span><span class="p">,</span> <span class="n">ref_label</span> <span class="o">=</span> <span class="n">_load_seq</span><span class="p">(</span><span class="n">ref_seq</span><span class="p">,</span> <span class="s2">&quot;ref&quot;</span><span class="p">)</span>
-    <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">ref_label</span> <span class="o">=</span> <span class="n">load_structure</span><span class="p">(</span><span class="n">ref_pdb</span><span class="p">,</span> <span class="n">ref_label</span><span class="p">)</span>
+    <span class="n">ref_seq</span><span class="p">,</span> <span class="n">ref_label</span> <span class="o">=</span> <span class="n">_load_seq</span><span class="p">(</span><span class="n">ref_seq</span><span class="p">,</span> <span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">ref_label</span> <span class="o">=</span> <span class="n">load_structure</span><span class="p">(</span><span class="n">ref_pdb</span><span class="p">,</span> <span class="n">ref_label</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_pdb</span><span class="p">,</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">),</span> <span class="p">(</span>
         <span class="s2">&quot;Invalid input format. ref_pdb must be Bio.PDB.Structure&quot;</span>
     <span class="p">)</span>
 
     <span class="n">aligner</span> <span class="o">=</span> <span class="n">instantiate_pairwise_aligner</span><span class="p">(</span>
         <span class="n">scoring_match</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-        <span class="n">penalty_mismatch</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">penalty_mismatch</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">penalty_gap_open</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">penalty_gap_extension</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">penalty_query_left_gap_score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">penalty_query_right_gap_score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cut_seq</span><span class="p">:</span>  <span class="c1"># not None</span>
@@ -357,7 +425,7 @@
             <span class="k">if</span> <span class="n">cut_pdb</span><span class="p">:</span>
                 <span class="c1"># 执行PDB Alignment并得对齐后的PDB文件和RMSD</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">_align_cut2ref</span><span class="p">(</span>
-                    <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">cut_pdb</span><span class="p">,</span> <span class="n">gap_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ref_label</span><span class="p">,</span> <span class="n">cut_label</span>
+                    <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">cut_pdb</span><span class="p">,</span> <span class="n">gap_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ref_label</span><span class="p">,</span> <span class="n">cut_label</span><span class="p">,</span> <span class="n">log_level</span>
                 <span class="p">)</span>
                 <span class="n">ref_pdbs_fix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">ref_label</span><span class="p">])</span>
                 <span class="n">cut_pdbs_fix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">cut_label</span><span class="p">])</span>
@@ -606,6 +674,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;pdb2fasta&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Params:</span>
+<span class="s2">-------</span>
+<span class="s2">input: </span><span class="si">{</span><span class="nb">input</span><span class="si">}</span>
+<span class="s2">output_fasta: </span><span class="si">{</span><span class="n">output_fasta</span><span class="si">}</span>
+<span class="s2">log_level: </span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="p">)</span>
 
     <span class="c1"># 设置输出文件名</span>
     <span class="k">if</span> <span class="n">output_fasta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -621,6 +697,7 @@
 
     <span class="c1"># 检查输入文件是否存在</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input file not found: </span><span class="si">{</span><span class="n">pdb_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">BioatFileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input file not found: </span><span class="si">{</span><span class="n">pdb_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># 检测文件格式并选择解析器</span>
@@ -629,6 +706,7 @@
     <span class="k">elif</span> <span class="n">pdb_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdb_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdb.gz&quot;</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">PDBParser</span><span class="p">(</span><span class="n">QUIET</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Only .pdb and .cif files are allowed.&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">BioatFileFormatError</span><span class="p">(</span><span class="s2">&quot;Only .pdb and .cif files are allowed.&quot;</span><span class="p">)</span>
 
     <span class="c1"># 打开文件，支持 gzip 格式</span>
