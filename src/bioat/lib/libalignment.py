@@ -166,7 +166,7 @@ def instantiate_pairwise_aligner(
         # !使用wildcard时需要谨慎，因为它可能会影响比对的准确性和生物学意义
         # !可以将wildcard设置为'N'，这样在比对过程中，字符'N'将被视为与任何字符都匹配
 
-    lm.logger.info(aligner)
+    lm.logger.debug(aligner)
     return aligner
 
 

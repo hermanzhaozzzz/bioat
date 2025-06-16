@@ -1,5 +1,3 @@
-import inspect
-
 import Bio
 from Bio.Seq import Seq
 
@@ -11,8 +9,6 @@ lm = LoggerManager(mod_name="bioat.foldtools")
 
 class FoldTools:
     """Folding toolbox."""
-
-    lm.set_names(cls_name="FoldTools")
 
     def __init__(self):
         pass
@@ -38,7 +34,6 @@ class FoldTools:
         annotate: bool = True,
         text_interval: int = 5,
         log_level="WARNING",
-        **kwargs,
     ):
         """
         Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
@@ -64,10 +59,6 @@ class FoldTools:
             text_interval (int, optional): The interval between text annotations. Defaults to 5.
             log_level (str, optional): Log level. Defaults to "WARNING".
         """
-        print(f"Calling show_ref_cut with {kwargs}")
-        print(f"Actual show_ref_cut module: {inspect.getmodule(show_ref_cut)}")
-        lm.set_names(func_name="show_ref_cut")
-        lm.set_level(log_level)
         show_ref_cut(
             ref_seq=ref_seq,
             cut_seq=cut_seq,
@@ -88,30 +79,6 @@ class FoldTools:
             annotate=annotate,
             text_interval=text_interval,
             log_level=log_level,
-        )
-        lm.logger.debug(
-            f"""\
-Params:
--------
-ref_seq: {ref_seq}
-ref_pdb: {ref_pdb}
-cut_seq: {cut_seq}
-cut_pdb: {cut_pdb}
-ref_color: {ref_color}
-ref_map_colors: {ref_map_colors}
-ref_map_values: {ref_map_values}
-cut_color: {cut_color}
-gap_color: {gap_color}
-ref_style: {ref_style}
-cut_style: {cut_style}
-gap_style: {gap_style}
-ref_map_value_random: {ref_map_value_random},
-output_fig : {output_fig},
-col: {col},
-scale: {scale},
-annotate: {annotate},
-text_interval: {text_interval},
-log_level: {log_level}"""
         )
 
     def pdb2fasta(self, input: str, output: str | None = None, log_level="WARNING"):
@@ -142,14 +109,4 @@ log_level: {log_level}"""
         Returns:
             None
         """
-        lm.set_names(func_name="pdb2fasta")
-        lm.set_level(log_level)
-        lm.logger.debug(
-            f"""\
-Params:
--------
-input: {input}
-output: {output}
-log_level: {log_level}"""
-        )
         pdb2fasta(pdb_file=input, output_fasta=output, log_level=log_level)

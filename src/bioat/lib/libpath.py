@@ -13,12 +13,23 @@ lm = LoggerManager(mod_name="bioat.lib.libpath")
 HOME = os.path.expanduser("~")
 
 
-def is_path(string):
-    if isinstance(string, Path):
-        return True
-    if isinstance(string, str) and ("/" in string or "\\" in string):
-        return True
-    return
+def is_file(x: str | Path, log_level="WARNING") -> bool:
+    """Check if the given path is a file.
+
+    Args:
+        x (str | Path): The path to check.
+
+    Returns:
+        bool: True if the path is a file, False otherwise.
+    """
+    lm.set_names(func_name="is_file")
+    lm.logger.debug("Checking if '%s' is a file", x)
+    result = os.path.isfile(x)
+    if result:
+        lm.logger.debug("'%s' is a file", x)
+    else:
+        lm.logger.error("'%s' is not a file", x)
+    return result
 
 
 def check_cmd(x, log_level="WARNING") -> bool:
