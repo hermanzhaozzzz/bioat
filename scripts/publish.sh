@@ -290,6 +290,7 @@ function main {
 	echo "按照Pull request successfully merged and closed提示点击Delete branch按钮删除 hermanzhaozzzz/bioat-feedstock/$VERSION 分支"
 	echo "⭐️"
 	echo "Conda 包已经发布, 可以半小时后运行 conda search -c conda-forge 自行检查是否成功更新版本."
+	echo "[step7] 清理不必要的仓库内容，防止下次更新出问题，/bin/rm -rf conda-recipe staged-recipes"
 	echo "⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️"
 }
 
