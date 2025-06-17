@@ -1,6 +1,7 @@
 import gzip
 import math
 import os
+import subprocess
 from io import StringIO
 from typing import List
 
@@ -31,7 +32,12 @@ from bioat.lib.libfastx import (
 from bioat.lib.libpath import is_file
 from bioat.logger import LoggerManager
 
-__all__ = ["load_structure", "structure_to_string", "show_ref_cut"]
+__all__ = [
+    "load_structure",
+    "structure2string",
+    "show_ref_cut",
+    "get_cut2ref_aln_info",
+]
 
 lm = LoggerManager(mod_name="bioat.lib.libpdb")
 lm.set_level("DEBUG")
@@ -62,7 +68,7 @@ def load_structure(structure, label=None, log_level="WARNING"):
     return structure, label
 
 
-def structure_to_string(structure: Bio.PDB.Structure.Structure):
+def structure2string(structure: Bio.PDB.Structure.Structure):
     """Convert Bio.PDB.Structure.Structure to string.
 
     Args:
@@ -80,97 +86,6 @@ def structure_to_string(structure: Bio.PDB.Structure.Structure):
 
     # 返回字符串
     return pdb_string.getvalue()
-
-
-# 对齐函数
-def _align_cut2ref(
-    ref: str | Bio.PDB.Structure.Structure,
-    cut: str | Bio.PDB.Structure.Structure,
-    gap_indices: list[int],
-    label1="ref",
-    label2="cut",
-    log_level="WARNING",
-) -> dict:
-    """Align cutted pdb to ref pdb using the CA atoms.
-    Aligns a truncated protein structure (cut) to its full-length reference structure (ref)
-    using Cα atoms and Biopython's Superimposer. Residues that are deleted in the cut structure
-    must be specified using `gap_indices` (i.e., their positions in the reference structure).
-
-    This function:
-    - Extracts all Cα atoms from `ref` and `cut`
-    - Removes atoms from `ref` at the indices listed in `gap_indices`
-    - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`
-    - Modifies the `cut` structure in-place to match the aligned orientation
-    - Returns both structures and the RMSD value of the alignment
-
-    It assumes:
-    - One-to-one correspondence between residues after gap removal
-    - Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)
-
-    Example:
-        Given:
-            ref = "CRISPRCRISPR"
-            cut = "CRISRCIPR"
-            gap_indices = [4, 7, 9]
-
-        Then:
-            aln_ref = CRISPRCRISPR
-            aln_cut = CRIS-RC-I-PR
-                          *  * *
-                      012345678901
-                        (aligned by removing ref[4], ref[7], ref[9])
-        Finally, the function will return:
-            {
-                "ref": aln_ref structure,  # unaltered ref structure
-                "cut": fixed_cut structure,  # fix cut coords in-place
-                "RMSD": 0.123  # example RMSD value
-            }
-
-    Args:
-        ref (str or Bio.PDB.Structure.Structure): Reference structure path or loaded Structure.
-        cut (str or Bio.PDB.Structure.Structure): Truncated structure path or loaded Structure.
-        gap_indices (list[int]): Indices (0-based) in ref of residues that are deleted in cut.
-        label1 (str, optional): Name for the reference structure. Default is "ref".
-        label2 (str, optional): Name for the cut structure. Default is "cut".
-        log_level (str, optional): Logging level. Default is "WARNING".
-
-    Returns:
-        dict: {
-            label1: Bio.PDB.Structure.Structure (unaltered),
-            label2: Bio.PDB.Structure.Structure (aligned in-place),
-            "RMSD": float
-        }
-    """
-    # 读取 PDB 文件
-    ref, cut = (
-        load_structure(ref, label1, log_level)[0],
-        load_structure(cut, label2, log_level)[0],
-    )
-
-    # 选择对齐的原子 (e.g., CA)
-    atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
-    atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
-    atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
-
-    assert len(atoms1) == len(atoms2), (
-        "The number of CA atoms in pdb1 and pdb2 are not equal. "
-        "Use ref and cut pdbs predicted by AlphaFold2/ESMFold or other tools "
-        "but not pdb downloaded from <PDB database> to ensure the CA atoms are aligned."
-    )
-    # 使用 Biopython 的 Superimposer 进行对齐
-    super_imposer = Superimposer()
-    super_imposer.set_atoms(atoms1, atoms2)
-    super_imposer.apply(cut.get_atoms())  # 修改 pdb 的坐标
-    rmsd = super_imposer.rms
-    lm.logger.info(
-        f"RMSD (strict, remove gaps in {label1}) between {label1} and {label2}: {rmsd:.3f}"
-    )
-
-    return {
-        label1: ref,
-        label2: cut,  # 坐标已对齐
-        "RMSD": rmsd,  # it should be close to the result of pymol cmd.align("cut and name CA", "ref and name CA", cutoff=10.0, cycles=0)[0]
-    }
 
 def _map_ref_colors(ref_map_colors, ref_map_values, ref_map_value_random):
     # fix color mapping
@@ -338,7 +253,7 @@ log_level: {log_level}"""
             )
             alignment_dict = get_aligned_seq(alignment, reverse=False, letn_match=False)
             alignment_dicts.append(alignment_dict)
-            gap_indices.append(
+            gap_indices.append(  # 不指定 cut pdb 时必须在这里计算而不是get_cut2ref_aln_info中
                 [i for i, n in enumerate(alignment_dict["target_seq"]) if n == "-"]
             )
 
@@ -346,8 +261,14 @@ log_level: {log_level}"""
 
             if cut_pdb:
                 # 执行PDB Alignment并得对齐后的PDB文件和RMSD
-                res = _align_cut2ref(
-                    ref_pdb, cut_pdb, gap_indices[idx], ref_label, cut_label, log_level
+                res = get_cut2ref_aln_info(
+                    ref_pdb,
+                    cut_pdb,
+                    cal_rmsd=True,
+                    cal_tmscore=False,
+                    label1=ref_label,
+                    label2=cut_label,
+                    log_level=log_level,
                 )
                 ref_pdbs_fix.append(res[ref_label])
                 cut_pdbs_fix.append(res[cut_label])
@@ -476,7 +397,7 @@ def _add_one_submodel(
     view.setViewStyle({"style": "outline", "color": "black", "width": 0.1})
 
     view.addModel(
-        structure_to_string(ref_pdb),
+        structure2string(ref_pdb),
         "pdb",
         viewer=viewer,
     )
@@ -547,7 +468,7 @@ def _add_one_submodel(
                 viewer=viewer,
             )
     if cut_pdb and rmsd:
-        view.addModel(structure_to_string(cut_pdb), "pdb", viewer=viewer)
+        view.addModel(structure2string(cut_pdb), "pdb", viewer=viewer)
         view.setStyle(
             {"model": 1},
             {
@@ -578,7 +499,12 @@ def _add_one_submodel(
     # view.render(viewer=viewer)
 
 
-def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
+def pdb2fasta(
+    pdb: str | Bio.PDB.Structure.Structure,
+    output_fasta=None,
+    func_return=False,
+    log_level="DEBUG",
+):
     """Converts a PDB / CIF file to a FASTA file.
 
         This function processes the provided PDB file and extracts protein, DNA,
@@ -589,8 +515,9 @@ def pdb2fasta(pdb_file, output_fasta, log_level="DEBUG"):
         4. Multi-chain complexes: The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
 
         Args:
-            pdb_file (str): input file path.
+            pdb_file (str |): input file path.
             output_fasta (str | None, optional): output file path. If None, the output file will be named as the basename of the input file with a ".fa" extension. Defaults to None.
+            func_return (bool, optional): If True, return SeqRecord obj. Defaults to False.
             log_level (str, optional): log level. Defaults to "WARNING".
     """
     lm.set_names(func_name="pdb2fasta")
@@ -603,38 +530,47 @@ input: {input}
 output_fasta: {output_fasta}
 log_level: {log_level}"""
     )
-
-    # 设置输出文件名
-    if output_fasta is None:
-        if pdb_file.endswith(".gz"):
-            idx = ".".join(os.path.basename(pdb_file).split(".")[:-2])
+    if isinstance(pdb, Bio.PDB.Structure.Structure):
+        structure = pdb
+    elif isinstance(pdb, str) and is_file(pdb, log_level=log_level):
+        # 从文件名输入或者命令行输入
+        # 设置输出文件名
+        if output_fasta is None:
+            if pdb.endswith(".gz"):
+                idx = ".".join(os.path.basename(pdb).split(".")[:-2])
+            else:
+                idx = ".".join(os.path.basename(pdb).split(".")[:-1])
+            output_fasta = f"{idx}.fa" if idx else "output.fa"
+            lm.logger.debug(f"Output is not defined, set output to {output_fasta}")
         else:
-            idx = ".".join(os.path.basename(pdb_file).split(".")[:-1])
-        output_fasta = f"{idx}.fa" if idx else "output.fa"
-        lm.logger.debug(f"Output is not defined, set output to {output_fasta}")
+            assert output_fasta.endswith(".fa") | output_fasta.endswith(".fasta"), (
+                "Output file must have a '.fa' / '.fasta' suffix"
+            )
+            idx = ".".join(os.path.basename(output_fasta).split(".fa")[:-1])
+
+        # 检查输入文件是否存在
+        if not os.path.exists(pdb):
+            lm.logger.error(f"Input file not found: {pdb}")
+            raise BioatFileNotFoundError(f"Input file not found: {pdb}")
+
+        # 检测文件格式并选择解析器
+        if pdb.endswith(".cif") or pdb.endswith(".cif.gz"):
+            parser = MMCIFParser(QUIET=True)
+        elif pdb.endswith(".pdb") or pdb.endswith(".pdb.gz"):
+            parser = PDBParser(QUIET=True)
+        else:
+            lm.logger.error("Only .pdb and .cif files are allowed.")
+            raise BioatFileFormatError("Only .pdb and .cif files are allowed.")
+
+        # 打开文件，支持 gzip 格式
+        input_handler = gzip.open(pdb, "rt") if pdb.endswith(".gz") else open(pdb, "rt")
+        structure = parser.get_structure(idx, input_handler)
     else:
-        assert output_fasta.endswith(".fa"), "Output file must have a '.fa' extension"
-        idx = ".".join(os.path.basename(output_fasta).split(".fa")[:-1])
+        raise BioatInvalidParameterError(
+            f"Invalid input format. pdb must be a file path or Bio.PDB.Structure.Structure, got {type(pdb)}"
+        )
 
-    # 检查输入文件是否存在
-    if not os.path.exists(pdb_file):
-        lm.logger.error(f"Input file not found: {pdb_file}")
-        raise BioatFileNotFoundError(f"Input file not found: {pdb_file}")
-
-    # 检测文件格式并选择解析器
-    if pdb_file.endswith(".cif") or pdb_file.endswith(".cif.gz"):
-        parser = MMCIFParser(QUIET=True)
-    elif pdb_file.endswith(".pdb") or pdb_file.endswith(".pdb.gz"):
-        parser = PDBParser(QUIET=True)
-    else:
-        lm.logger.error("Only .pdb and .cif files are allowed.")
-        raise BioatFileFormatError("Only .pdb and .cif files are allowed.")
-
-    # 打开文件，支持 gzip 格式
-    input_handler = (
-        gzip.open(pdb_file, "rt") if pdb_file.endswith(".gz") else open(pdb_file, "rt")
-    )
-    structure = parser.get_structure(idx, input_handler)
+    lm.logger.debug(f"Processing structure: {structure.id}")
 
     records = []
 
@@ -708,11 +644,159 @@ log_level: {log_level}"""
                         description=f"Chain {chain.id} Other molecules",
                     )
                 )
+    if output_fasta:
+        # 将所有链的序列保存为 FASTA 文件
+        SeqIO.write(records, output_fasta, "fasta")
+        input_handler.close()
+        lm.logger.info(f"FASTA saved to: {output_fasta}")
+    if func_return:
+        # 如果需要返回 SeqRecord 对象
+        return records
 
-    # 将所有链的序列保存为 FASTA 文件
-    SeqIO.write(records, output_fasta, "fasta")
-    input_handler.close()
-    lm.logger.info(f"FASTA saved to: {output_fasta}")
+
+# 对齐函数
+def get_cut2ref_aln_info(
+    ref: str | Bio.PDB.Structure.Structure,
+    cut: str | Bio.PDB.Structure.Structure,
+    cal_rmsd=True,
+    cal_tmscore=False,
+    label1="ref",
+    label2="cut",
+    usalign_bin: str = "usalign",
+    log_level="WARNING",
+) -> dict:
+    """Align cutted pdb to ref pdb using the CA atoms.
+    Aligns a truncated protein structure (cut) to its full-length reference structure (ref)
+    using Cα atoms and Biopython's Superimposer.
+
+    This function:
+    - Extracts all Cα atoms from `ref` and `cut`
+    - Removes atoms from `ref` at the indices listed in `gap_indices`
+    - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`
+    - Modifies the `cut` structure in-place to match the aligned orientation
+    - Returns both structures and the RMSD value of the alignment
+
+    It assumes:
+    - One-to-one correspondence between residues after gap removal
+    - Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)
+
+    Args:
+        ref (str or Bio.PDB.Structure.Structure): Reference structure path or loaded Structure.
+        cut (str or Bio.PDB.Structure.Structure): Truncated structure path or loaded Structure.
+        cal_rmsd (bool, optional): Whether to calculate RMSD. Default is True.
+        cal_tmscore (bool, optional): Whether to calculate TM-score using USalign. Default is False.
+        label1 (str, optional): Name for the reference structure. Default is "ref".
+        label2 (str, optional): Name for the cut structure. Default is "cut".
+        usalign_bin (str, optional): Path to the USalign binary for TM-score calculation. Default is "usalign".
+        log_level (str, optional): Logging level. Default is "WARNING".
+
+    Returns:
+        dict: {
+                "{label1}": aln label1 structure,  # if cal_rmsd is True, unaltered label1 structure
+                "{label2}}": fixed label2 structure,  # if cal_rmsd is True, fix label2 coords in-place
+                "RMSD": 0.123  # if cal_rmsd is True, the RMSD value between label1 and label2
+                f"{label1}_seq": ref_seq,  # if cal_rmsd is True, the sequence of label1 structure
+                f"{label2}_seq": cut_seq,  # if cal_rmsd is True, the sequence of label2 structure
+                "alignment_dict": alignment_dict,  # if cal_rmsd is True, the alignment dict of label1 and label2
+                "gap_indices": gap_indices,  # if cal_rmsd is True, the indices of gaps in label1 structure
+                "TM-score:mean": 0.623,  # if cal_tmscore is True, the mean TM-score value
+                "TM-score:TM1": 0.456,  # if cal_tmscore is True, use label1 as ref <L_N> in calculation
+                "TM-score:TM2": 0.789,  # if cal_tmscore is True, use label2 as ref <L_N> in calculation
+                ...
+            }
+    """
+    # 读取 PDB 文件
+    ref, cut = (
+        load_structure(ref, label1, log_level)[0],
+        load_structure(cut, label2, log_level)[0],
+    )
+    aln_info = dict()
+
+    if cal_rmsd:
+        lm.logger.debug(
+            f"Calculating RMSD between {label1} and {label2} using CA atoms."
+        )
+        ref_seq = pdb2fasta(ref, func_return=True, log_level=log_level)[0]
+        cut_seq = pdb2fasta(cut, func_return=True, log_level=log_level)[0]
+        lm.logger.debug(f"fetch seq info from structure: {ref.id} -> {ref_seq}")
+        lm.logger.debug(f"fetch seq info from structure:  {cut.id} -> {cut_seq}")
+        aligner = instantiate_pairwise_aligner(
+            scoring_match=5,
+            penalty_mismatch=-100,
+            penalty_gap_open=-1,
+            penalty_gap_extension=0,
+            penalty_query_left_gap_score=0,
+            penalty_query_right_gap_score=0,
+            log_level=log_level,
+        )
+
+        # 获得gaps的位置
+        # Perform alignment
+        alignment = get_best_alignment(
+            seq_a=ref_seq.seq, seq_b=cut_seq.seq, aligner=aligner, consider_strand=False
+        )
+        alignment_dict = get_aligned_seq(alignment, reverse=False, letn_match=False)
+        gap_indices = [
+            i for i, n in enumerate(alignment_dict["target_seq"]) if n == "-"
+        ]
+        # 选择对齐的原子 (e.g., CA)
+        atoms1 = [atom for atom in ref.get_atoms() if atom.get_name() == "CA"]
+        atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
+        atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
+
+        assert len(atoms1) == len(atoms2), (
+            "The number of CA atoms in pdb1 and pdb2 are not equal. "
+            "Use ref and cut pdbs predicted by AlphaFold2/ESMFold or other tools "
+            "but not pdb downloaded from <PDB database> to ensure the CA atoms are aligned."
+        )
+        # 使用 Biopython 的 Superimposer 进行对齐
+        super_imposer = Superimposer()
+        super_imposer.set_atoms(atoms1, atoms2)
+        super_imposer.apply(cut.get_atoms())  # 修改 pdb 的坐标
+        rmsd = super_imposer.rms
+        lm.logger.info(
+            f"RMSD (strict, remove gaps in {label1}) between {label1} and {label2}: {rmsd:.3f}"
+        )
+        aln_info[label1] = ref
+        aln_info[label2] = cut  # 坐标已对齐
+        aln_info["RMSD"] = (
+            rmsd  # it should be close to the result of pymol cmd.align("cut and name CA", "ref and name CA", cutoff=10.0, cycles=0)[0]
+        )
+        aln_info[f"{label1}_seq"] = str(ref_seq.seq)
+        aln_info[f"{label2}_seq"] = str(cut_seq.seq)
+        aln_info["alignment_dict"] = alignment_dict
+        aln_info["gap_indices"] = gap_indices
+
+    if cal_tmscore:
+        lm.logger.debug(
+            f"Calculating TM-score between {label1} and {label2} using CA atoms."
+        )
+        # 判断 usalign_bin 是否可执行
+        if not os.path.isfile(usalign_bin) or not os.access(usalign_bin, os.X_OK):
+            lm.logger.error(
+                f"usalign binary not found in var 'PATH' or not executable: {usalign_bin}, please set the --usalign_bin <path/to/usalign> param or use conda install -c conda-forge usalign to install it!"
+            )
+            raise BioatFileNotFoundError(
+                f"usalign binary not found or not executable: {usalign_bin}"
+            )
+        # 使用 usalign 计算 TM-score
+        cmd = [usalign_bin, ref_pdb, cut_pdb, "-outfmt", "2", "-mol", "prot"]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            raise RuntimeError(f"USalign 执行失败：\n{result.stderr}")
+
+        lines = result.stdout.strip().splitlines()
+        if len(lines) < 2:
+            raise ValueError("USalign 输出异常，结果缺失。")
+
+        fields = lines[1].split()
+        tm1 = float(fields[2])
+        tm2 = float(fields[3])
+        aln_info["TM-score:mean"] = (tm1 + tm2) / 2.0
+        aln_info["TM-score:TM1"] = tm1
+        aln_info["TM-score:TM2"] = tm2
+    return aln_info
 
 
 if __name__ == "__main__":
@@ -746,3 +830,14 @@ if __name__ == "__main__":
         output_fig=None,
         log_level="DEBUG",
     )
+    aln_info = get_cut2ref_aln_info(
+        ref=ref_pdb,
+        cut=cut_pdb,
+        cal_rmsd=True,
+        cal_tmscore=True,
+        label1="ref",
+        label2="cut",
+        usalign_bin="/Users/zhaohuanan/micromamba/envs/ProEvaluator/bin/usalign",
+        log_level="DEBUG",
+    )
+    print(aln_info)

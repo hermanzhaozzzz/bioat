@@ -1,7 +1,7 @@
 import Bio
 from Bio.Seq import Seq
 
-from bioat.lib.libpdb import pdb2fasta, show_ref_cut
+from bioat.lib.libpdb import get_cut2ref_aln_info, pdb2fasta, show_ref_cut
 from bioat.logger import LoggerManager
 
 lm = LoggerManager(mod_name="bioat.foldtools")
@@ -109,4 +109,68 @@ class FoldTools:
         Returns:
             None
         """
-        pdb2fasta(pdb_file=input, output_fasta=output, log_level=log_level)
+        pdb2fasta(pdb=input, output_fasta=output, log_level=log_level)
+
+    def get_cut2ref_aln_info(
+        self,
+        ref: str | Bio.PDB.Structure.Structure,
+        cut: str | Bio.PDB.Structure.Structure,
+        cal_rmsd=True,
+        cal_tmscore=False,
+        label1="ref",
+        label2="cut",
+        usalign_bin: str = "usalign",
+        log_level="WARNING",
+    ):
+        """Align cutted pdb to ref pdb using the CA atoms.
+        Aligns a truncated protein structure (cut) to its full-length reference structure (ref)
+        using Cα atoms and Biopython's Superimposer.
+
+        This function:
+        - Extracts all Cα atoms from `ref` and `cut`
+        - Removes atoms from `ref` at the indices listed in `gap_indices`
+        - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`
+        - Modifies the `cut` structure in-place to match the aligned orientation
+        - Returns both structures and the RMSD value of the alignment
+
+        It assumes:
+        - One-to-one correspondence between residues after gap removal
+        - Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)
+
+        Args:
+            ref (str or Bio.PDB.Structure.Structure): Reference structure path or loaded Structure.
+            cut (str or Bio.PDB.Structure.Structure): Truncated structure path or loaded Structure.
+            cal_rmsd (bool, optional): Whether to calculate RMSD. Default is True.
+            cal_tmscore (bool, optional): Whether to calculate TM-score using USalign. Default is False.
+            label1 (str, optional): Name for the reference structure. Default is "ref".
+            label2 (str, optional): Name for the cut structure. Default is "cut".
+            usalign_bin (str, optional): Path to the USalign binary for TM-score calculation. Default is "usalign".
+            log_level (str, optional): Logging level. Default is "WARNING".
+
+        Returns:
+            dict: {
+                    "{label1}": aln label1 structure,  # if cal_rmsd is True, unaltered label1 structure
+                    "{label2}}": fixed label2 structure,  # if cal_rmsd is True, fix label2 coords in-place
+                    "RMSD": 0.123  # if cal_rmsd is True, the RMSD value between label1 and label2
+                    f"{label1}_seq": ref_seq,  # if cal_rmsd is True, the sequence of label1 structure
+                    f"{label2}_seq": cut_seq,  # if cal_rmsd is True, the sequence of label2 structure
+                    "alignment_dict": alignment_dict,  # if cal_rmsd is True, the alignment dict of label1 and label2
+                    "gap_indices": gap_indices,  # if cal_rmsd is True, the indices of gaps in label1 structure
+                    "TM-score:mean": 0.623,  # if cal_tmscore is True, the mean TM-score value
+                    "TM-score:TM1": 0.456,  # if cal_tmscore is True, use label1 as ref <L_N> in calculation
+                    "TM-score:TM2": 0.789,  # if cal_tmscore is True, use label2 as ref <L_N> in calculation
+                    ...
+                }
+        """
+        aln_info = get_cut2ref_aln_info(
+            ref=ref,
+            cut=cut,
+            cal_rmsd=cal_rmsd,
+            cal_tmscore=cal_tmscore,
+            label1=label1,
+            label2=label2,
+            usalign_bin=usalign_bin,
+            log_level=log_level,
+        )
+        for key, value in aln_info.items():
+            print(f"{key}: {value}")
