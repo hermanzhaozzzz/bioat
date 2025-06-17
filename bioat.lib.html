@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=806654eb"></script>
+      <script src="_static/documentation_options.js?v=241ed0f2"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -1655,6 +1655,60 @@ homepage: <a class="reference external" href="https://github.com/hermanzhaozzzz"
 <section id="module-bioat.lib.libpdb">
 <span id="bioat-lib-libpdb-module"></span><h2>bioat.lib.libpdb module<a class="headerlink" href="#module-bioat.lib.libpdb" title="Link to this heading"></a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libpdb.get_cut2ref_aln_info">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_cut2ref_aln_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cal_rmsd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cal_tmscore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ref'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">usalign_bin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'usalign'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#get_cut2ref_aln_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.get_cut2ref_aln_info" title="Link to this definition"></a></dt>
+<dd><p>Align cutted pdb to ref pdb using the CA atoms.
+Aligns a truncated protein structure (cut) to its full-length reference structure (ref)
+using Cα atoms and Biopython’s Superimposer.</p>
+<p>This function:
+- Extracts all Cα atoms from <cite>ref</cite> and <cite>cut</cite>
+- Removes atoms from <cite>ref</cite> at the indices listed in <cite>gap_indices</cite>
+- Aligns the remaining atoms from <cite>cut</cite> to the corresponding positions in <cite>ref</cite>
+- Modifies the <cite>cut</cite> structure in-place to match the aligned orientation
+- Returns both structures and the RMSD value of the alignment</p>
+<p>It assumes:
+- One-to-one correspondence between residues after gap removal
+- Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref</strong> (<em>str</em><em> or </em><em>Bio.PDB.Structure.Structure</em>) – Reference structure path or loaded Structure.</p></li>
+<li><p><strong>cut</strong> (<em>str</em><em> or </em><em>Bio.PDB.Structure.Structure</em>) – Truncated structure path or loaded Structure.</p></li>
+<li><p><strong>cal_rmsd</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to calculate RMSD. Default is True.</p></li>
+<li><p><strong>cal_tmscore</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to calculate TM-score using USalign. Default is False.</p></li>
+<li><p><strong>label1</strong> (<em>str</em><em>, </em><em>optional</em>) – Name for the reference structure. Default is “ref”.</p></li>
+<li><p><strong>label2</strong> (<em>str</em><em>, </em><em>optional</em>) – Name for the cut structure. Default is “cut”.</p></li>
+<li><p><strong>usalign_bin</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the USalign binary for TM-score calculation. Default is “usalign”.</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – Logging level. Default is “WARNING”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>{</dt><dd><blockquote>
+<div><p>“{label1}”: aln label1 structure,  # if cal_rmsd is True, unaltered label1 structure
+“{label2}}”: fixed label2 structure,  # if cal_rmsd is True, fix label2 coords in-place
+“RMSD”: 0.123  # if cal_rmsd is True, the RMSD value between label1 and label2
+f”{label1}_seq”: ref_seq,  # if cal_rmsd is True, the sequence of label1 structure
+f”{label2}_seq”: cut_seq,  # if cal_rmsd is True, the sequence of label2 structure
+“alignment_dict”: alignment_dict,  # if cal_rmsd is True, the alignment dict of label1 and label2
+“gap_indices”: gap_indices,  # if cal_rmsd is True, the indices of gaps in label1 structure
+“TM-score:mean”: 0.623,  # if cal_tmscore is True, the mean TM-score value
+“TM-score:TM1”: 0.456,  # if cal_tmscore is True, use label1 as ref &lt;L_N&gt; in calculation
+“TM-score:TM2”: 0.789,  # if cal_tmscore is True, use label2 as ref &lt;L_N&gt; in calculation
+…</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="bioat.lib.libpdb.load_structure">
 <span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">load_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'WARNING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#load_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.load_structure" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1692,8 +1746,8 @@ homepage: <a class="reference external" href="https://github.com/hermanzhaozzzz"
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="bioat.lib.libpdb.structure_to_string">
-<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">structure_to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#structure_to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.structure_to_string" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="bioat.lib.libpdb.structure2string">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libpdb.</span></span><span class="sig-name descname"><span class="pre">structure2string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libpdb.html#structure2string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libpdb.structure2string" title="Link to this definition"></a></dt>
 <dd><p>Convert Bio.PDB.Structure.Structure to string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

@@ -12,7 +12,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=806654eb"></script>
+      <script src="../../_static/documentation_options.js?v=241ed0f2"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -71,7 +71,7 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Seq</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seq</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdb2fasta</span><span class="p">,</span> <span class="n">show_ref_cut</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cut2ref_aln_info</span><span class="p">,</span> <span class="n">pdb2fasta</span><span class="p">,</span> <span class="n">show_ref_cut</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.foldtools&quot;</span><span class="p">)</span>
@@ -186,7 +186,74 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pdb2fasta</span><span class="p">(</span><span class="n">pdb_file</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output_fasta</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span></div>
+        <span class="n">pdb2fasta</span><span class="p">(</span><span class="n">pdb</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output_fasta</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FoldTools.get_cut2ref_aln_info">
+<a class="viewcode-back" href="../../bioat.html#bioat.foldtools.FoldTools.get_cut2ref_aln_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cut2ref_aln_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">,</span>
+        <span class="n">cut</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">,</span>
+        <span class="n">cal_rmsd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cal_tmscore</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">label1</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span>
+        <span class="n">label2</span><span class="o">=</span><span class="s2">&quot;cut&quot;</span><span class="p">,</span>
+        <span class="n">usalign_bin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;usalign&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Align cutted pdb to ref pdb using the CA atoms.</span>
+<span class="sd">        Aligns a truncated protein structure (cut) to its full-length reference structure (ref)</span>
+<span class="sd">        using Cα atoms and Biopython&#39;s Superimposer.</span>
+
+<span class="sd">        This function:</span>
+<span class="sd">        - Extracts all Cα atoms from `ref` and `cut`</span>
+<span class="sd">        - Removes atoms from `ref` at the indices listed in `gap_indices`</span>
+<span class="sd">        - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`</span>
+<span class="sd">        - Modifies the `cut` structure in-place to match the aligned orientation</span>
+<span class="sd">        - Returns both structures and the RMSD value of the alignment</span>
+
+<span class="sd">        It assumes:</span>
+<span class="sd">        - One-to-one correspondence between residues after gap removal</span>
+<span class="sd">        - Structures are predicted by AlphaFold2 / ESMFold (no missing atoms)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ref (str or Bio.PDB.Structure.Structure): Reference structure path or loaded Structure.</span>
+<span class="sd">            cut (str or Bio.PDB.Structure.Structure): Truncated structure path or loaded Structure.</span>
+<span class="sd">            cal_rmsd (bool, optional): Whether to calculate RMSD. Default is True.</span>
+<span class="sd">            cal_tmscore (bool, optional): Whether to calculate TM-score using USalign. Default is False.</span>
+<span class="sd">            label1 (str, optional): Name for the reference structure. Default is &quot;ref&quot;.</span>
+<span class="sd">            label2 (str, optional): Name for the cut structure. Default is &quot;cut&quot;.</span>
+<span class="sd">            usalign_bin (str, optional): Path to the USalign binary for TM-score calculation. Default is &quot;usalign&quot;.</span>
+<span class="sd">            log_level (str, optional): Logging level. Default is &quot;WARNING&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: {</span>
+<span class="sd">                    &quot;{label1}&quot;: aln label1 structure,  # if cal_rmsd is True, unaltered label1 structure</span>
+<span class="sd">                    &quot;{label2}}&quot;: fixed label2 structure,  # if cal_rmsd is True, fix label2 coords in-place</span>
+<span class="sd">                    &quot;RMSD&quot;: 0.123  # if cal_rmsd is True, the RMSD value between label1 and label2</span>
+<span class="sd">                    f&quot;{label1}_seq&quot;: ref_seq,  # if cal_rmsd is True, the sequence of label1 structure</span>
+<span class="sd">                    f&quot;{label2}_seq&quot;: cut_seq,  # if cal_rmsd is True, the sequence of label2 structure</span>
+<span class="sd">                    &quot;alignment_dict&quot;: alignment_dict,  # if cal_rmsd is True, the alignment dict of label1 and label2</span>
+<span class="sd">                    &quot;gap_indices&quot;: gap_indices,  # if cal_rmsd is True, the indices of gaps in label1 structure</span>
+<span class="sd">                    &quot;TM-score:mean&quot;: 0.623,  # if cal_tmscore is True, the mean TM-score value</span>
+<span class="sd">                    &quot;TM-score:TM1&quot;: 0.456,  # if cal_tmscore is True, use label1 as ref &lt;L_N&gt; in calculation</span>
+<span class="sd">                    &quot;TM-score:TM2&quot;: 0.789,  # if cal_tmscore is True, use label2 as ref &lt;L_N&gt; in calculation</span>
+<span class="sd">                    ...</span>
+<span class="sd">                }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">aln_info</span> <span class="o">=</span> <span class="n">get_cut2ref_aln_info</span><span class="p">(</span>
+            <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span>
+            <span class="n">cut</span><span class="o">=</span><span class="n">cut</span><span class="p">,</span>
+            <span class="n">cal_rmsd</span><span class="o">=</span><span class="n">cal_rmsd</span><span class="p">,</span>
+            <span class="n">cal_tmscore</span><span class="o">=</span><span class="n">cal_tmscore</span><span class="p">,</span>
+            <span class="n">label1</span><span class="o">=</span><span class="n">label1</span><span class="p">,</span>
+            <span class="n">label2</span><span class="o">=</span><span class="n">label2</span><span class="p">,</span>
+            <span class="n">usalign_bin</span><span class="o">=</span><span class="n">usalign_bin</span><span class="p">,</span>
+            <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">aln_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
