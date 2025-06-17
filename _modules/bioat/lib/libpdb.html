@@ -12,7 +12,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=241ed0f2"></script>
+      <script src="../../../_static/documentation_options.js?v=cc047330"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -860,8 +860,21 @@
             <span class="k">raise</span> <span class="n">BioatFileNotFoundError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;usalign binary not found or not executable: </span><span class="si">{</span><span class="n">usalign_bin</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">Bio.PDB</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBIO</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">save_structure_to_tempfile</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+            <span class="n">io</span> <span class="o">=</span> <span class="n">PDBIO</span><span class="p">()</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">set_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">ref_path</span> <span class="o">=</span> <span class="n">save_structure_to_tempfile</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="n">cut_path</span> <span class="o">=</span> <span class="n">save_structure_to_tempfile</span><span class="p">(</span><span class="n">cut</span><span class="p">)</span>
         <span class="c1"># 使用 usalign 计算 TM-score</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">usalign_bin</span><span class="p">,</span> <span class="n">ref_pdb</span><span class="p">,</span> <span class="n">cut_pdb</span><span class="p">,</span> <span class="s2">&quot;-outfmt&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;-mol&quot;</span><span class="p">,</span> <span class="s2">&quot;prot&quot;</span><span class="p">]</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">usalign_bin</span><span class="p">,</span> <span class="n">ref_path</span><span class="p">,</span> <span class="n">cut_path</span><span class="p">,</span> <span class="s2">&quot;-outfmt&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;-mol&quot;</span><span class="p">,</span> <span class="s2">&quot;prot&quot;</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
