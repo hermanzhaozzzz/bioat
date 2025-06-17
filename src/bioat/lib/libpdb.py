@@ -779,8 +779,21 @@ def get_cut2ref_aln_info(
             raise BioatFileNotFoundError(
                 f"usalign binary not found or not executable: {usalign_bin}"
             )
+        import tempfile
+
+        from Bio.PDB import PDBIO
+
+        def save_structure_to_tempfile(structure):
+            io = PDBIO()
+            io.set_structure(structure)
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdb")
+            io.save(tmp.name)
+            return tmp.name
+
+        ref_path = save_structure_to_tempfile(ref)
+        cut_path = save_structure_to_tempfile(cut)
         # 使用 usalign 计算 TM-score
-        cmd = [usalign_bin, ref_pdb, cut_pdb, "-outfmt", "2", "-mol", "prot"]
+        cmd = [usalign_bin, ref_path, cut_path, "-outfmt", "2", "-mol", "prot"]
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode != 0:
