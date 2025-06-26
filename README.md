@@ -47,7 +47,7 @@ See [Doc](https://bioat.readthedocs.io/en/latest/)
 ```latex
 @software{huanan_herman_zhao_2025_15093444,
   author       = {Huanan Herman Zhao},
-  title        = {BioAT, a python package & command line toolkit for Bioinformatics and data science},
+  title        = {BioAT, a python package & command line toolkit for bioinformatics and data science},
   month        = mar,
   year         = 2025,
   publisher    = {Zenodo},
