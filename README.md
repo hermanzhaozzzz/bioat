@@ -47,11 +47,12 @@ See [Doc](https://bioat.readthedocs.io/en/latest/)
 ```latex
 @software{huanan_herman_zhao_2025_15093444,
   author       = {Huanan Herman Zhao},
-  title        = {BioAT, a python package & command line toolkit for bioinformatics and data science},
+  title        = {BioAT, a python package \& command line toolkit for
+                   bioinformatics and data science
+                  },
   month        = mar,
   year         = 2025,
   publisher    = {Zenodo},
-  version      = {v0.14.4},
   doi          = {10.5281/zenodo.15093444},
   url          = {https://doi.org/10.5281/zenodo.15093444},
   swhid        = {swh:1:dir:19b60f4b0b93f490798727c05ab41a3222b555a1
