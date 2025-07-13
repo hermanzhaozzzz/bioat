@@ -9,7 +9,11 @@ import Bio
 import numpy as np
 import py3Dmol
 from Bio import SeqIO
-from Bio.PDB import PDBIO, MMCIFParser, PDBParser, Superimposer
+from Bio.PDB.MMCIFParser import MMCIFParser
+from Bio.PDB.PDBIO import PDBIO
+from Bio.PDB.PDBParser import PDBParser
+from Bio.PDB.Structure import Structure as BiopythonStructure
+from Bio.PDB.Superimposer import Superimposer
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
@@ -54,11 +58,13 @@ def _load_seq(seq, label=None, log_level="WARNING"):
     return seq, label
 
 
-def load_structure(structure, label=None, log_level="WARNING"):
+def load_structure(
+    structure: str | BiopythonStructure, label=None, log_level="WARNING"
+):
     if isinstance(structure, str) and is_file(structure, log_level=log_level):
         parser = PDBParser(QUIET=True)
         structure = parser.get_structure(label, structure)
-    elif isinstance(structure, Bio.PDB.Structure.Structure):
+    elif isinstance(structure, BiopythonStructure):
         label = structure.id if label is None else label
     else:
         raise BioatInvalidParameterError(
@@ -68,7 +74,7 @@ def load_structure(structure, label=None, log_level="WARNING"):
     return structure, label
 
 
-def structure2string(structure: Bio.PDB.Structure.Structure):
+def structure2string(structure: BiopythonStructure):
     """Convert Bio.PDB.Structure.Structure to string.
 
     Args:
@@ -120,12 +126,9 @@ def _map_ref_colors(ref_map_colors, ref_map_values, ref_map_value_random):
 
 def show_ref_cut(
     ref_seq: str | Seq,
-    ref_pdb: str | Bio.PDB.Structure.Structure,
+    ref_pdb: str | BiopythonStructure,
     cut_seq: List[str | Seq] | str | Seq | None = None,
-    cut_pdb: List[str | Bio.PDB.Structure.Structure]
-    | str
-    | Bio.PDB.Structure.Structure
-    | None = None,
+    cut_pdb: List[str | BiopythonStructure] | str | BiopythonStructure | None = None,
     cut_labels: List[str] | None = None,
     ref_color: str = "red",
     ref_map_colors: tuple[str] | None = None,
