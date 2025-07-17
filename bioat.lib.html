@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cc047330"></script>
+      <script src="_static/documentation_options.js?v=687cf729"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -1766,8 +1766,72 @@ f”{label2}_seq”: cut_seq,  # if cal_rmsd is True, the sequence of label2 str
 <section id="module-bioat.lib.libphylo">
 <span id="bioat-lib-libphylo-module"></span><h2>bioat.lib.libphylo module<a class="headerlink" href="#module-bioat.lib.libphylo" title="Link to this heading"></a></h2>
 </section>
-<section id="bioat-lib-libplot-module">
-<h2>bioat.lib.libplot module<a class="headerlink" href="#bioat-lib-libplot-module" title="Link to this heading"></a></h2>
+<section id="module-bioat.lib.libplot">
+<span id="bioat-lib-libplot-module"></span><h2>bioat.lib.libplot module<a class="headerlink" href="#module-bioat.lib.libplot" title="Link to this heading"></a></h2>
+<p>bioat.lib.libplot</p>
+<p>author: Herman Huanan Zhao
+email: <a class="reference external" href="mailto:hermanzhaozzzz&#37;&#52;&#48;gmail&#46;com">hermanzhaozzzz<span>&#64;</span>gmail<span>&#46;</span>com</a>
+homepage: <a class="reference external" href="https://github.com/hermanzhaozzzz">https://github.com/hermanzhaozzzz</a></p>
+<p>This module provides functions for plotting.</p>
+<dl>
+<dt>example 1:</dt><dd><dl>
+<dt>init_matplotlib</dt><dd><dl>
+<dt>&lt;in python consolo&gt;:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_matplotlib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">init_matplotlib</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="s1">&#39;info&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>example 2:</dt><dd><dl>
+<dt>plot_colortable</dt><dd><dl>
+<dt>&lt;in python consolo&gt;:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_colortable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#64C1E8&#39;</span><span class="p">,</span> <span class="s1">&#39;#80CED7&#39;</span><span class="p">,</span> <span class="s1">&#39;#63C7B2&#39;</span><span class="p">,</span> <span class="s1">&#39;#8E6C88&#39;</span><span class="p">,</span> <span class="s1">&#39;#CA61C3&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF958C&#39;</span><span class="p">,</span> <span class="s1">&#39;#883677&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot_colortable</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libplot.init_matplotlib">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libplot.</span></span><span class="sig-name descname"><span class="pre">init_matplotlib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seaborn-v0_8-paper'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Helvetica'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libplot.html#init_matplotlib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libplot.init_matplotlib" title="Link to this definition"></a></dt>
+<dd><p>easily set matplotlib style</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>style</strong> (<em>str</em><em>, </em><em>optional</em>) – matplotlib style, defaults to ‘seaborn-v0_8-paper’</p></li>
+<li><p><strong>font</strong> (<em>str</em><em>, </em><em>optional</em>) – use what font in matplotlib, defaults to ‘Helvetica’</p></li>
+<li><p><strong>refresh</strong> (<em>bool</em><em>, </em><em>optional</em>) – wether to remove matplotlib font cache and reset it, defaults to False</p></li>
+<li><p><strong>log_level</strong> (<em>str</em><em>, </em><em>optional</em>) – log level, defaults to ‘INFO’</p></li>
+<li><p><strong>set_backend_pdf</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use core fonts for the PDF backend, defaults to True</p></li>
+<li><p><strong>set_backend_ps</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use core fonts for the PS backend, defaults to True</p></li>
+<li><p><strong>set_backend_svg</strong> (<em>str</em><em>, </em><em>optional</em>) – whether to use ‘none’ to replace ‘path’ (use font but not plot path for characters)for the SVG backend, defaults to ‘none’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="bioat.html#bioat.exceptions.BioatError" title="bioat.exceptions.BioatError"><strong>BioatError</strong></a> – if failed to copy fonts</p></li>
+<li><p><a class="reference internal" href="bioat.html#bioat.exceptions.BioatRuntimeError" title="bioat.exceptions.BioatRuntimeError"><strong>BioatRuntimeError</strong></a> – if site-packages not found in sys.path</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bioat.lib.libplot.plot_colortable">
+<span class="sig-prename descclassname"><span class="pre">bioat.lib.libplot.</span></span><span class="sig-name descname"><span class="pre">plot_colortable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bioat/lib/libplot.html#plot_colortable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bioat.lib.libplot.plot_colortable" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-bioat.lib.libsnakemake">
 <span id="bioat-lib-libsnakemake-module"></span><h2>bioat.lib.libsnakemake module<a class="headerlink" href="#module-bioat.lib.libsnakemake" title="Link to this heading"></a></h2>
