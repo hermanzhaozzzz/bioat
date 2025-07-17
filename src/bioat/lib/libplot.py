@@ -32,7 +32,7 @@ from glob import glob
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from dna_features_viewer import GraphicFeature, GraphicRecord
+import seaborn as sns
 from matplotlib.patches import Rectangle
 
 from bioat.exceptions import BioatError, BioatRuntimeError
@@ -93,11 +93,15 @@ def _copy_fonts(refresh=False, log_level="warning"):
 
 
 def init_matplotlib(
-    style="ggplot", font="Helvetica", refresh=False, log_level="INFO", **kwargs
+    style="seaborn-v0_8-paper",
+    font="Helvetica",
+    refresh=False,
+    log_level="INFO",
+    **kwargs,
 ):
     """easily set matplotlib style
 
-    :param style: matplotlib style, defaults to 'ggplot'
+    :param style: matplotlib style, defaults to 'seaborn-v0_8-paper'
     :type style: str, optional
     :param font: use what font in matplotlib, defaults to 'Helvetica'
     :type font: str, optional
@@ -156,6 +160,21 @@ def init_matplotlib(
         )
         plt.rcParams["svg.fonttype"] = set_backend_svg
     lm.logger.info("matplotlib initialized successfully")
+
+    sns_context = kwargs.get("sns_context", "paper")
+    sns_style = kwargs.get("sns_style", "whitegrid")
+    sns_palette = kwargs.get("sns_palette", "deep")
+    sns_font_scale = kwargs.get("sns_font_scale", 1.2)
+    sns.set_theme(
+        context=sns_context,
+        style=sns_style,
+        palette=sns_palette,
+        font=font,
+        font_scale=sns_font_scale,
+    )
+    lm.logger.info(
+        f"set: sns.set_theme(context='{sns_context}', style='{sns_style}', palette='{sns_palette}', font='{font}', font_scale={sns_font_scale})"
+    )
 
 
 def plot_colortable(colors, *, ncols=4):
@@ -376,6 +395,11 @@ def plot_dna_features(
         axs = [axs]
 
     # 循环遍历每个子图并进行绘图
+    try:
+        from dna_features_viewer import GraphicFeature, GraphicRecord
+    except ImportError:
+        lm.logger.error("Please install dna_features_viewer to use this function.")
+        exit(0)
     for i, g in zip(range(n), df.groupby(col_group)):
         group_name, data = g
         # print(f"group_name = {group_name}")
@@ -433,6 +457,7 @@ def plot_dna_features(
 
 
 if __name__ == "__main__":
+    pass
     # test for init_matplotlib
     # init_matplotlib(log_level="warning")
     # plot_colortable(
@@ -456,24 +481,24 @@ if __name__ == "__main__":
     # )
     # plt.show()
     # plt.close()
-    df_plot = pd.read_csv("~/demo.tsv", sep="\t")
-    # print(df_plot)
-    plot_dna_features()
-    plot_dna_features(
-        df=df_plot,
-        # use_demo_data=True
-        fig_width=20,
-        fig_height=3,
-        col_locus_start="locus_start",
-        col_locus_length="locus_length",
-        col_group="crispr_id:member",
-        col_name="pep_name",
-        col_start="pep_start",
-        col_end="pep_end",
-        col_strand="pep_strand",
-        col_color="color",
-    )
+    # df_plot = pd.read_csv("~/demo.tsv", sep="\t")
+    # # print(df_plot)
+    # plot_dna_features()
+    # plot_dna_features(
+    #     df=df_plot,
+    #     # use_demo_data=True
+    #     fig_width=20,
+    #     fig_height=3,
+    #     col_locus_start="locus_start",
+    #     col_locus_length="locus_length",
+    #     col_group="crispr_id:member",
+    #     col_name="pep_name",
+    #     col_start="pep_start",
+    #     col_end="pep_end",
+    #     col_strand="pep_strand",
+    #     col_color="color",
+    # )
 
-    # fig.savefig("/Users/zhaohuanan/Downloads/test.png", dpi=300)
-    # 显示图形
-    # plt.show()
+    # # fig.savefig("/Users/zhaohuanan/Downloads/test.png", dpi=300)
+    # # 显示图形
+    # # plt.show()
