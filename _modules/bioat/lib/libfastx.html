@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libfastx &mdash; bioat Documentation</title>
+  <title>bioat.lib.libfastx &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">bioat</a>
+          <a href="../../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -211,10 +211,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_filter_fasta_length</span><span class="p">(</span><span class="n">contig</span><span class="p">,</span> <span class="n">lmin</span><span class="p">,</span> <span class="n">lmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">lmin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">lmax</span>
-    <span class="k">elif</span> <span class="n">lmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">lmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">lmin</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">lmin</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">lmax</span>
+    <span class="k">return</span> <span class="n">lmin</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">lmax</span>
 
 
 <div class="viewcode-block" id="cas_finder">
@@ -242,7 +241,7 @@
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;pybedtools not installed, please exec `python -m pip install pybedtools` &quot;</span>
-            <span class="s2">&quot;or `conda install pybedtools`, then try again.&quot;</span>
+            <span class="s2">&quot;or `conda install pybedtools`, then try again.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -250,16 +249,13 @@
 
     <span class="k">if</span> <span class="n">temp_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">input_fa</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;./&quot;</span><span class="p">):</span>
-            <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">workspace</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">dirname</span>
+        <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">workspace</span> <span class="k">if</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;./&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">dirname</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">pass</span>
 
     <span class="k">if</span> <span class="n">prodigal_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;prodigal mode </span><span class="si">{</span><span class="n">prodigal_mode</span><span class="si">}</span><span class="s2"> not supported, must be &#39;meta&#39; or &#39;single&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;prodigal mode </span><span class="si">{</span><span class="n">prodigal_mode</span><span class="si">}</span><span class="s2"> not supported, must be &#39;meta&#39; or &#39;single&#39;&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">fa_input</span> <span class="o">=</span> <span class="n">input_fa</span>  <span class="c1"># input_fa = &#39;202155.assembled.fna&#39;</span>
@@ -306,9 +302,7 @@
         <span class="c1"># filter length of assembly contigs</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filter length of contigs from file @ </span><span class="si">{</span><span class="n">fa_input</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">contigs_input</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
         <span class="n">contigs_output</span> <span class="o">=</span> <span class="p">(</span>
@@ -327,15 +321,15 @@
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fa_filtered</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># don&#39;t consider gz file. because it is a temp file.</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;fa_filtered @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2"> is empty! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;fa_filtered @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2"> is empty! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fa_crisper_contig</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span>
             <span class="k">return</span>  <span class="c1"># just return output file as an empty file</span>
@@ -359,7 +353,7 @@
                 <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
                 <span class="n">gff</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;call has returned, check output @ </span><span class="si">{</span><span class="n">fa_pep</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># the output .pep.faa&#39;s header: &gt;name # start # stop # 1/-1 # prodigalInfo</span>
@@ -372,7 +366,7 @@
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;subprocess call for pilercr&quot;</span><span class="p">)</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>  <span class="c1"># don&#39;t export help doc for output crispr info</span>
             <span class="p">[</span><span class="n">pilercr</span><span class="p">,</span> <span class="s2">&quot;-noinfo&quot;</span><span class="p">,</span> <span class="s2">&quot;-in&quot;</span><span class="p">,</span> <span class="n">fa_filtered</span><span class="p">,</span> <span class="s2">&quot;-out&quot;</span><span class="p">,</span> <span class="n">f_pilercr</span><span class="p">],</span>
-            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">log_level</span> <span class="o">!=</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;call has returned, check output @ </span><span class="si">{</span><span class="n">f_pilercr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># if fa_filtered is empty, just return empty fa_pep_cas</span>
@@ -382,7 +376,7 @@
     <span class="c1"># -----------------------------</span>
     <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;2.get crispr loci&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_pilercr</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_pilercr</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">wrapper_i</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -395,7 +389,7 @@
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
                 <span class="c1"># parse detail info</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                    <span class="s2">&quot;DETAIL REPORT&quot;</span>
+                    <span class="s2">&quot;DETAIL REPORT&quot;</span><span class="p">,</span>
                 <span class="p">):</span>  <span class="c1"># the first line to parse detail info</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find `DETAIL REPORT part`&quot;</span><span class="p">)</span>
                     <span class="n">parse_detail</span> <span class="o">=</span> <span class="kc">True</span>
@@ -405,7 +399,7 @@
                     <span class="n">ls_detail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="c1"># parse repeat info</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                    <span class="s2">&quot;SUMMARY BY POSITION&quot;</span>
+                    <span class="s2">&quot;SUMMARY BY POSITION&quot;</span><span class="p">,</span>
                 <span class="p">):</span>  <span class="c1"># the first line to parse repeat info</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find `SUMMARY BY POSITION part`&quot;</span><span class="p">)</span>
                     <span class="n">parse_status</span> <span class="o">=</span> <span class="kc">True</span>
@@ -442,11 +436,10 @@
                     <span class="n">contig</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;find contig line, the contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Array&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=====&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Array&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=====&quot;</span><span class="p">):</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find annotation line, skip&quot;</span><span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find a crispr array, try to parse it&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;find a crispr array, try to parse it&quot;</span><span class="p">)</span>
                 <span class="c1"># when find a crispr array</span>
                 <span class="c1"># try to parse</span>
                 <span class="c1"># 2024-01-12 fix Sequence have space bug: invalid literal for int() with base 10: &#39;T&#39;</span>
@@ -457,7 +450,8 @@
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;splitted line info is: info = </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;info = </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;info = </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">, info[1] = </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="c1"># assert contig == info[1]  # check contig name?  # pilercr返回的info[1]可能是contig的name的截短</span>
                 <span class="n">array_index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">crispr_start</span><span class="p">,</span> <span class="n">crispr_length</span> <span class="o">=</span> <span class="n">info</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
@@ -471,7 +465,7 @@
                 <span class="n">spacer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">spacer</span><span class="p">)</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;array_index = </span><span class="si">{</span><span class="n">array_index</span><span class="si">}</span><span class="s2">, contig = </span><span class="si">{</span><span class="n">contig</span><span class="si">}</span><span class="s2">, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;crispr_start = </span><span class="si">{</span><span class="n">crispr_start</span><span class="si">}</span><span class="s2">, crispr_length = </span><span class="si">{</span><span class="n">crispr_length</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;crispr_start = </span><span class="si">{</span><span class="n">crispr_start</span><span class="si">}</span><span class="s2">, crispr_length = </span><span class="si">{</span><span class="n">crispr_length</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">crispr_end</span> <span class="o">=</span> <span class="n">crispr_start</span> <span class="o">+</span> <span class="n">crispr_length</span> <span class="o">+</span> <span class="mi">1</span>
@@ -499,11 +493,11 @@
 
             <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;2.additional job: writing crispr info table to @ </span><span class="si">{</span><span class="n">output_crispr_info_tab</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;2.additional job: writing crispr info table to @ </span><span class="si">{</span><span class="n">output_crispr_info_tab</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_detail</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
                     <span class="c1"># is empty</span>
-                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
                 <span class="n">ls_detail</span> <span class="o">=</span> <span class="n">ls_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -518,20 +512,18 @@
                         <span class="k">if</span> <span class="n">ls_temp</span><span class="p">:</span>
                             <span class="n">ls_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls_temp</span><span class="p">)</span>
                         <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
                         <span class="n">contig_id</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                         <span class="n">ls_temp</span> <span class="o">=</span> <span class="p">[]</span>
                         <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Pos&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Pos&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">):</span>
                         <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">):</span>
-                        <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
                         <span class="n">repeat_seq_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span>
                         <span class="n">repeat_length_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
                         <span class="n">spacer_length_rep</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
                         <span class="n">ls_rep_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="p">[</span><span class="n">repeat_seq_rep</span><span class="p">,</span> <span class="n">repeat_length_rep</span><span class="p">,</span> <span class="n">spacer_length_rep</span><span class="p">]</span>
+                            <span class="p">[</span><span class="n">repeat_seq_rep</span><span class="p">,</span> <span class="n">repeat_length_rep</span><span class="p">,</span> <span class="n">spacer_length_rep</span><span class="p">],</span>
                         <span class="p">)</span>
                         <span class="k">continue</span>
                     <span class="n">ls_temp</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assembly_id</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">contig_id</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">array_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">])</span>
@@ -542,15 +534,15 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">ls_all</span> <span class="ow">or</span> <span class="n">ls_all</span> <span class="o">==</span> <span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
                     <span class="c1"># don&#39;t consider gz file. because it is a temp file.</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;find no crispr info in @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2">! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;find no crispr info in @ </span><span class="si">{</span><span class="n">fa_filtered</span><span class="si">}</span><span class="s2">! will touch an empty output file @ </span><span class="si">{</span><span class="n">fa_pep_cas</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">output_crispr_info_tab</span><span class="p">:</span>
-                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_crispr_info_tab</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">output_contig_fa</span><span class="p">:</span>
-                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_contig_fa</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_contig_fa</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span>
                     <span class="k">return</span>  <span class="c1"># just return output file as an empty file</span>
@@ -560,7 +552,7 @@
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_one_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_one_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                         <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ls_one_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+                        <span class="n">ls_one_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
                     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
                         <span class="n">ls_one_info</span><span class="p">,</span>
                         <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
@@ -601,7 +593,7 @@
     <span class="c1"># -----------------------------</span>
     <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;3.get protein loci&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gff</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_pep</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gff</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_i</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_pep</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wrapper_o</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">wrapper_i</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
             <span class="c1"># skip annotation lines wiht # and blank lines</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span>
@@ -677,7 +669,7 @@
         <span class="c1"># special part for a dict info</span>
         <span class="c1"># -----------------------------</span>
         <span class="c1"># load keys from cas bed</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_cas</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_cas</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">contigs_cas</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">cas_loc_info</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -705,7 +697,7 @@
                 <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;ID&quot;</span><span class="p">:</span>
                     <span class="n">CDS_id</span> <span class="o">=</span> <span class="n">v</span>
                     <span class="k">break</span>
-            <span class="n">cas_loc_info</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dt_this</span><span class="p">[</span><span class="s2">&quot;contig_id&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">CDS_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_this</span>
+            <span class="n">cas_loc_info</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dt_this</span><span class="p">[</span><span class="s1">&#39;contig_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">CDS_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_this</span>
 
         <span class="c1"># crispr_ids = [&quot;_&quot;.join(i.split(&quot;_&quot;)[:-1]) for i in cas_loc_info.keys()]</span>
         <span class="c1"># print(len(crispr_ids))</span>
@@ -720,7 +712,7 @@
             <span class="n">header</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># header = Ga0307431_1014098_3</span>
             <span class="n">contig</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">contig</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;# &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">cas_loc_info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">cas_loc_info</span><span class="p">:</span>
                 <span class="n">info</span> <span class="o">=</span> <span class="n">cas_loc_info</span><span class="p">[</span><span class="n">header</span><span class="p">]</span>
                 <span class="n">contig</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">info</span><span class="p">[</span><span class="s2">&quot;CDS_id&quot;</span><span class="p">]</span>
@@ -731,7 +723,7 @@
         <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fa_pep_cas</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contigs_output</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
         <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -741,7 +733,7 @@
     <span class="c1"># -----------------------------</span>
     <span class="k">if</span> <span class="n">tests</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;6.get all crispr contigs&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bed_crispr</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">contigs_crispr</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="c1"># print(len(contigs_crispr))</span>
         <span class="n">crispr_ids</span> <span class="o">=</span> <span class="p">[</span>
@@ -750,9 +742,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">crispr_ids</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crispr_ids</span><span class="p">))</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-            <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">assembly_input</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
         <span class="n">contigs_output</span> <span class="o">=</span> <span class="p">[]</span>
@@ -764,11 +754,11 @@
         <span class="k">if</span> <span class="n">contigs_output</span><span class="p">:</span>
             <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contigs_output</span><span class="p">,</span> <span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_crisper_contig</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;generate crispr_scaffold.fa file, check output @ </span><span class="si">{</span><span class="n">fa_crisper_contig</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;generate crispr_scaffold.fa file, check output @ </span><span class="si">{</span><span class="n">fa_crisper_contig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">rm_temp</span><span class="p">:</span>
@@ -808,9 +798,7 @@
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># start to parse HEPN pattern</span>
-    <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">fa_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_input</span><span class="p">)</span>
     <span class="n">fa_cases</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
     <span class="n">fa_cases_filter_length</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">cas</span> <span class="k">for</span> <span class="n">cas</span> <span class="ow">in</span> <span class="n">fa_cases</span> <span class="k">if</span> <span class="n">_filter_fasta_length</span><span class="p">(</span><span class="n">cas</span><span class="p">,</span> <span class="n">lmin</span><span class="p">,</span> <span class="n">lmax</span><span class="p">)</span>
@@ -842,7 +830,7 @@
         <span class="n">ls_span</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
-            <span class="n">dt_span</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">dt_span</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">dt_span</span><span class="p">[</span><span class="s2">&quot;span&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
             <span class="n">dt_span</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()]</span>
             <span class="n">ls_span</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_span</span><span class="p">)</span>
@@ -867,7 +855,7 @@
     <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fa_pep_cas13</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">fa_pep_cas13</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ls_fa_cases_out</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End, exit.&quot;</span><span class="p">)</span></div>
@@ -892,7 +880,7 @@
 
     <span class="k">if</span> <span class="n">new_file</span> <span class="o">==</span> <span class="n">f_input</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
         <span class="n">operate</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Warning: will overwrite </span><span class="si">{</span><span class="n">f_input</span><span class="si">}</span><span class="s2">, continue? (y/n) [use --force to overwrite directly]&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Warning: will overwrite </span><span class="si">{</span><span class="n">f_input</span><span class="si">}</span><span class="s2">, continue? (y/n) [use --force to overwrite directly]&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">operate</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
@@ -901,16 +889,14 @@
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Aborted, exit.&quot;</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">handler</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_input</span><span class="p">)</span>
     <span class="n">fasta</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
 
     <span class="n">iter_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fasta</span><span class="p">)</span>
     <span class="n">handler_out</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">iter_out</span><span class="p">,</span> <span class="n">handler_out</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
     <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -942,10 +928,10 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no exists length table, generate table file: </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
             <span class="n">total_sequences</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">))</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
                 <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">),</span>
                 <span class="n">total</span><span class="o">=</span><span class="n">total_sequences</span><span class="p">,</span>
@@ -970,7 +956,13 @@
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;plot histplot&quot;</span><span class="p">)</span>
     <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;.3&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span>
+        <span class="n">df</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">,</span>
+        <span class="n">bins</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;.3&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">LogLocator</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">ScalarFormatter</span><span class="p">())</span>

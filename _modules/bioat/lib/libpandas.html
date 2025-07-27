@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libpandas &mdash; bioat Documentation</title>
+  <title>bioat.lib.libpandas &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">bioat</a>
+          <a href="../../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -68,7 +68,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.lib.libpandas</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;_summary_</span>
+<span></span><span class="sd">&quot;&quot;&quot;_summary_.</span>
 
 <span class="sd">author: Herman Huanan Zhao</span>
 <span class="sd">email: hermanzhaozzzz@gmail.com</span>
@@ -89,7 +89,6 @@
 <span class="sd">example 2:</span>
 <span class="sd">    _example_</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
@@ -133,15 +132,20 @@
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set pandas: display.max_columns=</span><span class="si">{</span><span class="n">display_max_columns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="n">display_max_columns</span><span class="p">)</span>  <span class="c1"># column最大显示数</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set pandas: display.max_rows=</span><span class="si">{</span><span class="n">display_max_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="n">display_max_rows</span><span class="p">)</span>  <span class="c1"># row最大显示数</span>
-    <span class="k">return</span></div>
+    <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="n">display_max_rows</span><span class="p">)</span>  <span class="c1"># row最大显示数</span></div>
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">move_column</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">to_move</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">before</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Move a specified column in a DataFrame to a new position.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">move_column</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">to_move</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">after</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">before</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move a specified column in a DataFrame to a new position.</span>
 
 <span class="sd">    :param df: The DataFrame to operate on.</span>
 <span class="sd">    :param to_move: The name of the column to move.</span>
@@ -154,27 +158,46 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Validate inputs for to_move</span>
     <span class="k">if</span> <span class="n">to_move</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame.&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># Validate inputs for first and last</span>
     <span class="k">if</span> <span class="n">first</span> <span class="ow">and</span> <span class="n">last</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify both &#39;first&#39; and &#39;last&#39; as True. Please choose one.&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot specify both &#39;first&#39; and &#39;last&#39; as True. Please choose one.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">msg</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="n">first</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;first&#39; must be a boolean or None.&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;first&#39; must be a boolean or None.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">last</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;last&#39; must be a boolean or None.&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;last&#39; must be a boolean or None.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># Validate inputs for before and after</span>
     <span class="k">if</span> <span class="n">after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">after</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">after</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame. Cannot use it as a reference.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">after</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame. Cannot use it as a reference.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">msg</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">to_move</span> <span class="o">==</span> <span class="n">after</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;to_move(</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">) is not allowed to be the same with after(</span><span class="si">{</span><span class="n">after</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to_move(</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">) is not allowed to be the same with after(</span><span class="si">{</span><span class="n">after</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">msg</span>
+            <span class="p">)</span>
     <span class="k">if</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">before</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">before</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame. Cannot use it as a reference.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">before</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame. Cannot use it as a reference.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">msg</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">to_move</span> <span class="o">==</span> <span class="n">before</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;to_move(</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">) is not allowed to be the same with before(</span><span class="si">{</span><span class="n">before</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;to_move(</span><span class="si">{</span><span class="n">to_move</span><span class="si">}</span><span class="s2">) is not allowed to be the same with before(</span><span class="si">{</span><span class="n">before</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">msg</span>
+            <span class="p">)</span>
     <span class="k">if</span> <span class="n">after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify both &#39;after&#39; and &#39;before&#39;. Please choose one.&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot specify both &#39;after&#39; and &#39;before&#39;. Please choose one.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">current_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
@@ -189,32 +212,41 @@
         <span class="c1"># Determine the new position</span>
         <span class="k">if</span> <span class="n">after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">index_after</span> <span class="o">=</span> <span class="n">current_columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">after</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">new_columns</span> <span class="o">=</span> <span class="n">current_columns</span><span class="p">[:</span><span class="n">index_after</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">to_move</span><span class="p">]</span> <span class="o">+</span> <span class="n">current_columns</span><span class="p">[</span><span class="n">index_after</span><span class="p">:]</span>
+            <span class="n">new_columns</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">current_columns</span><span class="p">[:</span><span class="n">index_after</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="n">to_move</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">current_columns</span><span class="p">[</span><span class="n">index_after</span><span class="p">:]</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="n">before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">index_before</span> <span class="o">=</span> <span class="n">current_columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
-            <span class="n">new_columns</span> <span class="o">=</span> <span class="n">current_columns</span><span class="p">[:</span><span class="n">index_before</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">to_move</span><span class="p">]</span> <span class="o">+</span> <span class="n">current_columns</span><span class="p">[</span><span class="n">index_before</span><span class="p">:]</span>
+            <span class="n">new_columns</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">current_columns</span><span class="p">[:</span><span class="n">index_before</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="n">to_move</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">current_columns</span><span class="p">[</span><span class="n">index_before</span><span class="p">:]</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;you must define one of the params(first/last/before/after) for operation&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;you must define one of the params(first/last/before/after) for operation&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">msg</span>
+            <span class="p">)</span>
 
     <span class="c1"># Return the modified DataFrame or None if inplace=True</span>
     <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
         <span class="n">df</span><span class="p">[</span><span class="n">current_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">df</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">set_option</span><span class="p">()</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-            <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-            <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-            <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-        <span class="p">}</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <span class="p">},</span>
     <span class="p">)</span>
     <span class="c1"># print(move_column(data, to_move=&#39;d&#39;))  # ValueError: you must define one of the params(first/last/before/after)</span>
     <span class="c1"># for operation</span>
@@ -232,11 +264,11 @@
     <span class="c1"># print(move_column(data, to_move=&#39;d&#39;, before=&#39;d&#39;))  # to_move(d) is not allowed to be the same with before(d)</span>
     <span class="c1"># print(move_column(data, &#39;b&#39;, first=True))</span>
     <span class="c1"># print(move_column(data, to_move=&#39;b&#39;, last=True))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data = </span><span class="se">\n</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">, </span><span class="se">\n</span><span class="s1">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data = </span><span class="se">\n</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">, </span><span class="se">\n</span><span class="s2">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="c1"># data_new = move_column(data, to_move=&#39;a&#39;, last=True, inplace=False)</span>
-    <span class="n">data_new</span> <span class="o">=</span> <span class="n">move_column</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">to_move</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data_new = </span><span class="se">\n</span><span class="si">{</span><span class="n">data_new</span><span class="si">}</span><span class="s1">, </span><span class="se">\n</span><span class="s1">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data_new</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data = </span><span class="se">\n</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">, </span><span class="se">\n</span><span class="s1">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">data_new</span> <span class="o">=</span> <span class="n">move_column</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">to_move</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data_new = </span><span class="se">\n</span><span class="si">{</span><span class="n">data_new</span><span class="si">}</span><span class="s2">, </span><span class="se">\n</span><span class="s2">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data_new</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data = </span><span class="se">\n</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">, </span><span class="se">\n</span><span class="s2">id = </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>

@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libcircos &mdash; bioat Documentation</title>
+  <title>bioat.lib.libcircos &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">bioat</a>
+          <a href="../../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -72,6 +72,7 @@
 <span class="sd">Adapt from https://github.com/ponnhide/pyCircos</span>
 <span class="sd">and thanks for this github user.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -80,7 +81,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpath</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -88,21 +89,27 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Phylo</span><span class="p">,</span> <span class="n">SeqIO</span>
 
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.max_open_warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ps.fonttype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;pdf.fonttype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.sans-serif&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="s2">&quot;Lucida Sans&quot;</span><span class="p">,</span> <span class="s2">&quot;DejaVu Sans&quot;</span><span class="p">,</span> <span class="s2">&quot;Lucida Grande&quot;</span><span class="p">,</span> <span class="s2">&quot;Verdana&quot;</span><span class="p">]</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sans-serif&#39;</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.labelcolor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#000000&quot;</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.linewidth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.major.pad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.major.pad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.major.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.major.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;circos&#39;</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.max_open_warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Arial&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Lucida Sans&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DejaVu Sans&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Lucida Grande&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Verdana&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans-serif&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.labelcolor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#000000&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.linewidth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.pad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.pad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;circos&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Garc">
@@ -121,10 +128,44 @@
 <span class="sd">            Retrieves the value of the attribute `key`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">colorlist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#ff8a80&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff80ab&quot;</span><span class="p">,</span> <span class="s2">&quot;#ea80fc&quot;</span><span class="p">,</span> <span class="s2">&quot;#b388ff&quot;</span><span class="p">,</span> <span class="s2">&quot;#8c9eff&quot;</span><span class="p">,</span> <span class="s2">&quot;#82b1ff&quot;</span><span class="p">,</span> <span class="s2">&quot;#84ffff&quot;</span><span class="p">,</span> <span class="s2">&quot;#a7ffeb&quot;</span><span class="p">,</span> <span class="s2">&quot;#b9f6ca&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;#ccff90&quot;</span><span class="p">,</span> <span class="s2">&quot;#f4ff81&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffff8d&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffe57f&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffd180&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff9e80&quot;</span><span class="p">,</span> <span class="s2">&quot;#bcaaa4&quot;</span><span class="p">,</span> <span class="s2">&quot;#eeeeee&quot;</span><span class="p">,</span> <span class="s2">&quot;#b0bec5&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;#ff5252&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff4081&quot;</span><span class="p">,</span> <span class="s2">&quot;#e040fb&quot;</span><span class="p">,</span> <span class="s2">&quot;#7c4dff&quot;</span><span class="p">,</span> <span class="s2">&quot;#536dfe&quot;</span><span class="p">,</span> <span class="s2">&quot;#448aff&quot;</span><span class="p">,</span> <span class="s2">&quot;#18ffff&quot;</span><span class="p">,</span> <span class="s2">&quot;#64ffda&quot;</span><span class="p">,</span> <span class="s2">&quot;#69f0ae&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;#b2ff59&quot;</span><span class="p">,</span> <span class="s2">&quot;#eeff41&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffff00&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffd740&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffab40&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff6e40&quot;</span><span class="p">,</span> <span class="s2">&quot;#a1887f&quot;</span><span class="p">,</span> <span class="s2">&quot;#e0e0e0&quot;</span><span class="p">,</span> <span class="s2">&quot;#90a4ae&quot;</span><span class="p">]</span>
+    <span class="n">colorlist</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;#ff8a80&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff80ab&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ea80fc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#b388ff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#8c9eff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#82b1ff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#84ffff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#a7ffeb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#b9f6ca&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ccff90&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#f4ff81&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffff8d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffe57f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffd180&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff9e80&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#bcaaa4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#eeeeee&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#b0bec5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff5252&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff4081&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#e040fb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#7c4dff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#536dfe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#448aff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#18ffff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#64ffda&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#69f0ae&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#b2ff59&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#eeff41&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffff00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffd740&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffab40&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff6e40&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#a1887f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#e0e0e0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#90a4ae&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="n">_arcnum</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="Garc.__setitem__">
@@ -188,9 +229,8 @@
 <span class="sd">            ValueError:</span>
 <span class="sd">                If no match for the provided NCBI accession number is found in `record`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_parental_gcircle</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">arc_id</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arc_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Garc</span><span class="o">.</span><span class="n">_arcnum</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arc_id</span> <span class="o">=</span> <span class="n">arc_id</span>
@@ -205,19 +245,17 @@
 
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="s2">&quot;[a-zA-Z]{1,2}_?[0-9]{5,6}&quot;</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;genbank&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect value for NCBI accession number.&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&amp;save=file&amp;log$=seqview&amp;db=nuccore&amp;report=gbwithparts&amp;id=</span><span class="si">{}</span><span class="s2">&amp;withparts=on&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">record</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect value for NCBI accession number.&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&amp;save=file&amp;log$=seqview&amp;db=nuccore&amp;report=gbwithparts&amp;id=</span><span class="si">{</span><span class="n">record</span><span class="si">}</span><span class="s2">&amp;withparts=on&quot;</span>
             <span class="n">outb</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
             <span class="n">outs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0&quot;</span>
+                <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0&quot;</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
 
@@ -275,7 +313,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list: A list containing the calculated density values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">densities</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">positions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
@@ -289,7 +326,10 @@
                     <span class="k">if</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">source</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                         <span class="n">amount</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="n">msg</span>
+                    <span class="p">)</span>
             <span class="n">densities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
 
         <span class="n">source</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
@@ -302,7 +342,10 @@
                 <span class="k">if</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">source</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                     <span class="n">amount</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">msg</span>
+                <span class="p">)</span>
         <span class="n">densities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">window_size</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">densities</span></div>
 
@@ -328,9 +371,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: An array containing the computed ratios of n1 to n2 for each window.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.record is None, please specify record value&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;self.record is None, please specify record value&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_size</span> <span class="o">=</span> <span class="n">window_size</span>
@@ -358,19 +401,17 @@
             <span class="n">gc_amounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span>
                 <span class="o">*</span> <span class="mf">1.0</span>
-                <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+                <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">_ratio&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">)]</span> <span class="o">=</span> <span class="n">gc_amounts</span>
-        <span class="n">gc_amounts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_amounts</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gc_amounts</span></div>
+        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_amounts</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_amounts</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Garc.calc_nnskew">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnskew">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnskew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along</span>
 <span class="sd">        the sequence.</span>
 
 <span class="sd">        Args:</span>
@@ -387,10 +428,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: An array of the skews computed by this method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># (G-C)/(G+C)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.record is None, please specify record value&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;self.record is None, please specify record value&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_size</span> <span class="o">=</span> <span class="n">window_size</span>
@@ -398,15 +439,28 @@
         <span class="n">seq</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span>
         <span class="n">gc_skews</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">step_size</span><span class="p">):</span>
-            <span class="n">gc_skew</span> <span class="o">=</span> <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">-</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span>
-                    <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1.0</span>
+            <span class="n">gc_skew</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
+                    <span class="o">-</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">*</span> <span class="mf">1.0</span>
+                <span class="o">/</span> <span class="p">(</span>
+                    <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">*</span> <span class="mf">1.0</span>
+            <span class="p">)</span>
             <span class="n">gc_skews</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gc_skew</span><span class="p">)</span>
 
-        <span class="n">gc_skews</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">-</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span>
-                <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">_skew&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">)]</span> <span class="o">=</span> <span class="n">gc_skews</span>
-        <span class="n">gc_skews</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_skews</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gc_skews</span></div>
+        <span class="n">gc_skews</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">-</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="mf">1.0</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="mf">1.0</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_skew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_skews</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_skews</span><span class="p">)</span></div>
 </div>
 
 
@@ -414,33 +468,50 @@
 <div class="viewcode-block" id="Gcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gcircle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a </span>
-<span class="sd">    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot) </span>
-<span class="sd">    can be placed on the space by specifying the raxis_range (from 0 to 1000) and </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a</span>
+<span class="sd">    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot)</span>
+<span class="sd">    can be placed on the space by specifying the raxis_range (from 0 to 1000) and</span>
 <span class="sd">    the corresponding Garc class object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#f44336&quot;</span><span class="p">,</span> <span class="s2">&quot;#e91e63&quot;</span><span class="p">,</span> <span class="s2">&quot;#9c27b0&quot;</span><span class="p">,</span> <span class="s2">&quot;#673ab7&quot;</span><span class="p">,</span> <span class="s2">&quot;#3f51b5&quot;</span><span class="p">,</span> <span class="s2">&quot;#2196f3&quot;</span><span class="p">,</span> <span class="s2">&quot;#00bcd4&quot;</span><span class="p">,</span> <span class="s2">&quot;#009688&quot;</span><span class="p">,</span> <span class="s2">&quot;#4caf50&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;#8bc34a&quot;</span><span class="p">,</span> <span class="s2">&quot;#cddc39&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffeb3b&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffc107&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff9800&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff5722&quot;</span><span class="p">,</span> <span class="s2">&quot;#795548&quot;</span><span class="p">,</span> <span class="s2">&quot;#9e9e9e&quot;</span><span class="p">,</span> <span class="s2">&quot;#607d8b&quot;</span><span class="p">]</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;#f44336&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#e91e63&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#9c27b0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#673ab7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#3f51b5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#2196f3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#00bcd4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#009688&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#4caf50&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#8bc34a&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#cddc39&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffeb3b&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ffc107&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff9800&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#ff5722&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#795548&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#9e9e9e&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#607d8b&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="c1"># colors = [&quot;#4E79A7&quot;,&quot;#F2BE2B&quot;,&quot;#E15759&quot;,&quot;#76B7B2&quot;,&quot;#59A14F&quot;,&quot;#EDC948&quot;,&quot;#B07AA1&quot;,&quot;#FF9DA7&quot;,&quot;#9C755F&quot;,&quot;#BAB0AC&quot;]</span>
     <span class="n">cmaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greens</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;garc_dict&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Gcircle.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the circular map.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the circular map.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fig (matplotlib.pyplot.Figure, optional): A Matplotlib Figure object. If not provided, a new figure will be created.</span>
 <span class="sd">            figsize (tuple, optional): A tuple specifying the size of the figure for the circular map, e.g., (width, height).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">figsize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -467,7 +538,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc</span><span class="o">.</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">garc</span></div>
 
 
@@ -492,26 +562,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">sum_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span>
-                <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-            <span class="p">)</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
         <span class="p">)</span>
         <span class="n">sum_interspace</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span>
-                <span class="nb">map</span><span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">],</span>
-                    <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
         <span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">360</span>
         <span class="n">end</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span> <span class="o">-</span> <span class="n">sum_interspace</span>
 
         <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">sum_interspace</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -526,7 +588,8 @@
         <span class="c1"># self.figure = plt.figure(figsize=self.figsize)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_is_ext</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span>
-                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -539,7 +602,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">width</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -547,7 +610,7 @@
             <span class="p">)</span>
             <span class="n">height</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">facecolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">facecolor</span>
@@ -564,16 +627,13 @@
                 <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
                 <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span><span class="p">:</span>
                 <span class="n">rot</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
                 <span class="n">rot</span> <span class="o">=</span> <span class="n">rot</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-                <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">:</span>
-                    <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
+                <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span> <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
                 <span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelposition</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
                     <span class="n">pos</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
@@ -615,7 +675,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">width</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -690,7 +749,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -713,7 +771,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">color_cycle</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="n">rlim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rlim</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+            <span class="n">rlim</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span>
+            <span class="p">)</span>
 
         <span class="n">min_value</span> <span class="o">=</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">max_value</span> <span class="o">=</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -721,7 +782,7 @@
         <span class="n">new_positions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_data_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_positions_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
                 <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
@@ -732,13 +793,21 @@
                 <span class="n">new_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
         <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">positions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_data_array</span><span class="p">,</span> <span class="n">new_positions_array</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">positions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_data_array</span><span class="p">,</span> <span class="n">new_positions_array</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">min_value</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">)))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">positions</span><span class="p">,</span>
+                    <span class="n">data</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
+                    <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
+                <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
@@ -757,8 +826,7 @@
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fill a specified area in the sector corresponding to the arc of the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill a specified area in the sector corresponding to the arc of the</span>
 <span class="sd">        Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -796,7 +864,6 @@
 <span class="sd">            None:</span>
 <span class="sd">                This function does not return any value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -832,7 +899,7 @@
         <span class="n">new_positions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_data_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_positions_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
                 <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
@@ -843,7 +910,7 @@
                 <span class="n">new_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
         <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">positions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_data_array</span><span class="p">,</span> <span class="n">new_positions_array</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">positions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_data_array</span><span class="p">,</span> <span class="n">new_positions_array</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">base_value</span> <span class="o">=</span> <span class="n">base_value</span> <span class="o">-</span> <span class="n">min_value</span>
                 <span class="n">base_value</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">base_value</span> <span class="o">*</span> <span class="p">(</span>
@@ -851,7 +918,7 @@
                 <span class="p">)</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">min_value</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                    <span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">))</span>
+                    <span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">)),</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
                     <span class="n">positions</span><span class="p">,</span>
@@ -862,7 +929,7 @@
                     <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
@@ -920,7 +987,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -943,7 +1009,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">color_cycle</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="n">rlim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rlim</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+            <span class="n">rlim</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span>
+            <span class="p">)</span>
 
         <span class="n">min_value</span> <span class="o">=</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">max_value</span> <span class="o">=</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -951,7 +1020,7 @@
         <span class="n">new_positions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_data_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_positions_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
                 <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
@@ -963,14 +1032,23 @@
 
         <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
         <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">positions</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_positions_array</span><span class="p">,</span> <span class="n">new_data_array</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">positions</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_positions_array</span><span class="p">,</span> <span class="n">new_data_array</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">min_value</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">)))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-                                <span class="n">marker</span><span class="o">=</span><span class="n">markershape</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="n">data</span> <span class="o">*</span> <span class="p">((</span><span class="n">top</span> <span class="o">-</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                    <span class="n">positions</span><span class="p">,</span>
+                    <span class="n">data</span><span class="p">,</span>
+                    <span class="n">c</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
+                    <span class="n">s</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
+                    <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="n">markershape</span><span class="p">,</span>
+                <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
@@ -1028,7 +1106,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None: This method does not return any value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
@@ -1081,7 +1158,7 @@
         <span class="n">new_data_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_positions_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">new_width_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">new_data_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
                 <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
@@ -1098,7 +1175,10 @@
         <span class="n">new_positions_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
         <span class="n">new_width_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_width</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">width</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="n">new_data_array</span><span class="p">,</span> <span class="n">new_positions_array</span><span class="p">,</span> <span class="n">new_width_array</span>
+            <span class="n">new_data_array</span><span class="p">,</span>
+            <span class="n">new_positions_array</span><span class="p">,</span>
+            <span class="n">new_width_array</span><span class="p">,</span>
+            <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">base_value</span> <span class="o">=</span> <span class="n">base_value</span> <span class="o">-</span> <span class="n">min_value</span>
@@ -1126,7 +1206,7 @@
                     <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
@@ -1146,8 +1226,7 @@
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Visualize magnitudes of data values by color scale in the sector</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize magnitudes of data values by color scale in the sector</span>
 <span class="sd">        corresponding to the arc of the Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -1183,7 +1262,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
@@ -1217,23 +1295,25 @@
             <span class="n">cmap</span> <span class="o">=</span> <span class="n">Gcircle</span><span class="o">.</span><span class="n">cmaps</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cmap_cycle</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">Gcircle</span><span class="o">.</span><span class="n">cmaps</span><span class="p">)]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmap_cycle</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">max_value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">max_value</span> <span class="o">=</span> <span class="n">vmax</span>
+        <span class="n">max_value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vmax</span>
 
-        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">min_value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">min_value</span> <span class="o">=</span> <span class="n">vmin</span>
+        <span class="n">min_value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vmin</span>
 
         <span class="n">facecolors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">facecolors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmap</span><span class="p">(</span><span class="n">d</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span><span class="p">)))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="p">[</span><span class="n">height</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">facecolors</span><span class="p">,</span>
-                    <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="p">[</span><span class="n">height</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">facecolors</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
@@ -1250,8 +1330,7 @@
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Visualize sequence features with bar plots in the sector corresponding</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize sequence features with bar plots in the sector corresponding</span>
 <span class="sd">        to the arc of the Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -1284,7 +1363,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1331,14 +1409,19 @@
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">spine</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Gcircle.chord_plot">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.chord_plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">chord_plot</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">start_list</span><span class="p">,</span> <span class="n">end_list</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_list</span><span class="p">,</span>
+        <span class="n">end_list</span><span class="p">,</span>
+        <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize interrelationships between data.</span>
 
@@ -1365,7 +1448,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">garc_id1</span> <span class="o">=</span> <span class="n">start_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">garc_id2</span> <span class="o">=</span> <span class="n">end_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">center</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1394,19 +1476,26 @@
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Path</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span>
-            <span class="n">path_data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">center</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">oend</span><span class="p">,</span> <span class="n">etop</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">((</span><span class="n">ostart</span> <span class="o">+</span> <span class="n">oend</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">etop</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">ostart</span><span class="p">,</span> <span class="n">etop</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">ostart</span><span class="p">,</span> <span class="n">center</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">send</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">((</span><span class="n">sstart</span> <span class="o">+</span> <span class="n">send</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">stop</span> <span class="o">+</span> <span class="n">z1</span><span class="p">)),</span>
-                         <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
-                         <span class="p">]</span>
-            <span class="n">codes</span><span class="p">,</span> <span class="n">verts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">path_data</span><span class="p">))</span>
+            <span class="n">path_data</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">MOVETO</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">center</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">oend</span><span class="p">,</span> <span class="n">etop</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">((</span><span class="n">ostart</span> <span class="o">+</span> <span class="n">oend</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">etop</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">ostart</span><span class="p">,</span> <span class="n">etop</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">ostart</span><span class="p">,</span> <span class="n">center</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">send</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">((</span><span class="n">sstart</span> <span class="o">+</span> <span class="n">send</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">stop</span> <span class="o">+</span> <span class="n">z1</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">CURVE3</span><span class="p">,</span> <span class="p">(</span><span class="n">sstart</span><span class="p">,</span> <span class="n">stop</span><span class="p">)),</span>
+            <span class="p">]</span>
+            <span class="n">codes</span><span class="p">,</span> <span class="n">verts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">path_data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">mpath</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">codes</span><span class="p">)</span>
-            <span class="n">patch</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span>
+                <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span></div>
 
 
@@ -1470,7 +1559,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span>
@@ -1485,7 +1573,7 @@
                 <span class="n">raxis_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">r0</span> <span class="o">-</span> <span class="n">tickheight</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tickpositions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tickpositions</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">tickinterval</span><span class="p">)]</span>
+            <span class="n">tickpositions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">tickinterval</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">ticklabels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ticklabels</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">tickpositions</span><span class="p">)</span>
@@ -1493,7 +1581,7 @@
         <span class="k">elif</span> <span class="n">ticklabels</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
             <span class="n">ticklabels</span> <span class="o">=</span> <span class="n">tickpositions</span>
 
-        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tickpositions</span><span class="p">,</span> <span class="n">ticklabels</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tickpositions</span><span class="p">,</span> <span class="n">ticklabels</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">positions_all</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">positions_all</span><span class="p">[</span><span class="n">pos</span><span class="p">]],</span>
                 <span class="n">raxis_range</span><span class="p">,</span>
@@ -1504,7 +1592,8 @@
                 <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ticklabel_rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_rotation</span><span class="p">(</span>
-                    <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos</span> <span class="o">/</span> <span class="n">size</span><span class="p">)),</span> <span class="n">ticklabelorientation</span>
+                    <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos</span> <span class="o">/</span> <span class="n">size</span><span class="p">)),</span>
+                    <span class="n">ticklabelorientation</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">ticklabelorientation</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
                     <span class="n">label_width</span> <span class="o">=</span> <span class="n">ticklabelsize</span> <span class="o">*</span> <span class="mi">2</span>
@@ -1572,7 +1661,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pdf&quot;</span> <span class="ow">and</span> <span class="n">dpi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
@@ -1605,8 +1693,7 @@
         <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">label_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes a Garc class object.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes a Garc class object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            arc_id (str, optional):</span>
@@ -1642,12 +1729,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">Phylo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">get_terminals</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parental_gcircle</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">arc_id</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arc_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Garc</span><span class="o">.</span><span class="n">_arcnum</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arc_id</span> <span class="o">=</span> <span class="n">arc_id</span>
@@ -1680,9 +1766,9 @@
         <span class="n">drawing_width</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">max_label_width</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">depths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">depths</span><span class="p">(</span><span class="n">unit_branch_lengths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">fudge_margin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">taxa</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">fudge_margin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">taxa</span><span class="p">))</span>
         <span class="n">cols_per_branch_unit</span> <span class="o">=</span> <span class="p">(</span><span class="n">drawing_width</span> <span class="o">-</span> <span class="n">fudge_margin</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span>
-            <span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
         <span class="p">)</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">clade</span><span class="p">:</span> <span class="n">blen</span> <span class="o">*</span> <span class="n">cols_per_branch_unit</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">clade</span><span class="p">,</span> <span class="n">blen</span> <span class="ow">in</span> <span class="n">depths</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -1736,8 +1822,12 @@
                 <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">v</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">col_min</span> <span class="o">-</span> <span class="n">col_max</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">col_values</span>
             <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_row_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">theta_positions</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">r_positions</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_row_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">theta_positions</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">r_positions</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1798,7 +1888,7 @@
                 <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">minsc_theta</span><span class="p">,</span> <span class="n">maxsc_theta</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
                 <span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span><span class="p">[</span><span class="n">clade</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">thetas</span><span class="p">)</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">rs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">linecolor</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">sc</span><span class="p">,</span> <span class="n">sc_theta</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">subclades</span><span class="p">,</span> <span class="n">sc_thetas</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">sc</span><span class="p">,</span> <span class="n">sc_theta</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">subclades</span><span class="p">,</span> <span class="n">sc_thetas</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
                     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                         <span class="p">[</span><span class="n">sc_theta</span><span class="p">,</span> <span class="n">sc_theta</span><span class="p">],</span>
                         <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span><span class="p">[</span><span class="n">sc</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span><span class="p">[</span><span class="n">clade</span><span class="p">]],</span>
@@ -1813,7 +1903,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please run `plot_tree` before running `plot_highlight`&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please run `plot_tree` before running `plot_highlight`&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">clade_names</span> <span class="ow">in</span> <span class="n">highlight_dict</span><span class="p">:</span>
             <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;#000000&quot;</span><span class="p">)</span>
@@ -1830,7 +1921,7 @@
 
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">clade_names</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
                 <span class="n">ca</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">common_ancestor</span><span class="p">(</span>
-                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clade_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">clade_names</span><span class="p">]</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clade_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">clade_names</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="n">clades</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clade_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">clade_names</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1860,10 +1951,7 @@
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rot</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">:</span>
-                        <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">rot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
+                    <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span> <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
                     <span class="k">if</span> <span class="n">yloc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">yloc</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_tree_rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1899,10 +1987,7 @@
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rot</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">:</span>
-                        <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">rot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
+                    <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span> <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
                     <span class="k">if</span> <span class="n">yloc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">yloc</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_tree_rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1924,8 +2009,7 @@
 <div class="viewcode-block" id="Tcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tcircle</span><span class="p">(</span><span class="n">Gcircle</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Tcircle class is the subclass of Gcircle. All methods implemented in the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tcircle class is the subclass of Gcircle. All methods implemented in the</span>
 <span class="sd">    Gcircle class also can be used. Then, the two additional methods set_tarc,</span>
 <span class="sd">    plot_tree and plot_highlight is provided in the Tcircle class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1956,7 +2040,8 @@
 <span class="sd">            dict: The corresponding _garc_dict if name is &#39;tarc_dict&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;tarc_dict&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Tcircle.add_tarc">
@@ -1991,39 +2076,54 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">sum_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
-        <span class="n">sum_interspace</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
+        <span class="n">sum_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="p">)</span>
+        <span class="n">sum_interspace</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">360</span>
         <span class="n">end</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span> <span class="o">-</span> <span class="n">sum_interspace</span>
 
         <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">sum_interspace</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">size</span>
             <span class="n">sum_interspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">interspace</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_is_ext</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;polar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;polar&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">height</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">facecolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">facecolor</span>
             <span class="n">edgecolor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">edgecolor</span>
@@ -2034,19 +2134,34 @@
             <span class="k">if</span> <span class="n">facecolor</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">linewidth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">([</span><span class="n">pos</span><span class="p">],</span> <span class="p">[</span><span class="n">height</span><span class="p">],</span> <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
-                            <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">pos</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">height</span><span class="p">],</span>
+                    <span class="n">bottom</span><span class="o">=</span><span class="n">bottom</span><span class="p">,</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                    <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
+                    <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
+                    <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">rot</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span><span class="p">:</span>
+                <span class="n">rot</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
                 <span class="n">rot</span> <span class="o">=</span> <span class="n">rot</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-                <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">:</span>
-                    <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
+                <span class="n">rot</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">-</span> <span class="n">rot</span> <span class="k">if</span> <span class="mi">90</span> <span class="o">&lt;</span> <span class="n">rot</span> <span class="o">&lt;</span> <span class="mi">270</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rot</span>
                 <span class="n">height</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">+</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelposition</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                             <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelsize</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="n">pos</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">height</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelsize</span><span class="p">,</span>
+                <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Tcircle.plot_tree">
@@ -2105,11 +2220,13 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-            <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="n">positions</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span>
         <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">positions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">positions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -2152,7 +2269,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="n">highlight_dict</span><span class="p">)</span></div>
 </div>
 
@@ -2161,44 +2277,47 @@
 <div class="viewcode-block" id="table_hg38_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_chromosome_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_chromosome_length</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;hg38_chromosome_length.csv&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;hg38_chromosome_length.csv&quot;</span><span class="p">))</span></div>
+
 
 
 <div class="viewcode-block" id="table_hg38_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_cytoband">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_cytoband</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;hg38_cytoBand.csv&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;hg38_cytoBand.csv&quot;</span><span class="p">))</span></div>
+
 
 
 <div class="viewcode-block" id="table_mm10_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_chromosome_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_chromosome_length</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;mm10_chromosome_length.csv&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;mm10_chromosome_length.csv&quot;</span><span class="p">))</span></div>
+
 
 
 <div class="viewcode-block" id="table_mm10_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_cytoband">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_cytoband</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s1">&#39;mm10_cytoBand.csv&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;mm10_cytoBand.csv&quot;</span><span class="p">))</span></div>
 
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    tree = next(Phylo.parse(&quot;../tutorial/circos/hmptree.xml&quot;, &quot;phyloxml&quot;)) </span>
-<span class="sd">    col_positions = get_col_positions(tree) </span>
+<span class="sd">    tree = next(Phylo.parse(&quot;../tutorial/circos/hmptree.xml&quot;, &quot;phyloxml&quot;))</span>
+<span class="sd">    col_positions = get_col_positions(tree)</span>
 <span class="sd">    row_positions = get_row_positions(tree)</span>
 
-<span class="sd">    import numpy as np </span>
+<span class="sd">    import numpy as np</span>
 <span class="sd">    import matplotlib.pyplot as plt</span>
-<span class="sd">    fig = plt.figure(figsize=(5,5)) </span>
+<span class="sd">    fig = plt.figure(figsize=(5,5))</span>
 <span class="sd">    ax  = fig.add_axes([0, 0, 1, 1], polar=True)</span>
 <span class="sd">    theta_dict, r_dict = convert(tree, col_positions, row_positions, (0, np.pi), (0,10))</span>
 
-<span class="sd">    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color=&quot;k&quot;) </span>
+<span class="sd">    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color=&quot;k&quot;)</span>
 
-<span class="sd">    plot_lines(ax, theta_dict, r_dict) </span>
+<span class="sd">    plot_lines(ax, theta_dict, r_dict)</span>
 
 <span class="sd">    ax.set_ylim([0,10])</span>
 <span class="sd">    fig.savefig(&quot;test.pdf&quot;, bbox_inches=&quot;tight&quot;)</span>

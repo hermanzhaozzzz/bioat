@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.hictools &mdash; bioat Documentation</title>
+  <title>bioat.hictools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -85,16 +85,17 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Hi-C toolbox.&quot;&quot;&quot;</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;HiCTools&quot;</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="nd">@profile</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_effective_resolutions</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">genome_index</span><span class="p">,</span>
-            <span class="n">valid_pairs</span><span class="p">,</span>
-            <span class="n">output</span><span class="p">,</span>
-            <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;INFO&#39;</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">genome_index</span><span class="p">,</span>
+        <span class="n">valid_pairs</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get deepest resolution of cis-interation.</span>
 
@@ -112,28 +113,39 @@
         <span class="c1"># load ref genome lengths</span>
         <span class="n">df_chromosome</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
             <span class="n">genome_index</span><span class="p">,</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chromosome&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">],</span>
-            <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;chromosome&#39;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chromosome&quot;</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">],</span>
+            <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;chromosome&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># load sample valid pairs by HiCTools-Pro after remove duplication and filter.</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
             <span class="n">valid_pairs</span><span class="p">,</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">names</span><span class="o">=</span><span class="p">[</span>
-                <span class="s1">&#39;read_name&#39;</span><span class="p">,</span> <span class="s1">&#39;chr_A&#39;</span><span class="p">,</span> <span class="s1">&#39;start_A&#39;</span><span class="p">,</span> <span class="s1">&#39;strand_A&#39;</span><span class="p">,</span> <span class="s1">&#39;chr_B&#39;</span><span class="p">,</span> <span class="s1">&#39;start_B&#39;</span><span class="p">,</span> <span class="s1">&#39;strand_B&#39;</span><span class="p">,</span> <span class="s1">&#39;insert_size&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;fragment_name_A&#39;</span><span class="p">,</span> <span class="s1">&#39;fragment_name_B&#39;</span><span class="p">,</span> <span class="s1">&#39;mapQ_A&#39;</span><span class="p">,</span> <span class="s1">&#39;mapQ_B&#39;</span><span class="p">,</span> <span class="s1">&#39;allele_specific_info&#39;</span>
+                <span class="s2">&quot;read_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;chr_A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;start_A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strand_A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;chr_B&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;start_B&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strand_B&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;insert_size&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fragment_name_A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fragment_name_B&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mapQ_A&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mapQ_B&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;allele_specific_info&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chr_A&#39;</span><span class="p">,</span> <span class="s1">&#39;start_A&#39;</span><span class="p">,</span> <span class="s1">&#39;chr_B&#39;</span><span class="p">,</span> <span class="s1">&#39;start_B&#39;</span><span class="p">],</span>
+            <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chr_A&quot;</span><span class="p">,</span> <span class="s2">&quot;start_A&quot;</span><span class="p">,</span> <span class="s2">&quot;chr_B&quot;</span><span class="p">,</span> <span class="s2">&quot;start_B&quot;</span><span class="p">],</span>
             <span class="n">dtype</span><span class="o">=</span><span class="p">{</span>
-                <span class="s1">&#39;chr_A&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                <span class="s1">&#39;start_A&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                <span class="s1">&#39;chr_B&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                <span class="s1">&#39;start_B&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                <span class="s2">&quot;chr_A&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="s2">&quot;start_A&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                <span class="s2">&quot;chr_B&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="s2">&quot;start_B&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">iterator</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">iterator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -148,18 +160,18 @@
         <span class="n">df_valid_pairs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">df_valid_pairs</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">memory_usage</span><span class="o">=</span><span class="s2">&quot;deep&quot;</span><span class="p">))</span>
         <span class="c1"># 思路：二分法确认new_bin下线</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;wt&#39;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="n">write_lines</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;test_bin(kb)</span><span class="se">\t</span><span class="s1">total_bins</span><span class="se">\t</span><span class="s1">threshold(%)</span><span class="se">\t</span><span class="s1">is_effective</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_bin(kb)</span><span class="se">\t</span><span class="s2">total_bins</span><span class="se">\t</span><span class="s2">threshold(%)</span><span class="se">\t</span><span class="s2">is_effective</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">write_lines</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="c1"># 思路：二分法确认new_bin下线</span>
         <span class="n">circle</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">new_bin</span> <span class="o">=</span> <span class="mi">512_000</span>  <span class="c1"># 512kb</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">get_bin_index</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">cumsum</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="p">[</span><span class="s1">&#39;bins_cumsum&#39;</span><span class="p">][</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;chr_A&#39;</span><span class="p">]]</span>
-            <span class="n">bin_count_in_this_chrom_a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;start_A&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">bin_count_in_this_chrom_b</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;start_B&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">cumsum</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="p">[</span><span class="s2">&quot;bins_cumsum&quot;</span><span class="p">][</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;chr_A&quot;</span><span class="p">]]</span>
+            <span class="n">bin_count_in_this_chrom_a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;start_A&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">bin_count_in_this_chrom_b</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;start_B&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">bin_index_a</span> <span class="o">=</span> <span class="n">cumsum</span> <span class="o">+</span> <span class="n">bin_count_in_this_chrom_a</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="n">bin_index_b</span> <span class="o">=</span> <span class="n">cumsum</span> <span class="o">+</span> <span class="n">bin_count_in_this_chrom_b</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="n">bin_index_a</span><span class="p">,</span> <span class="n">bin_index_b</span>
@@ -171,9 +183,9 @@
 
             <span class="c1"># calculate total bins</span>
             <span class="n">df_chromosome</span><span class="p">[</span><span class="s2">&quot;bins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">new_bin</span><span class="o">=</span><span class="n">new_bin</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">new_bin</span><span class="o">=</span><span class="n">new_bin</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">new_bin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">df_chromosome</span><span class="p">[</span><span class="s1">&#39;bins_cumsum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+            <span class="n">df_chromosome</span><span class="p">[</span><span class="s2">&quot;bins_cumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="p">[</span><span class="s2">&quot;bins&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
             <span class="n">total_bins</span> <span class="o">=</span> <span class="n">df_chromosome</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
             <span class="c1"># calculate mapped bin index</span>
@@ -186,18 +198,23 @@
 
             <span class="c1"># print(df_valid_pairs)</span>
             <span class="c1"># threshold calculation</span>
-            <span class="n">s_bin_idx_count1</span> <span class="o">=</span> <span class="n">df_valid_pairs</span><span class="p">[</span><span class="s1">&#39;bin_index_A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-            <span class="n">s_bin_idx_count2</span> <span class="o">=</span> <span class="n">df_valid_pairs</span><span class="p">[</span><span class="s1">&#39;bin_index_B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-            <span class="n">df_bin_interaction_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">s_bin_idx_count1</span><span class="p">,</span> <span class="n">s_bin_idx_count2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">df_bin_interaction_count</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s1">&#39;bin_index_A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_bin_interaction_count</span><span class="p">[</span>
-                <span class="s1">&#39;bin_index_B&#39;</span>
-            <span class="p">]</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">total_bins</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">s_bin_idx_count1</span> <span class="o">=</span> <span class="n">df_valid_pairs</span><span class="p">[</span><span class="s2">&quot;bin_index_A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+            <span class="n">s_bin_idx_count2</span> <span class="o">=</span> <span class="n">df_valid_pairs</span><span class="p">[</span><span class="s2">&quot;bin_index_B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+            <span class="n">df_bin_interaction_count</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">s_bin_idx_count1</span><span class="p">,</span> <span class="n">s_bin_idx_count2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="n">df_bin_interaction_count</span> <span class="o">=</span> <span class="n">df_bin_interaction_count</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s2">&quot;bin_index_A&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s2">&quot;bin_index_B&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">df_bin_interaction_count</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">total_bins</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">threshold</span> <span class="o">&gt;</span> <span class="mi">80</span><span class="p">:</span>
                 <span class="c1"># 输出结果为有效,进入下一个循环</span>
-                <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">new_bin</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">total_bins</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="se">\t</span><span class="s1">YES</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">new_bin</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">total_bins</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="se">\t</span><span class="s2">YES</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">write_lines</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># if write_lines != 1:</span>
@@ -205,7 +222,7 @@
                 <span class="c1">#     output.write(f&#39;{int(new_bin / 1000)}\t{total_bins}\t{threshold}\tNO\n&#39;)</span>
                 <span class="c1"># else:</span>
                 <span class="c1">#     # 第一次计算就无效,直接终止程序</span>
-                <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">new_bin</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">total_bins</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="se">\t</span><span class="s1">NO</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">new_bin</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">total_bins</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="se">\t</span><span class="s2">NO</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
             <span class="k">del</span> <span class="n">s_bin_idx_count1</span><span class="p">,</span> <span class="n">s_bin_idx_count2</span><span class="p">,</span> <span class="n">df_bin_interaction_count</span>
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
@@ -213,13 +230,13 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">hic</span> <span class="o">=</span> <span class="n">HiCTools</span><span class="p">()</span>
     <span class="n">hic</span><span class="o">.</span><span class="n">get_effective_resolutions</span><span class="p">(</span>
         <span class="n">genome_index</span><span class="o">=</span><span class="s2">&quot;/Volumes/zhaohn_HD/Bio/1.database/db_genomes/genome_fa/genome_ucsc_hg38/genome_ucsc_hg38.fa.fai&quot;</span><span class="p">,</span>
         <span class="n">valid_pairs</span><span class="o">=</span><span class="s2">&quot;../../data/hic/test.rm_dup_pairs.allValidPairs&quot;</span><span class="p">,</span>
-        <span class="n">output</span><span class="o">=</span><span class="s2">&quot;/Users/zhaohuanan/Downloads/testout&quot;</span>
+        <span class="n">output</span><span class="o">=</span><span class="s2">&quot;/Users/zhaohuanan/Downloads/testout&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span>
     <span class="c1"># print(f&#39;\n{a:.3f}s&#39;)</span>

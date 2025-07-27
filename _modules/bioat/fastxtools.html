@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.fastxtools &mdash; bioat Documentation</title>
+  <title>bioat.fastxtools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -84,6 +84,7 @@
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FastxTools</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;FASTA &amp; FASTQ toolbox.&quot;&quot;&quot;</span>
+
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;FastxTools&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -93,7 +94,11 @@
 <div class="viewcode-block" id="FastxTools.fmt_this">
 <a class="viewcode-back" href="../../bioat.html#bioat.fastxtools.FastxTools.fmt_this">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fmt_this</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">new_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Formats a FASTA file to improve readability.</span>
 
@@ -106,7 +111,10 @@
 <span class="sd">        This function calls &#39;format_this_fastx&#39; to perform the actual formatting on the specified FASTA file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">format_this_fastx</span><span class="p">(</span>
-            <span class="n">old_file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">new_file</span><span class="o">=</span><span class="n">new_file</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span>
+            <span class="n">old_file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+            <span class="n">new_file</span><span class="o">=</span><span class="n">new_file</span><span class="p">,</span>
+            <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span>
+            <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -130,7 +138,11 @@
 <span class="sd">            log_level (str): The logging level for messages. Default is &quot;WARNING&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">calculate_length_distribution</span><span class="p">(</span>
-            <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">plt_show</span><span class="o">=</span><span class="n">plt_show</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span>
+            <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+            <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
+            <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span>
+            <span class="n">plt_show</span><span class="o">=</span><span class="n">plt_show</span><span class="p">,</span>
+            <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -158,8 +170,8 @@
             <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">]</span>
             <span class="n">df</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">md5</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">BioatFileFormatError</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">BioatFileFormatError</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
         <span class="n">to_path</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.fix.md5&quot;</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;write to </span><span class="si">{</span><span class="n">to_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -168,9 +180,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_fastx_generator</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        :param str file: path of input &lt;fastq | fastq.gz | fastx | fastx.gz&gt;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;:param str file: path of input &lt;fastq | fastq.gz | fastx | fastx.gz&gt;</span>
 <span class="sd">        :return: a generator for all reads:</span>
 <span class="sd">            i.e. print(next(obj)) -&gt; [&#39;header&#39;, &#39;seq&#39;, &#39;info&#39;, &#39;quality&#39;]</span>
 <span class="sd">        :rtype: generator</span>
@@ -178,11 +188,11 @@
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_load_fastx_generator&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
         <span class="c1"># FASTQ @  | FASTA &gt;</span>
         <span class="n">symbol</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="s2">&quot;@&quot;</span><span class="p">:</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;detect FASTQ file&quot;</span><span class="p">)</span>
@@ -192,23 +202,22 @@
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
                     <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
-                        <span class="c1"># header or not complete</span>
-                        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                            <span class="c1"># header, 第一次循环开始</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>  <span class="c1"># add header!</span>
-                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>  <span class="c1"># next line</span>
-                            <span class="k">continue</span>
-                        <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                            <span class="c1"># read == [&#39;header&#39;, &#39;seq&#39;, &#39;info&#39;, &#39;quality&#39;]</span>
-                            <span class="k">yield</span> <span class="n">read</span>
-                            <span class="n">read</span> <span class="o">=</span> <span class="p">[]</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-<span class="w">                            </span><span class="sd">&quot;&quot;&quot;</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
+                    <span class="c1"># header or not complete</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># header, 第一次循环开始</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>  <span class="c1"># add header!</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>  <span class="c1"># next line</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="c1"># read == [&#39;header&#39;, &#39;seq&#39;, &#39;info&#39;, &#39;quality&#39;]</span>
+                        <span class="k">yield</span> <span class="n">read</span>
+                        <span class="n">read</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+<span class="w">                        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                            @@IIEIBCE&gt;IC&lt;IBIIIIEAIEIEB&lt;IDECCD6 # line! 期望它是 header！现在它是 quality</span>
 <span class="sd">                            [</span>
 <span class="sd">                                &#39;@Beta12AdemL1C001R00100001768/1&#39;,</span>
@@ -217,21 +226,23 @@
 <span class="sd">                            ]&#39;@@IIEIBCE&gt;IC&lt;IBIIIIEAIEIEB&lt;IDECCD6&#39;</span>
 
 <span class="sd">                            &quot;&quot;&quot;</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
-                                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The file may be incomplete!&quot;</span><span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The file may be incomplete!&quot;</span><span class="p">)</span>
-
-                        <span class="c1"># header line!</span>
-                        <span class="c1"># read.append(line)  # add header !</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># not header line!</span>
                         <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                         <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">):</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The file may be incomplete!&quot;</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The file may be incomplete!&quot;</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+                    <span class="c1"># header line!</span>
+                    <span class="c1"># read.append(line)  # add header !</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># not header line!</span>
+                    <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 
             <span class="c1"># ls.append(read)</span>
             <span class="k">yield</span> <span class="n">read</span>
@@ -248,34 +259,33 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                     <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
-                        <span class="c1"># 读取 header！</span>
-                        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
+                    <span class="c1"># 读取 header！</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">read</span><span class="p">)</span>
 
-                        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                            <span class="c1"># 第一次循环</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                            <span class="c1"># 已经有一个 header 了！现在缺 seq</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>  <span class="c1"># add seq line</span>
-                            <span class="c1"># ls.append(read)</span>
-                            <span class="k">yield</span> <span class="n">read</span>
-                            <span class="n">read</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 重置 read 这个 list</span>
-                            <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                            <span class="n">seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># 重置 seq 这个 str</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                                <span class="n">BioatFileNotCompleteError</span><span class="p">(</span><span class="s2">&quot;The file may be incomplete!&quot;</span><span class="p">)</span>
-                            <span class="p">)</span>
-                            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># 读取并添加 seq</span>
-                        <span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># 第一次循环</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                         <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1"># 已经有一个 header 了！现在缺 seq</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>  <span class="c1"># add seq line</span>
+                        <span class="c1"># ls.append(read)</span>
+                        <span class="k">yield</span> <span class="n">read</span>
+                        <span class="n">read</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 重置 read 这个 list</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                        <span class="n">seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># 重置 seq 这个 str</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="n">BioatFileNotCompleteError</span><span class="p">(</span><span class="s2">&quot;The file may be incomplete!&quot;</span><span class="p">),</span>
+                        <span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># 读取并添加 seq</span>
+                    <span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 
             <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
             <span class="c1"># ls.append(read)</span>
@@ -285,10 +295,10 @@
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="n">BioatFileFormatError</span><span class="p">(</span>
-                    <span class="s2">&quot;Input line one must starts with `@` for FASTQ or `&gt;` for FASTA!&quot;</span>
-                <span class="p">)</span>
+                    <span class="s2">&quot;Input line one must starts with `@` for FASTQ or `&gt;` for FASTA!&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
             <span class="p">)</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># CLI subcommand for filtering sequences</span>
@@ -310,7 +320,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fastx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_fastx_generator</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
@@ -318,11 +327,7 @@
         <span class="n">output</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">output</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
-                <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">output</span>
 
@@ -333,8 +338,7 @@
 
             <span class="k">if</span> <span class="n">seq</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">read</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">read</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 </div>
 

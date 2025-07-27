@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libpath &mdash; bioat Documentation</title>
+  <title>bioat.lib.libpath &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">bioat</a>
+          <a href="../../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -83,28 +83,6 @@
 <span class="n">HOME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="is_file">
-<a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpath.is_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_file</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given path is a file.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        x (str | Path): The path to check.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if the path is a file, False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;is_file&quot;</span><span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if &#39;</span><span class="si">%s</span><span class="s2">&#39; is a file&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; is a file&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; is not a file&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span></div>
-
-
-
 <div class="viewcode-block" id="check_cmd">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpath.check_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_cmd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -135,24 +113,28 @@
 <div class="viewcode-block" id="check_executable">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libpath.check_executable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_executable</span><span class="p">(</span>
-    <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Either x or name must be provided only one.&quot;</span>
             <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
-                <span class="s2">&quot;Either x or name must be provided only one.&quot;</span>
+                <span class="n">msg</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_cmd</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">log_level</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">BioatMissingDependencyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found in PATH&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_cmd</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">log_level</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found in PATH&quot;</span>
+            <span class="k">raise</span> <span class="n">BioatMissingDependencyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> not found or not executable&quot;</span>
+            <span class="k">raise</span> <span class="n">BioatInvalidOptionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">BioatInvalidOptionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> not found or not executable&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
-                <span class="s2">&quot;Either x or name must be provided only one.&quot;</span>
-            <span class="p">)</span></div>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Either x or name must be provided only one.&quot;</span>
+        <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
+            <span class="n">msg</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

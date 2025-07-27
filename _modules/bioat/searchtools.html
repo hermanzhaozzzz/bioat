@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.searchtools &mdash; bioat Documentation</title>
+  <title>bioat.searchtools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -68,15 +68,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.searchtools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span></span><span class="sd">&quot;&quot;&quot;Some cmdline tools for searching, powered by playwright.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidOptionError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpatentseq</span><span class="w"> </span><span class="kn">import</span> <span class="n">query_patent</span>
@@ -98,252 +98,192 @@
 <div class="viewcode-block" id="SearchTools.google_scholar">
 <a class="viewcode-back" href="../../bioat.html#bioat.searchtools.SearchTools.google_scholar">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">google_scholar</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CRISPR&quot;</span><span class="p">,</span>
-            <span class="n">sort_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CitePerYear&quot;</span><span class="p">,</span>
-            <span class="n">n_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">save_table</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
-            <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sort_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CitePerYear&quot;</span><span class="p">,</span>
+        <span class="n">n_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">start_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a table with a list of publications from google scholar, sort_by cit/year.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search Google Scholar.</span>
 
-<span class="sd">        This code creates a database with a list of publications data from Google</span>
-<span class="sd">        Scholar.</span>
-<span class="sd">        The data acquired from GS is Title, Citations, Links and Rank.</span>
-<span class="sd">        It is useful for finding relevant papers by sorting by the number of citations.</span>
+<span class="sd">        This method creates a DataFrame of publication data from Google Scholar.</span>
+<span class="sd">        Each result includes title, citations, year, authors, venue, publisher, and link.</span>
+<span class="sd">        It is useful for finding relevant papers by citation metrics.</span>
 
-<span class="sd">        As output this program will plot the number of citations in the Y axis and the</span>
-<span class="sd">        rank of the result in the X axis. It also, optionally, export the database to</span>
-<span class="sd">        a .csv file.</span>
+<span class="sd">        Optionally, it can generate a plot of citation counts versus rank and save the</span>
+<span class="sd">        table in various formats.</span>
 
-<span class="sd">        :param keyword: Keyword to be searched. Use double quote followed by simple quote to search for an exact</span>
-<span class="sd">                keyword. Example: &quot;&#39;exact keyword&#39;&quot;</span>
-<span class="sd">        :param sort_by: Column to be sorted by.</span>
-<span class="sd">                i.e., it will be sorted by the number of citations.</span>
-<span class="sd">                If you want to sort by citations per year, use --sort_by &quot;CitePerYear&quot;</span>
-<span class="sd">                Or --sort_by &quot;Citations&quot; to sort by citations totally.</span>
-<span class="sd">        :param n_results: Number of articles to search on Google Scholar.</span>
-<span class="sd">                Default is 100. (be careful with robot checking if value is too high)</span>
-<span class="sd">        :param output: Path of the exported table file. format can be &#39;csv&#39;, &#39;tsv&#39;, &#39;xls&#39; or &#39;xlsx&#39;(default).</span>
-<span class="sd">        :param save_table: By default, results are going to be exported to a csv file.</span>
-<span class="sd">                Select this option to just print results but not store them</span>
-<span class="sd">        :param plot: Use this flag in order to plot the results with the original rank in the x-axis</span>
-<span class="sd">                and the number of citaions in the y-axis.</span>
-<span class="sd">                Default is False</span>
-<span class="sd">        :param start_year: Start year when searching. Default is None</span>
-<span class="sd">        :param end_year: End year when searching. Default is current year</span>
-<span class="sd">        :param log_level: &#39;CRITICAL&#39;, &#39;ERROR&#39;, &#39;WARNING&#39;, &#39;INFO&#39;, &#39;DEBUG&#39;, &#39;NOTSET&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            keyword (str): Keyword to search for. For exact matches, wrap in double and single quotes,</span>
+<span class="sd">                e.g., &quot;&#39;exact keyword&#39;&quot;.</span>
+<span class="sd">            output (str, optional): Output file path. Supported formats: .csv, .tsv, .xls, .xlsx.</span>
+<span class="sd">                Default is None, which means no output and only print the table in the console.</span>
+<span class="sd">            sort_by (str): Column to sort the result by, such as &quot;Citations&quot; or &quot;CitePerYear&quot;. Default is &quot;CitePerYear&quot;.</span>
+<span class="sd">            n_results (int): Number of search results to retrieve. Default is 100.</span>
+
+<span class="sd">            plot (bool): Whether to plot citation count vs. rank. Default is False.</span>
+<span class="sd">            start_year (int, optional): Optional start year for publication filtering.</span>
+<span class="sd">            end_year (int): End year for publication filtering. Default is current year.</span>
+<span class="sd">            log_level (str): Logging level. One of: &#39;CRITICAL&#39;, &#39;ERROR&#39;, &#39;WARNING&#39;, &#39;INFO&#39;, &#39;DEBUG&#39;, &#39;NOTSET&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None. Prints the table and optionally saves or plots it.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;google_scholar&quot;</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Run google scholar search...&quot;</span><span class="p">)</span>
+        <span class="c1"># show params</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keyword: </span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sort by: </span><span class="si">{</span><span class="n">sort_by</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of results: </span><span class="si">{</span><span class="n">n_results</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start year: </span><span class="si">{</span><span class="n">start_year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;End year: </span><span class="si">{</span><span class="n">end_year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plot: </span><span class="si">{</span><span class="n">plot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_citations</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="n">char</span><span class="p">:</span> <span class="n">char</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Cited by &quot;</span><span class="p">:</span>
-                    <span class="n">init</span> <span class="o">=</span> <span class="n">char</span> <span class="o">+</span> <span class="mi">9</span>
-                    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">init</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">init</span> <span class="o">+</span> <span class="mi">6</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="n">end</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span>
-                            <span class="k">break</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">init</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">playwright_module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;playwright.sync_api&quot;</span><span class="p">)</span>
+            <span class="n">sync_playwright</span> <span class="o">=</span> <span class="n">playwright_module</span><span class="o">.</span><span class="n">sync_playwright</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                <span class="s2">&quot;Missing dependency &#39;playwright&#39;. Please install it by running:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;    pip install playwright &amp;&amp; playwright install&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_year</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">char</span> <span class="o">-</span> <span class="mi">5</span><span class="p">:</span> <span class="n">char</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">setup_driver</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">from</span><span class="w"> </span><span class="nn">selenium</span><span class="w"> </span><span class="kn">import</span> <span class="n">webdriver</span>
-                <span class="kn">from</span><span class="w"> </span><span class="nn">selenium.common.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaleElementReferenceException</span>
-                <span class="kn">from</span><span class="w"> </span><span class="nn">selenium.webdriver.chrome.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">Options</span>
-            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Please install Selenium using `pip install selenium`&quot;</span><span class="p">)</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading...&quot;</span><span class="p">)</span>
-            <span class="n">options</span> <span class="o">=</span> <span class="n">Options</span><span class="p">()</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;disable-infobars&quot;</span><span class="p">)</span>
-            <span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">driver</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_author</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span> <span class="n">char</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="k">break</span>
-            <span class="k">return</span> <span class="n">out</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">xpath</span><span class="p">,</span> <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">_count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Safe get_element method with multiple attempts&quot;&quot;&quot;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_xpath</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">element</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">_count</span> <span class="o">&lt;</span> <span class="n">attempts</span><span class="p">:</span>
-                    <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="n">get_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">xpath</span><span class="p">,</span> <span class="n">attempts</span><span class="o">=</span><span class="n">attempts</span><span class="p">,</span> <span class="n">_count</span><span class="o">=</span><span class="n">_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Element not found&quot;</span><span class="p">)</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_content_with_selenium</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s2">&quot;driver&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
-                <span class="k">global</span> <span class="n">driver</span>
-                <span class="n">driver</span> <span class="o">=</span> <span class="n">setup_driver</span><span class="p">()</span>
-            <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-
-            <span class="c1"># Get element from page</span>
-            <span class="n">el</span> <span class="o">=</span> <span class="n">get_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="s2">&quot;/html/body&quot;</span><span class="p">)</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;innerHTML&quot;</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">kw</span> <span class="ow">in</span> <span class="n">el</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">ROBOT_KW</span><span class="p">):</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;Solve captcha manually and press enter here to continue...&quot;</span>
-                <span class="p">)</span>
-                <span class="n">el</span> <span class="o">=</span> <span class="n">get_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="s2">&quot;/html/body&quot;</span><span class="p">)</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;innerHTML&quot;</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Websession Parameters</span>
         <span class="n">GSCHOLAR_URL</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;https://scholar.google.com/scholar?start=</span><span class="si">{}</span><span class="s2">&amp;q=</span><span class="si">{}</span><span class="s2">&amp;hl=en&amp;as_sdt=0,5&quot;</span>
         <span class="p">)</span>
-        <span class="n">YEAR_RANGE</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># &amp;as_ylo={start_year}&amp;as_yhi={end_year}&#39;</span>
-        <span class="c1"># GSCHOLAR_URL_YEAR = GSCHOLAR_URL + YEAR_RANGE</span>
         <span class="n">STARTYEAR_URL</span> <span class="o">=</span> <span class="s2">&quot;&amp;as_ylo=</span><span class="si">{}</span><span class="s2">&quot;</span>
         <span class="n">ENDYEAR_URL</span> <span class="o">=</span> <span class="s2">&quot;&amp;as_yhi=</span><span class="si">{}</span><span class="s2">&quot;</span>
-        <span class="n">ROBOT_KW</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;unusual traffic from your computer network&quot;</span><span class="p">,</span> <span class="s2">&quot;not a robot&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Create main URL based on command line arguments</span>
-        <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">GSCHOLAR_URL</span> <span class="o">+</span> <span class="n">STARTYEAR_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_year</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">start_year</span>
-            <span class="k">else</span> <span class="n">GSCHOLAR_URL</span>
-        <span class="p">)</span>
-        <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">+</span> <span class="n">ENDYEAR_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_year</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">end_year</span>
-            <span class="k">else</span> <span class="n">GSCHOLAR_MAIN_URL</span>
-        <span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_year</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="mi">1900</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
 
-        <span class="k">if</span> <span class="n">log_level</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
-            <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;https://web.archive.org/web/20210314203256/&quot;</span> <span class="o">+</span> <span class="n">GSCHOLAR_URL</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_citations</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Extract citation number from a string like &#39;Cited by 123&#39;.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;Cited by&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Cited by&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_author</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_venue</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_publisher</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">launch_browser</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">chromium</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">headless</span><span class="o">=</span><span class="n">headless</span><span class="p">)</span>
+
+        <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">=</span> <span class="n">GSCHOLAR_URL</span>
+        <span class="k">if</span> <span class="n">start_year</span><span class="p">:</span>
+            <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">+=</span> <span class="n">STARTYEAR_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_year</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end_year</span><span class="p">:</span>
+            <span class="n">GSCHOLAR_MAIN_URL</span> <span class="o">+=</span> <span class="n">ENDYEAR_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_year</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">sync_playwright</span><span class="p">()</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="n">browser</span> <span class="o">=</span> <span class="n">launch_browser</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headless&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="n">browser</span><span class="o">.</span><span class="n">new_context</span><span class="p">(</span>
+                <span class="n">user_agent</span><span class="o">=</span><span class="p">(</span>
+                    <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) &quot;</span>
+                    <span class="s2">&quot;AppleWebKit/537.36 (KHTML, like Gecko) &quot;</span>
+                    <span class="s2">&quot;Chrome/120.0.0.0 Safari/537.36&quot;</span>
+                <span class="p">),</span>
+                <span class="n">viewport</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">},</span>
+                <span class="n">locale</span><span class="o">=</span><span class="s2">&quot;en-US&quot;</span><span class="p">,</span>
+                <span class="n">java_script_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">new_page</span><span class="p">()</span>
+
+            <span class="n">links</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">citations</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">venue</span><span class="p">,</span> <span class="n">publisher</span><span class="p">,</span> <span class="n">rank</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="p">)</span>
 
-        <span class="c1"># Start new session</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-        <span class="c1"># headers = {&#39;User-Agent&#39;: &#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36&#39;}</span>
-
-        <span class="c1"># Variables</span>
-        <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">citations</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">year</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">author</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">venue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">publisher</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c1"># Get content from number_of_results URLs</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_results</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-            <span class="c1"># if start_year is None:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">GSCHOLAR_MAIN_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">keyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">))</span>
-
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Opening URL:&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
-            <span class="c1"># else:</span>
-            <span class="c1">#    url=GSCHOLAR_URL_YEAR.format(str(n), keyword.replace(&#39; &#39;,&#39;+&#39;), start_year=start_year, end_year=end_year)</span>
-
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading next </span><span class="si">{}</span><span class="s2"> results&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">10</span><span class="p">))</span>
-            <span class="n">page</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># , headers=headers)</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">content</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">kw</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">ROBOT_KW</span><span class="p">):</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;Robot checking detected, handling with selenium (if installed)&quot;</span>
-                <span class="p">)</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">get_content_with_selenium</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No success. The following error was raised:&quot;</span><span class="p">)</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-            <span class="c1"># Create parser</span>
-            <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">,</span> <span class="n">from_encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Get stuff</span>
-            <span class="n">mydivs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_or&quot;</span><span class="p">})</span>
-
-            <span class="k">for</span> <span class="n">div</span> <span class="ow">in</span> <span class="n">mydivs</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))</span>
-                <span class="k">except</span><span class="p">:</span>  <span class="c1"># catch *all* exceptions</span>
-                    <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Look manually at: &quot;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Could not catch title&quot;</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_citations</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">div</span><span class="o">.</span><span class="n">format_string</span><span class="p">)))</span>
-                <span class="k">except</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_results</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">GSCHOLAR_MAIN_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">keyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">))</span>
+                <span class="n">page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60000</span><span class="p">)</span>
+                <span class="n">page</span><span class="o">.</span><span class="n">wait_for_timeout</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+                <span class="c1"># 检查是否触发验证码：页面空、或包含“unusual traffic”、“not a robot”等文字</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="ow">not</span> <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;.gs_r.gs_or.gs_scl&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                    <span class="ow">or</span> <span class="s2">&quot;unusual traffic&quot;</span> <span class="ow">in</span> <span class="n">page</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
+                <span class="p">):</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Number of citations not found for </span><span class="si">{}</span><span class="s2">. Appending 0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                            <span class="n">title</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Google Scholar 验证触发, 进入人工处理模式...</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                    <span class="c1"># 重开非 headless 模式</span>
+                    <span class="n">browser</span> <span class="o">=</span> <span class="n">launch_browser</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">context</span> <span class="o">=</span> <span class="n">browser</span><span class="o">.</span><span class="n">new_context</span><span class="p">(</span>
+                        <span class="n">user_agent</span><span class="o">=</span><span class="p">(</span>
+                            <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) &quot;</span>
+                            <span class="s2">&quot;AppleWebKit/537.36 (KHTML, like Gecko) &quot;</span>
+                            <span class="s2">&quot;Chrome/120.0.0.0 Safari/537.36&quot;</span>
+                        <span class="p">),</span>
+                        <span class="n">viewport</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">},</span>
+                        <span class="n">locale</span><span class="o">=</span><span class="s2">&quot;en-US&quot;</span><span class="p">,</span>
+                        <span class="n">java_script_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">page</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">new_page</span><span class="p">()</span>
+                    <span class="n">page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                    <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请在弹出的浏览器中手动完成验证, 完成后按回车继续...&quot;</span><span class="p">)</span>
+
+                <span class="n">items</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;.gs_r.gs_or.gs_scl&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">link</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">it</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;h3 &gt; a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Unavailable&quot;</span>
                         <span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="n">citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">year</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_year</span><span class="p">(</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_a&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Year not found for </span><span class="si">{}</span><span class="s2">, appending 0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                    <span class="p">)</span>
-                    <span class="n">year</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_author</span><span class="p">(</span><span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_a&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Author not found&quot;</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">publisher</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_a&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">publisher</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Publisher not found&quot;</span><span class="p">)</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">venue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                            <span class="n">div</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_a&quot;</span><span class="p">})</span>
-                            <span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-                            <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">ttl</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;h3 &gt; a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">inner_text</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;Unavailable&quot;</span>
+                        <span class="n">ttl</span> <span class="o">=</span> <span class="s2">&quot;No Title&quot;</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;.gs_a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">inner_text</span><span class="p">()</span>
+                    <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ttl</span><span class="p">)</span>
+                    <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+                    <span class="c1"># citations.append(get_citations(it.inner_html()))</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">cite_texts</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;.gs_fl&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all_inner_texts</span><span class="p">()</span>
+                        <span class="n">citation_line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">cite_texts</span> <span class="k">if</span> <span class="s2">&quot;Cited by&quot;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">),</span> <span class="s2">&quot;&quot;</span>
                         <span class="p">)</span>
-                    <span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">venue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Venue not fount&quot;</span><span class="p">)</span>
+                        <span class="n">citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_citations</span><span class="p">(</span><span class="n">citation_line</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">citations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">year</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_year</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+                    <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_author</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+                    <span class="n">venue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_venue</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+                    <span class="n">publisher</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_publisher</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+                    <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="c1"># Delay</span>
-            <span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-
-        <span class="c1"># Create a dataset and sort by the number of citations</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">citations</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">publisher</span><span class="p">,</span> <span class="n">venue</span><span class="p">,</span> <span class="n">links</span><span class="p">)),</span>
-            <span class="n">index</span><span class="o">=</span><span class="n">rank</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">citations</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">publisher</span><span class="p">,</span> <span class="n">venue</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
                 <span class="s2">&quot;Author&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
@@ -354,69 +294,93 @@
                 <span class="s2">&quot;Source&quot;</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Rank&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Citations&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="c1"># Add columns with number of citations per year</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Citations&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">])</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;Author&#39;</span><span class="p">,</span> <span class="s1">&#39;Citations&#39;</span><span class="p">,</span> <span class="s2">&quot;CitePerYear&quot;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Venue&#39;</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;Publisher&#39;</span><span class="p">]]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Author&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Citations&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;CitePerYear&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Year&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Venue&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Publisher&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Source&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
 
-        <span class="c1"># Sort by the selected columns, if exists</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">data_ranked</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sort_by</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Column name to be sorted not found. Sorting by the number of citations...&quot;</span>
+            <span class="n">df_sorted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sort_by</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+                <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
-            <span class="n">data_ranked</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Citations&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-        <span class="c1"># fix index</span>
-        <span class="n">data_ranked</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># Print data</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">data_ranked</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Sort failed, using default sort by &#39;Citations&#39;&quot;</span><span class="p">)</span>
+            <span class="n">df_sorted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Citations&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+                <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
 
-        <span class="c1"># Plot by citation number</span>
         <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rank</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">citations</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Number of Citations&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Rank of the keyword on Google Scholar&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Keyword: &quot;</span> <span class="o">+</span> <span class="n">keyword</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># 保证 citation 来自最终排序结果（而不是原始顺序）</span>
+                <span class="n">citation_values</span> <span class="o">=</span> <span class="n">df_sorted</span><span class="p">[</span><span class="s2">&quot;Citations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="c1"># Save results</span>
-        <span class="k">if</span> <span class="n">save_table</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">citation_values</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="n">citation_values</span><span class="p">,</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+                    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>  <span class="c1"># 常用: log scale 能更清晰看分布</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Number of Citations (log scale)&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Rank&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keyword: </span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">citation_values</span><span class="p">)</span><span class="si">}</span><span class="s2"> results)&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to plot citation distribution: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting results to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="p">:</span>
-                <span class="n">fpath_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">keyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">)</span>
-                <span class="n">data_ranked</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">fpath_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
-                <span class="n">data_ranked</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">keyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.xlsx&quot;</span>
+            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+                <span class="n">df_sorted</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
-                <span class="n">data_ranked</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">):</span>
-                <span class="n">data_ranked</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xls&quot;</span><span class="p">):</span>
-                <span class="n">data_ranked</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">df_sorted</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xls&quot;</span><span class="p">):</span>
+                <span class="n">df_sorted</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">BioatInvalidOptionError</span><span class="p">(</span><span class="s2">&quot;Output format not supported&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="n">BioatInvalidOptionError</span><span class="p">(</span><span class="s2">&quot;Unsupported output format: &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">df_sorted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_for_test&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">df_sorted</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="SearchTools.query_patent">
 <a class="viewcode-back" href="../../bioat.html#bioat.searchtools.SearchTools.query_patent">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query_patent</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">query_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">via_proxy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># proxy_server = &quot;socks5://127.0.0.1:8235&quot;,</span>
-            <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">nobrowser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="n">retry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="n">local_browser</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">rm_fail_cookie</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">query_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">via_proxy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># proxy_server = &quot;socks5://127.0.0.1:8235&quot;,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nobrowser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">retry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">local_browser</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rm_fail_cookie</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a table with a list of patent blast hit from lens.org</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a table with a list of patent blast hit from lens.org.</span>
 
 <span class="sd">        :param seq: protein sequence, e.g. MCRISQQKK</span>
 <span class="sd">        :param query_name: queryName in output table</span>
@@ -449,6 +413,11 @@
         <span class="p">)</span></div>
 </div>
 
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">tool</span> <span class="o">=</span> <span class="n">SearchTools</span><span class="p">()</span>
+    <span class="n">tool</span><span class="o">.</span><span class="n">google_scholar</span><span class="p">(</span><span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;prime editing&quot;</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
            </div>

@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.crisprtools &mdash; bioat Documentation</title>
+  <title>bioat.crisprtools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -68,8 +68,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.crisprtools</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">crisprtools.py</span>
+<span></span><span class="sd">&quot;&quot;&quot;crisprtools.py.</span>
 
 <span class="sd">This module provides a toolbox for mining CRISPR-related sequences in metagenomic data.</span>
 <span class="sd">It includes functionality for identifying Cas candidates associated with CRISPR loci</span>
@@ -176,7 +175,12 @@
 <div class="viewcode-block" id="CrisprTools.cas13_finder">
 <a class="viewcode-back" href="../../bioat.html#bioat.crisprtools.CrisprTools.cas13_finder">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cas13_finder</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">input_faa</span><span class="p">,</span> <span class="n">output_faa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lmin</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_faa</span><span class="p">,</span>
+        <span class="n">output_faa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lmin</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">lmax</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;De novo annotation for Cas13 candidates from proteins.faa.</span>
 

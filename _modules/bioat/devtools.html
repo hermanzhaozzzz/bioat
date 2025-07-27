@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.devtools &mdash; bioat Documentation</title>
+  <title>bioat.devtools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -92,8 +92,7 @@
 <div class="viewcode-block" id="profile">
 <a class="viewcode-back" href="../../bioat.html#bioat.devtools.profile">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">(</span><span class="n">num_iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator for calculating the runtime of a function, over multiple iterations.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator for calculating the runtime of a function, over multiple iterations.</span>
 
 <span class="sd">    :param num_iterations: times to iter, defaults to 1</span>
 <span class="sd">    :type num_iterations: int, optional</span>
@@ -102,8 +101,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_iterations</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;num_iterations must be a positive integer&quot;</span>
                 <span class="k">raise</span> <span class="n">BioatInvalidParameterError</span><span class="p">(</span>
-                    <span class="s2">&quot;num_iterations must be a positive integer&quot;</span>
+                    <span class="n">msg</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>

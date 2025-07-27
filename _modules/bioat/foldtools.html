@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.foldtools &mdash; bioat Documentation</title>
+  <title>bioat.foldtools &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=687cf729"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            bioat
+            Unknown Project
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,7 +49,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">bioat</a>
+          <a href="../../index.html">Unknown Project</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -68,7 +68,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for bioat.foldtools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">Bio</span>
+<span></span><span class="sd">&quot;&quot;&quot;TODO.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.PDB.Structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Structure</span> <span class="k">as</span> <span class="n">BiopythonStructure</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Seq</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seq</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cut2ref_aln_info</span><span class="p">,</span> <span class="n">pdb2fasta</span><span class="p">,</span> <span class="n">show_ref_cut</span>
@@ -89,34 +93,39 @@
 <a class="viewcode-back" href="../../bioat.html#bioat.foldtools.FoldTools.show_ref_cut">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">show_ref_cut</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ref_seq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Seq</span><span class="p">,</span>
-        <span class="n">ref_pdb</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">,</span>
-        <span class="n">cut_seq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Seq</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">cut_pdb</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ref_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
-        <span class="n">ref_map_colors</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref_seq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Seq</span><span class="p">,</span>
+        <span class="n">ref_pdb</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">BiopythonStructure</span><span class="p">,</span>
+        <span class="n">cut_seq</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Seq</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Seq</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cut_pdb</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">BiopythonStructure</span><span class="p">]</span>
+        <span class="o">|</span> <span class="nb">str</span>
+        <span class="o">|</span> <span class="n">Path</span>
+        <span class="o">|</span> <span class="n">BiopythonStructure</span>
+        <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cut_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">ref_map_colors</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ref_map_values</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">cut_color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
-        <span class="n">gap_color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">cut_color</span><span class="o">=</span><span class="s2">&quot;lightgray&quot;</span><span class="p">,</span>
+        <span class="n">gap_color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span>
         <span class="n">ref_style</span><span class="o">=</span><span class="s2">&quot;cartoon&quot;</span><span class="p">,</span>
         <span class="n">cut_style</span><span class="o">=</span><span class="s2">&quot;cartoon&quot;</span><span class="p">,</span>
         <span class="n">gap_style</span><span class="o">=</span><span class="s2">&quot;cartoon&quot;</span><span class="p">,</span>
         <span class="n">ref_map_value_random</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">output_fig</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_fig</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">col</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">text_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            ref_seq (str or Seq): Amino acid sequence content for the ref protein.</span>
-<span class="sd">            ref_pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the reference structure.</span>
-<span class="sd">            cut_seq (str, Seq or None, optional): Amino acid sequence content for the cut protein.</span>
-<span class="sd">            cut_pdb (str, Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.</span>
+<span class="sd">            ref_seq (str or Path or Seq): Amino acid sequence content for the ref protein.</span>
+<span class="sd">            ref_pdb (str or Path or Bio.PDB.Structure.Structure): Path to the PDB file of the reference structure.</span>
+<span class="sd">            cut_seq (str, Path or Seq or None, optional): Amino acid sequence content for the cut protein.</span>
+<span class="sd">            cut_pdb (str, Path or Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.</span>
+<span class="sd">            cut_labels (list[str] or str or None, optional): Label for the cut proteins. If None, the label will be set to &quot;cut&quot;.</span>
 <span class="sd">            ref_color (str, optional): Color for reference residues.</span>
 <span class="sd">            ref_map_colors (tuple[str, str] or None, optional): ref_map_colors will be used as color bar from ref_map_colors[0] to ref_map_colors[1]. If None, do not apply color mapping. Defaults to None.</span>
 <span class="sd">            ref_map_values (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_value_dict = {&#39;V_0&#39;: 0.4177215189873418, &#39;S_1&#39;: 0.8185654008438819, &#39;K_2&#39;: 0.9915611814345991, &#39;G_3&#39;: 0.42616033755274263, ...}</span>
@@ -138,6 +147,7 @@
             <span class="n">cut_seq</span><span class="o">=</span><span class="n">cut_seq</span><span class="p">,</span>
             <span class="n">ref_pdb</span><span class="o">=</span><span class="n">ref_pdb</span><span class="p">,</span>
             <span class="n">cut_pdb</span><span class="o">=</span><span class="n">cut_pdb</span><span class="p">,</span>
+            <span class="n">cut_labels</span><span class="o">=</span><span class="n">cut_labels</span><span class="p">,</span>
             <span class="n">ref_color</span><span class="o">=</span><span class="n">ref_color</span><span class="p">,</span>
             <span class="n">ref_map_colors</span><span class="o">=</span><span class="n">ref_map_colors</span><span class="p">,</span>
             <span class="n">ref_map_values</span><span class="o">=</span><span class="n">ref_map_values</span><span class="p">,</span>
@@ -158,11 +168,13 @@
 
 <div class="viewcode-block" id="FoldTools.pdb2fasta">
 <a class="viewcode-back" href="../../bioat.html#bioat.foldtools.FoldTools.pdb2fasta">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">pdb2fasta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdb2fasta</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_pdb</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">output_fasta</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a PDB file to a FASTA file.</span>
-
-<span class="sd">        This function processes the provided PDB file and extracts protein, DNA,</span>
-<span class="sd">        RNA sequences, and other molecules appropriately to create a FASTA file.</span>
 
 <span class="sd">        Details:</span>
 <span class="sd">            1. **Proteins**:</span>
@@ -175,26 +187,28 @@
 <span class="sd">               The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            input (str):</span>
-<span class="sd">                Input file path.</span>
-<span class="sd">            output (str, optional):</span>
+<span class="sd">            input_pdb (str or Path):</span>
+<span class="sd">                Path to the input PDB/CIF file or Biopython Structure.</span>
+<span class="sd">            output_fasta (str or Path, optional):</span>
 <span class="sd">                Output file path. If None, the output file will be named as the</span>
 <span class="sd">                basename of the input file with a &quot;.fa&quot; extension. Defaults to None.</span>
+<span class="sd">            func_return: (bool, optional)</span>
+<span class="sd">                Whether to return a list of SeqRecord objects, useful when used as a function but not for command line. Defaults to False.</span>
 <span class="sd">            log_level (str, optional):</span>
 <span class="sd">                Logging level. Defaults to &quot;WARNING&quot;.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            None</span>
+<span class="sd">            List of SeqRecord if func_return is True, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pdb2fasta</span><span class="p">(</span><span class="n">pdb</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output_fasta</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span></div>
+        <span class="n">pdb2fasta</span><span class="p">(</span><span class="n">input_pdb</span><span class="o">=</span><span class="n">input_pdb</span><span class="p">,</span> <span class="n">output_fasta</span><span class="o">=</span><span class="n">output_fasta</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FoldTools.get_cut2ref_aln_info">
 <a class="viewcode-back" href="../../bioat.html#bioat.foldtools.FoldTools.get_cut2ref_aln_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_cut2ref_aln_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">,</span>
-        <span class="n">cut</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Bio</span><span class="o">.</span><span class="n">PDB</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">Structure</span><span class="p">,</span>
+        <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">BiopythonStructure</span><span class="p">,</span>
+        <span class="n">cut</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">BiopythonStructure</span><span class="p">,</span>
         <span class="n">cal_rmsd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">cal_tmscore</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">label1</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span>
@@ -203,11 +217,12 @@
         <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Align cutted pdb to ref pdb using the CA atoms.</span>
+
 <span class="sd">        Aligns a truncated protein structure (cut) to its full-length reference structure (ref)</span>
-<span class="sd">        using Cα atoms and Biopython&#39;s Superimposer.</span>
+<span class="sd">        using Ca atoms and Biopython&#39;s Superimposer.</span>
 
 <span class="sd">        This function:</span>
-<span class="sd">        - Extracts all Cα atoms from `ref` and `cut`</span>
+<span class="sd">        - Extracts all Ca atoms from `ref` and `cut`</span>
 <span class="sd">        - Removes atoms from `ref` at the indices listed in `gap_indices`</span>
 <span class="sd">        - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`</span>
 <span class="sd">        - Modifies the `cut` structure in-place to match the aligned orientation</span>
