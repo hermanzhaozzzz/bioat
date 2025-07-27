@@ -1,4 +1,4 @@
-"""_summary_
+"""_summary_.
 
 author: Herman Huanan Zhao
 email: hermanzhaozzzz@gmail.com
@@ -47,6 +47,7 @@ IP_ERRORS = (
     "NS_ERROR_PROXY_FORBIDDEN",
 )
 
+
 def _save_cookies(context, log_level):
     lm.set_names(func_name="_save_cookies")
     lm.set_level(log_level)
@@ -55,10 +56,10 @@ def _save_cookies(context, log_level):
     storage_state = context.storage_state()
     lm.logger.info(f"Saving cookie to {COOKIE}")
     os.makedirs(os.path.dirname(COOKIE), exist_ok=True)
-    with open(COOKIE, "wt") as f:
+    with open(COOKIE, "w") as f:
         f.write(json.dumps(storage_state))
     lm.logger.info(f"Saving cookie time to {COOKIE}.time")
-    with open(f"{COOKIE}.time", "wt") as f:
+    with open(f"{COOKIE}.time", "w") as f:
         f.write(str(int(time.time())))
 
 
@@ -68,7 +69,7 @@ def _load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
     lm.set_level(log_level)
 
     try:
-        with open(f"{COOKIE}.time", "rt") as f:
+        with open(f"{COOKIE}.time") as f:
             login_time = int(f.read().strip())
     except FileNotFoundError:
         login_time = None
@@ -76,30 +77,26 @@ def _load_cookies(browser, proxy_ip=None, log_level="DEBUG") -> None | object:
     if login_time is None:
         # run login
         return None
-    else:
-        # run check time
-        current_time = int(time.time())
-        elapsed_time = current_time - login_time
-        if elapsed_time > 60 * 60:  # 1 hour
-            lm.logger.info("Cookies are expired, performing re-login...")
-            return None
-        else:
-            if (
-                os.path.exists(COOKIE)
-                and os.path.isfile(COOKIE)
-                and os.path.getsize(f"{COOKIE}") > 0
-            ):
-                lm.logger.info("Cookies are still valid, skip login and load cookies")
-                with open(COOKIE, "rt") as f:
-                    storage_state = json.loads(f.read().strip())
-                lm.logger.debug("new_context")
-                context = browser.new_context(
-                    storage_state=storage_state,
-                    proxy={"server": proxy_ip} if proxy_ip else None,
-                )
-                return context
-            else:
-                return None
+    # run check time
+    current_time = int(time.time())
+    elapsed_time = current_time - login_time
+    if elapsed_time > 60 * 60:  # 1 hour
+        lm.logger.info("Cookies are expired, performing re-login...")
+        return None
+    if (
+        os.path.exists(COOKIE)
+        and os.path.isfile(COOKIE)
+        and os.path.getsize(f"{COOKIE}") > 0
+    ):
+        lm.logger.info("Cookies are still valid, skip login and load cookies")
+        with open(COOKIE) as f:
+            storage_state = json.loads(f.read().strip())
+        lm.logger.debug("new_context")
+        return browser.new_context(
+            storage_state=storage_state,
+            proxy={"server": proxy_ip} if proxy_ip else None,
+        )
+    return None
 
 
 def _remove_cookie(log_level):
@@ -139,12 +136,12 @@ def run(
         lm.set_level("info")
         lm.logger.info(e)
         lm.logger.info(
-            "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
+            "Unable to import playwright. please exec `python -m pip install playwright`, then try again.",
         )
-        return None
+        return
     except AssertionError as e:
         lm.logger.info(e)
-        return None
+        return
 
     account = {
         "username": username,
@@ -184,11 +181,10 @@ def run(
             if proxy_ip:
                 lm.logger.debug("Get valid proxy, go on")
                 break
-            else:
-                lm.logger.debug("No proxy found in proxy pool, waiting 10 seconds...")
-                time.sleep(10)
-                lm.logger.debug("Next try to get proxy")
-                continue
+            lm.logger.debug("No proxy found in proxy pool, waiting 10 seconds...")
+            time.sleep(10)
+            lm.logger.debug("Next try to get proxy")
+            continue
         lm.logger.info(f"Get proxy_ip: {proxy_ip}")
 
     # start to test
@@ -210,7 +206,7 @@ def run(
         while True:
             if counter > nretry:
                 lm.logger.error(
-                    f"Could not load url {url_login}, already retry maximum ({nretry})number of retries"
+                    f"Could not load url {url_login}, already retry maximum ({nretry})number of retries",
                 )
                 lm.logger.debug("browser close")
                 browser.close()
@@ -261,7 +257,7 @@ def run(
                 page1.get_by_label("Email or 16-digit ORCID iD").click()
                 lm.logger.debug('Fill "Email or 16-digit ORCID iD"')
                 page1.get_by_label("Email or 16-digit ORCID iD").fill(
-                    account["username"]
+                    account["username"],
                 )
                 lm.logger.debug("Press Tab")
                 page1.get_by_label("Email or 16-digit ORCID iD").press("Tab")
@@ -285,8 +281,8 @@ def run(
                 continue
             except Exception as e:
                 if str(e) in IP_ERRORS:
-                    lm.logger.error(
-                        f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry..."
+                    lm.logger.exception(
+                        f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...",
                     )
                     proxy_pool.delete_proxy(proxy_ip)
                     proxy_ip = proxy_pool.get_proxy().get("proxy")
@@ -307,7 +303,7 @@ def run(
     while True:
         if counter > nretry:
             lm.logger.error(
-                f"Could not load url {url_query}, already retry maximum ({nretry})number of retries"
+                f"Could not load url {url_query}, already retry maximum ({nretry})number of retries",
             )
             lm.logger.debug("context close")
             context.close()
@@ -334,29 +330,29 @@ def run(
                     login_status = False
                     rm_cookie = False
                     lm.logger.error(
-                        "checker2 failed, it might because that the proxy IP has been banned!"
+                        "checker2 failed, it might because that the proxy IP has been banned!",
                     )
             else:
                 login_status = False
                 rm_cookie = True
                 lm.logger.error(
-                    "checker1 failed, it might because that the cookies out of time!"
+                    "checker1 failed, it might because that the cookies out of time!",
                 )
 
             if not login_status:
                 lm.logger.error(
-                    f"Login failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
+                    f"Login failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}",
                 )
                 lm.logger.debug("context close")
                 context.close()
                 lm.logger.debug("browser close")
                 browser.close()
                 lm.logger.error(
-                    f"Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}"
+                    f"Query failed! checker1: {bool(checker1)}, checker2: {bool(checker2)}",
                 )
                 if rm_cookie:
                     lm.logger.debug(
-                        "Consider to remove cookies because checker1 is failed!"
+                        "Consider to remove cookies because checker1 is failed!",
                     )
                     if rm_fail_cookie:
                         lm.logger.debug(f"Param rm_fail_cookie = {rm_fail_cookie}")
@@ -369,29 +365,30 @@ def run(
                 lm.logger.debug("Passed cookies and success login!")
             time.sleep(3)
             page.frame_locator("iframe").get_by_placeholder(
-                "Enter a query sequence."
+                "Enter a query sequence.",
             ).click()
             lm.logger.debug(f"Try to fill seq: {seq}")
             page.frame_locator("iframe").get_by_placeholder(
-                "Enter a query sequence."
+                "Enter a query sequence.",
             ).fill(seq)
             lm.logger.debug('Click "Protein"')
             page.frame_locator("iframe").get_by_text("Protein", exact=True).click()
             lm.logger.debug('Click "advanced options"')
             page.frame_locator("iframe").locator("div").filter(
-                has_text=re.compile(r"^advanced options$")
+                has_text=re.compile(r"^advanced options$"),
             ).locator("div").click()
             lm.logger.debug("Set maximum number of hits to 50")
             page.frame_locator("iframe").get_by_label(
-                "Maximum Number of Hits to"
+                "Maximum Number of Hits to",
             ).select_option("50")
             lm.logger.debug("Set maximum e-value to 1.0")
             page.frame_locator("iframe").get_by_label(
-                "Expectation value threshold"
+                "Expectation value threshold",
             ).select_option("1.0")
             lm.logger.debug("Submit blastp query info")
             page.frame_locator("iframe").get_by_role(
-                "button", name="Submit search"
+                "button",
+                name="Submit search",
             ).nth(1).click()
             time.sleep(3)
             lm.logger.info("Task has been submitted, waiting for completion")
@@ -403,8 +400,8 @@ def run(
             continue
         except Exception as e:
             if str(e) in IP_ERRORS:
-                lm.logger.error(
-                    f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry..."
+                lm.logger.exception(
+                    f"proxy error: {e}, delete ip ({proxy_ip}) from remote server and retry...",
                 )
                 proxy_pool.delete_proxy(proxy_ip)
                 proxy_ip = proxy_pool.get_proxy().get("proxy")
@@ -450,10 +447,10 @@ def run(
                     lm.logger.error("Response text is empty")
                     STATUS = "ResponseEmptyError"
             except json.JSONDecodeError as e:
-                lm.logger.error(f"Error decoding JSON: {e}")
+                lm.logger.exception(f"Error decoding JSON: {e}")
                 STATUS = "JSONDecodeError"
             except Exception as e:
-                lm.logger.error(f"Error while handling response: {e}")
+                lm.logger.exception(f"Error while handling response: {e}")
                 STATUS = "ERROR"
             finally:
                 lm.logger.info(f"STATUS: {STATUS}")
@@ -467,10 +464,10 @@ def run(
         if int(time.time() - start_time) >= 300:
             lm.logger.error(
                 "TimeoutError (waiting for more than 300s), "
-                "this might be a problem with browser was terminated external"
+                "this might be a problem with browser was terminated external",
             )
             lm.logger.error("You can try again later")
-            exit(1)
+            sys.exit(1)
         try:
             full_url = page.evaluate("window.location.href")
             # if time.time() - start_time % 5 == 0:
@@ -479,10 +476,10 @@ def run(
             #     lm.logger.debug(f"Full URL including hash: {full_url}")
             page.on("response", handle_response)
         except TargetClosedError as e:
-            lm.logger.error(
-                f"Meet error{e}, this might be a problem with browser was terminated external"
+            lm.logger.exception(
+                f"Meet error{e}, this might be a problem with browser was terminated external",
             )
-            lm.logger.error("you can try again later")
+            lm.logger.exception("you can try again later")
             sys.exit(1)
     # ---------------------
     lm.logger.debug("context close")
@@ -512,9 +509,9 @@ def query_patent(
         lm.set_level("info")
         lm.logger.info(e)
         lm.logger.info(
-            "Unable to import playwright. please exec `python -m pip install playwright`, then try again."
+            "Unable to import playwright. please exec `python -m pip install playwright`, then try again.",
         )
-        return None
+        return
     with sync_playwright() as playwright:
         run(
             playwright,

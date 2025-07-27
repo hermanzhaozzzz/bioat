@@ -1,9 +1,8 @@
 """Tests for `bamtools` package."""
 
-import os
-import random
-import string
+import importlib
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -11,24 +10,22 @@ from bioat.cli import Cli
 from bioat.lib.libpath import check_cmd
 
 from ._pytest_meta import DATA_PATH
+
 try:
-    import pysam
-except ImportError:
+    pysam = importlib.import_module("pysam")
+except ModuleNotFoundError:
     __BAM_PARSER_BACKEND__ = False
 else:
     __BAM_PARSER_BACKEND__ = True
 
 bioat_cli = Cli()
 
-MPILEUP_FILE = os.path.join(DATA_PATH, "bam/test_sorted.mpileup.gz")
-BAM_SORTP_FILE = os.path.join(DATA_PATH, "bam/test_sorted.bam")
-BAM_SORTN_FILE = os.path.join(DATA_PATH, "bam/test_sorted_n.bam")
-TEMP_DIR = (
-    f"/tmp/bioat_{''.join(random.sample(string.ascii_letters + string.digits, 16))}"
-)
+MPILEUP_FILE = DATA_PATH / Path("bam/test_sorted.mpileup.gz")
+BAM_SORTP_FILE = DATA_PATH / Path("bam/test_sorted.bam")
+BAM_SORTN_FILE = DATA_PATH / Path("bam/test_sorted_n.bam")
 
-
-def test_mpileup_to_table():
+@pytest.fixture
+def test_mpileup_to_table(tmp_path):
     """Tests the mpileup to table conversion functionality.
 
     This function calls the `mpileup2table` method from the `bioat_cli.bam` module,
@@ -46,22 +43,21 @@ def test_mpileup_to_table():
     bioat_cli.bam.mpileup2table(
         mpileup=MPILEUP_FILE,
         output="/dev/null",
-        threads=os.cpu_count() - 1,
+        threads=1,
         mutation_number_threshold=3,
-        temp_dir=TEMP_DIR,
+        temp_dir=tmp_path,
         remove_temp=True,
         log_level="WARNING",
     )
 
-
-def test_cli_mpileup_to_table():
+@pytest.fixture
+def test_cli_mpileup_to_table(tmp_path):
     """Test the CLI command for converting mpileup to table format.
 
     This function constructs a command with specified arguments to
     run the mpileup2table command in the bioat tool, checking its
     execution without creating any output file.
     """
-
     args = [
         "bioat",  # The main command for the bioat tool
         "bam",  # The subcommand indicating the operation type (bam processing)
@@ -71,20 +67,18 @@ def test_cli_mpileup_to_table():
         "--output",  # Option to specify the output file location
         "/dev/null",  # Indicates that no output file should be created
         "--threads",  # Option to specify the number of threads to use
-        str(os.cpu_count() - 1),  # Uses all available CPU cores minus one
+        str(1),  # Uses all available CPU cores minus one
         "--mutation_number_threshold",  # Option to set mutation number threshold
         "0",  # Sets the threshold to zero
         "--temp_dir",  # Option to specify the temporary directory for processing
-        TEMP_DIR,  # Placeholder for the path to the temporary directory
+        tmp_path,  # Placeholder for the path to the temporary directory
         "--remove_temp",  # Option indicating whether to remove temporary files
         "True",  # Specifies that temporary files should be removed
         "--log_level",  # Option to set the logging level
         "WARNING",  # Sets the log level to WARNING
     ]
 
-    subprocess.run(
-        args, check=True
-    )  # Executes the constructed command and checks for errors
+    subprocess.run(args, check=True)  # noqa S603
 
 
 def test_remove_clip():
@@ -98,14 +92,13 @@ def test_remove_clip():
     Raises:
         pytest.skip: If the BAM parser backend is 'bamnostic'.
     """
-
     if not __BAM_PARSER_BACKEND__:
         pytest.skip("pysam should be installed for this test")
 
     bioat_cli.bam.remove_clip(
         input=BAM_SORTN_FILE,
         output="/dev/null",
-        threads=os.cpu_count() - 1,
+        threads=1,
         output_fmt="SAM",
         remove_as_paired=True,
         max_clip=0,
@@ -130,7 +123,6 @@ def test_cli_remove_clip_sortn():
     Returns:
         None
     """
-
     if not __BAM_PARSER_BACKEND__:
         pytest.skip("pysam should be installed for this test")
 
@@ -144,7 +136,7 @@ def test_cli_remove_clip_sortn():
         "--output",  # Output file option
         "/dev/null",  # Discard output (no need to save)
         "--threads",  # Threads option for parallel processing
-        str(os.cpu_count() - 1),  # Use all but one CPU core
+        str(1),  # Use all but one CPU core
         "--output_fmt",  # Output format option
         "SAM",  # Specify output format as SAM
         "--remove_as_paired",  # Flag to remove as paired
@@ -156,7 +148,7 @@ def test_cli_remove_clip_sortn():
     ]
 
     # Execute the command with the specified arguments
-    subprocess.run(args, check=True)
+    subprocess.run(args, check=True)  # noqa S603
 
 
 def test_cli_remove_clip_sortn_pipe():
@@ -177,15 +169,15 @@ def test_cli_remove_clip_sortn_pipe():
 
     # Prepare the command to view BAM file with samtools
     args = ["samtools", "view", "-h", BAM_SORTN_FILE]
-    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)  # noqa S603
 
     # Prepare the command to remove clips from the BAM data
     args = ["bioat", "bam", "remove_clip"]
-    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     # Prepare the command to output the results using head
     args = ["head"]
-    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     # Communicate with the head process and get the output
     _ = p3.communicate()[0]  # output str
@@ -211,15 +203,15 @@ def test_cli_remove_clip_sortn_pipe2():
 
     # Prepare the first command to get sorted BAM data
     args = ["samtools", "view", "-h", BAM_SORTN_FILE]
-    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)  # noqa S603
 
     # Setup the remove_clip command from bioat
     args = ["bioat", "bam", "remove_clip"]
-    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     # Prepare the tail command to read the output
     args = ["tail"]
-    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     # Communicate with the last subprocess and get the output
     _ = p3.communicate()[0]  # output str
@@ -249,13 +241,13 @@ def test_cli_remove_clip_sortp_pipe():
 
     # Test the pipe functionality using `samtools` and `bioat`
     args = ["samtools", "view", "-h", BAM_SORTP_FILE]
-    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(args, stdout=subprocess.PIPE)  # noqa S603
 
     args = ["bioat", "bam", "remove_clip"]
-    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(args, stdin=p1.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     args = ["tail"]
-    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)
+    p3 = subprocess.Popen(args, stdin=p2.stdout, stdout=subprocess.PIPE)  # noqa S603
 
     # Capture the output, which should be the processed BAM data
     _ = p3.communicate()[0]  # Output as a string

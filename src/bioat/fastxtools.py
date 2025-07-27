@@ -12,6 +12,7 @@ lm = LoggerManager(mod_name="bioat.fastxtools")
 
 class FastxTools:
     """FASTA & FASTQ toolbox."""
+
     lm.set_names(cls_name="FastxTools")
 
     def __init__(self):
@@ -19,7 +20,11 @@ class FastxTools:
         pass
 
     def fmt_this(
-        self, file: str, new_file: str | None = None, force=False, log_level="WARNING"
+        self,
+        file: str,
+        new_file: str | None = None,
+        force=False,
+        log_level="WARNING",
     ):
         """Formats a FASTA file to improve readability.
 
@@ -32,7 +37,10 @@ class FastxTools:
         This function calls 'format_this_fastx' to perform the actual formatting on the specified FASTA file.
         """
         format_this_fastx(
-            old_file=file, new_file=new_file, force=force, log_level=log_level
+            old_file=file,
+            new_file=new_file,
+            force=force,
+            log_level=log_level,
         )
 
     def plot_length_distribution(
@@ -53,7 +61,11 @@ class FastxTools:
             log_level (str): The logging level for messages. Default is "WARNING".
         """
         calculate_length_distribution(
-            file=file, table=table, image=image, plt_show=plt_show, log_level=log_level
+            file=file,
+            table=table,
+            image=image,
+            plt_show=plt_show,
+            log_level=log_level,
         )
 
     def mgi_parse_md5(self, file: str, log_level="WARNING"):
@@ -78,8 +90,8 @@ class FastxTools:
             df.columns = ["md5", "filename"]
             df.md5 = df.md5.map(lambda x: x.lower())
         except ValueError as e:
-            lm.logger.error(BioatFileFormatError(e))
-            exit(1)
+            lm.logger.exception(BioatFileFormatError(e))
+            sys.exit(1)
         df.filename = df.filename + ".gz"
         to_path = file.replace(".txt", "") + ".fix.md5"
         lm.logger.info(f"write to {to_path}")
@@ -87,9 +99,7 @@ class FastxTools:
 
     @staticmethod
     def _load_fastx_generator(file, log_level="WARNING"):
-        """
-
-        :param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
+        """:param str file: path of input <fastq | fastq.gz | fastx | fastx.gz>
         :return: a generator for all reads:
             i.e. print(next(obj)) -> ['header', 'seq', 'info', 'quality']
         :rtype: generator
@@ -97,11 +107,11 @@ class FastxTools:
         lm.set_names(func_name="_load_fastx_generator")
         lm.set_level(log_level)
 
-        f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
+        f = open(file) if not file.endswith(".gz") else gzip.open(file, "rt")
         # FASTQ @  | FASTA >
         symbol = f.read(1)
         f.close()
-        f = open(file, "rt") if not file.endswith(".gz") else gzip.open(file, "rt")
+        f = open(file) if not file.endswith(".gz") else gzip.open(file, "rt")
 
         if symbol == "@":
             lm.logger.debug("detect FASTQ file")
@@ -111,23 +121,22 @@ class FastxTools:
             while True:
                 if not line:
                     break
-                else:
-                    if line.startswith("@"):
-                        # header or not complete
-                        n = len(read)
-                        if n == 0:
-                            # header, 第一次循环开始
-                            read.append(line)  # add header!
-                            line = f.readline().rstrip()  # next line
-                            continue
-                        elif n == 4:
-                            # read == ['header', 'seq', 'info', 'quality']
-                            yield read
-                            read = []
-                            read.append(line)
-                            line = f.readline().rstrip()
-                        elif n == 3:
-                            """
+                elif line.startswith("@"):
+                    # header or not complete
+                    n = len(read)
+                    if n == 0:
+                        # header, 第一次循环开始
+                        read.append(line)  # add header!
+                        line = f.readline().rstrip()  # next line
+                        continue
+                    elif n == 4:
+                        # read == ['header', 'seq', 'info', 'quality']
+                        yield read
+                        read = []
+                        read.append(line)
+                        line = f.readline().rstrip()
+                    elif n == 3:
+                        """
                             @@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6 # line! 期望它是 header！现在它是 quality
                             [
                                 '@Beta12AdemL1C001R00100001768/1',
@@ -136,21 +145,23 @@ class FastxTools:
                             ]'@@IIEIBCE>IC<IBIIIIEAIEIEB<IDECCD6'
 
                             """
-                            read.append(line)
-                            line = f.readline().rstrip()
-
-                            if not line.startswith("@"):
-                                raise ValueError("The file may be incomplete!")
-                        else:
-                            f.close()
-                            raise ValueError("The file may be incomplete!")
-
-                        # header line!
-                        # read.append(line)  # add header !
-                    else:
-                        # not header line!
                         read.append(line)
                         line = f.readline().rstrip()
+
+                        if not line.startswith("@"):
+                            msg = "The file may be incomplete!"
+                            raise ValueError(msg)
+                    else:
+                        f.close()
+                        msg = "The file may be incomplete!"
+                        raise ValueError(msg)
+
+                    # header line!
+                    # read.append(line)  # add header !
+                else:
+                    # not header line!
+                    read.append(line)
+                    line = f.readline().rstrip()
 
             # ls.append(read)
             yield read
@@ -167,34 +178,33 @@ class FastxTools:
                 if not line:
                     f.close()
                     break
-                else:
-                    if line.startswith(">"):
-                        # 读取 header！
-                        n = len(read)
+                elif line.startswith(">"):
+                    # 读取 header！
+                    n = len(read)
 
-                        if n == 0:
-                            # 第一次循环
-                            read.append(line)
-                            line = f.readline().rstrip()
-                        elif n == 1:
-                            # 已经有一个 header 了！现在缺 seq
-                            read.append(seq)  # add seq line
-                            # ls.append(read)
-                            yield read
-                            read = []  # 重置 read 这个 list
-                            read.append(line)
-                            line = f.readline().rstrip()
-                            seq = ""  # 重置 seq 这个 str
-                        else:
-                            f.close()
-                            lm.logger.error(
-                                BioatFileNotCompleteError("The file may be incomplete!")
-                            )
-                            exit(1)
-                    else:
-                        # 读取并添加 seq
-                        seq += line
+                    if n == 0:
+                        # 第一次循环
+                        read.append(line)
                         line = f.readline().rstrip()
+                    elif n == 1:
+                        # 已经有一个 header 了！现在缺 seq
+                        read.append(seq)  # add seq line
+                        # ls.append(read)
+                        yield read
+                        read = []  # 重置 read 这个 list
+                        read.append(line)
+                        line = f.readline().rstrip()
+                        seq = ""  # 重置 seq 这个 str
+                    else:
+                        f.close()
+                        lm.logger.error(
+                            BioatFileNotCompleteError("The file may be incomplete!"),
+                        )
+                        sys.exit(1)
+                else:
+                    # 读取并添加 seq
+                    seq += line
+                    line = f.readline().rstrip()
 
             read.append(seq)
             # ls.append(read)
@@ -204,10 +214,10 @@ class FastxTools:
             f.close()
             lm.logger.error(
                 BioatFileFormatError(
-                    "Input line one must starts with `@` for FASTQ or `>` for FASTA!"
-                )
+                    "Input line one must starts with `@` for FASTQ or `>` for FASTA!",
+                ),
             )
-            exit(1)
+            sys.exit(1)
         f.close()
 
     # CLI subcommand for filtering sequences
@@ -227,7 +237,6 @@ class FastxTools:
         Returns:
             None
         """
-
         if self.fastx is None:
             self.fastx = self._load_fastx_generator(file)
 
@@ -235,11 +244,7 @@ class FastxTools:
         output = sys.stdout if output == sys.stdout.name else output
 
         if isinstance(output, str):
-            f = (
-                gzip.open(output, "wt")
-                if output.endswith(".gz")
-                else open(output, "wt")
-            )
+            f = gzip.open(output, "wt") if output.endswith(".gz") else open(output, "w")
         else:
             f = output
 
@@ -250,8 +255,7 @@ class FastxTools:
 
             if seq.upper().__contains__("N"):
                 continue
-            else:
-                f.write("\n".join(read) + "\n")
+            f.write("\n".join(read) + "\n")
         f.close()
 
 

@@ -10,8 +10,6 @@ def is_jupyter_environment() -> bool:
         if shell is None:
             return False  # Not in an IPython environment
         # Jupyter Notebook or JupyterLab environment
-        if shell.__class__.__name__ in {"ZMQInteractiveShell", "Shell"}:
-            return True
-        return False
+        return shell.__class__.__name__ in {"ZMQInteractiveShell", "Shell"}
     except ImportError:
         return False  # IPython is not installed, not in Jupyter

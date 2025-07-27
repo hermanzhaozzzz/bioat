@@ -12,6 +12,7 @@ __all__ = ["LoggerManager"]
 _logger_cache = {}
 _logger_lock = threading.Lock()
 
+
 class LoggerManager:
     LOG_FORMAT = "%(asctime)s.%(msecs)03d - [%(name)s] - %(filename)s[line:%(lineno)4d] - %(levelname)+8s: %(message)s"
     DEFAULT_LEVEL = os.getenv("BIOAT_LOG_LEVEL", "INFO").upper()
@@ -23,8 +24,7 @@ class LoggerManager:
         cls_name: str | None = None,
         func_name: str | None = None,
     ):
-        """
-        Initialize the LoggerManager with default log level and module name.
+        """Initialize the LoggerManager with default log level and module name.
 
         Args:
             log_level (str, optional): Default logger level. Defaults to "ERROR".
@@ -43,14 +43,17 @@ class LoggerManager:
 
     @staticmethod
     def get_logger(name: str, level: str = DEFAULT_LEVEL) -> logging.Logger:
-        """直接返回 logger 实例，用于标准 logging 接口"""
+        """直接返回 logger 实例，用于标准 logging 接口."""
         return LoggerManager(mod_name=name, log_level=level).logger
 
     def _get_log_level(self, log_level: str) -> int:
         if log_level.upper() not in logging._nameToLevel:
-            raise BioatInvalidParameterError(
+            msg = (
                 f"Invalid log level: {log_level}. "
                 "Choose from CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET."
+            )
+            raise BioatInvalidParameterError(
+                msg,
             )
         return logging._nameToLevel[log_level.upper()]
 
@@ -77,26 +80,26 @@ class LoggerManager:
                     fmt=self.LOG_FORMAT,
                     level=self.log_level,
                     logger=logger,
-                    field_styles=dict(
-                        asctime=dict(color="yellow", bold=True),
-                        name=dict(color="blue", bold=True),
-                        filename=dict(color="cyan"),
-                        lineno=dict(color="green", bold=True),
-                        levelname=dict(color="magenta", bold=True),
-                    ),
-                    level_styles=dict(
-                        critical=dict(color="red", bold=True),
-                        error=dict(color="red"),
-                        warning=dict(color="yellow"),
-                        info=dict(color="green"),
-                        debug=dict(color="blue"),
-                    ),
+                    field_styles={
+                        "asctime": {"color": "yellow", "bold": True},
+                        "name": {"color": "blue", "bold": True},
+                        "filename": {"color": "cyan"},
+                        "lineno": {"color": "green", "bold": True},
+                        "levelname": {"color": "magenta", "bold": True},
+                    },
+                    level_styles={
+                        "critical": {"color": "red", "bold": True},
+                        "error": {"color": "red"},
+                        "warning": {"color": "yellow"},
+                        "info": {"color": "green"},
+                        "debug": {"color": "blue"},
+                    },
                 )
             _logger_cache[name] = logger
             return logger
 
     def set_names(self, cls_name: str | None = None, func_name: str | None = None):
-        """重新设置类名和函数名，会重新绑定 logger"""
+        """重新设置类名和函数名，会重新绑定 logger."""
         self.cls_name = cls_name
         self.func_name = func_name
         # 会根据新的 name 自动获取缓存或新建 logger（线程安全）
@@ -105,12 +108,12 @@ class LoggerManager:
         self.logger = self._get_or_create_logger()
 
     def set_level(self, log_level: str):
-        """更新日志等级"""
+        """更新日志等级."""
         self.log_level = self._get_log_level(log_level)
         self.logger.setLevel(self.log_level)
 
     def mute(self):
-        """将日志等级设置为 NOTSET"""
+        """将日志等级设置为 NOTSET."""
         self.set_level(log_level="NOTSET")  # NOTSET is higher than CRITICAL
 
     def set_file(
@@ -120,9 +123,10 @@ class LoggerManager:
         max_bytes: int = 10 * 1024 * 1024,
         backup_count: int = 5,
     ):
-        """设置普通文件日志"""
+        """设置普通文件日志."""
         if mode not in {"a", "w"}:
-            raise BioatInvalidParameterError("Mode must be 'a' or 'w'")
+            msg = "Mode must be 'a' or 'w'"
+            raise BioatInvalidParameterError(msg)
         os.makedirs(os.path.dirname(file), exist_ok=True)
 
         self._remove_handler_type(logging.FileHandler)
@@ -131,20 +135,23 @@ class LoggerManager:
             handler = logging.FileHandler(file, mode=mode)
         else:
             handler = logging.handlers.RotatingFileHandler(
-                file, mode=mode, maxBytes=max_bytes, backupCount=backup_count
+                file,
+                mode=mode,
+                maxBytes=max_bytes,
+                backupCount=backup_count,
             )
 
         handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
         self.logger.addHandler(handler)
 
     def _remove_handler_type(self, handler_type):
-        """内部方法：移除已有的特定 handler 类型"""
+        """内部方法：移除已有的特定 handler 类型."""
         self.logger.handlers = [
             h for h in self.logger.handlers if not isinstance(h, handler_type)
         ]
 
     def add_stream_handler(self):
-        """添加 console handler（不会重复添加）"""
+        """添加 console handler（不会重复添加）."""
         if not any(isinstance(h, logging.StreamHandler) for h in self.logger.handlers):
             stream_handler = logging.StreamHandler()
             stream_handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
@@ -189,7 +196,8 @@ if __name__ == "__main__":
     except BioatInvalidParameterError as e:
         print("✅ 错误等级捕获 OK:", type(e), e)
     else:
-        raise AssertionError("❌ 错误等级未正确捕获")
+        msg = "❌ 错误等级未正确捕获"
+        raise AssertionError(msg)
 
     # 测试文件日志
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -200,7 +208,6 @@ if __name__ == "__main__":
             content = f.read()
             assert "test file log entry" in content
     print("✅ 文件日志写入 OK:", file_path)
-
 
     # 测试 add_stream_handler 不重复
     # 仅统计 StreamHandler 类型的 handler 数量
@@ -231,7 +238,6 @@ if __name__ == "__main__":
     # 修改类名函数名
     lm.set_names(cls_name="MyClass", func_name="run")
     lm.logger.debug("With class+func name.")
-
 
     # 静态方式快速获取 logger
     logger = LoggerManager.get_logger("bioat.io", "INFO")

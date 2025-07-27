@@ -1,5 +1,4 @@
-"""
-about.py
+"""about.py.
 
 This module provides information about the BioAT package, including
 version, author details, and links to related resources.

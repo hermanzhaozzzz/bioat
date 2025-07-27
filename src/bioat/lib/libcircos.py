@@ -2,6 +2,7 @@
 Adapt from https://github.com/ponnhide/pyCircos
 and thanks for this github user.
 """
+
 import io
 import math
 import os
@@ -10,7 +11,7 @@ import tempfile
 import urllib
 
 import Bio
-import matplotlib
+import matplotlib as mpl
 import matplotlib.patches as mpatches
 import matplotlib.path as mpath
 import matplotlib.pyplot as plt
@@ -18,21 +19,27 @@ import numpy as np
 import pandas as pd
 from Bio import Phylo, SeqIO
 
-matplotlib.rcParams["figure.max_open_warning"] = 0
-matplotlib.rcParams['ps.fonttype'] = 42
-matplotlib.rcParams['pdf.fonttype'] = 42
-matplotlib.rcParams['font.sans-serif'] = ["Arial", "Lucida Sans", "DejaVu Sans", "Lucida Grande", "Verdana"]
-matplotlib.rcParams['font.family'] = 'sans-serif'
-matplotlib.rcParams['font.size'] = 10.0
-matplotlib.rcParams["axes.labelcolor"] = "#000000"
-matplotlib.rcParams["axes.linewidth"] = 1.0
-matplotlib.rcParams["xtick.major.width"] = 1.0
-matplotlib.rcParams["ytick.major.width"] = 1.0
-matplotlib.rcParams['xtick.major.pad'] = 6
-matplotlib.rcParams['ytick.major.pad'] = 6
-matplotlib.rcParams['xtick.major.size'] = 6
-matplotlib.rcParams['ytick.major.size'] = 6
-DATAPATH = os.path.join(os.path.dirname(__file__), 'circos')
+mpl.rcParams["figure.max_open_warning"] = 0
+mpl.rcParams["ps.fonttype"] = 42
+mpl.rcParams["pdf.fonttype"] = 42
+mpl.rcParams["font.sans-serif"] = [
+    "Arial",
+    "Lucida Sans",
+    "DejaVu Sans",
+    "Lucida Grande",
+    "Verdana",
+]
+mpl.rcParams["font.family"] = "sans-serif"
+mpl.rcParams["font.size"] = 10.0
+mpl.rcParams["axes.labelcolor"] = "#000000"
+mpl.rcParams["axes.linewidth"] = 1.0
+mpl.rcParams["xtick.major.width"] = 1.0
+mpl.rcParams["ytick.major.width"] = 1.0
+mpl.rcParams["xtick.major.pad"] = 6
+mpl.rcParams["ytick.major.pad"] = 6
+mpl.rcParams["xtick.major.size"] = 6
+mpl.rcParams["ytick.major.size"] = 6
+DATAPATH = os.path.join(os.path.dirname(__file__), "circos")
 
 
 class Garc:
@@ -49,10 +56,44 @@ class Garc:
             Retrieves the value of the attribute `key`.
     """
 
-    colorlist = ["#ff8a80", "#ff80ab", "#ea80fc", "#b388ff", "#8c9eff", "#82b1ff", "#84ffff", "#a7ffeb", "#b9f6ca",
-                 "#ccff90", "#f4ff81", "#ffff8d", "#ffe57f", "#ffd180", "#ff9e80", "#bcaaa4", "#eeeeee", "#b0bec5",
-                 "#ff5252", "#ff4081", "#e040fb", "#7c4dff", "#536dfe", "#448aff", "#18ffff", "#64ffda", "#69f0ae",
-                 "#b2ff59", "#eeff41", "#ffff00", "#ffd740", "#ffab40", "#ff6e40", "#a1887f", "#e0e0e0", "#90a4ae"]
+    colorlist = [
+        "#ff8a80",
+        "#ff80ab",
+        "#ea80fc",
+        "#b388ff",
+        "#8c9eff",
+        "#82b1ff",
+        "#84ffff",
+        "#a7ffeb",
+        "#b9f6ca",
+        "#ccff90",
+        "#f4ff81",
+        "#ffff8d",
+        "#ffe57f",
+        "#ffd180",
+        "#ff9e80",
+        "#bcaaa4",
+        "#eeeeee",
+        "#b0bec5",
+        "#ff5252",
+        "#ff4081",
+        "#e040fb",
+        "#7c4dff",
+        "#536dfe",
+        "#448aff",
+        "#18ffff",
+        "#64ffda",
+        "#69f0ae",
+        "#b2ff59",
+        "#eeff41",
+        "#ffff00",
+        "#ffd740",
+        "#ffab40",
+        "#ff6e40",
+        "#a1887f",
+        "#e0e0e0",
+        "#90a4ae",
+    ]
     _arcnum = 0
 
     def __setitem__(self, key, item):
@@ -108,9 +149,8 @@ class Garc:
             ValueError:
                 If no match for the provided NCBI accession number is found in `record`.
         """
-
         self._parental_gcircle = None
-        if arc_id == None:
+        if arc_id is None:
             self.arc_id = str(Garc._arcnum)
         else:
             self.arc_id = arc_id
@@ -125,19 +165,17 @@ class Garc:
 
         elif type(record) == str:
             match = re.fullmatch("[a-zA-Z]{1,2}_?[0-9]{5,6}", record)
-            if os.path.exists(record) == True:
+            if os.path.exists(record):
                 self.record = SeqIO.read(record, format="genbank")
 
             if match is None:
-                raise ValueError("Incorrect value for NCBI accession number.")
-            else:
-                url = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&save=file&log$=seqview&db=nuccore&report=gbwithparts&id={}&withparts=on".format(
-                    record
-                )
+                msg = "Incorrect value for NCBI accession number."
+                raise ValueError(msg)
+            url = f"https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&save=file&log$=seqview&db=nuccore&report=gbwithparts&id={record}&withparts=on"
             outb = io.BytesIO()
             outs = io.StringIO()
             headers = {
-                "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0"
+                "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0",
             }
             request = urllib.request.Request(url, headers=headers)
 
@@ -192,7 +230,6 @@ class Garc:
         Returns:
             list: A list containing the calculated density values.
         """
-
         densities = []
         positions.sort()
         for i in range(0, self.size, window_size):
@@ -206,7 +243,10 @@ class Garc:
                     if pos[0] <= source[-1] and pos[1] >= source[0]:
                         amount += 1
                 else:
-                    raise ValueError("List elements should be int type or tuple consisting of two int values")
+                    msg = "List elements should be int type or tuple consisting of two int values"
+                    raise ValueError(
+                        msg
+                    )
             densities.append(amount)
 
         source = tuple(range(i, self.size))
@@ -219,7 +259,10 @@ class Garc:
                 if pos[0] <= source[-1] and pos[1] >= source[0]:
                     amount += 1
             else:
-                raise ValueError("List elements should be int type or tuple consisting of two int values")
+                msg = "List elements should be int type or tuple consisting of two int values"
+                raise ValueError(
+                    msg
+                )
         densities.append(amount * ((self.size - i) / window_size))
         return densities
 
@@ -242,9 +285,9 @@ class Garc:
         Returns:
             np.array: An array containing the computed ratios of n1 to n2 for each window.
         """
-
         if self.record is None:
-            raise ValueError("self.record is None, please specify record value")
+            msg = "self.record is None, please specify record value"
+            raise ValueError(msg)
 
         if step_size is None:
             step_size = window_size
@@ -272,16 +315,14 @@ class Garc:
             gc_amounts.append(
                 (seq[i:].upper().count(n1) + seq[i : i + window_size].upper().count(n2))
                 * 1.0
-                / (len(seq) - i)
+                / (len(seq) - i),
             )
 
-        self["{}{}_ratio".format(n1, n2)] = gc_amounts
-        gc_amounts = np.array(gc_amounts)
-        return gc_amounts
+        self[f"{n1}{n2}_ratio"] = gc_amounts
+        return np.array(gc_amounts)
 
     def calc_nnskew(self, n1="G", n2="C", window_size=1000, step_size=None):
-        """
-        Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along
+        """Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along
         the sequence.
 
         Args:
@@ -298,10 +339,10 @@ class Garc:
         Returns:
             np.array: An array of the skews computed by this method.
         """
-
         # (G-C)/(G+C)
         if self.record is None:
-            raise ValueError("self.record is None, please specify record value")
+            msg = "self.record is None, please specify record value"
+            raise ValueError(msg)
 
         if step_size is None:
             step_size = window_size
@@ -309,43 +350,73 @@ class Garc:
         seq = str(self.record.seq)
         gc_skews = []
         for i in range(0, len(seq), step_size):
-            gc_skew = (seq[i:i + window_size].upper().count(n1) - seq[i:i + window_size].upper().count(n2)) * 1.0 / (
-                    seq[i:i + window_size].upper().count(n1) + seq[i:i + window_size].upper().count(n2)) * 1.0
+            gc_skew = (
+                (
+                    seq[i : i + window_size].upper().count(n1)
+                    - seq[i : i + window_size].upper().count(n2)
+                )
+                * 1.0
+                / (
+                    seq[i : i + window_size].upper().count(n1)
+                    + seq[i : i + window_size].upper().count(n2)
+                )
+                * 1.0
+            )
             gc_skews.append(gc_skew)
 
-        gc_skews.append((seq[i:].upper().count(n1) - seq[i:].upper().count(n2)) * 1.0 / (
-                seq[i:].upper().count(n1) + seq[i:].upper().count(n2)) * 1.0)
-        self["{}{}_skew".format(n1, n2)] = gc_skews
-        gc_skews = np.array(gc_skews)
-        return gc_skews
+        gc_skews.append(
+            (seq[i:].upper().count(n1) - seq[i:].upper().count(n2))
+            * 1.0
+            / (seq[i:].upper().count(n1) + seq[i:].upper().count(n2))
+            * 1.0
+        )
+        self[f"{n1}{n2}_skew"] = gc_skews
+        return np.array(gc_skews)
 
 
 class Gcircle:
-    """
-    A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a 
-    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot) 
-    can be placed on the space by specifying the raxis_range (from 0 to 1000) and 
+    """A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a
+    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot)
+    can be placed on the space by specifying the raxis_range (from 0 to 1000) and
     the corresponding Garc class object.
     """
-    colors = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#00bcd4", "#009688", "#4caf50",
-              "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"]
+
+    colors = [
+        "#f44336",
+        "#e91e63",
+        "#9c27b0",
+        "#673ab7",
+        "#3f51b5",
+        "#2196f3",
+        "#00bcd4",
+        "#009688",
+        "#4caf50",
+        "#8bc34a",
+        "#cddc39",
+        "#ffeb3b",
+        "#ffc107",
+        "#ff9800",
+        "#ff5722",
+        "#795548",
+        "#9e9e9e",
+        "#607d8b",
+    ]
     # colors = ["#4E79A7","#F2BE2B","#E15759","#76B7B2","#59A14F","#EDC948","#B07AA1","#FF9DA7","#9C755F","#BAB0AC"]
     cmaps = [plt.cm.Reds, plt.cm.Blues, plt.cm.Greens, plt.cm.Greys]
 
     def __getattr__(self, name):
         if name == "garc_dict":
             return self._garc_dict
+        return None
 
     def __init__(self, fig=None, figsize=None):
-        """
-        Initializes the circular map.
+        """Initializes the circular map.
 
         Args:
             fig (matplotlib.pyplot.Figure, optional): A Matplotlib Figure object. If not provided, a new figure will be created.
             figsize (tuple, optional): A tuple specifying the size of the figure for the circular map, e.g., (width, height).
 
         """
-
         self._garc_dict = {}
         if fig is None:
             if figsize is None:
@@ -369,7 +440,6 @@ class Gcircle:
         Returns:
             None
         """
-
         self._garc_dict[garc.arc_id] = garc
 
     def set_garcs(self, start=0, end=360):
@@ -391,26 +461,18 @@ class Gcircle:
         Returns:
             None
         """
-
         sum_length = sum(
-            list(
-                map(lambda x: self._garc_dict[x]["size"], list(self._garc_dict.keys()))
-            )
+            [self._garc_dict[x]["size"] for x in list(self._garc_dict.keys())],
         )
         sum_interspace = sum(
-            list(
-                map(
-                    lambda x: self._garc_dict[x]["interspace"],
-                    list(self._garc_dict.keys()),
-                )
-            )
+            [self._garc_dict[x]["interspace"] for x in list(self._garc_dict.keys())],
         )
         start = 2 * np.pi * start / 360
         end = (2 * np.pi * end / 360) - sum_interspace
 
         s = 0
         sum_interspace = 0
-        for key in self._garc_dict.keys():
+        for key in self._garc_dict:
             size = self._garc_dict[key].size
             self._garc_dict[key].coordinates = [None, None]
             self._garc_dict[key].coordinates[0] = (
@@ -425,7 +487,8 @@ class Gcircle:
         # self.figure = plt.figure(figsize=self.figsize)
         if self.fig_is_ext:
             self.ax = self.figure.add_axes(
-                [0, 0, self.figsize[0], self.figsize[1]], polar=True
+                [0, 0, self.figsize[0], self.figsize[1]],
+                polar=True,
             )
         else:
             self.ax = self.figure.add_axes([0, 0, 1, 1], polar=True)
@@ -438,7 +501,7 @@ class Gcircle:
         self.ax.yaxis.set_ticks([])
         self.ax.yaxis.set_ticklabels([])
 
-        for i, key in enumerate(self._garc_dict.keys()):
+        for _i, key in enumerate(self._garc_dict.keys()):
             pos = self._garc_dict[key].coordinates[0]
             width = (
                 self._garc_dict[key].coordinates[-1]
@@ -446,7 +509,7 @@ class Gcircle:
             )
             height = abs(
                 self._garc_dict[key].raxis_range[1]
-                - self._garc_dict[key].raxis_range[0]
+                - self._garc_dict[key].raxis_range[0],
             )
             bottom = self._garc_dict[key].raxis_range[0]
             facecolor = self._garc_dict[key].facecolor
@@ -463,16 +526,13 @@ class Gcircle:
                 edgecolor=edgecolor,
                 align="edge",
             )
-            if self._garc_dict[key].label_visible == True:
+            if self._garc_dict[key].label_visible:
                 rot = (
                     self._garc_dict[key].coordinates[0]
                     + self._garc_dict[key].coordinates[1]
                 ) / 2
                 rot = rot * 360 / (2 * np.pi)
-                if 90 < rot < 270:
-                    rot = 180 - rot
-                else:
-                    rot = -1 * rot
+                rot = 180 - rot if 90 < rot < 270 else -1 * rot
                 height = bottom + height / 2 + self._garc_dict[key].labelposition
                 self.ax.text(
                     pos + width / 2,
@@ -511,7 +571,6 @@ class Gcircle:
         Returns:
             None
         """
-
         pos = self._garc_dict[garc_id].coordinates[0]
         width = (
             self._garc_dict[garc_id].coordinates[-1]
@@ -583,7 +642,6 @@ class Gcircle:
         Returns:
             None
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size - 1
@@ -606,7 +664,10 @@ class Gcircle:
             self.color_cycle += 1
 
         if rlim is None:
-            rlim = (min(data) - 0.05 * abs(min(data)), max(data) + 0.05 * abs(max(data)))
+            rlim = (
+                min(data) - 0.05 * abs(min(data)),
+                max(data) + 0.05 * abs(max(data)),
+            )
 
         min_value = rlim[0]
         max_value = rlim[1]
@@ -614,7 +675,7 @@ class Gcircle:
         new_positions = []
         new_data_array = []
         new_positions_array = []
-        for p, v in zip(positions, data):
+        for p, v in zip(positions, data, strict=False):
             if v > rlim[1] or v < rlim[0]:
                 new_data_array.append(new_data)
                 new_positions_array.append(new_positions)
@@ -625,13 +686,21 @@ class Gcircle:
                 new_positions.append(p)
         new_data_array.append(new_data)
         new_positions_array.append(new_positions)
-        for data, positions in zip(new_data_array, new_positions_array):
+        for data, positions in zip(new_data_array, new_positions_array, strict=False):
             if len(positions) > 0:
                 data = np.array(data) - min_value
-                data = bottom + np.array(data * ((top - bottom) / (max_value - min_value)))
-                self.ax.plot(positions, data, color=linecolor, linewidth=linewidth, linestyle=linestyle)
+                data = bottom + np.array(
+                    data * ((top - bottom) / (max_value - min_value))
+                )
+                self.ax.plot(
+                    positions,
+                    data,
+                    color=linecolor,
+                    linewidth=linewidth,
+                    linestyle=linestyle,
+                )
 
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def fillplot(
@@ -647,8 +716,7 @@ class Gcircle:
         linewidth=0.0,
         spine=False,
     ):
-        """
-        Fill a specified area in the sector corresponding to the arc of the
+        """Fill a specified area in the sector corresponding to the arc of the
         Garc class object specified by garc_id.
 
         Args:
@@ -686,7 +754,6 @@ class Gcircle:
             None:
                 This function does not return any value.
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size - 1
@@ -722,7 +789,7 @@ class Gcircle:
         new_positions = []
         new_data_array = []
         new_positions_array = []
-        for p, v in zip(positions, data):
+        for p, v in zip(positions, data, strict=False):
             if v > rlim[1] or v < rlim[0]:
                 new_data_array.append(new_data)
                 new_positions_array.append(new_positions)
@@ -733,7 +800,7 @@ class Gcircle:
                 new_positions.append(p)
         new_data_array.append(new_data)
         new_positions_array.append(new_positions)
-        for data, positions in zip(new_data_array, new_positions_array):
+        for data, positions in zip(new_data_array, new_positions_array, strict=False):
             if len(positions) > 0:
                 base_value = base_value - min_value
                 base_value = bottom + base_value * (
@@ -741,7 +808,7 @@ class Gcircle:
                 )
                 data = np.array(data) - min_value
                 data = bottom + np.array(
-                    data * ((top - bottom) / (max_value - min_value))
+                    data * ((top - bottom) / (max_value - min_value)),
                 )
                 self.ax.fill_between(
                     positions,
@@ -752,7 +819,7 @@ class Gcircle:
                     edgecolor=edgecolor,
                 )
 
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def scatterplot(
@@ -807,7 +874,6 @@ class Gcircle:
         Returns:
             None
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size - 1
@@ -830,7 +896,10 @@ class Gcircle:
             self.color_cycle += 1
 
         if rlim is None:
-            rlim = (min(data) - 0.05 * abs(min(data)), max(data) + 0.05 * abs(max(data)))
+            rlim = (
+                min(data) - 0.05 * abs(min(data)),
+                max(data) + 0.05 * abs(max(data)),
+            )
 
         min_value = rlim[0]
         max_value = rlim[1]
@@ -838,7 +907,7 @@ class Gcircle:
         new_positions = []
         new_data_array = []
         new_positions_array = []
-        for p, v in zip(positions, data):
+        for p, v in zip(positions, data, strict=False):
             if v > rlim[1] or v < rlim[0]:
                 new_data_array.append(new_data)
                 new_positions_array.append(new_positions)
@@ -850,14 +919,23 @@ class Gcircle:
 
         new_data_array.append(new_data)
         new_positions_array.append(new_positions)
-        for positions, data in zip(new_positions_array, new_data_array):
+        for positions, data in zip(new_positions_array, new_data_array, strict=False):
             if len(positions) > 0:
                 data = np.array(data) - min_value
-                data = bottom + np.array(data * ((top - bottom) / (max_value - min_value)))
-                self.ax.scatter(positions, data, c=facecolor, s=markersize, linewidth=linewidth, edgecolor=edgecolor,
-                                marker=markershape)
+                data = bottom + np.array(
+                    data * ((top - bottom) / (max_value - min_value))
+                )
+                self.ax.scatter(
+                    positions,
+                    data,
+                    c=facecolor,
+                    s=markersize,
+                    linewidth=linewidth,
+                    edgecolor=edgecolor,
+                    marker=markershape,
+                )
 
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def barplot(
@@ -912,7 +990,6 @@ class Gcircle:
         Returns:
             None: This method does not return any value.
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size
@@ -965,7 +1042,7 @@ class Gcircle:
         new_data_array = []
         new_positions_array = []
         new_width_array = []
-        for p, v, w in zip(positions, data, width):
+        for p, v, w in zip(positions, data, width, strict=False):
             if v > rlim[1] or v < rlim[0]:
                 new_data_array.append(new_data)
                 new_positions_array.append(new_positions)
@@ -982,7 +1059,10 @@ class Gcircle:
         new_positions_array.append(new_positions)
         new_width_array.append(new_width)
         for data, positions, width in zip(
-            new_data_array, new_positions_array, new_width_array
+            new_data_array,
+            new_positions_array,
+            new_width_array,
+            strict=False,
         ):
             if len(positions) > 0:
                 base_value = base_value - min_value
@@ -1010,7 +1090,7 @@ class Gcircle:
                     align="edge",
                 )
 
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def heatmap(
@@ -1027,8 +1107,7 @@ class Gcircle:
         linewidth=0.0,
         spine=False,
     ):
-        """
-        Visualize magnitudes of data values by color scale in the sector
+        """Visualize magnitudes of data values by color scale in the sector
         corresponding to the arc of the Garc class object specified by garc_id.
 
         Args:
@@ -1064,7 +1143,6 @@ class Gcircle:
         Returns:
             None
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size
@@ -1098,23 +1176,25 @@ class Gcircle:
             cmap = Gcircle.cmaps[self.cmap_cycle % len(Gcircle.cmaps)]
             self.cmap_cycle += 1
 
-        if vmax is None:
-            max_value = max(data)
-        else:
-            max_value = vmax
+        max_value = max(data) if vmax is None else vmax
 
-        if vmin is None:
-            min_value = min(data)
-        else:
-            min_value = vmin
+        min_value = min(data) if vmin is None else vmin
 
         facecolors = []
         for d in data:
             facecolors.append(cmap(d / (max_value - min_value)))
-        self.ax.bar(positions, height=[height] * len(positions), width=width, bottom=bottom, color=facecolors,
-                    edgecolor=edgecolor, linewidth=linewidth, align="edge")
+        self.ax.bar(
+            positions,
+            height=[height] * len(positions),
+            width=width,
+            bottom=bottom,
+            color=facecolors,
+            edgecolor=edgecolor,
+            linewidth=linewidth,
+            align="edge",
+        )
 
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def featureplot(
@@ -1128,8 +1208,7 @@ class Gcircle:
         linewidth=0.0,
         spine=False,
     ):
-        """
-        Visualize sequence features with bar plots in the sector corresponding
+        """Visualize sequence features with bar plots in the sector corresponding
         to the arc of the Garc class object specified by garc_id.
 
         Args:
@@ -1162,7 +1241,6 @@ class Gcircle:
         Returns:
             None
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size - 1
@@ -1209,11 +1287,16 @@ class Gcircle:
             linewidth=linewidth,
             align="edge",
         )
-        if spine == True:
+        if spine:
             self.setspine(garc_id, raxis_range)
 
     def chord_plot(
-        self, start_list, end_list, facecolor=None, edgecolor=None, linewidth=0.0
+        self,
+        start_list,
+        end_list,
+        facecolor=None,
+        edgecolor=None,
+        linewidth=0.0,
     ):
         """Visualize interrelationships between data.
 
@@ -1240,7 +1323,6 @@ class Gcircle:
         Returns:
             None
         """
-
         garc_id1 = start_list[0]
         garc_id2 = end_list[0]
         center = 0
@@ -1269,19 +1351,26 @@ class Gcircle:
             pass
         else:
             Path = mpath.Path
-            path_data = [(Path.MOVETO, (sstart, stop)),
-                         (Path.CURVE3, (sstart, center)),
-                         (Path.CURVE3, (oend, etop)),
-                         (Path.CURVE3, ((ostart + oend) * 0.5, etop + z2)),
-                         (Path.CURVE3, (ostart, etop)),
-                         (Path.CURVE3, (ostart, center)),
-                         (Path.CURVE3, (send, stop)),
-                         (Path.CURVE3, ((sstart + send) * 0.5, stop + z1)),
-                         (Path.CURVE3, (sstart, stop)),
-                         ]
-            codes, verts = list(zip(*path_data))
+            path_data = [
+                (Path.MOVETO, (sstart, stop)),
+                (Path.CURVE3, (sstart, center)),
+                (Path.CURVE3, (oend, etop)),
+                (Path.CURVE3, ((ostart + oend) * 0.5, etop + z2)),
+                (Path.CURVE3, (ostart, etop)),
+                (Path.CURVE3, (ostart, center)),
+                (Path.CURVE3, (send, stop)),
+                (Path.CURVE3, ((sstart + send) * 0.5, stop + z1)),
+                (Path.CURVE3, (sstart, stop)),
+            ]
+            codes, verts = list(zip(*path_data, strict=False))
             path = mpath.Path(verts, codes)
-            patch = mpatches.PathPatch(path, facecolor=facecolor, linewidth=linewidth, edgecolor=edgecolor, zorder=0)
+            patch = mpatches.PathPatch(
+                path,
+                facecolor=facecolor,
+                linewidth=linewidth,
+                edgecolor=edgecolor,
+                zorder=0,
+            )
             self.ax.add_patch(patch)
 
     def tickplot(
@@ -1342,7 +1431,6 @@ class Gcircle:
         Returns:
             None
         """
-
         start = self._garc_dict[garc_id].coordinates[0]
         end = self._garc_dict[garc_id].coordinates[-1]
         size = self._garc_dict[garc_id].size + 1
@@ -1357,7 +1445,7 @@ class Gcircle:
                 raxis_range = (r0 - tickheight, r0)
 
         if tickpositions is None:
-            tickpositions = [pos for pos in range(0, size, tickinterval)]
+            tickpositions = list(range(0, size, tickinterval))
 
         if ticklabels is None:
             ticklabels = [None] * len(tickpositions)
@@ -1365,7 +1453,7 @@ class Gcircle:
         elif ticklabels == "None":
             ticklabels = tickpositions
 
-        for pos, label in zip(tickpositions, ticklabels):
+        for pos, label in zip(tickpositions, ticklabels, strict=False):
             self.ax.plot(
                 [positions_all[pos], positions_all[pos]],
                 raxis_range,
@@ -1376,7 +1464,8 @@ class Gcircle:
                 pass
             else:
                 ticklabel_rot = self._get_label_rotation(
-                    start + ((end - start) * (pos / size)), ticklabelorientation
+                    start + ((end - start) * (pos / size)),
+                    ticklabelorientation,
                 )
                 if ticklabelorientation == "horizontal":
                     label_width = ticklabelsize * 2
@@ -1441,7 +1530,6 @@ class Gcircle:
         Returns:
             None
         """
-
         self.figure.patch.set_alpha(0.0)
         if format == "pdf" and dpi is None:
             self.figure.savefig(file_name + ".pdf", bbox_inches="tight")
@@ -1468,8 +1556,7 @@ class Tarc(Garc):
         labelsize=10,
         label_visible=False,
     ):
-        """
-        Initializes a Garc class object.
+        """Initializes a Garc class object.
 
         Args:
             arc_id (str, optional):
@@ -1505,12 +1592,11 @@ class Tarc(Garc):
         Returns:
             None
         """
-
         self.tree = Phylo.read(tree, format)
         self.size = len(self.tree.get_terminals())
         self._tree_plotted = 0
         self._parental_gcircle = None
-        if arc_id == None:
+        if arc_id is None:
             self.arc_id = str(Garc._arcnum)
         else:
             self.arc_id = arc_id
@@ -1542,9 +1628,9 @@ class Tarc(Garc):
         drawing_width = 100 - max_label_width - 1
         if max(depths.values()) == 0:
             depths = self.tree.depths(unit_branch_lengths=True)
-        fudge_margin = math.log(len(taxa), 2)
+        fudge_margin = math.log2(len(taxa))
         cols_per_branch_unit = (drawing_width - fudge_margin) / float(
-            max(depths.values())
+            max(depths.values()),
         )
         positions = {
             clade: blen * cols_per_branch_unit + 1.0 for clade, blen in depths.items()
@@ -1598,8 +1684,12 @@ class Tarc(Garc):
                 rlim[0] - (v * abs(rlim[1] - rlim[0]) / abs(col_min - col_max))
                 for v in col_values
             ]
-        self._theta_dict = dict(zip(list(self._row_positions.keys()), theta_positions))
-        self._r_dict = dict(zip(list(self._col_positions.keys()), r_positions))
+        self._theta_dict = dict(
+            zip(list(self._row_positions.keys()), theta_positions, strict=False)
+        )
+        self._r_dict = dict(
+            zip(list(self._col_positions.keys()), r_positions, strict=False)
+        )
 
     def _plot_tree(
         self,
@@ -1660,7 +1750,7 @@ class Tarc(Garc):
                 thetas = np.linspace(minsc_theta, maxsc_theta, 100)
                 rs = [self._r_dict[clade]] * len(thetas)
                 ax.plot(thetas, rs, lw=linewidth, color=linecolor, zorder=0)
-                for sc, sc_theta in zip(subclades, sc_thetas):
+                for sc, sc_theta in zip(subclades, sc_thetas, strict=False):
                     ax.plot(
                         [sc_theta, sc_theta],
                         [self._r_dict[sc], self._r_dict[clade]],
@@ -1675,7 +1765,8 @@ class Tarc(Garc):
 
     def _plot_highlight(self, ax, highlight_dict=None):
         if self._tree_plotted == 0:
-            raise ValueError("Please run `plot_tree` before running `plot_highlight`")
+            msg = "Please run `plot_tree` before running `plot_highlight`"
+            raise ValueError(msg)
 
         for clade_names in highlight_dict:
             highlight_dict[clade_names].setdefault("color", "#000000")
@@ -1692,7 +1783,7 @@ class Tarc(Garc):
 
             if type(clade_names) is tuple:
                 ca = self.tree.common_ancestor(
-                    [self.clade_dict[name] for name in clade_names]
+                    [self.clade_dict[name] for name in clade_names],
                 )
                 clades = [self.clade_dict[name] for name in clade_names]
             else:
@@ -1722,10 +1813,7 @@ class Tarc(Garc):
                     pass
                 else:
                     rot = loc * 360 / (2 * np.pi)
-                    if 90 < rot < 270:
-                        rot = 180 - rot
-                    else:
-                        rot = -1 * rot
+                    rot = 180 - rot if 90 < rot < 270 else -1 * rot
                     if yloc is None:
                         yloc = (
                             self._tree_rlim[1]
@@ -1761,10 +1849,7 @@ class Tarc(Garc):
                     pass
                 else:
                     rot = loc * 360 / (2 * np.pi)
-                    if 90 < rot < 270:
-                        rot = 180 - rot
-                    else:
-                        rot = -1 * rot
+                    rot = 180 - rot if 90 < rot < 270 else -1 * rot
                     if yloc is None:
                         yloc = (
                             self._tree_rlim[1]
@@ -1783,8 +1868,7 @@ class Tarc(Garc):
 
 
 class Tcircle(Gcircle):
-    """
-    Tcircle class is the subclass of Gcircle. All methods implemented in the
+    """Tcircle class is the subclass of Gcircle. All methods implemented in the
     Gcircle class also can be used. Then, the two additional methods set_tarc,
     plot_tree and plot_highlight is provided in the Tcircle class.
     """
@@ -1811,6 +1895,7 @@ class Tcircle(Gcircle):
         """
         if name == "tarc_dict":
             return self._garc_dict
+        return None
 
     def add_tarc(self, tarc):
         """Adds a new Tarc or Garc object to the tarc_dict.
@@ -1839,39 +1924,54 @@ class Tcircle(Gcircle):
         Returns:
             None
         """
-
-        sum_length = sum(list(map(lambda x: self._garc_dict[x]["size"], list(self._garc_dict.keys()))))
-        sum_interspace = sum(list(map(lambda x: self._garc_dict[x]["interspace"], list(self._garc_dict.keys()))))
+        sum_length = sum(
+            [self._garc_dict[x]["size"] for x in list(self._garc_dict.keys())]
+        )
+        sum_interspace = sum(
+            [self._garc_dict[x]["interspace"] for x in list(self._garc_dict.keys())]
+        )
         start = 2 * np.pi * start / 360
         end = (2 * np.pi * end / 360) - sum_interspace
 
         s = 0
         sum_interspace = 0
-        for key in self._garc_dict.keys():
+        for key in self._garc_dict:
             size = self._garc_dict[key].size
             self._garc_dict[key].coordinates = [None, None]
-            self._garc_dict[key].coordinates[0] = sum_interspace + start + ((end - start) * s / sum_length)
-            self._garc_dict[key].coordinates[1] = sum_interspace + start + ((end - start) * (s + size) / sum_length)
+            self._garc_dict[key].coordinates[0] = (
+                sum_interspace + start + ((end - start) * s / sum_length)
+            )
+            self._garc_dict[key].coordinates[1] = (
+                sum_interspace + start + ((end - start) * (s + size) / sum_length)
+            )
             s = s + size
             sum_interspace += self._garc_dict[key].interspace
 
         if self.fig_is_ext:
-            self.ax = self.figure.add_axes([0, 0, self.figsize[0], self.figsize[1]], polar=True)
+            self.ax = self.figure.add_axes(
+                [0, 0, self.figsize[0], self.figsize[1]], polar=True
+            )
         else:
             self.ax = self.figure.add_axes([0, 0, 1, 1], polar=True)
         self.ax.set_theta_zero_location("N")
         self.ax.set_theta_direction(-1)
         self.ax.set_ylim(0, 1000)
-        self.ax.spines['polar'].set_visible(False)
+        self.ax.spines["polar"].set_visible(False)
         self.ax.xaxis.set_ticks([])
         self.ax.xaxis.set_ticklabels([])
         self.ax.yaxis.set_ticks([])
         self.ax.yaxis.set_ticklabels([])
 
-        for i, key in enumerate(self._garc_dict.keys()):
+        for _i, key in enumerate(self._garc_dict.keys()):
             pos = self._garc_dict[key].coordinates[0]
-            width = self._garc_dict[key].coordinates[-1] - self._garc_dict[key].coordinates[0]
-            height = abs(self._garc_dict[key].raxis_range[1] - self._garc_dict[key].raxis_range[0])
+            width = (
+                self._garc_dict[key].coordinates[-1]
+                - self._garc_dict[key].coordinates[0]
+            )
+            height = abs(
+                self._garc_dict[key].raxis_range[1]
+                - self._garc_dict[key].raxis_range[0]
+            )
             bottom = self._garc_dict[key].raxis_range[0]
             facecolor = self._garc_dict[key].facecolor
             edgecolor = self._garc_dict[key].edgecolor
@@ -1882,19 +1982,34 @@ class Tcircle(Gcircle):
             if facecolor == (0, 0, 0, 0) and linewidth == 0:
                 pass
             else:
-                self.ax.bar([pos], [height], bottom=bottom, width=width, facecolor=facecolor, linewidth=linewidth,
-                            edgecolor=edgecolor, align="edge")
+                self.ax.bar(
+                    [pos],
+                    [height],
+                    bottom=bottom,
+                    width=width,
+                    facecolor=facecolor,
+                    linewidth=linewidth,
+                    edgecolor=edgecolor,
+                    align="edge",
+                )
 
-            if self._garc_dict[key].label_visible == True:
-                rot = (self._garc_dict[key].coordinates[0] + self._garc_dict[key].coordinates[1]) / 2
+            if self._garc_dict[key].label_visible:
+                rot = (
+                    self._garc_dict[key].coordinates[0]
+                    + self._garc_dict[key].coordinates[1]
+                ) / 2
                 rot = rot * 360 / (2 * np.pi)
-                if 90 < rot < 270:
-                    rot = 180 - rot
-                else:
-                    rot = -1 * rot
+                rot = 180 - rot if 90 < rot < 270 else -1 * rot
                 height = bottom + height / 2 + self._garc_dict[key].labelposition
-                self.ax.text(pos + width / 2, height, self._garc_dict[key].label, rotation=rot, ha="center",
-                             va="center", fontsize=self._garc_dict[key].labelsize)
+                self.ax.text(
+                    pos + width / 2,
+                    height,
+                    self._garc_dict[key].label,
+                    rotation=rot,
+                    ha="center",
+                    va="center",
+                    fontsize=self._garc_dict[key].labelsize,
+                )
 
     def plot_tree(
         self,
@@ -1950,11 +2065,13 @@ class Tcircle(Gcircle):
         Returns:
             None
         """
-
         start = self._garc_dict[tarc_id].coordinates[0]
         end = self._garc_dict[tarc_id].coordinates[-1]
         positions = np.linspace(
-            start, end, self._garc_dict[tarc_id].size, endpoint=False
+            start,
+            end,
+            self._garc_dict[tarc_id].size,
+            endpoint=False,
         )
         positions = positions + abs(positions[1] - positions[0]) * 0.5
         start, end = positions[0], positions[-1]
@@ -1994,39 +2111,41 @@ class Tcircle(Gcircle):
         Returns:
             None
         """
-
         self._garc_dict[tarc_id]._plot_highlight(self.ax, highlight_dict=highlight_dict)
 
 
 def table_hg38_chromosome_length():
-    return pd.read_csv(os.path.join(DATAPATH, 'hg38_chromosome_length.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, "hg38_chromosome_length.csv"))
+
 
 def table_hg38_cytoband():
-    return pd.read_csv(os.path.join(DATAPATH, 'hg38_cytoBand.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, "hg38_cytoBand.csv"))
+
 
 def table_mm10_chromosome_length():
-    return pd.read_csv(os.path.join(DATAPATH, 'mm10_chromosome_length.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, "mm10_chromosome_length.csv"))
+
 
 def table_mm10_cytoband():
-    return pd.read_csv(os.path.join(DATAPATH, 'mm10_cytoBand.csv'))
+    return pd.read_csv(os.path.join(DATAPATH, "mm10_cytoBand.csv"))
 
 
 if __name__ == "__main__":
     pass
     """
-    tree = next(Phylo.parse("../tutorial/circos/hmptree.xml", "phyloxml")) 
-    col_positions = get_col_positions(tree) 
+    tree = next(Phylo.parse("../tutorial/circos/hmptree.xml", "phyloxml"))
+    col_positions = get_col_positions(tree)
     row_positions = get_row_positions(tree)
 
-    import numpy as np 
+    import numpy as np
     import matplotlib.pyplot as plt
-    fig = plt.figure(figsize=(5,5)) 
+    fig = plt.figure(figsize=(5,5))
     ax  = fig.add_axes([0, 0, 1, 1], polar=True)
     theta_dict, r_dict = convert(tree, col_positions, row_positions, (0, np.pi), (0,10))
 
-    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color="k") 
+    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color="k")
 
-    plot_lines(ax, theta_dict, r_dict) 
+    plot_lines(ax, theta_dict, r_dict)
 
     ax.set_ylim([0,10])
     fig.savefig("test.pdf", bbox_inches="tight")

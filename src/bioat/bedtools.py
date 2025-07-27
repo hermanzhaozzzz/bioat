@@ -1,8 +1,6 @@
+"""BioAt BedTools
+# todo.
 """
-BioAt BedTools
-# todo
-"""
-
 
 
 class BedTools:

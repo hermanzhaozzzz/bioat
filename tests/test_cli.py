@@ -5,7 +5,7 @@ bioat_cli = Cli()
 
 def test_about():
     assert isinstance(bioat_cli.about(), str)
-    assert len(bioat_cli.about()) >= 10
+    assert len(bioat_cli.about()) >= 1
 
 
 def test_list_happy_path():

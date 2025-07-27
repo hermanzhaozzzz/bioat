@@ -1,17 +1,19 @@
 import os
 import sys
-import toml
 from datetime import datetime
 
+import toml
+
 # 将项目路径添加到 sys.path，以便 Sphinx 能找到代码
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath("../src"))
 
 # 解析 pyproject.toml 文件
 pyproject_path = os.path.abspath("../pyproject.toml")
 if not os.path.exists(pyproject_path):
-    raise FileNotFoundError(f"pyproject.toml not found at {pyproject_path}")
+    msg = f"pyproject.toml not found at {pyproject_path}"
+    raise FileNotFoundError(msg)
 
-with open(pyproject_path, "r") as f:
+with open(pyproject_path) as f:
     pyproject_data = toml.load(f)
 
 # 从 pyproject.toml 中提取元信息
@@ -24,25 +26,25 @@ year = datetime.now().year
 
 # Sphinx 配置
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx_rtd_theme',
-    'sphinx.ext.viewcode',
-    'myst_parser',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx_rtd_theme",
+    "sphinx.ext.viewcode",
+    "myst_parser",
 ]
 
 # 模板路径和主题设置
-templates_path = ['_templates']
-html_theme = 'sphinx_rtd_theme'
+templates_path = ["_templates"]
+html_theme = "sphinx_rtd_theme"
 
 # 支持的文档格式
-source_suffix = ['.rst', '.md']
+source_suffix = [".rst", ".md"]
 
 # 项目语言
-language = 'en'
+language = "en"
 
 # 静态文件路径
-html_static_path = ['_static']
+html_static_path = ["_static"]
 static_path = os.path.join(os.path.dirname(__file__), "_static")
 if not os.path.exists(static_path):
     os.makedirs(static_path)
@@ -74,11 +76,11 @@ rst_epilog = f"""
 """
 
 # 动态生成版本号
-version = release.rsplit('.', 1)[0]  # 主版本号
+version = release.rsplit(".", 1)[0]  # 主版本号
 
 # 输出设置
-master_doc = 'index'
+master_doc = "index"
 html_title = f"{project} Documentation"
 html_short_title = project
-pygments_style = 'sphinx'
-highlight_language = 'python'
+pygments_style = "sphinx"
+highlight_language = "python"

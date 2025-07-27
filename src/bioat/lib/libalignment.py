@@ -1,4 +1,4 @@
-"""Library for alignment, depends on Biopython
+"""Library for alignment, depends on Biopython.
 
 author: Herman Huanan Zhao
 email: hermanzhaozzzz@gmail.com
@@ -27,6 +27,7 @@ example 1:
             >>> print(res)
 """
 
+import sys
 
 from Bio.Align import Alignment, PairwiseAligner, substitution_matrices
 from Bio.Seq import Seq
@@ -66,7 +67,7 @@ def instantiate_pairwise_aligner(
         PairwiseAligner: An object instantiated from PairwiseAligner.
 
     Details for `score_matrix_dict`:
-        You can use any base and any score, such as AGCTN, or 20AA + 2 abnormal AAs, 
+        You can use any base and any score, such as AGCTN, or 20AA + 2 abnormal AAs,
         or any characters you want. For example:
 
             score_matrix_dict = {
@@ -148,7 +149,7 @@ def instantiate_pairwise_aligner(
             }
 
         substitution_matrix = substitution_matrices.Array(
-            data=score_matrix_dict
+            data=score_matrix_dict,
         )
         aligner.mode = mode
         aligner.substitution_matrix = substitution_matrix
@@ -171,9 +172,12 @@ def instantiate_pairwise_aligner(
 
 
 def get_best_alignment(
-    seq_a: Seq, seq_b: Seq, aligner: PairwiseAligner, consider_strand=True
+    seq_a: Seq,
+    seq_b: Seq,
+    aligner: PairwiseAligner,
+    consider_strand=True,
 ):
-    """Get best alignment by heightest alignment score
+    """Get best alignment by heightest alignment score.
 
     Get best alignment by heightest alignment score,
     default to consider strand, that means, it will attempt to use
@@ -217,7 +221,9 @@ def get_best_alignment(
     if consider_strand:
         alignments_rc = aligner.align(seq_a, seq_b.reverse_complement())
         alignment_rc = sorted(
-            alignments_rc, key=lambda x: x.score, reverse=True
+            alignments_rc,
+            key=lambda x: x.score,
+            reverse=True,
         )[0]
 
         if alignment.score >= alignment_rc.score:
@@ -238,20 +244,22 @@ def get_best_alignment(
 
 
 def get_aligned_seq(
-    alignment: Alignment, reverse: bool = False, letn_match=False
+    alignment: Alignment,
+    reverse: bool = False,
+    letn_match=False,
 ) -> dict:
     """Retrieve aligned sequence information from a Bio.Align.Alignment object.
 
     Args:
-        alignment (Bio.Align.Alignment): 
+        alignment (Bio.Align.Alignment):
             A `Bio.Align.Alignment` object containing the alignment information.
-        reverse (bool, optional): 
+        reverse (bool, optional):
             Whether to return reversed sequence information. Defaults to False.
 
     Returns:
         dict: A dictionary containing the alignment details with the following keys:
             - 'reference_seq' (str): The aligned reference sequence.
-            - 'aln_info' (str): The alignment information string, indicating matches ('|'), 
+            - 'aln_info' (str): The alignment information string, indicating matches ('|'),
               mismatches ('.'), and gaps ('-').
             - 'target_seq' (str): The aligned target sequence.
 
@@ -271,31 +279,29 @@ def get_aligned_seq(
         if x:
             ls.append(x[20:].split(" ")[0])
     if not reverse:
-        res = dict(
-            reference_seq="".join(ls[::3]),
-            aln_info="".join(ls[1::3]),
-            target_seq="".join(ls[2::3]),
-        )
+        res = {
+            "reference_seq": "".join(ls[::3]),
+            "aln_info": "".join(ls[1::3]),
+            "target_seq": "".join(ls[2::3]),
+        }
     else:
-        res = dict(
-            reference_seq="".join(ls[::3])[::-1],
-            aln_info="".join(ls[1::3])[::-1],
-            target_seq="".join(ls[2::3])[::-1],
-        )
+        res = {
+            "reference_seq": "".join(ls[::3])[::-1],
+            "aln_info": "".join(ls[1::3])[::-1],
+            "target_seq": "".join(ls[2::3])[::-1],
+        }
     if letn_match:
         length = len(res["reference_seq"])
         # change base N to match
         i_n_a = [
             i
             for i in range(length)
-            if (res["reference_seq"][i] == "N")
-            and (res["target_seq"][i] != "-")
+            if (res["reference_seq"][i] == "N") and (res["target_seq"][i] != "-")
         ]
         i_n_b = [
             i
             for i in range(length)
-            if (res["target_seq"][i] == "N")
-            and (res["reference_seq"][i] != "-")
+            if (res["target_seq"][i] == "N") and (res["reference_seq"][i] != "-")
         ]
         i_n = list(set(i_n_a) | set(i_n_b))
         aln_list = list(res["aln_info"])
@@ -333,14 +339,14 @@ def get_alignment_info(
             - end_index (int): The end index of the sgRNA alignment region.
 
     Notes:
-        The gap count specifically counts gaps within the sgRNA alignment region, not the total gaps in the entire sequence. 
+        The gap count specifically counts gaps within the sgRNA alignment region, not the total gaps in the entire sequence.
         For example:
 
-            >>> Reference:  AGTGGTAAGAAGAAGACGAGACATAATGAG
+            >>> Reference: AGTGGTAAGAAGAAGACGAGACATAATGAG
             >>>             ------||||||||||||||.|----||||
-            >>> Target:     ------AAGAAGAAGACGAGCC----TGAG
+            >>> Target: ------AAGAAGAAGACGAGCC - ---TGAG
 
-        In this example: Gap count = 4 (within sgRNA alignment region), not 10 (total gaps). 
+        In this example: Gap count = 4 (within sgRNA alignment region), not 10 (total gaps).
 
 
     Example:
@@ -352,7 +358,9 @@ def get_alignment_info(
 
     if reverse:
         aln_res = get_aligned_seq(
-            alignment, reverse=True, letn_match=letn_match
+            alignment,
+            reverse=True,
+            letn_match=letn_match,
         )
     else:
         aln_res = get_aligned_seq(alignment, letn_match=letn_match)
@@ -365,9 +373,7 @@ def get_alignment_info(
     target_seq_length_rm_gap = len(target_seq.replace("-", ""))
     aligned_coordinates = alignment.aligned[::-1]
     if hasattr(alignment, "is_a_reverse_complement_alignment"):
-        is_a_reverse_complement_alignment = (
-            alignment.is_a_reverse_complement_alignment
-        )
+        is_a_reverse_complement_alignment = alignment.is_a_reverse_complement_alignment
     else:
         is_a_reverse_complement_alignment = None
 
@@ -377,13 +383,13 @@ def get_alignment_info(
     lm.logger.debug(f"aln_score     = {aln_score}")
     lm.logger.debug(f"target_seq_length (remove gap) = {target_seq_length_rm_gap}")
     lm.logger.debug(
-        f"is_a_reverse_complement_alignment = {is_a_reverse_complement_alignment}"
+        f"is_a_reverse_complement_alignment = {is_a_reverse_complement_alignment}",
     )
     lm.logger.debug(f"aligned_coordinates =\n{aligned_coordinates}")
 
     # define params
     ref_aln_start = target_seq_length - len(target_seq.lstrip("-"))
-    ref_aln_end = ref_aln_start + len((target_seq.strip("-")))
+    ref_aln_end = ref_aln_start + len(target_seq.strip("-"))
     match_count = 0
     mismatch_count = 0
     gap_count = 0
@@ -402,18 +408,15 @@ def get_alignment_info(
                 # not encounter with target_seq yet!
                 # print(idx, base_info)
                 continue
-            else:
-                # find first aligned base
-                # encounter with target_seq!
-                encounter_target_seq = True
+            # find first aligned base
+            # encounter with target_seq!
+            encounter_target_seq = True
 
-        if encounter_target_seq and (
-            parsed_target_bases < target_seq_length_rm_gap
-        ):
+        if encounter_target_seq and (parsed_target_bases < target_seq_length_rm_gap):
             # from the same loop of [else: catch_start = True]
             # parse start base and later base
             # print(parsed_target_bases, target_seq_length_rm_gap, base_info)
-            if base_info == "|" or base_info == "★":
+            if base_info in {"|", "★"}:
                 # match
                 match_count += 1
                 parsed_target_bases += 1
@@ -438,22 +441,21 @@ def get_alignment_info(
             else:
                 lm.logger.critical(
                     f"find not surpported alignment symbol: {base_info} ({idx} on the reference), check"
-                    f"whether Biopython >= 1.8.0 or not"
+                    f"whether Biopython >= 1.8.0 or not",
                 )
-                exit(1)
+                sys.exit(1)
         else:
             # parsed_target_bases = target_seq_length_rm_gap
             # full target_seq bases were processed
             break
 
-    res = dict(
-        match_count=match_count,
-        mismatch_count=mismatch_count,
-        gap_count=gap_count,
-        aln_score=aln_score,
-        ref_aln_start=ref_aln_start,
-        ref_aln_end=ref_aln_end,
-        is_a_reverse_complement_alignment=is_a_reverse_complement_alignment,
-        alignment=aln_res,
-    )
-    return res
+    return {
+        "match_count": match_count,
+        "mismatch_count": mismatch_count,
+        "gap_count": gap_count,
+        "aln_score": aln_score,
+        "ref_aln_start": ref_aln_start,
+        "ref_aln_end": ref_aln_end,
+        "is_a_reverse_complement_alignment": is_a_reverse_complement_alignment,
+        "alignment": aln_res,
+    }

@@ -1,5 +1,4 @@
-"""
-bioat.cli
+"""bioat.cli.
 
 This module provides the command line interface (CLI) for the BioAT (Bioinformatic Analysis Tools) toolkit.
 The BioAT toolkit is designed for bioinformatic analyses, allowing users to handle various biological data formats
@@ -60,7 +59,7 @@ from bioat import (
 from bioat.about import __ABOUT__
 
 
-class Cli(object):
+class Cli:
     """Cli interface of BioAT.
 
     Brief:

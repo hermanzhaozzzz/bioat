@@ -1,4 +1,4 @@
-"""_summary_
+"""_summary_.
 
 author: Herman Huanan Zhao
 email: hermanzhaozzzz@gmail.com
@@ -19,7 +19,6 @@ example 1:
 example 2:
     _example_
 """
-
 
 import pandas as pd
 
@@ -62,13 +61,18 @@ def set_option(
     pd.set_option("display.max_columns", display_max_columns)  # column最大显示数
     lm.logger.info(f"set pandas: display.max_rows={display_max_rows}")
     pd.set_option("display.max_rows", display_max_rows)  # row最大显示数
-    return
 
 
-def move_column(df: pd.DataFrame, to_move: str, after: str | None = None, before: str | None = None,
-                first: bool | None = None, last: bool | None = None, inplace=False) -> pd.DataFrame | None:
-    """
-    Move a specified column in a DataFrame to a new position.
+def move_column(
+    df: pd.DataFrame,
+    to_move: str,
+    after: str | None = None,
+    before: str | None = None,
+    first: bool | None = None,
+    last: bool | None = None,
+    inplace=False,
+) -> pd.DataFrame | None:
+    """Move a specified column in a DataFrame to a new position.
 
     :param df: The DataFrame to operate on.
     :param to_move: The name of the column to move.
@@ -81,27 +85,46 @@ def move_column(df: pd.DataFrame, to_move: str, after: str | None = None, before
     """
     # Validate inputs for to_move
     if to_move not in df.columns:
-        raise ValueError(f"Column '{to_move}' not found in the DataFrame.")
+        msg = f"Column '{to_move}' not found in the DataFrame."
+        raise ValueError(msg)
     # Validate inputs for first and last
     if first and last:
-        raise ValueError("Cannot specify both 'first' and 'last' as True. Please choose one.")
+        msg = "Cannot specify both 'first' and 'last' as True. Please choose one."
+        raise ValueError(
+            msg
+        )
     if first is not None and not isinstance(first, bool):
-        raise ValueError("'first' must be a boolean or None.")
+        msg = "'first' must be a boolean or None."
+        raise ValueError(msg)
     if last is not None and not isinstance(last, bool):
-        raise ValueError("'last' must be a boolean or None.")
+        msg = "'last' must be a boolean or None."
+        raise ValueError(msg)
     # Validate inputs for before and after
     if after is not None:
         if after not in df.columns:
-            raise ValueError(f"Column '{after}' not found in the DataFrame. Cannot use it as a reference.")
+            msg = f"Column '{after}' not found in the DataFrame. Cannot use it as a reference."
+            raise ValueError(
+                msg
+            )
         if to_move == after:
-            raise ValueError(f"to_move({to_move}) is not allowed to be the same with after({after})")
+            msg = f"to_move({to_move}) is not allowed to be the same with after({after})"
+            raise ValueError(
+                msg
+            )
     if before is not None:
         if before not in df.columns:
-            raise ValueError(f"Column '{before}' not found in the DataFrame. Cannot use it as a reference.")
+            msg = f"Column '{before}' not found in the DataFrame. Cannot use it as a reference."
+            raise ValueError(
+                msg
+            )
         if to_move == before:
-            raise ValueError(f"to_move({to_move}) is not allowed to be the same with before({before})")
+            msg = f"to_move({to_move}) is not allowed to be the same with before({before})"
+            raise ValueError(
+                msg
+            )
     if after is not None and before is not None:
-        raise ValueError("Cannot specify both 'after' and 'before'. Please choose one.")
+        msg = "Cannot specify both 'after' and 'before'. Please choose one."
+        raise ValueError(msg)
 
     current_columns = df.columns.tolist()
     if first:
@@ -116,32 +139,41 @@ def move_column(df: pd.DataFrame, to_move: str, after: str | None = None, before
         # Determine the new position
         if after is not None:
             index_after = current_columns.index(after) + 1
-            new_columns = current_columns[:index_after] + [to_move] + current_columns[index_after:]
+            new_columns = (
+                current_columns[:index_after]
+                + [to_move]
+                + current_columns[index_after:]
+            )
         elif before is not None:
             index_before = current_columns.index(before)
-            new_columns = current_columns[:index_before] + [to_move] + current_columns[index_before:]
+            new_columns = (
+                current_columns[:index_before]
+                + [to_move]
+                + current_columns[index_before:]
+            )
         else:
-            raise ValueError("you must define one of the params(first/last/before/after) for operation")
+            msg = "you must define one of the params(first/last/before/after) for operation"
+            raise ValueError(
+                msg
+            )
 
     # Return the modified DataFrame or None if inplace=True
     if inplace:
         df[current_columns] = df[new_columns]
         return None
-    else:
-        df = df[new_columns].copy()
-        return df
+    return df[new_columns].copy()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     set_option()
 
     data = pd.DataFrame(
         {
-            'a': [1, 2, 3, 4],
-            'b': [2, 2, 3, 4],
-            'c': [3, 2, 3, 4],
-            'd': [4, 2, 3, 4],
-        }
+            "a": [1, 2, 3, 4],
+            "b": [2, 2, 3, 4],
+            "c": [3, 2, 3, 4],
+            "d": [4, 2, 3, 4],
+        },
     )
     # print(move_column(data, to_move='d'))  # ValueError: you must define one of the params(first/last/before/after)
     # for operation
@@ -159,8 +191,8 @@ if __name__ == '__main__':
     # print(move_column(data, to_move='d', before='d'))  # to_move(d) is not allowed to be the same with before(d)
     # print(move_column(data, 'b', first=True))
     # print(move_column(data, to_move='b', last=True))
-    print(f'data = \n{data}, \nid = {id(data)}')
+    print(f"data = \n{data}, \nid = {id(data)}")
     # data_new = move_column(data, to_move='a', last=True, inplace=False)
-    data_new = move_column(data, to_move='a', last=True, inplace=True)
-    print(f'data_new = \n{data_new}, \nid = {id(data_new)}')
-    print(f'data = \n{data}, \nid = {id(data)}')
+    data_new = move_column(data, to_move="a", last=True, inplace=True)
+    print(f"data_new = \n{data_new}, \nid = {id(data_new)}")
+    print(f"data = \n{data}, \nid = {id(data)}")

@@ -1,12 +1,12 @@
-import os
+"""Some cmdline tools for searching, powered by playwright."""
+
+import importlib
 import sys
 from datetime import datetime
-from time import sleep
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 
 from bioat.exceptions import BioatInvalidOptionError
 from bioat.lib.libpatentseq import query_patent
@@ -24,252 +24,192 @@ class SearchTools:
         pass
 
     def google_scholar(
-            self,
-            keyword: str = "CRISPR",
-            sort_by: str = "CitePerYear",
-            n_results: int = 100,
-            output: str | None = None,
-            save_table: bool = True,
-            plot: bool = False,
-            start_year: int = None,
-            end_year: int = datetime.now().year,
-            log_level: str = "WARNING",
+        self,
+        keyword: str,
+        output: str | Path | None = None,
+        sort_by: str = "CitePerYear",
+        n_results: int = 100,
+        plot: bool = False,
+        start_year: int | None = None,
+        end_year: int = datetime.now().year,
+        log_level: str = "WARNING",
+        **kwargs,
     ):
-        """Return a table with a list of publications from google scholar, sort_by cit/year.
+        """Search Google Scholar.
 
-        This code creates a database with a list of publications data from Google
-        Scholar.
-        The data acquired from GS is Title, Citations, Links and Rank.
-        It is useful for finding relevant papers by sorting by the number of citations.
+        This method creates a DataFrame of publication data from Google Scholar.
+        Each result includes title, citations, year, authors, venue, publisher, and link.
+        It is useful for finding relevant papers by citation metrics.
 
-        As output this program will plot the number of citations in the Y axis and the
-        rank of the result in the X axis. It also, optionally, export the database to
-        a .csv file.
+        Optionally, it can generate a plot of citation counts versus rank and save the
+        table in various formats.
 
-        :param keyword: Keyword to be searched. Use double quote followed by simple quote to search for an exact
-                keyword. Example: "'exact keyword'"
-        :param sort_by: Column to be sorted by.
-                i.e., it will be sorted by the number of citations.
-                If you want to sort by citations per year, use --sort_by "CitePerYear"
-                Or --sort_by "Citations" to sort by citations totally.
-        :param n_results: Number of articles to search on Google Scholar.
-                Default is 100. (be careful with robot checking if value is too high)
-        :param output: Path of the exported table file. format can be 'csv', 'tsv', 'xls' or 'xlsx'(default).
-        :param save_table: By default, results are going to be exported to a csv file.
-                Select this option to just print results but not store them
-        :param plot: Use this flag in order to plot the results with the original rank in the x-axis
-                and the number of citaions in the y-axis.
-                Default is False
-        :param start_year: Start year when searching. Default is None
-        :param end_year: End year when searching. Default is current year
-        :param log_level: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
+        Args:
+            keyword (str): Keyword to search for. For exact matches, wrap in double and single quotes,
+                e.g., "'exact keyword'".
+            output (str, optional): Output file path. Supported formats: .csv, .tsv, .xls, .xlsx.
+                Default is None, which means no output and only print the table in the console.
+            sort_by (str): Column to sort the result by, such as "Citations" or "CitePerYear". Default is "CitePerYear".
+            n_results (int): Number of search results to retrieve. Default is 100.
+
+            plot (bool): Whether to plot citation count vs. rank. Default is False.
+            start_year (int, optional): Optional start year for publication filtering.
+            end_year (int): End year for publication filtering. Default is current year.
+            log_level (str): Logging level. One of: 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.
+
+        Returns:
+            None. Prints the table and optionally saves or plots it.
         """
         lm.set_names(func_name="google_scholar")
         lm.set_level(log_level)
+        lm.logger.info("Run google scholar search...")
+        # show params
+        lm.logger.info(f"Keyword: {keyword}")
+        lm.logger.info(f"Sort by: {sort_by}")
+        lm.logger.info(f"Number of results: {n_results}")
+        lm.logger.info(f"Start year: {start_year}")
+        lm.logger.info(f"End year: {end_year}")
+        lm.logger.info(f"Output: {output}")
+        lm.logger.info(f"Plot: {plot}")
 
-        def get_citations(content):
-            out = 0
-            for char in range(0, len(content)):
-                if content[char: char + 9] == "Cited by ":
-                    init = char + 9
-                    for end in range(init + 1, init + 6):
-                        if content[end] == "<":
-                            break
-                    out = content[init:end]
-            return int(out)
+        try:
+            playwright_module = importlib.import_module("playwright.sync_api")
+            sync_playwright = playwright_module.sync_playwright
+        except ModuleNotFoundError:
+            lm.logger.exception(
+                "Missing dependency 'playwright'. Please install it by running:\n"
+                "    pip install playwright && playwright install"
+            )
+            sys.exit(1)
 
-        def get_year(content):
-            for char in range(0, len(content)):
-                if content[char] == "-":
-                    out = content[char - 5: char - 1]
-            if not out.isdigit():
-                out = 0
-            return int(out)
-
-        def setup_driver():
-            try:
-                from selenium import webdriver
-                from selenium.common.exceptions import StaleElementReferenceException
-                from selenium.webdriver.chrome.options import Options
-            except ImportError as e:
-                lm.logger.error(e)
-                lm.logger.error("Please install Selenium using `pip install selenium`")
-                sys.exit(0)
-
-            lm.logger.info("Loading...")
-            options = Options()
-            options.add_argument("disable-infobars")
-            driver = webdriver.Chrome(options=options)
-            return driver
-
-        def get_author(content):
-            for char in range(0, len(content)):
-                if content[char] == "-":
-                    out = content[2: char - 1]
-                    break
-            return out
-
-        def get_element(driver, xpath, attempts=5, _count=0):
-            """Safe get_element method with multiple attempts"""
-            try:
-                element = driver.find_element_by_xpath(xpath)
-                return element
-            except Exception:
-                if _count < attempts:
-                    sleep(1)
-                    get_element(driver, xpath, attempts=attempts, _count=_count + 1)
-                else:
-                    lm.logger.warning("Element not found")
-
-        def get_content_with_selenium(url):
-            if "driver" not in globals():
-                global driver
-                driver = setup_driver()
-            driver.get(url)
-
-            # Get element from page
-            el = get_element(driver, "/html/body")
-            c = el.get_attribute("innerHTML")
-
-            if any(kw in el.text for kw in ROBOT_KW):
-                lm.logger.info(
-                    "Solve captcha manually and press enter here to continue..."
-                )
-                el = get_element(driver, "/html/body")
-                c = el.get_attribute("innerHTML")
-
-            return c.encode("utf-8")
-
-        # Websession Parameters
         GSCHOLAR_URL = (
             "https://scholar.google.com/scholar?start={}&q={}&hl=en&as_sdt=0,5"
         )
-        YEAR_RANGE = ""  # &as_ylo={start_year}&as_yhi={end_year}'
-        # GSCHOLAR_URL_YEAR = GSCHOLAR_URL + YEAR_RANGE
         STARTYEAR_URL = "&as_ylo={}"
         ENDYEAR_URL = "&as_yhi={}"
-        ROBOT_KW = ["unusual traffic from your computer network", "not a robot"]
 
-        # Create main URL based on command line arguments
-        GSCHOLAR_MAIN_URL = (
-            GSCHOLAR_URL + STARTYEAR_URL.format(start_year)
-            if start_year
-            else GSCHOLAR_URL
-        )
-        GSCHOLAR_MAIN_URL = (
-            GSCHOLAR_MAIN_URL + ENDYEAR_URL.format(end_year)
-            if end_year
-            else GSCHOLAR_MAIN_URL
-        )
+        def get_year(text: str) -> int:
+            for token in text.split():
+                if token.strip().isdigit() and 1900 < int(token) <= datetime.now().year:
+                    return int(token)
+            return 0
 
-        if log_level == "DEBUG":
-            GSCHOLAR_MAIN_URL = (
-                    "https://web.archive.org/web/20210314203256/" + GSCHOLAR_URL
+        def get_citations(text: str) -> int:
+            """Extract citation number from a string like 'Cited by 123'."""
+            if "Cited by" in text:
+                try:
+                    return int(text.split("Cited by")[1].split()[0])
+                except Exception:
+                    return 0
+            return 0
+
+        def get_author(text: str) -> str:
+            return text.split("-")[0].strip()
+
+        def get_venue(text: str) -> str:
+            parts = text.split("-")
+            return parts[-2].strip() if len(parts) >= 2 else ""
+
+        def get_publisher(text: str) -> str:
+            parts = text.split("-")
+            return parts[-1].strip() if len(parts) >= 2 else ""
+
+        def launch_browser(p, headless=True):
+            return p.chromium.launch(headless=headless)
+
+        GSCHOLAR_MAIN_URL = GSCHOLAR_URL
+        if start_year:
+            GSCHOLAR_MAIN_URL += STARTYEAR_URL.format(start_year)
+        if end_year:
+            GSCHOLAR_MAIN_URL += ENDYEAR_URL.format(end_year)
+
+        with sync_playwright() as p:
+            browser = launch_browser(p, headless=kwargs.get("headless", True))
+            context = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+                viewport={"width": 1920, "height": 1080},
+                locale="en-US",
+                java_script_enabled=True,
+            )
+            page = context.new_page()
+
+            links, title, citations, year, author, venue, publisher, rank = (
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [0],
             )
 
-        # Start new session
-        session = requests.Session()
-        # headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
-        # Variables
-        links = []
-        title = []
-        citations = []
-        year = []
-        author = []
-        venue = []
-        publisher = []
-        rank = [0]
-
-        # Get content from number_of_results URLs
-        for n in range(0, n_results, 10):
-            # if start_year is None:
-            url = GSCHOLAR_MAIN_URL.format(str(n), keyword.replace(" ", "+"))
-
-            lm.logger.debug("Opening URL:", url)
-            # else:
-            #    url=GSCHOLAR_URL_YEAR.format(str(n), keyword.replace(' ','+'), start_year=start_year, end_year=end_year)
-
-            lm.logger.info("Loading next {} results".format(n + 10))
-            page = session.get(url)  # , headers=headers)
-            c = page.content
-            if any(kw in c.decode("ISO-8859-1") for kw in ROBOT_KW):
-                lm.logger.info(
-                    "Robot checking detected, handling with selenium (if installed)"
-                )
-                try:
-                    c = get_content_with_selenium(url)
-                except Exception as e:
-                    lm.logger.error("No success. The following error was raised:")
-                    lm.logger.error(e)
-
-            # Create parser
-            soup = BeautifulSoup(c, "html.parser", from_encoding="utf-8")
-
-            # Get stuff
-            mydivs = soup.findAll("div", {"class": "gs_or"})
-
-            for div in mydivs:
-                try:
-                    links.append(div.find("h3").find("a").get("href"))
-                except:  # catch *all* exceptions
-                    links.append("Look manually at: " + url)
-
-                try:
-                    title.append(div.find("h3").find("a").text)
-                except:
-                    title.append("Could not catch title")
-
-                try:
-                    citations.append(get_citations(str(div.format_string)))
-                except:
+            for n in range(0, n_results, 10):
+                url = GSCHOLAR_MAIN_URL.format(str(n), keyword.replace(" ", "+"))
+                page.goto(url, timeout=60000)
+                page.wait_for_timeout(1000)
+                # 检查是否触发验证码：页面空、或包含“unusual traffic”、“not a robot”等文字
+                if (
+                    not page.locator(".gs_r.gs_or.gs_scl").count()
+                    or "unusual traffic" in page.content()
+                ):
                     lm.logger.warning(
-                        "Number of citations not found for {}. Appending 0".format(
-                            title[-1]
+                        "\nGoogle Scholar 验证触发, 进入人工处理模式...\n"
+                    )
+                    browser.close()
+
+                    # 重开非 headless 模式
+                    browser = launch_browser(p, headless=False)
+                    context = browser.new_context(
+                        user_agent=(
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/120.0.0.0 Safari/537.36"
+                        ),
+                        viewport={"width": 1920, "height": 1080},
+                        locale="en-US",
+                        java_script_enabled=True,
+                    )
+                    page = context.new_page()
+                    page.goto(url)
+                    input("请在弹出的浏览器中手动完成验证, 完成后按回车继续...")
+
+                items = page.locator(".gs_r.gs_or.gs_scl").all()
+                for it in items:
+                    try:
+                        link = (
+                            it.locator("h3 > a").get_attribute("href") or "Unavailable"
                         )
-                    )
-                    citations.append(0)
-
-                try:
-                    year.append(get_year(div.find("div", {"class": "gs_a"}).text))
-                except:
-                    lm.logger.warning(
-                        "Year not found for {}, appending 0".format(title[-1])
-                    )
-                    year.append(0)
-
-                try:
-                    author.append(get_author(div.find("div", {"class": "gs_a"}).text))
-                except:
-                    author.append("Author not found")
-
-                try:
-                    publisher.append(
-                        div.find("div", {"class": "gs_a"}).text.split("-")[-1]
-                    )
-                except:
-                    publisher.append("Publisher not found")
-
-                try:
-                    venue.append(
-                        " ".join(
-                            div.find("div", {"class": "gs_a"})
-                            .text.split("-")[-2]
-                            .split(",")[:-1]
+                        ttl = it.locator("h3 > a").inner_text()
+                    except Exception:
+                        link = "Unavailable"
+                        ttl = "No Title"
+                    meta = it.locator(".gs_a").inner_text()
+                    title.append(ttl)
+                    links.append(link)
+                    # citations.append(get_citations(it.inner_html()))
+                    try:
+                        cite_texts = it.locator(".gs_fl").all_inner_texts()
+                        citation_line = next(
+                            (t for t in cite_texts if "Cited by" in t), ""
                         )
-                    )
-                except:
-                    venue.append("Venue not fount")
+                        citations.append(get_citations(citation_line))
+                    except Exception:
+                        citations.append(0)
+                    year.append(get_year(meta))
+                    author.append(get_author(meta))
+                    venue.append(get_venue(meta))
+                    publisher.append(get_publisher(meta))
+                    rank.append(rank[-1] + 1)
 
-                rank.append(rank[-1] + 1)
+            browser.close()
 
-            # Delay
-            sleep(0.5)
-
-        # Create a dataset and sort by the number of citations
-        data = pd.DataFrame(
-            list(zip(author, title, citations, year, publisher, venue, links)),
-            index=rank[1:],
+        df = pd.DataFrame(
+            zip(author, title, citations, year, publisher, venue, links, strict=False),
             columns=[
                 "Author",
                 "Title",
@@ -280,66 +220,90 @@ class SearchTools:
                 "Source",
             ],
         )
-        data.index.name = "Rank"
+        df["CitePerYear"] = df["Citations"] / (
+            end_year + 1 - df["Year"].replace(0, end_year + 1)
+        )
+        df["CitePerYear"] = df["CitePerYear"].round().astype(int)
 
-        # Add columns with number of citations per year
-        data["CitePerYear"] = data["Citations"] / (end_year + 1 - data["Year"])
-        data["CitePerYear"] = data["CitePerYear"].round(0).astype(int)
-        data = data[['Author', 'Citations', "CitePerYear", 'Year', 'Venue', 'Title', 'Publisher']]
+        df = df[
+            [
+                "Author",
+                "Citations",
+                "CitePerYear",
+                "Year",
+                "Venue",
+                "Title",
+                "Publisher",
+                "Source",
+            ]
+        ]
 
-        # Sort by the selected columns, if exists
         try:
-            data_ranked = data.sort_values(by=sort_by, ascending=False)
-        except Exception as e:
-            print(
-                "Column name to be sorted not found. Sorting by the number of citations..."
+            df_sorted = df.sort_values(by=sort_by, ascending=False).reset_index(
+                drop=True
             )
-            data_ranked = data.sort_values(by="Citations", ascending=False)
-            print(e)
-        # fix index
-        data_ranked.reset_index(drop=True, inplace=True)
-        # Print data
-        print(data_ranked)
+        except Exception:
+            lm.logger.warning("Sort failed, using default sort by 'Citations'")
+            df_sorted = df.sort_values(by="Citations", ascending=False).reset_index(
+                drop=True
+            )
 
-        # Plot by citation number
         if plot:
-            plt.plot(rank[1:], citations, "*")
-            plt.ylabel("Number of Citations")
-            plt.xlabel("Rank of the keyword on Google Scholar")
-            plt.title("Keyword: " + keyword)
-            plt.show()
+            try:
+                # 保证 citation 来自最终排序结果（而不是原始顺序）
+                citation_values = df_sorted["Citations"].tolist()
 
-        # Save results
-        if save_table:
+                plt.figure(figsize=(8, 5))
+                plt.plot(
+                    range(1, len(citation_values) + 1),
+                    citation_values,
+                    marker="o",
+                    linestyle="None",
+                )
+                plt.yscale("log")  # 常用: log scale 能更清晰看分布
+                plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+                plt.ylabel("Number of Citations (log scale)")
+                plt.xlabel("Rank")
+                plt.title(f"Keyword: {keyword} ({len(citation_values)} results)")
+                plt.tight_layout()
+                plt.show()
+            except Exception as e:
+                lm.logger.warning(f"Failed to plot citation distribution: {e}")
+
+        if output:
+            lm.logger.info(f"Exporting results to {output}")
             if not output:
-                fpath_csv = os.path.join('.', keyword.replace(" ", "_") + ".xlsx")
-                data_ranked.to_excel(fpath_csv, index=False)
-            elif output.endswith(".csv"):
-                data_ranked.to_csv(output, encoding="utf-8")
+                output = f"{keyword.replace(' ', '_')}.xlsx"
+            if output.endswith(".csv"):
+                df_sorted.to_csv(output, index=False)
             elif output.endswith(".tsv"):
-                data_ranked.to_csv(output, sep="\t", index=False)
-            elif output.endswith(".xlsx"):
-                data_ranked.to_excel(output, index=False)
-            elif output.endswith(".xls"):
-                data_ranked.to_excel(output, index=False)
+                df_sorted.to_csv(output, sep="\t", index=False)
+            elif output.endswith(".xlsx") or output.endswith(".xls"):
+                df_sorted.to_excel(output, index=False)
             else:
-                raise BioatInvalidOptionError("Output format not supported")
+                raise BioatInvalidOptionError("Unsupported output format: " + output)
+        else:
+            print(df_sorted)
+        if kwargs.get("_for_test", False):
+            return df_sorted
+        return None
 
     def query_patent(
-            self,
-            seq: str,
-            query_name: str | None = None,
-            username: str | None = None,
-            password: str | None = None,
-            via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
-            output: str | None = None,
-            nobrowser: bool = True,
-            retry: int = 3,
-            local_browser: str | None = None,
-            rm_fail_cookie: bool = False,
-            log_level: str = "INFO",
+        self,
+        seq: str,
+        query_name: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        via_proxy: str | None = None,  # proxy_server = "socks5://127.0.0.1:8235",
+        output: str | None = None,
+        nobrowser: bool = True,
+        retry: int = 3,
+        local_browser: str | None = None,
+        rm_fail_cookie: bool = False,
+        log_level: str = "INFO",
     ):
-        """Return a table with a list of patent blast hit from lens.org
+        """Return a table with a list of patent blast hit from lens.org.
 
         :param seq: protein sequence, e.g. MCRISQQKK
         :param query_name: queryName in output table
@@ -370,3 +334,8 @@ class SearchTools:
             rm_fail_cookie=rm_fail_cookie,
             log_level=log_level,
         )
+
+
+if __name__ == "__main__":
+    tool = SearchTools()
+    tool.google_scholar(keyword="prime editing", n_results=20, plot=False)

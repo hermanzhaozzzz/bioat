@@ -6,6 +6,7 @@ class SystemTools:
         # self.test_internet_speed = speedtest()
         pass
 
+
 #     def __convert_size(self, size, mode='b') -> float:
 #         """将单位为Byte的数字转为其它单位
 #

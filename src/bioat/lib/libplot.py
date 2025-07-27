@@ -1,4 +1,4 @@
-"""bioat.lib.libplot
+"""bioat.lib.libplot.
 
 author: Herman Huanan Zhao
 email: hermanzhaozzzz@gmail.com
@@ -11,7 +11,7 @@ example 1:
         <in python consolo>:
             >>> import matplotlib.pyplot as plt
             >>> from bioat.lib.libplot import init_matplotlib
-            >>> init_matplotlib(log_level='info')
+            >>> init_matplotlib(log_level="info")
             >>> plt.plot([1, 2, 3], [4, 5, 6])
             >>> plt.show()
 
@@ -19,7 +19,7 @@ example 2:
     plot_colortable
         <in python consolo>:
             >>> from bioat.lib.libplot import plot_colortable
-            >>> colors = ['#64C1E8', '#80CED7', '#63C7B2', '#8E6C88', '#CA61C3', '#FF958C', '#883677']
+            >>> colors = ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"]
             >>> plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])
             >>> plt.show()
 """
@@ -54,7 +54,7 @@ BIOAT_DEFAULT_FONTS = [
 
 
 def _copy_fonts(refresh=False, log_level="warning"):
-    """copy fonts from bioat package to matplotlib package
+    """Copy fonts from bioat package to matplotlib package.
 
     :param log_level: log level for logger
     :type log_level: string
@@ -76,9 +76,13 @@ def _copy_fonts(refresh=False, log_level="warning"):
         if not to_path:
             lm.logger.warning(BioatRuntimeError("site-packages not found in sys.path"))
             return
-        to_path = [i for i in sys.path if i.endswith("site-packages")][0]
+        to_path = next(i for i in sys.path if i.endswith("site-packages"))
         to_path = os.path.join(
-            to_path, "matplotlib", "mpl-data", "fonts", "ttf"
+            to_path,
+            "matplotlib",
+            "mpl-data",
+            "fonts",
+            "ttf",
         )
         from_path = BIOAT_DEFAULT_FONTS_DATAPATH
         lm.logger.debug(f"Copying fonts from {from_path} to {to_path}")
@@ -89,19 +93,23 @@ def _copy_fonts(refresh=False, log_level="warning"):
             )
         lm.logger.debug("Fonts copied successfully")
     except Exception as e:
-        lm.logger.error(BioatError(f"Failed to copy fonts: {e}"))
+        lm.logger.exception(BioatError(f"Failed to copy fonts: {e}"))
 
 
 def init_matplotlib(
-    style="seaborn-v0_8-paper",
+    style="seaborn-v0_8-white",
     font="Helvetica",
     refresh=False,
+    sns_context="paper",
+    sns_style="whitegrid",
+    sns_palette="deep",
+    sns_font_scale=1.2,
     log_level="INFO",
     **kwargs,
 ):
-    """easily set matplotlib style
+    """Easily set matplotlib style.
 
-    :param style: matplotlib style, defaults to 'seaborn-v0_8-paper'
+    :param style: matplotlib style, defaults to 'seaborn-v0_8-white'
     :type style: str, optional
     :param font: use what font in matplotlib, defaults to 'Helvetica'
     :type font: str, optional
@@ -121,12 +129,12 @@ def init_matplotlib(
     lm.set_names(func_name="init_matplotlib")
     lm.set_level(log_level)
 
-    lm.logger.info('Initializing matplotlib')
+    lm.logger.info("Initializing matplotlib")
     _copy_fonts(refresh=refresh, log_level=log_level)
     lm.logger.info(
         f"set: plt.style.use('{style}')\n"
         "# set matplotlib style theme\n"
-        "# ref: https://matplotlib.org/stable/api/style_api.html"
+        "# ref: https://matplotlib.org/stable/api/style_api.html",
     )
     plt.style.use(style)
 
@@ -144,19 +152,19 @@ def init_matplotlib(
         lm.logger.info(
             f"set: plt.rcParams['pdf.use14corefonts'] = {set_backend_pdf} \n"
             "# whether to use core fonts for the PDF backend\n"
-            "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)"
+            "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)",
         )
         plt.rcParams["pdf.use14corefonts"] = set_backend_pdf
     if set_backend_ps:
         lm.logger.info(
             f"set: plt.rcParams['ps.useafm'] = {set_backend_ps}\n"
-            "# whether to use core fonts for the PS backend"
+            "# whether to use core fonts for the PS backend",
         )
         plt.rcParams["ps.useafm"] = set_backend_ps
     if set_backend_svg:
         lm.logger.info(
             f"set: plt.rcParams['svg.fonttype'] = '{set_backend_svg}'\n"
-            "# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend"
+            "# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend",
         )
         plt.rcParams["svg.fonttype"] = set_backend_svg
     lm.logger.info("matplotlib initialized successfully")
@@ -173,7 +181,7 @@ def init_matplotlib(
         font_scale=sns_font_scale,
     )
     lm.logger.info(
-        f"set: sns.set_theme(context='{sns_context}', style='{sns_style}', palette='{sns_palette}', font='{font}', font_scale={sns_font_scale})"
+        f"set: sns.set_theme(context='{sns_context}', style='{sns_style}', palette='{sns_palette}', font='{font}', font_scale={sns_font_scale})",
     )
 
 
@@ -193,10 +201,14 @@ def plot_colortable(colors, *, ncols=4):
     dpi = 72
 
     fig, ax = plt.subplots(figsize=(width / dpi, height / dpi), dpi=dpi)
-    fig.subplots_adjust(margin / width, margin / height,
-                        (width - margin) / width, (height - margin) / height)
+    fig.subplots_adjust(
+        margin / width,
+        margin / height,
+        (width - margin) / width,
+        (height - margin) / height,
+    )
     ax.set_xlim(0, cell_width * 4)
-    ax.set_ylim(cell_height * (nrows - 0.5), -cell_height / 2.)
+    ax.set_ylim(cell_height * (nrows - 0.5), -cell_height / 2.0)
     ax.yaxis.set_visible(False)
     ax.xaxis.set_visible(False)
     ax.set_axis_off()
@@ -212,15 +224,20 @@ def plot_colortable(colors, *, ncols=4):
         ax.text(
             text_pos_x,
             y,
-            names[i],
+            name,
             fontsize=14,
             horizontalalignment="left",
             verticalalignment="center",
         )
 
         ax.add_patch(
-            Rectangle(xy=(swatch_start_x, y - 9), width=swatch_width,
-                      height=18, facecolor=name, edgecolor='0.7')
+            Rectangle(
+                xy=(swatch_start_x, y - 9),
+                width=swatch_width,
+                height=18,
+                facecolor=name,
+                edgecolor="0.7",
+            ),
         )
     plt.show()
     plt.close()
@@ -229,7 +246,8 @@ def plot_colortable(colors, *, ncols=4):
 def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib.
 
-    Defined in :numref:`sec_calculus`"""
+    Defined in :numref:`sec_calculus`
+    """
     # use_svg_display()
     plt.rcParams["figure.figsize"] = figsize
 
@@ -237,7 +255,8 @@ def set_figsize(figsize=(3.5, 2.5)):
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     """Set the axes for matplotlib.
 
-    Defined in :numref:`sec_calculus`"""
+    Defined in :numref:`sec_calculus`
+    """
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
     axes.set_xscale(xscale)
@@ -255,7 +274,7 @@ def plot(
     Y=None,
     xlabel=None,
     ylabel=None,
-    legend=[],
+    legend=None,
     xlim=None,
     ylim=None,
     xscale="linear",
@@ -266,14 +285,13 @@ def plot(
 ):
     """Plot data points.
 
-    Defined in :numref:`sec_calculus`"""
-
+    Defined in :numref:`sec_calculus`
+    """
+    if legend is None:
+        legend = []
     def has_one_axis(X):  # True if X (tensor or list) has 1 axis
-        return (
-            hasattr(X, "ndim")
-            and X.ndim == 1
-            or isinstance(X, list)
-            and not hasattr(X[0], "__len__")
+        return (hasattr(X, "ndim") and X.ndim == 1) or (
+            isinstance(X, list) and not hasattr(X[0], "__len__")
         )
 
     if has_one_axis(X):
@@ -289,7 +307,7 @@ def plot(
     if axes is None:
         axes = plt.gca()
     axes.cla()
-    for x, y, fmt in zip(X, Y, fmts):
+    for x, y, fmt in zip(X, Y, fmts, strict=False):
         axes.plot(x, y, fmt) if len(x) else axes.plot(y, fmt)
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
     # return axes
@@ -309,7 +327,7 @@ def plot_dna_features(
     col_strand="strand",
     col_color="color",
     **kwargs,
-) -> plt.Figure:
+):
     # """
     # ![](https://raw.githubusercontent.com/hermanzhaozzzz/PicturesBed01/master/PicGo/202406260156158.png)
     # ==================== DEMO ====================
@@ -330,7 +348,7 @@ def plot_dna_features(
     # ==================== /DEMO ====================
     # """
     def _get_demo_data():
-        """get demo data for DNA features
+        """Get demo data for DNA features.
 
         :return: demo DNA features
         :rtype: pd.DataFrame
@@ -340,14 +358,10 @@ def plot_dna_features(
                 "name": ["AAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
                 "type": ["CDS", "CDS", "CDS"] + ["DR"] * 50 + ["spacer"] * 50,
                 "start": (
-                    [1050, 3500, 14000]
-                    + list(range(10300, 10300 + 66 * 50, 66))
-                    + list(range(10336, 10336 + 66 * 50, 66))
+                    [1050, 3500, 14000, *list(range(10300, 10300 + 66 * 50, 66)), *list(range(10336, 10336 + 66 * 50, 66))]
                 ),
                 "end": (
-                    [4000, 6000, 16000]
-                    + list(range(10336, 10336 + 66 * 50, 66))
-                    + list(range(10366, 10366 + 66 * 50, 66))
+                    [4000, 6000, 16000, *list(range(10336, 10336 + 66 * 50, 66)), *list(range(10366, 10366 + 66 * 50, 66))]
                 ),
                 "strand": [1, -1, None] + [None] * 50 + [None] * 50,
                 "color": (
@@ -361,7 +375,7 @@ def plot_dna_features(
                 ),
                 "locus_length": [20000] * 103,
                 "locus_start": [0] * 103,
-            }
+            },
         )
         ls = []
         for i in range(5):
@@ -374,7 +388,7 @@ def plot_dna_features(
                 tmpdf["locus_start"] = 1000
             ls.append(tmpdf)
         df = pd.concat(ls)
-        df.reset_index(drop=True, inplace=True)
+        df = df.reset_index(drop=True)
         print("=" * 20, "DEMO", "=" * 20)
         print(df)
         print("=" * 20, "/DEMO", "=" * 20)
@@ -384,7 +398,8 @@ def plot_dna_features(
         if use_demo_data:
             df = _get_demo_data()
         else:
-            raise ValueError("Please provide a DataFrame with DNA features.")
+            msg = "Please provide a DataFrame with DNA features."
+            raise ValueError(msg)
 
     # 设置子图的数量
     n = df[col_group].nunique()
@@ -398,9 +413,9 @@ def plot_dna_features(
     try:
         from dna_features_viewer import GraphicFeature, GraphicRecord
     except ImportError:
-        lm.logger.error("Please install dna_features_viewer to use this function.")
-        exit(0)
-    for i, g in zip(range(n), df.groupby(col_group)):
+        lm.logger.exception("Please install dna_features_viewer to use this function.")
+        sys.exit(0)
+    for i, g in zip(range(n), df.groupby(col_group), strict=False):
         group_name, data = g
         # print(f"group_name = {group_name}")
 
@@ -414,7 +429,11 @@ def plot_dna_features(
             strand = row.get(col_strand, 0)
             color = row.get(col_color, "grey")
             feature = GraphicFeature(
-                start=start, end=end, strand=strand, color=color, label=label
+                start=start,
+                end=end,
+                strand=strand,
+                color=color,
+                label=label,
             )
             features.append(feature)
         if use_demo_data:
@@ -424,7 +443,9 @@ def plot_dna_features(
             locus_start = data[col_locus_start].values[0]
             locus_length = data[col_locus_length].values[0]
         record = GraphicRecord(
-            first_index=locus_start, sequence_length=locus_length, features=features
+            first_index=locus_start,
+            sequence_length=locus_length,
+            features=features,
         )
         # print(axs)
         # print(n)

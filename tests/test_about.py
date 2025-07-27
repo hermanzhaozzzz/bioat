@@ -1,5 +1,4 @@
-"""
-Unit tests for the `bioat about` subcommand.
+"""Unit tests for the `bioat about` subcommand.
 
 This module contains tests for the `about` functionality of the
 `bioat` command-line interface (CLI). It includes two main tests:
@@ -40,7 +39,4 @@ def test_cli_about():
 
     This function executes the command `bioat about` and checks if it runs without errors.
     """
-    args = ["bioat", "about"]  # Command-line arguments for the 'about' command
-    assert subprocess.run(
-        args, check=True
-    )  # Running the command and asserting it completes successfully
+    assert subprocess.run(["bioat", "about"], check=True)  # noqa: S607

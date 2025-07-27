@@ -1,3 +1,1 @@
-"""
-Tests for fastxtools.
-"""
+"""Tests for fastxtools."""

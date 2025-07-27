@@ -18,11 +18,11 @@ cli = Cli()
 
 
 def test_list():
-    assert hasattr(cli, 'list')
+    assert hasattr(cli, "list")
     out = cli.list()
     assert isinstance(out, str)
 
 
 def test_cli_list():
-    args = ['bioat', 'list']
-    subprocess.run(args, check=True)
+    args = ["bioat", "list"]
+    subprocess.run(args, check=True)  # noqa S603

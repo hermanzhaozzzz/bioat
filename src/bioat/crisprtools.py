@@ -1,5 +1,4 @@
-"""
-crisprtools.py
+"""crisprtools.py.
 
 This module provides a toolbox for mining CRISPR-related sequences in metagenomic data.
 It includes functionality for identifying Cas candidates associated with CRISPR loci
@@ -99,7 +98,12 @@ class CrisprTools:
     #     pass
 
     def cas13_finder(
-        self, input_faa, output_faa=None, lmin=200, lmax=1500, log_level="INFO"
+        self,
+        input_faa,
+        output_faa=None,
+        lmin=200,
+        lmax=1500,
+        log_level="INFO",
     ):
         """De novo annotation for Cas13 candidates from proteins.faa.
 

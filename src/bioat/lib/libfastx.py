@@ -141,10 +141,9 @@ AMINO_ACIDS_3CODE_EXTEND = {
 def _filter_fasta_length(contig, lmin, lmax) -> bool:
     if lmin is None and lmax is not None:
         return len(contig) <= lmax
-    elif lmin is not None and lmax is None:
+    if lmin is not None and lmax is None:
         return len(contig) >= lmin
-    else:
-        return lmin <= len(contig) <= lmax
+    return lmin <= len(contig) <= lmax
 
 
 def cas_finder(
@@ -170,7 +169,7 @@ def cas_finder(
     except (ImportError, ModuleNotFoundError):
         lm.logger.warning(
             "pybedtools not installed, please exec `python -m pip install pybedtools` "
-            "or `conda install pybedtools`, then try again."
+            "or `conda install pybedtools`, then try again.",
         )
         sys.exit(0)
 
@@ -178,16 +177,13 @@ def cas_finder(
 
     if temp_dir is None:
         dirname = os.path.dirname(input_fa)
-        if dirname in ("", "./"):
-            temp_dir = workspace
-        else:
-            temp_dir = dirname
+        temp_dir = workspace if dirname in ("", "./") else dirname
     else:
         pass
 
     if prodigal_mode not in ("meta", "single"):
         lm.logger.error(
-            f"prodigal mode {prodigal_mode} not supported, must be 'meta' or 'single'"
+            f"prodigal mode {prodigal_mode} not supported, must be 'meta' or 'single'",
         )
 
     fa_input = input_fa  # input_fa = '202155.assembled.fna'
@@ -234,9 +230,7 @@ def cas_finder(
         # filter length of assembly contigs
         lm.logger.debug(f"filter length of contigs from file @ {fa_input}")
         handler = (
-            gzip.open(fa_input, "rt")
-            if fa_input.endswith(".gz")
-            else open(fa_input, "rt")
+            gzip.open(fa_input, "rt") if fa_input.endswith(".gz") else open(fa_input)
         )
         contigs_input = SeqIO.parse(handler, "fasta")
         contigs_output = (
@@ -255,15 +249,15 @@ def cas_finder(
         if os.path.getsize(fa_filtered) == 0:
             # don't consider gz file. because it is a temp file.
             lm.logger.warning(
-                f"fa_filtered @ {fa_filtered} is empty! will touch an empty output file @ {fa_pep_cas}"
+                f"fa_filtered @ {fa_filtered} is empty! will touch an empty output file @ {fa_pep_cas}",
             )
-            with open(fa_pep_cas, "wt") as f:
+            with open(fa_pep_cas, "w") as f:
                 f.write("")
             if output_crispr_info_tab:
-                with open(output_crispr_info_tab, "wt") as f:
+                with open(output_crispr_info_tab, "w") as f:
                     f.write("")
             if fa_crisper_contig:
-                with open(fa_crisper_contig, "wt") as f:
+                with open(fa_crisper_contig, "w") as f:
                     f.write("")
             lm.logger.info("End, exit.")
             return  # just return output file as an empty file
@@ -287,7 +281,7 @@ def cas_finder(
                 "-o",
                 gff,
             ],
-            stderr=open("/dev/null", "wt") if log_level != "DEBUG" else sys.stderr,
+            stderr=open("/dev/null", "w") if log_level != "DEBUG" else sys.stderr,
         )
         lm.logger.debug(f"call has returned, check output @ {fa_pep}, {gff}")
         # the output .pep.faa's header: >name # start # stop # 1/-1 # prodigalInfo
@@ -300,7 +294,7 @@ def cas_finder(
         lm.logger.debug("subprocess call for pilercr")
         subprocess.check_call(  # don't export help doc for output crispr info
             [pilercr, "-noinfo", "-in", fa_filtered, "-out", f_pilercr],
-            stderr=open("/dev/null", "wt") if log_level != "DEBUG" else sys.stderr,
+            stderr=open("/dev/null", "w") if log_level != "DEBUG" else sys.stderr,
         )
         lm.logger.debug(f"call has returned, check output @ {f_pilercr}")
         # if fa_filtered is empty, just return empty fa_pep_cas
@@ -310,7 +304,7 @@ def cas_finder(
     # -----------------------------
     if tests[2]:
         lm.logger.info("2.get crispr loci")
-        with open(f_pilercr, "rt") as wrapper_i, open(bed_crispr, "wt") as wrapper_o:
+        with open(f_pilercr) as wrapper_i, open(bed_crispr, "w") as wrapper_o:
             lines = wrapper_i.readlines()
             lines = [
                 line.rstrip() for line in lines if len(line.rstrip()) > 0
@@ -323,7 +317,7 @@ def cas_finder(
             for line in lines:
                 # parse detail info
                 if line.startswith(
-                    "DETAIL REPORT"
+                    "DETAIL REPORT",
                 ):  # the first line to parse detail info
                     lm.logger.debug("find `DETAIL REPORT part`")
                     parse_detail = True
@@ -333,7 +327,7 @@ def cas_finder(
                     ls_detail.append(line)
                 # parse repeat info
                 if line.startswith(
-                    "SUMMARY BY POSITION"
+                    "SUMMARY BY POSITION",
                 ):  # the first line to parse repeat info
                     lm.logger.debug("find `SUMMARY BY POSITION part`")
                     parse_status = True
@@ -370,11 +364,10 @@ def cas_finder(
                     contig = contig.split(" ")[0]
                     lm.logger.debug(f"find contig line, the contig = {contig}")
                     continue
-                elif line.startswith("Array") or line.startswith("====="):
+                if line.startswith("Array") or line.startswith("====="):
                     lm.logger.debug("find annotation line, skip")
                     continue
-                else:
-                    lm.logger.debug("find a crispr array, try to parse it")
+                lm.logger.debug("find a crispr array, try to parse it")
                 # when find a crispr array
                 # try to parse
                 # 2024-01-12 fix Sequence have space bug: invalid literal for int() with base 10: 'T'
@@ -385,7 +378,8 @@ def cas_finder(
                 lm.logger.debug(f"splitted line info is: info = {info}")
 
                 if not info[0].isnumeric():
-                    raise ValueError(f"info = {info}")
+                    msg = f"info = {info}"
+                    raise ValueError(msg)
                 lm.logger.debug(f"contig = {contig}, info[1] = {info[1]}")
                 # assert contig == info[1]  # check contig name?  # pilercr返回的info[1]可能是contig的name的截短
                 array_index, _, crispr_start, crispr_length = info[:4]
@@ -399,7 +393,7 @@ def cas_finder(
                 spacer = int(spacer)
                 lm.logger.debug(
                     f"array_index = {array_index}, contig = {contig}, "
-                    f"crispr_start = {crispr_start}, crispr_length = {crispr_length}"
+                    f"crispr_start = {crispr_start}, crispr_length = {crispr_length}",
                 )
 
                 crispr_end = crispr_start + crispr_length + 1
@@ -427,11 +421,11 @@ def cas_finder(
 
             if output_crispr_info_tab:
                 lm.logger.info(
-                    f"2.additional job: writing crispr info table to @ {output_crispr_info_tab}"
+                    f"2.additional job: writing crispr info table to @ {output_crispr_info_tab}",
                 )
                 if not len(ls_detail) >= 5:
                     # is empty
-                    with open(output_crispr_info_tab, "wt") as f:
+                    with open(output_crispr_info_tab, "w") as f:
                         f.write("")
 
                 ls_detail = ls_detail[1:]
@@ -446,20 +440,18 @@ def cas_finder(
                         if ls_temp:
                             ls_all.append(ls_temp)
                         continue
-                    elif info.startswith(">"):
+                    if info.startswith(">"):
                         contig_id = info[1:]
                         ls_temp = []
                         continue
-                    elif info.startswith("Pos"):
+                    if info.startswith("Pos") or info.startswith("="):
                         continue
-                    elif info.startswith("="):
-                        continue
-                    elif len(info.split()) == 4:
+                    if len(info.split()) == 4:
                         repeat_seq_rep = info.split()[3]
                         repeat_length_rep = info.split()[1]
                         spacer_length_rep = info.split()[2]
                         ls_rep_info.append(
-                            [repeat_seq_rep, repeat_length_rep, spacer_length_rep]
+                            [repeat_seq_rep, repeat_length_rep, spacer_length_rep],
                         )
                         continue
                     ls_temp.append([f"{assembly_id}+{contig_id}+{array_id}", info])
@@ -470,15 +462,15 @@ def cas_finder(
                 if not ls_all or ls_all == [None]:
                     # don't consider gz file. because it is a temp file.
                     lm.logger.warning(
-                        f"find no crispr info in @ {fa_filtered}! will touch an empty output file @ {fa_pep_cas}"
+                        f"find no crispr info in @ {fa_filtered}! will touch an empty output file @ {fa_pep_cas}",
                     )
-                    with open(fa_pep_cas, "wt") as f:
+                    with open(fa_pep_cas, "w") as f:
                         f.write("")
                     if output_crispr_info_tab:
-                        with open(output_crispr_info_tab, "wt") as f:
+                        with open(output_crispr_info_tab, "w") as f:
                             f.write("")
                     if output_contig_fa:
-                        with open(output_contig_fa, "wt") as f:
+                        with open(output_contig_fa, "w") as f:
                             f.write("")
                     lm.logger.info("End, exit.")
                     return  # just return output file as an empty file
@@ -488,7 +480,7 @@ def cas_finder(
                     if len(ls_one_info[0]) == len(ls_one_info[-1]):
                         pass
                     else:
-                        ls_one_info[-1].insert(7, np.NaN)
+                        ls_one_info[-1].insert(7, np.nan)
                     df = pd.DataFrame(
                         ls_one_info,
                         columns=[
@@ -529,7 +521,7 @@ def cas_finder(
     # -----------------------------
     if tests[3]:
         lm.logger.info("3.get protein loci")
-        with open(gff, "rt") as wrapper_i, open(bed_pep, "wt") as wrapper_o:
+        with open(gff) as wrapper_i, open(bed_pep, "w") as wrapper_o:
             lines = wrapper_i.readlines()
             # skip annotation lines wiht # and blank lines
             lines = (
@@ -605,7 +597,7 @@ def cas_finder(
         # special part for a dict info
         # -----------------------------
         # load keys from cas bed
-        with open(bed_cas, "rt") as f:
+        with open(bed_cas) as f:
             contigs_cas = f.readlines()
         cas_loc_info = {}
 
@@ -633,7 +625,7 @@ def cas_finder(
                 if k == "ID":
                     CDS_id = v
                     break
-            cas_loc_info[f'{dt_this["contig_id"]}_{CDS_id}'] = dt_this
+            cas_loc_info[f"{dt_this['contig_id']}_{CDS_id}"] = dt_this
 
         # crispr_ids = ["_".join(i.split("_")[:-1]) for i in cas_loc_info.keys()]
         # print(len(crispr_ids))
@@ -648,7 +640,7 @@ def cas_finder(
             header = contig.id  # header = Ga0307431_1014098_3
             contig.description = contig.description.split("# ")[-1]
 
-            if header in cas_loc_info.keys():
+            if header in cas_loc_info:
                 info = cas_loc_info[header]
                 contig.id = (
                     info["CDS_id"]
@@ -659,7 +651,7 @@ def cas_finder(
         handler = (
             gzip.open(fa_pep_cas, "wt")
             if fa_pep_cas.endswith(".gz")
-            else open(fa_pep_cas, "wt")
+            else open(fa_pep_cas, "w")
         )
         SeqIO.write(contigs_output, handler, "fasta")
         handler.close()
@@ -669,7 +661,7 @@ def cas_finder(
     # -----------------------------
     if tests[6]:
         lm.logger.info("6.get all crispr contigs")
-        with open(bed_crispr, "rt") as f:
+        with open(bed_crispr) as f:
             contigs_crispr = f.readlines()
         # print(len(contigs_crispr))
         crispr_ids = [
@@ -678,9 +670,7 @@ def cas_finder(
         print(crispr_ids)
         print(len(crispr_ids))
         handler = (
-            gzip.open(fa_input, "rt")
-            if fa_input.endswith(".gz")
-            else open(fa_input, "rt")
+            gzip.open(fa_input, "rt") if fa_input.endswith(".gz") else open(fa_input)
         )
         assembly_input = SeqIO.parse(handler, "fasta")
         contigs_output = []
@@ -692,11 +682,11 @@ def cas_finder(
         if contigs_output:
             SeqIO.write(contigs_output, fa_crisper_contig, "fasta")
         else:
-            with open(fa_crisper_contig, "wt") as f:
+            with open(fa_crisper_contig, "w") as f:
                 f.write("")
         handler.close()
         lm.logger.debug(
-            f"generate crispr_scaffold.fa file, check output @ {fa_crisper_contig}"
+            f"generate crispr_scaffold.fa file, check output @ {fa_crisper_contig}",
         )
 
     if rm_temp:
@@ -733,9 +723,7 @@ def cas13_finder(
     os.makedirs(dirname, exist_ok=True)
 
     # start to parse HEPN pattern
-    handler = (
-        gzip.open(fa_input, "rt") if fa_input.endswith(".gz") else open(fa_input, "rt")
-    )
+    handler = gzip.open(fa_input, "rt") if fa_input.endswith(".gz") else open(fa_input)
     fa_cases = SeqIO.parse(handler, format="fasta")
     fa_cases_filter_length = [
         cas for cas in fa_cases if _filter_fasta_length(cas, lmin, lmax)
@@ -767,7 +755,7 @@ def cas13_finder(
         ls_span = []
 
         for match in matches:
-            dt_span = dict()
+            dt_span = {}
             dt_span["span"] = match.span()
             dt_span["target"] = match.string[match.start() : match.end()]
             ls_span.append(dt_span)
@@ -792,7 +780,7 @@ def cas13_finder(
     handler = (
         gzip.open(fa_pep_cas13, "wt")
         if fa_pep_cas13.endswith(".gz")
-        else open(fa_pep_cas13, "wt")
+        else open(fa_pep_cas13, "w")
     )
     SeqIO.write(ls_fa_cases_out, handler, "fasta")
     lm.logger.info("End, exit.")
@@ -814,7 +802,7 @@ def format_this_fastx(
 
     if new_file == f_input and not force:
         operate = input(
-            f"Warning: will overwrite {f_input}, continue? (y/n) [use --force to overwrite directly]"
+            f"Warning: will overwrite {f_input}, continue? (y/n) [use --force to overwrite directly]",
         )
 
         if operate.lower() == "y":
@@ -823,16 +811,14 @@ def format_this_fastx(
             lm.logger.warning("Aborted, exit.")
             sys.exit(1)
 
-    handler = (
-        gzip.open(f_input, "rt") if f_input.endswith(".gz") else open(f_input, "rt")
-    )
+    handler = gzip.open(f_input, "rt") if f_input.endswith(".gz") else open(f_input)
     fasta = SeqIO.parse(handler, "fasta")
 
     iter_out = (i for i in fasta)
     handler_out = (
         gzip.open(temp_file, "wt")
         if temp_file.endswith(".gz")
-        else open(temp_file, "wt")
+        else open(temp_file, "w")
     )
     SeqIO.write(iter_out, handler_out, "fasta")
     handler.close()
@@ -861,10 +847,10 @@ def calculate_length_distribution(
 
     if not os.path.isfile(table):
         lm.logger.info(f"no exists length table, generate table file: {table}")
-        with open(file, "r") as fi:
+        with open(file) as fi:
             total_sequences = sum(1 for _ in SeqIO.parse(fi, "fasta"))
 
-        with open(file, "r") as fi, open(table, "w") as fo:
+        with open(file) as fi, open(table, "w") as fo:
             for record in tqdm(
                 SeqIO.parse(fi, "fasta"),
                 total=total_sequences,
@@ -889,7 +875,13 @@ def calculate_length_distribution(
     lm.logger.info("plot histplot")
     ax1 = fig.add_subplot(2, 1, 1)
     sns.histplot(
-        df, x="length", bins=300, edgecolor=".3", linewidth=0.5, log_scale=True, ax=ax1
+        df,
+        x="length",
+        bins=300,
+        edgecolor=".3",
+        linewidth=0.5,
+        log_scale=True,
+        ax=ax1,
     )
     ax1.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, numticks=4))
     ax1.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())

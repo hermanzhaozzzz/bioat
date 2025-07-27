@@ -1,4 +1,4 @@
-"""module of bamtools
+"""module of bamtools.
 
 bioat bamtools <command> deal with SAM or BAM files
 
@@ -14,7 +14,6 @@ example 1:
 example 2:
     _example_
 """
-
 import gzip
 import os
 import random
@@ -22,6 +21,7 @@ import string
 import sys
 from io import TextIOWrapper
 from multiprocessing import Process
+from pathlib import Path
 from signal import SIG_DFL, SIGPIPE, signal
 from sys import stdin as STDIN
 from sys import stdout as STDOUT
@@ -30,26 +30,30 @@ from bioat.logger import LoggerManager
 
 lm = LoggerManager(mod_name="bioat.bamtools")
 
+
 def setup_signal_handling():
     """Setup signal handlers."""
     signal(SIGPIPE, SIG_DFL)
 
+
 setup_signal_handling()
+
 
 class BamTools:
     """Bam toolbox."""
 
     lm.set_names(cls_name="BamTools")
+
     def __init__(self):
         pass
 
     def mpileup2table(
         self,
-        mpileup: str,
-        output: str | TextIOWrapper = STDOUT,
-        threads: int = os.cpu_count(),
+        mpileup: str | Path,
+        output: str | Path | TextIOWrapper = STDOUT,
+        threads: int = 1,
         mutation_number_threshold: int = 0,
-        temp_dir: str = "__bioat_temp_dir",
+        temp_dir: str | Path = "__bioat_temp_dir",
         remove_temp: bool = True,
         log_level: str = "WARNING",
     ) -> None:
@@ -112,9 +116,7 @@ class BamTools:
 
             total_input_line_num = 0
             input_file = (
-                gzip.open(mpileup, "rt")
-                if mpileup.endswith(".gz")
-                else open(mpileup, "rt")
+                gzip.open(mpileup, "rt") if mpileup.endswith(".gz") else open(mpileup)
             )
 
             # count total_input_line_num
@@ -132,9 +134,7 @@ class BamTools:
             # split temp files
             # write into output filename
             input_file = (
-                gzip.open(mpileup, "rt")
-                if mpileup.endswith(".gz")
-                else open(mpileup, "rt")
+                gzip.open(mpileup, "rt") if mpileup.endswith(".gz") else open(mpileup)
             )
 
             for index, line in enumerate(input_file):
@@ -153,7 +153,7 @@ class BamTools:
                 output = (
                     gzip.open(output, "wt")
                     if output.endswith(".gz")
-                    else open(output, "wt")
+                    else open(output, "w")
                 )
             # write header
             header = [
@@ -190,14 +190,16 @@ class BamTools:
 
         # make temp files
         temp_filename_list = _temp_split_bam(
-            mpileup=mpileup, threads=threads, temp_dir=temp_dir
+            mpileup=mpileup,
+            threads=threads,
+            temp_dir=temp_dir,
         )
         # multiple processing part
         lm.logger.debug("Parsing files...")
 
         procs_list = []
 
-        for index, temp_mpileup in enumerate(temp_filename_list):
+        for _index, temp_mpileup in enumerate(temp_filename_list):
             temp_output = temp_mpileup + ".bmat.gz"
             # add multiprocess
             sub_proc = Process(
@@ -225,8 +227,8 @@ class BamTools:
 
     def remove_clip(
         self,
-        input: str | TextIOWrapper = STDIN,
-        output: str | TextIOWrapper = STDOUT,
+        input: str | Path | TextIOWrapper = STDIN,
+        output: str | Path | TextIOWrapper = STDOUT,
         threads: int = os.cpu_count(),
         output_fmt: str = "SAM",
         remove_as_paired: bool = False,
@@ -239,30 +241,30 @@ class BamTools:
         accept input from stdin and produce output to stdout.
 
         Args:
-            input (str | TextIOWrapper): 
-                BAM file sorted by query name with soft/hard clipped reads. 
+            input (str | TextIOWrapper):
+                BAM file sorted by query name with soft/hard clipped reads.
                 Pipe stdin is supported, e.g.:
                 [samtools view -h foo_sort_name.bam | bioat bam remove_clip <flags>].
-            output (str | TextIOWrapper): 
-                BAM file sorted by query name without soft/hard clipped reads. 
+            output (str | TextIOWrapper):
+                BAM file sorted by query name without soft/hard clipped reads.
                 Pipe stdout is supported, e.g.:
-                [bioat bam remove_clip <flags> | wc -l] 
+                [bioat bam remove_clip <flags> | wc -l]
                 or [bioat bam remove_clip <flags> | samtools view ....].
-            threads (int, optional): 
-                Number of threads used by pysam and samtools core. 
+            threads (int, optional):
+                Number of threads used by pysam and samtools core.
                 Defaults to the number of CPU cores.
-            output_fmt (str, optional): 
+            output_fmt (str, optional):
                 Format of the output file, can be "BAM" or "SAM". Defaults to "SAM".
-            remove_as_paired (bool, optional): 
-                Flag to determine whether to remove single clipped reads. 
-                If True, removes both the clipped read and its paired read. The input 
-                BAM/SAM must be sorted by name and have header [SO:queryname]. 
+            remove_as_paired (bool, optional):
+                Flag to determine whether to remove single clipped reads.
+                If True, removes both the clipped read and its paired read. The input
+                BAM/SAM must be sorted by name and have header [SO:queryname].
                 If False, only removes the single clipped read.
-            max_clip (int, optional): 
+            max_clip (int, optional):
                 The maximum number of clips allowed per read. Defaults to 0.
-            log_level (str, optional): 
-                Logging level for the process. Can be one of 
-                'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'. 
+            log_level (str, optional):
+                Logging level for the process. Can be one of
+                'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'.
                 Defaults to "INFO".
 
         Returns:
@@ -274,12 +276,12 @@ class BamTools:
         try:
             import pysam
         except ImportError:
-            lm.logger.error(
-                'remove_clip requires "pysam" as the backend for parsing BAM files. Please install it first.'
+            lm.logger.exception(
+                'remove_clip requires "pysam" as the backend for parsing BAM files. Please install it first.',
             )
             sys.exit(0)
         save = pysam.set_verbosity(
-            0
+            0,
         )  # https://github.com/pysam-developers/pysam/issues/939
 
         if isinstance(input, TextIOWrapper):
@@ -299,24 +301,23 @@ class BamTools:
                     lm.logger.error(
                         "When remove_as_paired is True, the input BAM|SAM must be sorted by"
                         "name and has header [SO:queryname]!\n"
-                        f"your header: [SO:{so}]\n"
+                        f"your header: [SO:{so}]\n",
                     )
-                    exit(1)
-                else:
-                    if so != "coordinate":
-                        lm.logger.warning(
-                            "the input BAM|SAM must have header [SO:coordinate] or [SO:queryname]!\n"
-                            f"your header: [SO:{so}]\n"
-                        )
+                    sys.exit(1)
+                elif so != "coordinate":
+                    lm.logger.warning(
+                        "the input BAM|SAM must have header [SO:coordinate] or [SO:queryname]!\n"
+                        f"your header: [SO:{so}]\n",
+                    )
 
         else:
             lm.logger.warning(
                 "the input BAM|SAM must be sorted by name and has header [SO:queryname]!\n"
-                "your bam file does not have a header\n"
+                "your bam file does not have a header\n",
             )
             if isinstance(input, TextIOWrapper):
                 lm.logger.warning(
-                    "you can add header to your input file by using `samtools view -h input.bam > input_with_header.bam`"
+                    "you can add header to your input file by using `samtools view -h input.bam > input_with_header.bam`",
                 )
 
         write_mode = "wb" if output_fmt.upper() == "BAM" else "w"
@@ -325,7 +326,7 @@ class BamTools:
         # Iterate through reads.
         if remove_as_paired:
             lm.logger.info(
-                "remove_as_paired is True, all paired clipped reads will be removed."
+                "remove_as_paired is True, all paired clipped reads will be removed.",
             )
             read1, read2 = None, None
 
@@ -363,19 +364,18 @@ class BamTools:
                             bam_out.write(read1)
                         if softclip2 <= max_clip:
                             bam_out.write(read2)
-                    else:
-                        if softclip1 <= max_clip and softclip2 <= max_clip:
-                            bam_out.write(read1)
-                            bam_out.write(read2)
+                    elif softclip1 <= max_clip and softclip2 <= max_clip:
+                        bam_out.write(read1)
+                        bam_out.write(read2)
                 else:
                     lm.logger.fatal(
-                        "something wrong with read1/2 pairs, they may have different read id or there is None in them"
+                        "something wrong with read1/2 pairs, they may have different read id or there is None in them",
                     )
                     lm.logger.fatal(f"read1={read1}, read2={read2}")
                     lm.logger.fatal(
-                        f"read1_id={read1.query_name}, read2_id={read2.query_name}"
+                        f"read1_id={read1.query_name}, read2_id={read2.query_name}",
                     )
-                    exit(1)
+                    sys.exit(1)
         else:
             for read in bam_in:
                 if read.is_unmapped:
@@ -396,13 +396,13 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
     temp_mpileup = (
         gzip.open(temp_mpileup, "rt")
         if temp_mpileup.endswith(".gz")
-        else open(temp_mpileup, "rt")
+        else open(temp_mpileup)
     )
     # open output file
     temp_output = (
         gzip.open(temp_output, "wt")
         if temp_output.endswith(".gz")
-        else open(temp_output, "wt")
+        else open(temp_output, "w")
     )
 
     # parse mpileup file
@@ -435,7 +435,7 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
 
                 delNum = int(del_str_num)
                 delSeq = ""
-                for a in range(delNum):
+                for _a in range(delNum):
                     delSeq += bases[i]
                     i += 1
                 types["-"].append(delSeq)
@@ -454,12 +454,12 @@ def _run_mpileup_to_table(temp_mpileup, temp_output, mutation_number_threshold):
 
                 addNum = int(add_str_num)
                 addSeq = ""
-                for a in range(addNum):
+                for _a in range(addNum):
                     addSeq += bases[i]
                     i += 1
                 types["+"].append(addSeq)
 
-            elif (base == ".") or (base == ","):
+            elif base in {".", ","}:
                 types[ref] += 1
                 i += 1
 

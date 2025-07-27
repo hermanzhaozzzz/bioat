@@ -13,25 +13,6 @@ lm = LoggerManager(mod_name="bioat.lib.libpath")
 HOME = os.path.expanduser("~")
 
 
-def is_file(x: str | Path, log_level="WARNING") -> bool:
-    """Check if the given path is a file.
-
-    Args:
-        x (str | Path): The path to check.
-
-    Returns:
-        bool: True if the path is a file, False otherwise.
-    """
-    lm.set_names(func_name="is_file")
-    lm.logger.debug("Checking if '%s' is a file", x)
-    result = os.path.isfile(x)
-    if result:
-        lm.logger.debug("'%s' is a file", x)
-    else:
-        lm.logger.error("'%s' is not a file", x)
-    return result
-
-
 def check_cmd(x, log_level="WARNING") -> bool:
     """Check if a command is available in the system's PATH.
 
@@ -57,21 +38,25 @@ def check_cmd(x, log_level="WARNING") -> bool:
 
 
 def check_executable(
-    x: str | None, name: str | None, log_level: str = "WARNING"
+    x: str | None,
+    name: str | None,
+    log_level: str = "WARNING",
 ) -> None:
     if not x:
         if not name:
+            msg = "Either x or name must be provided only one."
             raise BioatInvalidParameterError(
-                "Either x or name must be provided only one."
+                msg,
             )
-        else:
-            if not check_cmd(name, log_level):
-                raise BioatMissingDependencyError(f"{name} not found in PATH")
+        if not check_cmd(name, log_level):
+            msg = f"{name} not found in PATH"
+            raise BioatMissingDependencyError(msg)
+    elif not name:
+        if not os.path.exists(x) or not os.access(x, os.X_OK):
+            msg = f"{x} not found or not executable"
+            raise BioatInvalidOptionError(msg)
     else:
-        if not name:
-            if not os.path.exists(x) or not os.access(x, os.X_OK):
-                raise BioatInvalidOptionError(f"{x} not found or not executable")
-        else:
-            raise BioatInvalidParameterError(
-                "Either x or name must be provided only one."
-            )
+        msg = "Either x or name must be provided only one."
+        raise BioatInvalidParameterError(
+            msg,
+        )

@@ -20,8 +20,7 @@ def _get_process_memory():
 
 
 def profile(num_iterations=1):
-    """
-    Decorator for calculating the runtime of a function, over multiple iterations.
+    """Decorator for calculating the runtime of a function, over multiple iterations.
 
     :param num_iterations: times to iter, defaults to 1
     :type num_iterations: int, optional
@@ -30,8 +29,9 @@ def profile(num_iterations=1):
     def inner_decorator(func):
         def wrapper(*args, **kwargs):
             if not isinstance(num_iterations, int) or num_iterations < 1:
+                msg = "num_iterations must be a positive integer"
                 raise BioatInvalidParameterError(
-                    "num_iterations must be a positive integer"
+                    msg,
                 )
             lm.set_names(func_name=func.__name__)
             lm.set_level("INFO")

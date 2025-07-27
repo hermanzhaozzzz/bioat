@@ -1,11 +1,12 @@
-import os
+import tempfile
+from pathlib import Path
 
-HOME = os.path.expanduser('~')
-MODULE_PATH = 'src'
-DATA_PATH = 'data'
-TESTOUT_PATH = HOME
+HOME = Path.home()
+MODULE_PATH = Path("src")
+DATA_PATH = Path("data")
 
 
 if __name__ == "__main__":
     print(HOME)
-    print(MODULE_PATH)
+    print(type(HOME))
+    print(DATA_PATH)

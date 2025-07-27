@@ -1,69 +1,192 @@
-# ref https://github.com/python-poetry/poetry/blob/main/pyproject.toml
-[tool.poetry]
+# ------------------------------------------------------------------->>>>>>>>>>
+# specially for this project (bioat)
+# ------------------------------------------------------------------->>>>>>>>>>
+# ref https://python-poetry.org/docs/pyproject/
+[project]
 name = "bioat"
-version = "0.15.9"
+version = "0.16.0"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
-license = "Apache-2.0"
-authors = ["Huanan Herman Zhao <hermanzhaozzzz@gmail.com>"]
-maintainers = ["Huanan Herman Zhao <hermanzhaozzzz@gmail.com>"]
+license = { text = "Apache-2.0" }
 readme = "README.md"
-documentation = "https://bioat.readthedocs.io/en/latest/"
-repository = "https://github.com/hermanzhaozzzz/bioat"
+requires-python = ">=3.10.0,<4.0"
+authors = [{name = "Huanan Herman Zhao", email = "hermanzhaozzzz@gmail.com"}]
+maintainers = [{name = "Huanan Herman Zhao", email = "hermanzhaozzzz@gmail.com"}]
+keywords = ["bioat", "bioinformatics", "data science", "deep learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
+]
+dependencies = [ # https://python-poetry.org/docs/dependency-specification/
+    "pandas>=1.5",
+    "numpy>=1.24.1",
+    "tqdm>=4.64.1",
+    "fire>=0.5.0",
+    "biopython>=1.80",
+    "matplotlib>=3.5.3",
+    "tabulate>=0.9.0",
+    "statsmodels>=0.13.5",
+    "requests>=2.31.0",
+    "coloredlogs>=15.0.1",
+    "psutil>=5.9.8",
+    "openpyxl>=3.1.2",
+    "matplotlib-inline>=0.1.7",
+    "beautifulsoup4>=4.12.3",
+    "selenium>=4.1.3",
+    "scikit-learn>=1.0.2",
+    "scipy>=1.7.3",
+    "seaborn>=0.13.2",
+    "py3dmol>=2.4.2",
+    "ipykernel>=6.0.0",
+    "ipython<9.0.0",
+]
+
+[project.urls]
 homepage = "https://github.com/hermanzhaozzzz/bioat"
-keywords = ["bioat", "python", "data-science", "bioinformatics", "bioinformatics-tool"]
+repository = "https://github.com/hermanzhaozzzz/bioat"
+documentation = "https://bioat.readthedocs.io/en/latest/"
+"Bug Tracker" = "https://github.com/hermanzhaozzzz/bioat/issues"
 
-[tool.poetry.dependencies]
-python = ">=3.10.0, <3.13.0"
-pandas = ">=1.5"
-numpy = ">=1.24.1"
-tqdm = ">=4.64.1"
-fire = ">=0.5.0"
-biopython = ">=1.80"
-matplotlib = ">=3.5.3"
-tabulate = ">=0.9.0"
-statsmodels = ">=0.13.5"
-requests = ">=2.31.0"
-coloredlogs = ">=15.0.1"
-psutil = ">=5.9.8"
-openpyxl = ">=3.1.2"
-matplotlib-inline = ">=0.1.7"
-beautifulsoup4 = ">=4.12.3"
-selenium = ">=4.1.3"
-scikit-learn = ">=1.0.2"
-scipy = ">=1.7.3"
-seaborn = ">=0.13.2"
-py3dmol = ">=2.4.2"
-ipykernel = ">=6.0.0"
-ipython = "<9.0.0"
+[project.scripts]
+bioat = "bioat.__main__:main"
 
-[tool.poetry.extras]
-docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "myst-parser", "toml"]
+# ------------------------------------------------------------------->>>>>>>>>>
+# Poetry 环境激活
+# ------------------------------------------------------------------->>>>>>>>>>
+# 进入项目目录
+# eval $(poetry env activate)
+# ------------------------------------------------------------------->>>>>>>>>>
+# 构建、依赖与开发分组
+# ------------------------------------------------------------------->>>>>>>>>>
+[tool.poetry]
+requires-poetry = ">=2.0"
 
-[tool.poetry.group.dev.dependencies]
-toml = ">=0.10.2"
-ruff = ">=0.7.1"  # 替换 black、isort、flake8、mypy 等功能
+[build-system]
+# 声明build-system后,可通过可选的 pip install -e . 的命令成功将项目及其依赖项安装至虚拟环境
+# 但 pip 不会使用锁定文件来确定依赖版本，因为 poetry-core 构建系统主要面向库开发者
+# https://python-poetry.org/docs/basic-usage/#operating-modes
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
+[project.optional-dependencies]
+dev = ["ruff", "toml"]
+# ruff # 替换 black、isort、flake8、mypy 等功能
+# toml # 解析 pyproject.toml 文件
+docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "myst-parser"]
+# sphinx # 文档生成工具
+# sphinx-autobuild # 自动更新文档
+# sphinx-rtd-theme # 文档主题
+# myst-parser # 解析 MyST 格式文档
+test = ["pytest", "pytest-cov"]
+# pytest # 单元测试框架
+# pytest-cov # 单元测试覆盖率插件
 
+# ------------------------------------------------------------------->>>>>>>>>>
+# 通用 Ruff 格式化与风格配置
+# ------------------------------------------------------------------->>>>>>>>>>
 [tool.ruff]
+indent-width = 4
 line-length = 88
-extend-include = ["*.ipynb"]
-lint.extend-ignore = ["E501"]  # 忽略行长限制，让 `black` 风格兼容
-lint.select = ["E", "F", "I", "N", "B", "A"]  # 启用特定规则组
-lint.fixable = ["ALL"]  # 启用 Ruff 的全部可自动修复规则
+extend-include = [
+    "*.ipynb",  # ruff 0.6.0之前需要显示声明支持 ipynb 格式化
+    "pyproject.toml",  # Ruff 自身规则支持
+    ]  
+target-version = "py310" # 更好地理解新语法（比如 walrus 运算符、match-case 等）
 
-[tool.poetry.group.test.dependencies]
-pytest = ">=7.1.3"
-pytest-cov = ">=3.0"
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+docstring-code-format = true  # 自动格式化 docstring 里的代码块
+docstring-code-line-length = 88  # 自动格式化 docstring 里的代码块的行长度
+
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/linter/#rule-selection
+select = [
+    # https://docs.astral.sh/ruff/rules/#pydoclint-doc
+    "A",  # flake8-builtins (A)
+    "B",  # flake8-bugbear (B)
+    "C4",  # flake8-comprehensions (C4)
+    "D",  # pydocstyle (D)
+    "DJ",  # flake8-django (DJ)
+    "E",  # pycodestyle (E) errors
+    "EM",  # flake8-errmsg (EM)
+    "EXE",  # flake8-executable (EXE)
+    "F",  # Pyflakes (F)
+    "FAST",  # FastAPI (FAST)
+    "FIX",  # flake8-fixme (FIX)
+    "FLY",  # flynt (FLY)  flynt（FLY）
+    "FURB", # refurb (FURB)
+    "I",  # isort (I) 
+    "ICN",  # flake8-import-conventions (ICN)
+    "INT",  # flake8-gettext (INT)
+    "N",  # pep8-naming (N) 
+    "NPY",  # NumPy-specific rules (NPY)
+    "PD",  # pandas-vet (PD)
+    "PERF", # Perflint (PERF) 
+    "PL",  # Pylint (PL)
+    "PLE", # Error (PLE)
+    "PLR", # Refactor (PLR) 
+    "PLW", # Warning (PLW)
+    "PTH",  # flake8-use-pathlib (PTH)
+    "RET",  # flake8-return (RET)
+    "RUF", # Ruff-specific rules (RUF)
+    "S", # flake8-bandit (S)
+    "SLF",  # flake8-self (SLF)
+    "SIM", # flake8-simplify (SIM)
+    "TD",  # flake8-todos (TD)
+    "TRY", # tryceratops (TRY)
+    "UP", # pyupgrade (UP)
+    "W",  # pycodestyle (W) warnings
+]
+ignore = [
+    "D107", # Missing docstring in `__init__`RuffD107
+    "E501", # line-too-long 避免强制执行行长度违规
+    "EM101", # Exception must not use a string literal, assign to variable firstRuffEM101
+    "PD901", # Avoid using the generic variable name `df` for DataFramesRuffPD901
+    "PLR0912", # Too many branches (> 12)RuffPLR0912
+    "PLR0913", # Too many arguments in function definition (> 5)RuffPLR0913
+    "PLR0915", # Too many statements (> 50)RuffPLR0915
+    "PLR2004", # Magic number used in comparison, consider replacing with a named constantRuffPLR2004
+    "TRY003",  # Avoid specifying long messages outside the exception classRuffTRY003
+    "W191", # tab-indentation 避免强制使用制表符缩进
+]
+fixable = ["ALL"]  # 启用 Ruff 的全部可自动修复规则
+unfixable = [
+    "F401",  # unused-imports    # 禁用 Ruff 的某些规则的自动修复
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = [    
+    "D100", # Missing docstring in public moduleRuffD100
+    "D101", # Missing docstring in public classRuffD101
+    "D102", # Missing docstring in public methodRuffD102
+    "D103", # Missing docstring in public functionRuffD103
+    "D417", # Missing argument description in the docstringRuffD417
+    "S101", # Use of `assert` detectedRuffS101
+    ]
+"*.ipynb" = [
+    "E501", # 避免强制执行行长度违规 # 针对 Jupyter Notebook 文件忽略特定规则
+]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.poetry.group.github-actions]
 optional = true
 
 [tool.poetry.group.github-actions.dependencies]
 pytest-github-actions-annotate-failures = "^0.1.7"
-
-[tool.poetry.scripts]
-bioat = "bioat.__main__:main"
-
-[build-system]
-requires = ["poetry-core>=1.5.0"]
-build-backend = "poetry.core.masonry.api"

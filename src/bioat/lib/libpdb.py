@@ -1,11 +1,15 @@
-import gzip
+"""TODO."""
+
 import math
 import os
+import shutil
 import subprocess
+import sys
+import tempfile
 from io import StringIO
-from typing import List
+from pathlib import Path
+from typing import cast
 
-import Bio
 import numpy as np
 import py3Dmol
 from Bio import SeqIO
@@ -33,105 +37,294 @@ from bioat.lib.libfastx import (
     AMINO_ACIDS_3CODE,
     AMINO_ACIDS_3CODE_EXTEND,
 )
-from bioat.lib.libpath import is_file
 from bioat.logger import LoggerManager
 
 __all__ = [
-    "load_structure",
-    "structure2string",
-    "show_ref_cut",
     "get_cut2ref_aln_info",
+    "load_structure",
+    "show_ref_cut",
+    "structure2string",
 ]
 
 lm = LoggerManager(mod_name="bioat.lib.libpdb")
 lm.set_level("DEBUG")
 
-def _load_seq(seq, label=None, log_level="WARNING"):
-    if isinstance(seq, str) and is_file(seq, log_level=log_level):
+
+def _load_seq(seq: str | Path | Seq, label=None):
+    if isinstance(seq, str):
+        seq = Path(seq)
+
+    if (
+        isinstance(seq, Path)
+        and seq.is_file()
+        and seq.suffix.lower() in [".fasta", ".fa"]
+    ):
         seq = next(SeqIO.parse(seq, "fasta"))
         label = seq.id if label is None else label
         seq = seq.seq
     elif isinstance(seq, Seq):
         label = "no_name" if label is None else label
     else:
-        raise BioatInvalidParameterError(f"Invalid sequence format. seq: {seq}")
+        msg = f"Invalid sequence format. seq: {seq}, type={type(seq)}, seq.is_file()={seq.is_file()}, seq.suffix.lower()={seq.suffix.lower()}"
+        raise BioatInvalidParameterError(msg)
     return seq, label
 
 
 def load_structure(
-    structure: str | BiopythonStructure, label=None, log_level="WARNING"
-):
-    if isinstance(structure, str) and is_file(structure, log_level=log_level):
-        parser = PDBParser(QUIET=True)
-        structure = parser.get_structure(label, structure)
-    elif isinstance(structure, BiopythonStructure):
-        label = structure.id if label is None else label
-    else:
-        raise BioatInvalidParameterError(
-            f"Invalid structure format. structure: {structure}. "
-            "file path or Bio.PDB.Structure.Structure is expected."
-        )
-    return structure, label
-
-
-def structure2string(structure: BiopythonStructure):
-    """Convert Bio.PDB.Structure.Structure to string.
+    structure: str | Path | BiopythonStructure, label: str | None = None
+) -> tuple[BiopythonStructure, str]:
+    """Load a PDB structure file or a BiopythonStructure object.
 
     Args:
-        structure (Bio.PDB.Structure.Structure): Structure object to convert.
+        structure (str | Path | BiopythonStructure): Structure file path or BiopythonStructure object.
+        label (str | None, optional): Structure label. If None, the label will be set to the file name. Defaults to None.
+
+    Raises:
+        BioatInvalidParameterError: If the input structure is not a valid file path or a BiopythonStructure object.
 
     Returns:
-        str: PDB context。
+        tuple[BiopythonStructure, str]: A tuple of BiopythonStructure object and label.
+    """
+    if isinstance(structure, str):
+        structure = Path(structure)
+
+    if isinstance(structure, Path) and structure.is_file():
+        parser = PDBParser(QUIET=True)
+        structure = cast(BiopythonStructure, parser.get_structure(label, structure))
+    if isinstance(structure, BiopythonStructure):
+        label = cast(str, structure.id if label is None else label)
+        return structure, label
+    msg = f"Invalid structure format. structure: {structure}"
+    raise BioatInvalidParameterError(msg)
+
+
+def structure2string(structure: BiopythonStructure) -> str:
+    """Convert BiopythonStructure object to string format.
+
+    Args:
+        structure (BiopythonStructure): Structure object to convert.
+
+    Returns:
+        str: PDB context.
     """
     pdb_io = PDBIO()
     pdb_io.set_structure(structure)
-
-    # 使用 StringIO 保存到内存中的字符串
+    # Use StringIO to save to memory string
     pdb_string = StringIO()
     pdb_io.save(pdb_string)
-
-    # 返回字符串
+    # Return string
     return pdb_string.getvalue()
 
-def _map_ref_colors(ref_map_colors, ref_map_values, ref_map_value_random):
-    # fix color mapping
-    assert (ref_map_colors is None and ref_map_values is None) or (
-        isinstance(ref_map_colors, tuple)
-        and isinstance(ref_map_values, dict)
-        and len(ref_map_colors) == 2
-    ), "ref_color_base and ref_map_values must be both None or both not None"
-    color1, color2 = None, None
-    if ref_map_colors is not None:
-        color1, color2 = ref_map_colors
 
-    if ref_map_colors and ref_map_values:
-        values = []
-        res_names = []
-        res_idxes = []
-        for k, v in ref_map_values.items():
-            res_name, res_idx = k.split("_")
-            assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
-            res_idx = int(res_idx)
-            values.append(v)
-            res_names.append(res_name)
-            res_idxes.append(res_idx)
-        if not ref_map_value_random:
-            colors = map_colors_between_two(color1, color2, values)
+def pdb2fasta(
+    input_pdb: str | Path | BiopythonStructure,
+    output_fasta: str | Path | None = None,
+    func_return: bool = False,
+    log_level: str = "DEBUG",
+) -> list[Seq] | None:
+    """Converts a PDB file to a FASTA file.
+
+    Details:
+        1. **Proteins**:
+            The protein sequence for each chain will be extracted as "Chain X Protein".
+        2. **DNA and RNA**:
+            Bases for DNA (A, T, G, C) will be saved as "Chain X DNA", and bases for RNA (A, U, G, C) will be saved as "Chain X RNA".
+        3. **Other molecules**:
+            Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as "Chain X Other molecules".
+        4. **Multi-chain complexes**:
+            The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
+
+    Args:
+        input_pdb (str or Path or BiopythonStructure):
+            Path to the input PDB/CIF file or Biopython Structure.
+        output_fasta (str or Path, optional):
+            Output file path. If None, the output file will be named as the
+            basename of the input file with a ".fa" extension. Defaults to None.
+        func_return: (bool, optional)
+            Whether to return a list of SeqRecord objects, useful when used as a function but not for command line. Defaults to False.
+        log_level (str, optional):
+            Logging level. Defaults to "WARNING".
+
+    Returns:
+        List of SeqRecord if func_return is True, otherwise None.
+    """
+    lm.set_names(func_name="pdb2fasta")
+    lm.set_level(log_level)
+
+    structure = None
+    structure_id = "structure"
+
+    # === Handle input file or structure object ===
+    if isinstance(input_pdb, str | Path):
+        input_pdb = Path(input_pdb)
+
+        if not input_pdb.exists():
+            msg = f"Input file not found: {input_pdb}"
+            raise BioatFileNotFoundError(msg)
+
+        suffix = input_pdb.suffix.lower()
+        parser = (
+            MMCIFParser(QUIET=True)
+            if suffix.endswith(".cif") or suffix.endswith(".cif.gz")
+            else PDBParser(QUIET=True)
+            if suffix.endswith(".pdb") or suffix.endswith(".pdb.gz")
+            else None
+        )
+        if parser is None:
+            raise BioatFileFormatError("Only .pdb and .cif files are allowed.")
+
+        structure_id = input_pdb.stem
+        with input_pdb.open("rt") as f:
+            structure = parser.get_structure(structure_id, f)
+
+        if output_fasta is None:
+            output_fasta = input_pdb.with_suffix(".fa")
+            lm.logger.debug(f"Output is not defined, set output to {output_fasta}")
         else:
-            colors = map_colors_between_two(color1, color2, np.random.rand(len(values)))
-        return colors, res_names, res_idxes
+            output_fasta = Path(output_fasta)
+            if output_fasta.suffix.lower() not in (".fa", ".fasta"):
+                raise ValueError("Output file must have a '.fa' / '.fasta' suffix")
+
+    elif isinstance(input_pdb, BiopythonStructure):
+        structure = input_pdb
+        structure_id = getattr(structure, "id", "structure")
     else:
-        return None, None, None
+        msg = f"Invalid input type. Expect Path or BiopythonStructure, got {type(input_pdb)}"
+        raise BioatInvalidParameterError(msg)
+
+    lm.logger.debug(f"Processing structure: {structure_id}")
+
+    records = []
+
+    if isinstance(structure, BiopythonStructure):
+        for model in structure:
+            for chain in model:
+                lm.logger.debug(f"Processing chain {chain.id}")
+                residues = list(chain)
+                if not residues:
+                    continue
+
+                res_ids = [res.id[1] for res in residues]
+                offset = min(res_ids)
+                length = max(res_ids) - offset + 1
+
+                protein = ["-"] * length
+                dna = ["-"] * length
+                rna = ["-"] * length
+                other = ["-"] * length
+
+                for res in residues:
+                    idx = res.id[1] - offset
+                    name = res.resname.strip().upper()
+
+                    if name in AMINO_ACIDS_3CODE:
+                        protein[idx] = AMINO_ACIDS_3CODE[name]
+                    elif name in AMINO_ACIDS_3CODE_EXTEND:
+                        protein[idx] = AMINO_ACIDS_3CODE_EXTEND[name]
+                    elif name in ("DA", "DT", "DG", "DC"):
+                        dna[idx] = name[1]
+                    elif name in ("A", "U", "G", "C"):
+                        rna[idx] = name
+                    else:
+                        other[idx] = f"[{name}]"
+
+                def _append(seq, label, chain):
+                    if any(c != "-" for c in seq):
+                        records.append(
+                            SeqRecord(
+                                Seq("".join(seq)),
+                                id=f"{structure_id}|Chain_{chain.id}|{label}",
+                                description=f"Chain {chain.id} {label}",
+                            )
+                        )
+
+                _append(protein, "Protein", chain)
+                _append(dna, "DNA", chain)
+                _append(rna, "RNA", chain)
+                _append(other, "UNKNOWN", chain)
+    else:
+        raise BioatInvalidParameterError("Invalid structure format.")
+    if output_fasta:
+        SeqIO.write(records, output_fasta, "fasta")
+        lm.logger.info(f"FASTA saved to: {output_fasta}")
+
+    return [s.seq for s in records] if func_return else None
+
+
+def _map_ref_colors(
+    ref_map_colors: tuple,
+    ref_map_values: dict,
+    ref_map_value_random: bool,
+) -> tuple:
+    """Map reference residue colors based on values.
+
+    This function maps residue-level scalar values (e.g., importance scores) to colors
+    along a linear gradient defined by `ref_map_colors`. Each residue is identified by
+    a string key in the format "X_123", where X is the 1-letter amino acid code and 123 is the residue index.
+
+    Args:
+        ref_map_colors (tuple): A tuple of two color values (e.g., hex or RGB), representing the color gradient endpoints.
+                                For example: ("blue", "red") or ("#0000FF", "#FF0000").
+        ref_map_values (dict): A dictionary mapping residue keys to float values.
+                               Each key must be in the format "<residue>_<index>", such as "A_25".
+                               The value represents a scalar quantity (e.g., attention weight) to be color-mapped.
+        ref_map_value_random (bool): If True, the actual mapped values will be replaced with random numbers in [0, 1],
+                                     ignoring the values in `ref_map_values`. Useful for debugging or visualization testing.
+
+    Returns:
+        tuple:
+            - colors (List[str or tuple]): List of color values corresponding to each residue, generated by interpolation.
+            - res_names (List[str]): List of 1-letter residue codes.
+            - res_idxes (List[int]): List of residue indices (integers parsed from the keys).
+
+    Raises:
+        BioatInvalidParameterError:
+            - If `ref_map_colors` is not a tuple of length 2.
+            - If a residue name in `ref_map_values` is not a valid 1-letter amino acid code.
+
+    Example:
+        >>> ref_map_colors = ("blue", "red")
+        >>> ref_map_values = {"A_25": 0.1, "V_26": 0.9}
+        >>> colors, names, idxes = _map_ref_colors(ref_map_colors, ref_map_values, False)
+        >>> print(colors)  # List of interpolated colors between blue and red
+        >>> print(names)  # ['A', 'V']
+        >>> print(idxes)  # [25, 26]
+    """
+    if len(ref_map_colors) != 2:
+        raise BioatInvalidParameterError("ref_map_colors must be a tuple of length 2")
+
+    color1, color2 = ref_map_colors
+
+    values, res_names, res_idxes = [], [], []
+    for k, v in ref_map_values.items():
+        res_name, res_idx = k.split("_")
+        if res_name not in AMINO_ACIDS_1CODE:
+            msg = f"Invalid residue name: {res_name}"
+            raise BioatInvalidParameterError(msg)
+        res_names.append(res_name)
+        res_idxes.append(int(res_idx))
+        values.append(v)
+
+    # 映射颜色
+    rng = np.random.default_rng()
+    mapped_values = rng.random(len(values)) if ref_map_value_random else values
+
+    colors = map_colors_between_two(color1, color2, mapped_values)
+    return colors, res_names, res_idxes
 
 
 def show_ref_cut(
-    ref_seq: str | Seq,
-    ref_pdb: str | BiopythonStructure,
-    cut_seq: List[str | Seq] | str | Seq | None = None,
-    cut_pdb: List[str | BiopythonStructure] | str | BiopythonStructure | None = None,
-    cut_labels: List[str] | None = None,
+    ref_seq: str | Path | Seq,
+    ref_pdb: str | Path | BiopythonStructure,
+    cut_seq: list[str | Path | Seq] | str | Path | Seq | None = None,
+    cut_pdb: list[str | Path | BiopythonStructure]
+    | str
+    | Path
+    | BiopythonStructure
+    | None = None,
+    cut_labels: list[str] | str | None = None,
     ref_color: str = "red",
-    ref_map_colors: tuple[str] | None = None,
+    ref_map_colors: tuple[str, str] | None = None,
     ref_map_values: dict | None = None,
     cut_color="lightgray",
     gap_color="purple",
@@ -139,22 +332,21 @@ def show_ref_cut(
     cut_style="cartoon",
     gap_style="cartoon",
     ref_map_value_random: bool = False,
-    output_fig: str | None = None,
+    output_fig: str | Path | None = None,
     col: int = 4,
     scale: float = 1.0,
     annotate: bool = True,
     text_interval: int = 5,
     log_level="WARNING",
 ):
-    """
-    Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
+    """Visualizes the alignment of sequences and highlights changes in PDB structures using py3Dmol.
 
     Args:
         ref_seq (str or Seq): Amino acid sequence content for the ref protein.
-        ref_pdb (str or Bio.PDB.Structure.Structure): Path to the PDB file of the reference structure.
+        ref_pdb (str or BiopythonStructure): Path to the PDB file of the reference structure.
         cut_seq (str, Seq or None, optional): Amino acid sequence content for the cut protein.
-        cut_pdb (str, Bio.PDB.Structure.Structure or None, optional): Path to the PDB file of the cut structure.
-        cut_labels (str or None, optional): Label for the cut proteins. If None, the label will be set to "cut".
+        cut_pdb (str, BiopythonStructure or None, optional): Path to the PDB file of the cut structure.
+        cut_labels (list[str] or str or None, optional): Label for the cut proteins. If None, the label will be set to "cut".
         ref_color (str, optional): Color for reference residues.
         ref_map_colors (tuple[str, str] or None, optional): ref_map_colors will be used as color bar from ref_map_colors[0] to ref_map_colors[1]. If None, do not apply color mapping. Defaults to None.
         ref_map_values (dict or None, optional): A dictionary of values for the ref color map, it will be normalized to the range of [0 - 1]. If None, all residues will be colored with the same color. e.g. ref_map_values = {'V_0': 0.4177215189873418, 'S_1': 0.8185654008438819, 'K_2': 0.9915611814345991, 'G_3': 0.42616033755274263, ...}
@@ -164,7 +356,7 @@ def show_ref_cut(
         cut_style (str, optional): "stick", "sphere", "cartoon", or "line"
         gap_style (str, optional): "stick", "sphere", "cartoon", or "line"
         ref_map_value_random (bool, optional): If True, ref_map_values will be randomly generated. Defaults to False.
-        output_fig (str or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
+        output_fig (str or Path or None, optional): Output figure file path. If None, the figure will not be saved in html format. Defaults to None.
         col (int, optional): Number of columns for the visualization. Defaults to 3.
         scale (float, optional): Scale factor for the visualization. Defaults to 1.0.
         annotate (bool, optional): Whether to annotate the visualization with labels. Defaults to True.
@@ -173,36 +365,12 @@ def show_ref_cut(
     """
     lm.set_names(func_name="show_ref_cut")
     lm.set_level(log_level)
-    lm.logger.debug(
-        f"""\
-Params:
--------
-ref_seq: {ref_seq}
-ref_pdb: {ref_pdb}
-cut_seq: {cut_seq}
-cut_pdb: {cut_pdb}
-ref_color: {ref_color}
-ref_map_colors: {ref_map_colors}
-ref_map_values: {ref_map_values}
-cut_color: {cut_color}
-gap_color: {gap_color}
-ref_style: {ref_style}
-cut_style: {cut_style}
-gap_style: {gap_style}
-ref_map_value_random: {ref_map_value_random},
-output_fig : {output_fig},
-col: {col},
-scale: {scale},
-annotate: {annotate},
-text_interval: {text_interval},
-log_level: {log_level}"""
-    )
-
-    ref_seq, ref_label = _load_seq(ref_seq, "ref", log_level=log_level)
-    ref_pdb, ref_label = load_structure(ref_pdb, ref_label, log_level=log_level)
-    assert isinstance(ref_pdb, Bio.PDB.Structure.Structure), (
-        "Invalid input format. ref_pdb must be Bio.PDB.Structure"
-    )
+    if isinstance(cut_seq, str) and "," in cut_seq:
+        cut_seq = cast(list[str | Path | Seq], cut_seq.split(","))
+    if isinstance(cut_pdb, str) and "," in cut_pdb:
+        cut_pdb = cast(list[str | Path | BiopythonStructure], cut_pdb.split(","))
+    ref_seq, ref_label = _load_seq(ref_seq, "ref")
+    ref_pdb, ref_label = load_structure(ref_pdb, ref_label)
 
     aligner = instantiate_pairwise_aligner(
         scoring_match=5,
@@ -215,14 +383,8 @@ log_level: {log_level}"""
     )
 
     if cut_seq:  # not None
-        if not isinstance(cut_seq, list):
-            cut_seqs = [cut_seq]
-        else:
-            cut_seqs = cut_seq
-        if not isinstance(cut_pdb, list):
-            cut_pdbs = [cut_pdb]
-        else:
-            cut_pdbs = cut_pdb
+        cut_seqs = [cut_seq] if not isinstance(cut_seq, list) else cut_seq
+        cut_pdbs = [cut_pdb] if not isinstance(cut_pdb, list) else cut_pdb
 
         ref_seqs_fix = []
         ref_pdbs_fix = []
@@ -234,12 +396,12 @@ log_level: {log_level}"""
         rmsds = []
         alignment_dicts = []
 
-        for idx, cut_seq in enumerate(cut_seqs):
+        for idx, _cut_seq in enumerate(cut_seqs):
             ref_seqs_fix.append(ref_seq)
             ref_labels.append(ref_label)
             # 执行Sequence Alignment并得到gaps的位置
-            cut_seq, cut_label = _load_seq(cut_seq, "cut")
-            cut_seqs_fix.append(cut_seq)
+            _cut_seq, cut_label = _load_seq(_cut_seq, "cut")
+            cut_seqs_fix.append(_cut_seq)
 
             if cut_labels:
                 if isinstance(cut_labels, list):
@@ -252,12 +414,15 @@ log_level: {log_level}"""
             # 获得gaps的位置
             # Perform alignment
             alignment = get_best_alignment(
-                seq_a=ref_seq, seq_b=cut_seq, aligner=aligner, consider_strand=False
+                seq_a=ref_seq,
+                seq_b=_cut_seq,
+                aligner=aligner,
+                consider_strand=False,
             )
             alignment_dict = get_aligned_seq(alignment, reverse=False, letn_match=False)
             alignment_dicts.append(alignment_dict)
             gap_indices.append(  # 不指定 cut pdb 时必须在这里计算而不是get_cut2ref_aln_info中
-                [i for i, n in enumerate(alignment_dict["target_seq"]) if n == "-"]
+                [i for i, n in enumerate(alignment_dict["target_seq"]) if n == "-"],
             )
 
             cut_pdb = cut_pdbs[idx]
@@ -277,16 +442,16 @@ log_level: {log_level}"""
                 cut_pdbs_fix.append(res[cut_label])
                 rmsds.append(res["RMSD"])
 
-                assert isinstance(res[cut_label], Bio.PDB.Structure.Structure), (
-                    "Invalid input format. cut_pdb must be (one or list of) Bio.PDB.Structure"
-                )
+                if not isinstance(res[cut_label], BiopythonStructure):
+                    msg = "Invalid input format. cut_pdb must be (one or list of) BiopythonStructure"
+                    raise BioatInvalidParameterError(msg)
             else:
                 ref_pdbs_fix.append(ref_pdb)
                 cut_pdbs_fix.append(None)
                 rmsds.append(None)
     else:
         lm.logger.info(
-            "Cut sequence is not provided, skip alignment and annotation for gaps, and just show ref visualization."
+            "Cut sequence is not provided, skip alignment and annotation for gaps, and just show ref visualization.",
         )
         ref_seqs_fix = [ref_seq]
         ref_pdbs_fix = [ref_pdb]
@@ -316,10 +481,8 @@ log_level: {log_level}"""
         lm.logger.debug(f"viewer = {viewer}")
         _add_one_submodel(
             view=view,
-            ref_seq=ref_seqs_fix[i],
             ref_pdb=ref_pdbs_fix[i],
             ref_label=ref_labels[i],
-            cut_seq=cut_seqs_fix[i],
             cut_pdb=cut_pdbs_fix[i],
             cut_label=cut_labels_fix[i],
             ref_color=ref_color,
@@ -340,18 +503,23 @@ log_level: {log_level}"""
         )
 
     if output_fig:
-        assert output_fig.endswith(".html"), "Output file must have a '.html' extension"
-        with open(output_fig, "w") as f:
-            f.write(view._make_html())
+        output_fig = Path(output_fig)
+        if output_fig.suffix != ".html":
+            lm.logger.warning(
+                f"Output file must have a '.html' extension, but got {output_fig}"
+            )
+            sys.exit(1)
+        else:
+            with output_fig.open("w") as f:
+                f.write(view._make_html())  # noqa: SLF001
+            lm.logger.info(f"Visualization saved to: {output_fig}")
     return view.show()
 
 
 def _add_one_submodel(
     view,
-    ref_seq,
     ref_pdb,
     ref_label,
-    cut_seq,
     cut_pdb,
     cut_label,
     ref_color,
@@ -375,9 +543,14 @@ def _add_one_submodel(
     label_ypos = 75
     label_zpos = -30
 
-    colors, res_names, res_idxes = _map_ref_colors(
-        ref_map_colors, ref_map_values, ref_map_value_random
-    )
+    if ref_map_colors is not None:
+        colors, res_names, res_idxes = _map_ref_colors(
+            ref_map_colors,
+            ref_map_values,
+            ref_map_value_random,
+        )
+    else:
+        colors, res_names, res_idxes = None, None, None
     color1, color2 = None, None
     if ref_map_colors is not None:
         color1, color2 = ref_map_colors
@@ -387,7 +560,9 @@ def _add_one_submodel(
         res_idxes = []
         for k, v in ref_map_values.items():
             res_name, res_idx = k.split("_")
-            assert res_name in AMINO_ACIDS_1CODE, f"Invalid residue name: {res_name}"
+            if res_name not in AMINO_ACIDS_1CODE:
+                msg = f"Invalid residue name: {res_name}"
+                raise BioatInvalidParameterError(msg)
             res_idx = int(res_idx)
             values.append(v)
             res_names.append(res_name)
@@ -395,7 +570,9 @@ def _add_one_submodel(
         if not ref_map_value_random:
             colors = map_colors_between_two(color1, color2, values)
         else:
-            colors = map_colors_between_two(color1, color2, np.random.rand(len(values)))
+            rng = np.random.default_rng()
+            mapped_values = rng.random(len(values))
+            colors = map_colors_between_two(color1, color2, mapped_values)
 
     view.setViewStyle({"style": "outline", "color": "black", "width": 0.1})
 
@@ -428,7 +605,12 @@ def _add_one_submodel(
     )
 
     # 标记ref 值的颜色
-    if ref_map_colors is not None:
+    if (
+        ref_map_colors is not None
+        and colors is not None
+        and res_names is not None
+        and res_idxes is not None
+    ):
         for i in range(len(colors)):
             idx = res_idxes[i]
             res = res_names[i]
@@ -502,178 +684,24 @@ def _add_one_submodel(
     # view.render(viewer=viewer)
 
 
-def pdb2fasta(
-    pdb: str | Bio.PDB.Structure.Structure,
-    output_fasta=None,
-    func_return=False,
-    log_level="DEBUG",
-):
-    """Converts a PDB / CIF file to a FASTA file.
-
-        This function processes the provided PDB file and extracts protein, DNA,
-        RNA sequences, and other molecules appropriately to create a FASTA file.
-    e   1. Proteins:The protein sequence for each chain will be extracted as Chain X Protein.
-        2. DNA and RNA: Bases for DNA (A, T, G, C) will be saved as Chain X DNA and bases for RNA (A, U, G, C) will be saved as Chain X RNA.
-        3. Other molecules: Any unrecognized molecules (e.g., ions, modified molecules) will be labeled as [residue] and stored as Chain X Other molecules.
-        4. Multi-chain complexes: The program supports multi-chain structures in complexes, and the content of each chain will be recorded separately.
-
-        Args:
-            pdb_file (str |): input file path.
-            output_fasta (str | None, optional): output file path. If None, the output file will be named as the basename of the input file with a ".fa" extension. Defaults to None.
-            func_return (bool, optional): If True, return SeqRecord obj. Defaults to False.
-            log_level (str, optional): log level. Defaults to "WARNING".
-    """
-    lm.set_names(func_name="pdb2fasta")
-    lm.set_level(log_level)
-    lm.logger.debug(
-        f"""\
-Params:
--------
-input: {input}
-output_fasta: {output_fasta}
-log_level: {log_level}"""
-    )
-    if isinstance(pdb, Bio.PDB.Structure.Structure):
-        structure = pdb
-    elif isinstance(pdb, str) and is_file(pdb, log_level=log_level):
-        # 从文件名输入或者命令行输入
-        # 设置输出文件名
-        if output_fasta is None:
-            if pdb.endswith(".gz"):
-                idx = ".".join(os.path.basename(pdb).split(".")[:-2])
-            else:
-                idx = ".".join(os.path.basename(pdb).split(".")[:-1])
-            output_fasta = f"{idx}.fa" if idx else "output.fa"
-            lm.logger.debug(f"Output is not defined, set output to {output_fasta}")
-        else:
-            assert output_fasta.endswith(".fa") | output_fasta.endswith(".fasta"), (
-                "Output file must have a '.fa' / '.fasta' suffix"
-            )
-            idx = ".".join(os.path.basename(output_fasta).split(".fa")[:-1])
-
-        # 检查输入文件是否存在
-        if not os.path.exists(pdb):
-            lm.logger.error(f"Input file not found: {pdb}")
-            raise BioatFileNotFoundError(f"Input file not found: {pdb}")
-
-        # 检测文件格式并选择解析器
-        if pdb.endswith(".cif") or pdb.endswith(".cif.gz"):
-            parser = MMCIFParser(QUIET=True)
-        elif pdb.endswith(".pdb") or pdb.endswith(".pdb.gz"):
-            parser = PDBParser(QUIET=True)
-        else:
-            lm.logger.error("Only .pdb and .cif files are allowed.")
-            raise BioatFileFormatError("Only .pdb and .cif files are allowed.")
-
-        # 打开文件，支持 gzip 格式
-        input_handler = gzip.open(pdb, "rt") if pdb.endswith(".gz") else open(pdb, "rt")
-        structure = parser.get_structure(idx, input_handler)
-    else:
-        raise BioatInvalidParameterError(
-            f"Invalid input format. pdb must be a file path or Bio.PDB.Structure.Structure, got {type(pdb)}"
-        )
-
-    lm.logger.debug(f"Processing structure: {structure.id}")
-
-    records = []
-
-    # 遍历结构中的所有模型和链，提取序列
-    for model in structure:
-        for chain in model:
-            lm.logger.debug(f"processing chain {chain.id}")
-            # 找出当前链中所有氨基酸的编号范围
-            residue_ids = [residue.id[1] for residue in chain]
-
-            if not residue_ids:
-                continue
-
-            min_res_id, max_res_id = min(residue_ids), max(residue_ids)
-            # 分别初始化序列列表，使用 "-" 占位符填充缺失位置
-            protein_seq = ["-"] * (max_res_id - min_res_id + 1)
-            dna_seq = ["-"] * (max_res_id - min_res_id + 1)
-            rna_seq = ["-"] * (max_res_id - min_res_id + 1)
-            other_seq = ["-"] * (max_res_id - min_res_id + 1)
-
-            for residue in chain:
-                residue_name = residue.resname.strip().upper()  # 标准化残基名称
-                residue_id = residue.id[1] - min_res_id  # 计算相对于最小编号的偏移
-
-                if residue_name in AMINO_ACIDS_3CODE:
-                    # 蛋白质序列，填充氨基酸到相应位置
-                    protein_seq[residue_id] = AMINO_ACIDS_3CODE[residue_name]
-                elif residue_name in AMINO_ACIDS_3CODE_EXTEND:
-                    # 蛋白质序列，填充氨基酸到相应位置
-                    protein_seq[residue_id] = AMINO_ACIDS_3CODE_EXTEND[residue_name]
-                elif residue_name in ("DA", "DT", "DG", "DC"):
-                    # DNA 序列，填充 A, T, G, C
-                    dna_seq[residue_id] = residue_name[1]
-                elif residue_name in ("A", "U", "G", "C"):
-                    # RNA 碱基
-                    rna_seq[residue_id] = residue_name
-                else:
-                    # 其他分子类型，用 [] 标记
-                    other_seq[residue_id] = f"[{residue_name}]"
-
-            # 根据链类型创建 SeqRecord，并添加到 records 列表
-            if any(res != "-" for res in protein_seq):
-                records.append(
-                    SeqRecord(
-                        Seq("".join(protein_seq)),
-                        id=f"{structure.id}|Chain_{chain.id}|Protein",
-                        description=f"Chain {chain.id} Protein",
-                    )
-                )
-            if any(res != "-" for res in dna_seq):
-                records.append(
-                    SeqRecord(
-                        Seq("".join(dna_seq)),
-                        id=f"{structure.id}|Chain_{chain.id}|DNA",
-                        description=f"Chain {chain.id} DNA",
-                    )
-                )
-            if any(res != "-" for res in rna_seq):
-                records.append(
-                    SeqRecord(
-                        Seq("".join(rna_seq)),
-                        id=f"{structure.id}|Chain_{chain.id}|RNA",
-                        description=f"Chain {chain.id} RNA",
-                    )
-                )
-            if any(res != "-" for res in other_seq):
-                records.append(
-                    SeqRecord(
-                        Seq("".join(other_seq)),
-                        id=f"{structure.id}|Chain_{chain.id}|UNKNOWN",
-                        description=f"Chain {chain.id} Other molecules",
-                    )
-                )
-    if output_fasta:
-        # 将所有链的序列保存为 FASTA 文件
-        SeqIO.write(records, output_fasta, "fasta")
-        input_handler.close()
-        lm.logger.info(f"FASTA saved to: {output_fasta}")
-    if func_return:
-        # 如果需要返回 SeqRecord 对象
-        return records
-
-
 # 对齐函数
 def get_cut2ref_aln_info(
-    ref: str | Bio.PDB.Structure.Structure,
-    cut: str | Bio.PDB.Structure.Structure,
+    ref: str | Path | BiopythonStructure,
+    cut: str | Path | BiopythonStructure,
     cal_rmsd=True,
     cal_tmscore=False,
     label1="ref",
     label2="cut",
-    usalign_bin: str = "usalign",
+    usalign_bin: str | Path = "usalign",
     log_level="WARNING",
 ) -> dict:
     """Align cutted pdb to ref pdb using the CA atoms.
+
     Aligns a truncated protein structure (cut) to its full-length reference structure (ref)
-    using Cα atoms and Biopython's Superimposer.
+    using Ca atoms and Biopython's Superimposer.
 
     This function:
-    - Extracts all Cα atoms from `ref` and `cut`
+    - Extracts all Ca atoms from `ref` and `cut`
     - Removes atoms from `ref` at the indices listed in `gap_indices`
     - Aligns the remaining atoms from `cut` to the corresponding positions in `ref`
     - Modifies the `cut` structure in-place to match the aligned orientation
@@ -690,7 +718,7 @@ def get_cut2ref_aln_info(
         cal_tmscore (bool, optional): Whether to calculate TM-score using USalign. Default is False.
         label1 (str, optional): Name for the reference structure. Default is "ref".
         label2 (str, optional): Name for the cut structure. Default is "cut".
-        usalign_bin (str, optional): Path to the USalign binary for TM-score calculation. Default is "usalign".
+        usalign_bin (str or Path, optional): Path to the USalign binary for TM-score calculation. Default is "usalign".
         log_level (str, optional): Logging level. Default is "WARNING".
 
     Returns:
@@ -710,17 +738,17 @@ def get_cut2ref_aln_info(
     """
     # 读取 PDB 文件
     ref, cut = (
-        load_structure(ref, label1, log_level)[0],
-        load_structure(cut, label2, log_level)[0],
+        load_structure(ref, label1)[0],
+        load_structure(cut, label2)[0],
     )
-    aln_info = dict()
+    aln_info = {}
 
     if cal_rmsd:
         lm.logger.debug(
-            f"Calculating RMSD between {label1} and {label2} using CA atoms."
+            f"Calculating RMSD between {label1} and {label2} using CA atoms.",
         )
-        ref_seq = pdb2fasta(ref, func_return=True, log_level=log_level)[0]
-        cut_seq = pdb2fasta(cut, func_return=True, log_level=log_level)[0]
+        ref_seq = cast(Seq, pdb2fasta(ref, func_return=True)[0])  # type: ignore
+        cut_seq = cast(Seq, pdb2fasta(cut, func_return=True)[0])  # type: ignore
         lm.logger.debug(f"fetch seq info from structure: {ref.id} -> {ref_seq}")
         lm.logger.debug(f"fetch seq info from structure:  {cut.id} -> {cut_seq}")
         aligner = instantiate_pairwise_aligner(
@@ -736,7 +764,10 @@ def get_cut2ref_aln_info(
         # 获得gaps的位置
         # Perform alignment
         alignment = get_best_alignment(
-            seq_a=ref_seq.seq, seq_b=cut_seq.seq, aligner=aligner, consider_strand=False
+            seq_a=ref_seq,
+            seq_b=cut_seq,
+            aligner=aligner,
+            consider_strand=False,
         )
         alignment_dict = get_aligned_seq(alignment, reverse=False, letn_match=False)
         gap_indices = [
@@ -747,64 +778,76 @@ def get_cut2ref_aln_info(
         atoms1 = [atoms1[i] for i in range(len(atoms1)) if i not in gap_indices]
         atoms2 = [atom for atom in cut.get_atoms() if atom.get_name() == "CA"]
 
-        assert len(atoms1) == len(atoms2), (
-            "The number of CA atoms in pdb1 and pdb2 are not equal. "
-            "Use ref and cut pdbs predicted by AlphaFold2/ESMFold or other tools "
-            "but not pdb downloaded from <PDB database> to ensure the CA atoms are aligned."
-        )
+        if len(atoms1) != len(atoms2):
+            msg = (
+                f"The number of CA atoms in {label1} and {label2} are not equal. "
+                "Use ref and cut pdbs predicted by AlphaFold2/ESMFold or other tools "
+                "but not pdb downloaded from <PDB database> to ensure the CA atoms are aligned."
+            )
+            raise BioatInvalidParameterError(msg)
+
         # 使用 Biopython 的 Superimposer 进行对齐
         super_imposer = Superimposer()
         super_imposer.set_atoms(atoms1, atoms2)
         super_imposer.apply(cut.get_atoms())  # 修改 pdb 的坐标
         rmsd = super_imposer.rms
         lm.logger.info(
-            f"RMSD (strict, remove gaps in {label1}) between {label1} and {label2}: {rmsd:.3f}"
+            f"RMSD (strict, remove gaps in {label1}) between {label1} and {label2}: {rmsd:.3f}",
         )
         aln_info[label1] = ref
         aln_info[label2] = cut  # 坐标已对齐
         aln_info["RMSD"] = (
             rmsd  # it should be close to the result of pymol cmd.align("cut and name CA", "ref and name CA", cutoff=10.0, cycles=0)[0]
         )
-        aln_info[f"{label1}_seq"] = str(ref_seq.seq)
-        aln_info[f"{label2}_seq"] = str(cut_seq.seq)
+        aln_info[f"{label1}_seq"] = str(ref_seq)
+        aln_info[f"{label2}_seq"] = str(cut_seq)
         aln_info["alignment_dict"] = alignment_dict
         aln_info["gap_indices"] = gap_indices
 
     if cal_tmscore:
         lm.logger.debug(
-            f"Calculating TM-score between {label1} and {label2} using CA atoms."
+            f"Calculating TM-score between {label1} and {label2} using CA atoms.",
         )
         # 判断 usalign_bin 是否可执行
-        if not os.path.isfile(usalign_bin) or not os.access(usalign_bin, os.X_OK):
+        if (
+            isinstance(usalign_bin, str)
+            and "/" not in usalign_bin
+            and shutil.which(usalign_bin) is None
+        ) or (
+            isinstance(usalign_bin, str | Path)
+            and "/" in str(usalign_bin)
+            and not (
+                Path(usalign_bin).expanduser().resolve().is_file()
+                and os.access(Path(usalign_bin).expanduser().resolve(), os.X_OK)
+            )
+        ):
             lm.logger.error(
                 f"usalign binary not found in var 'PATH' or not executable: {usalign_bin}, please set the --usalign_bin <path/to/usalign> param or use conda install -c conda-forge usalign to install it!"
             )
-            raise BioatFileNotFoundError(
-                f"usalign binary not found or not executable: {usalign_bin}"
-            )
-        import tempfile
-
-        from Bio.PDB import PDBIO
+            msg = f"usalign binary not found or not executable: {usalign_bin}"
+            raise BioatFileNotFoundError(msg)
 
         def save_structure_to_tempfile(structure):
             io = PDBIO()
             io.set_structure(structure)
-            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdb")
-            io.save(tmp.name)
-            return tmp.name
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp:
+                io.save(tmp.name)
+                return tmp.name
 
         ref_path = save_structure_to_tempfile(ref)
         cut_path = save_structure_to_tempfile(cut)
         # 使用 usalign 计算 TM-score
-        cmd = [usalign_bin, ref_path, cut_path, "-outfmt", "2", "-mol", "prot"]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        cmd = [str(usalign_bin), ref_path, cut_path, "-outfmt", "2", "-mol", "prot"]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)  # noqa: S603
 
         if result.returncode != 0:
-            raise RuntimeError(f"USalign 执行失败：\n{result.stderr}")
+            msg = f"USalign 执行失败: \n{result.stderr}"
+            raise RuntimeError(msg)
 
         lines = result.stdout.strip().splitlines()
         if len(lines) < 2:
-            raise ValueError("USalign 输出异常，结果缺失。")
+            msg = "USalign 输出异常, 结果缺失。"
+            raise ValueError(msg)
 
         fields = lines[1].split()
         tm1 = float(fields[2])

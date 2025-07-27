@@ -1,4 +1,3 @@
-
 from bioat.lib.libjgi import JGIOperator
 from bioat.logger import LoggerManager
 
@@ -103,6 +102,6 @@ class MetaTools:
         lm.logger.debug("parse xml to json")
         operator.parse_xml()
         lm.logger.debug(
-            "start to download; calculate and display total size of selected data"
+            "start to download; calculate and display total size of selected data",
         )
         operator.download()

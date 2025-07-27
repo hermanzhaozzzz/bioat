@@ -25,9 +25,8 @@ def main() -> None:
     calculator = Cli()
     # print in shell stdout instead of view in `less`
     fire.core.Display = lambda lines, out: print(*lines, file=out)
-    #
-    fire.Fire(calculator, name='bioat')
+    fire.Fire(calculator, name="bioat")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(type(main()))
