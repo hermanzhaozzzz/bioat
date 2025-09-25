@@ -1710,8 +1710,9 @@ class TargetSeq:
             lm.logger.debug(f"df_plot_rec: \n{df_plot_rec}")
             # print(f'df_plot_rec: \n{df_plot_rec}')
             # exit()
-            df_plot_rec.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(map_hex_for_matrix)
             df_plot_rec_cmap = df_plot_rec.copy()
+            df_plot_rec_cmap.iloc[2:, :] = df_plot_rec_cmap.iloc[2:, :].map(map_hex_for_matrix)
+            
             # print(df_plot_rec_cmap)
             # exit()
 
