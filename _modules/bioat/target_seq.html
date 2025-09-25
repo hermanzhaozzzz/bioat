@@ -1787,8 +1787,9 @@
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;df_plot_rec: </span><span class="se">\n</span><span class="si">{</span><span class="n">df_plot_rec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="c1"># print(f&#39;df_plot_rec: \n{df_plot_rec}&#39;)</span>
             <span class="c1"># exit()</span>
-            <span class="n">df_plot_rec</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">df_plot_rec</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_hex_for_matrix</span><span class="p">)</span>
             <span class="n">df_plot_rec_cmap</span> <span class="o">=</span> <span class="n">df_plot_rec</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">df_plot_rec_cmap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">df_plot_rec_cmap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_hex_for_matrix</span><span class="p">)</span>
+            
             <span class="c1"># print(df_plot_rec_cmap)</span>
             <span class="c1"># exit()</span>
 
