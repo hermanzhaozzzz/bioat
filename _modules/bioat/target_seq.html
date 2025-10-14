@@ -1270,50 +1270,39 @@
         <span class="c1"># ----------------------------------------------------------------&gt;&gt;&gt;&gt;&gt;</span>
         <span class="n">label_panel</span> <span class="o">=</span> <span class="n">labels</span>
         <span class="n">ls_bmat</span> <span class="o">=</span> <span class="n">input_tables</span>
-        <span class="n">ls_bmat_table</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path_bmat</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">path_bmat</span> <span class="ow">in</span> <span class="n">ls_bmat</span><span class="p">]</span>
+        <span class="n">ls_bmat_table</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">bmat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ls_bmat_table</span><span class="p">):</span>
-            <span class="n">bmat</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_panel</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-            <span class="n">bmat</span> <span class="o">=</span> <span class="n">bmat</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;chr_name&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">path_bmat</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">label_panel</span><span class="p">,</span> <span class="n">ls_bmat</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="c1"># 读取文件</span>
+            <span class="k">if</span> <span class="n">input_table_header</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path_bmat</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path_bmat</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">bmat_table</span> <span class="o">=</span> <span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># 删除不必要的列</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chr_name&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">df_bmat</span> <span class="ow">in</span> <span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">suffixes</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">df_tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">df_bmat</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-                <span class="n">df_tmp</span><span class="p">,</span> <span class="n">df_bmat</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;chr_index&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="n">suffixes</span>
-            <span class="p">)</span>
+            <span class="c1"># 添加标签列（如果后面需要）</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
 
-        <span class="n">ls_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chr_index&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_panel</span><span class="p">:</span>
-            <span class="n">str_tmp</span> <span class="o">=</span> <span class="s2">&quot;ref_base_ A_ G_ C_ T_ del_count_ insert_count_ ambiguous_count_ deletion_ insertion_ ambiguous_ mut_num_ label_ &quot;</span>
-            <span class="n">ls_tmp</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">str_tmp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_ &quot;</span><span class="p">,</span> <span class="s2">&quot;_</span><span class="si">{label}</span><span class="s2"> &quot;</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">ls_columns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ls_tmp</span><span class="p">)</span>
+            <span class="c1"># 重命名除 chr_index 之外的列，避免 merge 时产生 _x/_y</span>
+            <span class="n">rename_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;chr_index&quot;</span><span class="p">}</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_map</span><span class="p">)</span>
 
-        <span class="n">df_tmp</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">ls_columns</span>
-        <span class="c1"># print(f&#39;df_tmp = \n{df_tmp}&#39;)</span>
-        <span class="c1"># define ref_seq as the referencing sequence</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_bmat_table</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">ref_seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bmat_table</span><span class="p">[</span><span class="s2">&quot;ref_base_&quot;</span> <span class="o">+</span> <span class="n">label_panel</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="c1"># 写回</span>
+            <span class="n">ls_bmat_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls_bmat_table</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">ref_seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bmat_table</span><span class="o">.</span><span class="n">ref_base</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;ref info gets wrong!&quot;</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># 合并所有表，仅 chr_index 对齐</span>
+        <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">df_tmp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;chr_index&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">)</span>
 
         <span class="n">df_bmat_all</span> <span class="o">=</span> <span class="n">df_tmp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="c1"># print(f&#39;df_bmat_all = \n{df_bmat_all}&#39;)</span>
-        <span class="c1"># print(f&#39;ref_seq = \n{ref_seq}&#39;)</span>
-        <span class="c1"># make alignment info</span>
-        <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_seq</span><span class="p">)</span>
-        <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_seq</span><span class="p">)</span>
+
+        <span class="c1"># ref_seq：用第一份表构建</span>
+        <span class="n">ref_seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ls_bmat_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;ref_base_</span><span class="si">{</span><span class="n">label_panel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+
 
         <span class="n">possible_target_region_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">aln_start</span> <span class="o">-</span> <span class="n">region_extend_length</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">possible_target_region_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
@@ -1788,7 +1777,7 @@
             <span class="c1"># print(f&#39;df_plot_rec: \n{df_plot_rec}&#39;)</span>
             <span class="c1"># exit()</span>
             <span class="n">df_plot_rec_cmap</span> <span class="o">=</span> <span class="n">df_plot_rec</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">df_plot_rec_cmap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">df_plot_rec_cmap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_hex_for_matrix</span><span class="p">)</span>
+            <span class="n">df_plot_rec_cmap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">df_plot_rec</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">map_hex_for_matrix</span><span class="p">)</span>
             
             <span class="c1"># print(df_plot_rec_cmap)</span>
             <span class="c1"># exit()</span>
