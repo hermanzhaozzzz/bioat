@@ -1193,50 +1193,39 @@ class TargetSeq:
         # ---------------------------------------------------------------->>>>>
         label_panel = labels
         ls_bmat = input_tables
-        ls_bmat_table = [pd.read_csv(path_bmat, sep="\t") for path_bmat in ls_bmat]
+        ls_bmat_table = []
 
-        for index, bmat in enumerate(ls_bmat_table):
-            bmat["label"] = label_panel[index]
-            bmat = bmat.drop("chr_name", axis=1)
+        for label, path_bmat in zip(label_panel, ls_bmat, strict=False):
+            # 读取文件
+            if input_table_header:
+                df = pd.read_csv(path_bmat, sep="\t")
+            else:
+                df = pd.read_csv(path_bmat, sep="\t", header=None)
 
-        df_tmp = ls_bmat_table[0]
-        bmat_table = ls_bmat_table[0]
+            # 删除不必要的列
+            df = df.drop(columns=["chr_name"], errors="ignore")
 
-        for df_bmat in ls_bmat_table[1:]:
-            suffixes = (f"_{df_tmp.iloc[-1, -1]}", f"_{df_bmat.iloc[0, -1]}")
-            df_tmp = pd.merge(
-                df_tmp, df_bmat, on="chr_index", how="outer", suffixes=suffixes
-            )
+            # 添加标签列（如果后面需要）
+            df["label"] = label
 
-        ls_columns = ["chr_index"]
-        for label in label_panel:
-            str_tmp = "ref_base_ A_ G_ C_ T_ del_count_ insert_count_ ambiguous_count_ deletion_ insertion_ ambiguous_ mut_num_ label_ "
-            ls_tmp = (
-                str_tmp.replace("_ ", "_{label} ")
-                .format(label=label)
-                .strip()
-                .split(" ")
-            )
-            ls_columns.extend(ls_tmp)
+            # 重命名除 chr_index 之外的列，避免 merge 时产生 _x/_y
+            rename_map = {c: f"{c}_{label}" for c in df.columns if c != "chr_index"}
+            df = df.rename(columns=rename_map)
 
-        df_tmp.columns = ls_columns
-        # print(f'df_tmp = \n{df_tmp}')
-        # define ref_seq as the referencing sequence
-        if len(ls_bmat_table) == 1:
-            ref_seq = "".join(bmat_table["ref_base_" + label_panel[0]].tolist())
+            # 写回
+            ls_bmat_table.append(df)
 
-        elif len(ls_bmat_table) > 1:
-            ref_seq = "".join(bmat_table.ref_base)
-        else:
-            msg = "ref info gets wrong!"
-            raise ValueError(msg)
+        # 合并所有表，仅 chr_index 对齐
+        df_tmp = ls_bmat_table[0].copy()
+        for df in ls_bmat_table[1:]:
+            df_tmp = df_tmp.merge(df, on="chr_index", how="outer")
 
         df_bmat_all = df_tmp.copy()
-        # print(f'df_bmat_all = \n{df_bmat_all}')
-        # print(f'ref_seq = \n{ref_seq}')
-        # make alignment info
-        [""] * len(ref_seq)
-        [""] * len(ref_seq)
+
+        # ref_seq：用第一份表构建
+        ref_seq = "".join(ls_bmat_table[0][f"ref_base_{label_panel[0]}"].astype(str).fillna("").tolist())
+
+
 
         possible_target_region_start = max(aln_start - region_extend_length, 0)
         possible_target_region_end = min(
@@ -1711,7 +1700,7 @@ class TargetSeq:
             # print(f'df_plot_rec: \n{df_plot_rec}')
             # exit()
             df_plot_rec_cmap = df_plot_rec.copy()
-            df_plot_rec_cmap.iloc[2:, :] = df_plot_rec_cmap.iloc[2:, :].map(map_hex_for_matrix)
+            df_plot_rec_cmap.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(map_hex_for_matrix)
             
             # print(df_plot_rec_cmap)
             # exit()
