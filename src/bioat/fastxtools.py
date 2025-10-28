@@ -87,12 +87,17 @@ class FastxTools:
                 sep="  ",
                 engine="python",
             )
-            df.columns = ["md5", "filename"]
-            df.md5 = df.md5.map(lambda x: x.lower())
+            if len(df.columns == 1):
+                df.columns = ["md5"]
+                df["filename"] = [file.replace(".md5.txt", "")]
+            else:
+                # for old version
+                df.columns = ["md5", "filename"]
+                df.filename = df.filename + ".gz"
+                df.md5 = df.md5.map(lambda x: x.lower())
         except ValueError as e:
             lm.logger.exception(BioatFileFormatError(e))
             sys.exit(1)
-        df.filename = df.filename + ".gz"
         to_path = file.replace(".txt", "") + ".fix.md5"
         lm.logger.info(f"write to {to_path}")
         df.to_csv(to_path, header=False, index=False, sep="\t")
