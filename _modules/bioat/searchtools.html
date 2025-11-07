@@ -76,6 +76,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioatInvalidOptionError</span>
@@ -297,7 +298,14 @@
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Citations&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span>
             <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">end_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1"># df[&quot;CitePerYear&quot;] = df[&quot;CitePerYear&quot;].round().astype(int)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;CitePerYear&quot;</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># 替换 inf</span>
+            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 用 0 填充 NaN</span>
+            <span class="o">.</span><span class="n">round</span><span class="p">()</span>  <span class="c1"># 四舍五入</span>
+            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># 转换为整数</span>
+        <span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
             <span class="p">[</span>
