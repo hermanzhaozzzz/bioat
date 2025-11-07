@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from bioat.exceptions import BioatInvalidOptionError
@@ -223,7 +224,14 @@ class SearchTools:
         df["CitePerYear"] = df["Citations"] / (
             end_year + 1 - df["Year"].replace(0, end_year + 1)
         )
-        df["CitePerYear"] = df["CitePerYear"].round().astype(int)
+        # df["CitePerYear"] = df["CitePerYear"].round().astype(int)
+        df["CitePerYear"] = (
+            df["CitePerYear"]
+            .replace([np.inf, -np.inf], np.nan)  # 替换 inf
+            .fillna(0)  # 用 0 填充 NaN
+            .round()  # 四舍五入
+            .astype(int)  # 转换为整数
+        )
 
         df = df[
             [
