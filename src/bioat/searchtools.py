@@ -5,7 +5,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -258,6 +257,8 @@ class SearchTools:
 
         if plot:
             try:
+                import matplotlib.pyplot as plt
+
                 # 保证 citation 来自最终排序结果（而不是原始顺序）
                 citation_values = df_sorted["Citations"].tolist()
 

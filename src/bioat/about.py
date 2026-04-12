@@ -17,7 +17,7 @@ Attributes:
                      and author details.
 """
 
-from bioat import (
+from bioat._meta import (
     __AUTHOR__,
     __AUTHOR_EMAIL__,
     __DOC_PAGE__,

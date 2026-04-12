@@ -30,10 +30,7 @@ import shutil
 import sys
 from glob import glob
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from matplotlib.patches import Rectangle
 
 from bioat.exceptions import BioatError, BioatRuntimeError
 from bioat.lib.libpath import HOME
@@ -51,6 +48,14 @@ BIOAT_DEFAULT_FONTS = [
     "Helvetica-Oblique.ttf",
     "Helvetica.ttf",
 ]
+
+
+def _load_plot_modules():
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from matplotlib.patches import Rectangle
+
+    return plt, sns, Rectangle
 
 
 def _copy_fonts(refresh=False, log_level="warning"):
@@ -128,6 +133,7 @@ def init_matplotlib(
     """
     lm.set_names(func_name="init_matplotlib")
     lm.set_level(log_level)
+    plt, sns, _ = _load_plot_modules()
 
     lm.logger.info("Initializing matplotlib")
     _copy_fonts(refresh=refresh, log_level=log_level)
@@ -186,6 +192,8 @@ def init_matplotlib(
 
 
 def plot_colortable(colors, *, ncols=4):
+    plt, _, Rectangle = _load_plot_modules()
+
     cell_width = 212
     cell_height = 22
     swatch_width = 48
@@ -249,6 +257,7 @@ def set_figsize(figsize=(3.5, 2.5)):
     Defined in :numref:`sec_calculus`
     """
     # use_svg_display()
+    plt, _, _ = _load_plot_modules()
     plt.rcParams["figure.figsize"] = figsize
 
 
@@ -289,6 +298,9 @@ def plot(
     """
     if legend is None:
         legend = []
+
+    plt, _, _ = _load_plot_modules()
+
     def has_one_axis(X):  # True if X (tensor or list) has 1 axis
         return (hasattr(X, "ndim") and X.ndim == 1) or (
             isinstance(X, list) and not hasattr(X[0], "__len__")
@@ -402,6 +414,7 @@ def plot_dna_features(
             raise ValueError(msg)
 
     # 设置子图的数量
+    plt, _, _ = _load_plot_modules()
     n = df[col_group].nunique()
     # 创建一个n行1列的子图
     fig, axs = plt.subplots(n, 1, figsize=(fig_width, fig_height * n))

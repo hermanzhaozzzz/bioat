@@ -22,10 +22,7 @@ example 2:
 
 import math
 
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import Rectangle
 
 from bioat.logger import LoggerManager
 
@@ -33,6 +30,9 @@ lm = LoggerManager(mod_name="bioat.lib.libcolor")
 
 
 def plot_colortable(colors, *, ncols=4, sort_colors=True, labels=None):
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
+
     cell_width = 212
     cell_height = 22
     swatch_width = 48
@@ -196,6 +196,8 @@ def map_colors_between_two(base_color, target_color, values):
     Return:
         list: 对应颜色数组（#RRGGBB 格式）。
     """
+    import matplotlib.colors as mcolors
+
     # 创建自定义线性颜色映射
     cmap = mcolors.LinearSegmentedColormap.from_list(
         "custom_cmap",

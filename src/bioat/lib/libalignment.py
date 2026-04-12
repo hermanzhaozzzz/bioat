@@ -37,6 +37,20 @@ from bioat.logger import LoggerManager
 lm = LoggerManager(mod_name="bioat.lib.libalignment")
 
 
+def _set_terminal_gap_scores(
+    aligner: PairwiseAligner,
+    penalty_query_left_gap_score: float,
+    penalty_query_right_gap_score: float,
+) -> None:
+    """Set query terminal gap scores without triggering Biopython deprecation warnings."""
+    try:
+        aligner.left_deletion_score = penalty_query_left_gap_score
+        aligner.right_deletion_score = penalty_query_right_gap_score
+    except AttributeError:
+        aligner.query_left_gap_score = penalty_query_left_gap_score
+        aligner.query_right_gap_score = penalty_query_right_gap_score
+
+
 def instantiate_pairwise_aligner(
     scoring_match: float = 1,
     penalty_mismatch: float = 0.8,
@@ -115,8 +129,11 @@ def instantiate_pairwise_aligner(
         aligner.mismatch = penalty_mismatch
         aligner.open_gap_score = penalty_gap_open
         aligner.extend_gap_score = penalty_gap_extension
-        aligner.query_left_gap_score = penalty_query_left_gap_score
-        aligner.query_right_gap_score = penalty_query_right_gap_score
+        _set_terminal_gap_scores(
+            aligner=aligner,
+            penalty_query_left_gap_score=penalty_query_left_gap_score,
+            penalty_query_right_gap_score=penalty_query_right_gap_score,
+        )
         aligner.wildcard = None
     else:
         if not score_matrix_dict:
@@ -158,8 +175,11 @@ def instantiate_pairwise_aligner(
         # !aligner.mismatch = penalty_mismatch
         aligner.open_gap_score = penalty_gap_open
         aligner.extend_gap_score = penalty_gap_extension
-        aligner.query_left_gap_score = penalty_query_left_gap_score
-        aligner.query_right_gap_score = penalty_query_right_gap_score
+        _set_terminal_gap_scores(
+            aligner=aligner,
+            penalty_query_left_gap_score=penalty_query_left_gap_score,
+            penalty_query_right_gap_score=penalty_query_right_gap_score,
+        )
         aligner.wildcard = None
         # !自定义的打分矩阵中如果有"N"，则wildcard最好注释掉
         # !wildcard是一个特殊字符，用于在序列比对过程中表示一个可以与任何字符匹配的通配符

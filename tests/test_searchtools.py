@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
@@ -59,6 +58,8 @@ def test_save_table(ext, save_fn, tmp_path):
 def test_plot_show_called(monkeypatch):
     if not DEBUG:
         pytest.skip("Skipping...")
+    import matplotlib.pyplot as plt
+
     called = {"show": False}
 
     def fake_show():
@@ -73,6 +74,8 @@ def test_plot_show_called(monkeypatch):
 def test_plot_show_not_called(monkeypatch):
     if not DEBUG:
         pytest.skip("Skipping...")
+    import matplotlib.pyplot as plt
+
     called = {"show": False}
 
     def fake_show():

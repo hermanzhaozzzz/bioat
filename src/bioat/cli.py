@@ -42,21 +42,42 @@ Copyright:
     For commercial use: Not permitted without prior permission from the author.
 """
 
-from bioat import (
-    __VERSION__,
-    BamTools,
-    BedTools,
-    CrisprTools,
-    FastxTools,
-    FoldTools,
-    HiCTools,
-    MetaTools,
-    SearchTools,
-    # SystemTools,
-    TableTools,
-    TargetSeq,
-)
+import ast
+from functools import lru_cache
+from importlib import import_module
+from pathlib import Path
+
 from bioat.about import __ABOUT__
+from bioat._meta import __VERSION__
+
+_TOOL_SPECS = {
+    "bam": ("bioat.bamtools", "BamTools"),
+    "bed": ("bioat.bedtools", "BedTools"),
+    "crispr": ("bioat.crisprtools", "CrisprTools"),
+    "fastx": ("bioat.fastxtools", "FastxTools"),
+    "fold": ("bioat.foldtools", "FoldTools"),
+    "hic": ("bioat.hictools", "HiCTools"),
+    "meta": ("bioat.metatools", "MetaTools"),
+    "search": ("bioat.searchtools", "SearchTools"),
+    "table": ("bioat.tabletools", "TableTools"),
+    "target_seq": ("bioat.target_seq", "TargetSeq"),
+}
+
+
+@lru_cache(maxsize=None)
+def _get_public_tool_methods(module_name: str, class_name: str) -> tuple[str, ...]:
+    module_path = Path(__file__).resolve().parent / f"{module_name.rsplit('.', 1)[1]}.py"
+    tree = ast.parse(module_path.read_text(encoding="utf-8"))
+
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            return tuple(
+                child.name
+                for child in node.body
+                if isinstance(child, ast.FunctionDef) and not child.name.startswith("_")
+            )
+
+    return ()
 
 
 class Cli:
@@ -108,17 +129,54 @@ class Cli:
     # """
 
     def __init__(self):
-        self.bam = BamTools()
-        self.bed = BedTools()
-        self.crispr = CrisprTools()
-        self.fastx = FastxTools()
-        self.fold = FoldTools()
-        self.hic = HiCTools()
-        self.meta = MetaTools()
-        self.search = SearchTools()
-        # self.system = SystemTools()
-        self.table = TableTools()
-        self.target_seq = TargetSeq()
+        self._tool_cache = {}
+
+    def _load_tool(self, name: str):
+        if name not in self._tool_cache:
+            module_name, class_name = _TOOL_SPECS[name]
+            tool_class = getattr(import_module(module_name), class_name)
+            self._tool_cache[name] = tool_class()
+        return self._tool_cache[name]
+
+    @property
+    def bam(self):
+        return self._load_tool("bam")
+
+    @property
+    def bed(self):
+        return self._load_tool("bed")
+
+    @property
+    def crispr(self):
+        return self._load_tool("crispr")
+
+    @property
+    def fastx(self):
+        return self._load_tool("fastx")
+
+    @property
+    def fold(self):
+        return self._load_tool("fold")
+
+    @property
+    def hic(self):
+        return self._load_tool("hic")
+
+    @property
+    def meta(self):
+        return self._load_tool("meta")
+
+    @property
+    def search(self):
+        return self._load_tool("search")
+
+    @property
+    def table(self):
+        return self._load_tool("table")
+
+    @property
+    def target_seq(self):
+        return self._load_tool("target_seq")
 
     @classmethod
     def about(cls):
@@ -145,15 +203,13 @@ class Cli:
             str: A tree formatted string representing the available
                  subcommands and their attributes.
         """
-        # ! do not change OBJ method to CLASS method
-        # ! because some attr and methods do not exit before obj instantiation
         out = ""
         for att in dir(self):
             if not att.startswith("_"):
                 out += f"{att}\n"
-
-                for sub_att in dir(getattr(self, att)):
-                    if not sub_att.startswith("_"):
+                if att in _TOOL_SPECS:
+                    module_name, class_name = _TOOL_SPECS[att]
+                    for sub_att in _get_public_tool_methods(module_name, class_name):
                         out += f"  ├── {sub_att}\n"
         return out
 

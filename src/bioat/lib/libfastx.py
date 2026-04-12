@@ -4,11 +4,8 @@ import re
 import subprocess
 import sys
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from Bio import SeqIO
 from tqdm import tqdm
 
@@ -837,6 +834,10 @@ def calculate_length_distribution(
 ):
     lm.set_names(func_name="calculate_length_distribution")
     lm.set_level(log_level)
+
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    import seaborn as sns
 
     if not table:
         table = f"{file}.lengths"

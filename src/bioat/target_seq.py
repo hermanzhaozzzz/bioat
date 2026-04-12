@@ -24,13 +24,9 @@ import gzip
 import os.path
 import sys
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from Bio.Seq import Seq
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Rectangle
 from tabulate import tabulate
 
 from bioat.exceptions import (
@@ -47,6 +43,18 @@ from bioat.logger import LoggerManager
 lm = LoggerManager(mod_name="bioat.target_seq")
 
 set_option(log_level="ERROR")
+
+
+def _load_matplotlib_plotting():
+    import matplotlib as mpl
+
+    mpl.use("Agg")
+
+    import matplotlib.pyplot as plt
+    from matplotlib.collections import PatchCollection
+    from matplotlib.patches import Rectangle
+
+    return mpl, plt, PatchCollection, Rectangle
 
 
 class TargetSeq:
@@ -131,6 +139,7 @@ class TargetSeq:
         """
         lm.set_names(func_name="region_heatmap")
         lm.set_level(log_level)
+        mpl, plt, PatchCollection, Rectangle = _load_matplotlib_plotting()
 
         if get_built_in_target_seq:
             lm.logger.info(
@@ -398,7 +407,6 @@ class TargetSeq:
         # make plot
         # set color
         # show indel
-        mpl.use("Agg")
         np.set_printoptions(suppress=True)
 
         indel_plot_state = show_indel
@@ -870,6 +878,7 @@ class TargetSeq:
         """
         lm.set_names(func_name="region_heatmap_compare")
         lm.set_level(log_level)
+        mpl, plt, PatchCollection, Rectangle = _load_matplotlib_plotting()
 
         base_color_dict = {
             "A": "#04E3E3",
@@ -1241,7 +1250,6 @@ class TargetSeq:
         # make plot
         # set color
         # show indel
-        mpl.use("Agg")
         np.set_printoptions(suppress=True)
 
         box_border_plot_state = box_border

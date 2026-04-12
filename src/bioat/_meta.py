@@ -1,7 +1,52 @@
-from importlib.metadata import metadata
+from importlib.metadata import PackageNotFoundError, metadata
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback
+    tomllib = None
 
 __PKG_NAME__ = "bioat"  # !don't change this line unless you know what you are doing
-__META__ = metadata(__PKG_NAME__)
+
+
+def _load_pyproject_fallback() -> dict[str, str]:
+    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    fallback = {
+        "Author": "Huanan Herman Zhao",
+        "Author-email": "hermanzhaozzzz@gmail.com",
+        "Summary": (
+            "bioat, a python package & command line toolkit for Bioinformatics "
+            "and data science!"
+        ),
+        "License": "Apache-2.0",
+        "Version": "0.0.0",
+    }
+
+    if tomllib is None or not pyproject.exists():
+        return fallback
+
+    with pyproject.open("rb") as handle:
+        project = tomllib.load(handle).get("project", {})
+
+    author = next(iter(project.get("authors", [])), {})
+    license_info = project.get("license", {})
+    fallback.update(
+        {
+            "Author": author.get("name", fallback["Author"]),
+            "Author-email": author.get("email", fallback["Author-email"]),
+            "Summary": project.get("description", fallback["Summary"]),
+            "License": license_info.get("text", fallback["License"]),
+            "Version": project.get("version", fallback["Version"]),
+        }
+    )
+    return fallback
+
+
+try:
+    __META__ = metadata(__PKG_NAME__)
+except PackageNotFoundError:
+    __META__ = _load_pyproject_fallback()
+
 __AUTHOR__ = __META__["Author"]
 __AUTHOR_EMAIL__ = __META__["Author-email"]
 __DESCRIPTION__ = __META__["Summary"]

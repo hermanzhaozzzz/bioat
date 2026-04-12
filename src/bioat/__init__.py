@@ -4,10 +4,9 @@ BioAT also can be a command-line tool.
 It is a bioinformatic tool/pkg bundle for python.
 """
 
-# !use "# ruff: isort: skip_file" annotation to skip this file when sorting imports
-# ruff: isort: skip_file
+from importlib import import_module
+
 from bioat._meta import (
-    __PKG_NAME__,
     __AUTHOR__,
     __AUTHOR_EMAIL__,
     __DESCRIPTION__,
@@ -16,22 +15,38 @@ from bioat._meta import (
     __HOME_PAGE__,
     __ISSUE_PAGE__,
     __LICENSE__,
+    __PKG_NAME__,
     __VERSION__,
 )
 
-from bioat.bamtools import BamTools
-from bioat.bedtools import BedTools
-from bioat.crisprtools import CrisprTools
+_LAZY_ATTRS = {
+    "BamTools": ("bioat.bamtools", "BamTools"),
+    "BedTools": ("bioat.bedtools", "BedTools"),
+    "CrisprTools": ("bioat.crisprtools", "CrisprTools"),
+    "FastxTools": ("bioat.fastxtools", "FastxTools"),
+    "FoldTools": ("bioat.foldtools", "FoldTools"),
+    "HiCTools": ("bioat.hictools", "HiCTools"),
+    "MetaTools": ("bioat.metatools", "MetaTools"),
+    "SearchTools": ("bioat.searchtools", "SearchTools"),
+    "SystemTools": ("bioat.systemtools", "SystemTools"),
+    "TableTools": ("bioat.tabletools", "TableTools"),
+    "TargetSeq": ("bioat.target_seq", "TargetSeq"),
+}
 
-from bioat.fastxtools import FastxTools
-from bioat.foldtools import FoldTools
-from bioat.hictools import HiCTools
 
-from bioat.metatools import MetaTools
-from bioat.searchtools import SearchTools
-from bioat.systemtools import SystemTools
-from bioat.tabletools import TableTools
-from bioat.target_seq import TargetSeq
+def __getattr__(name: str):
+    if name not in _LAZY_ATTRS:
+        msg = f"module {__name__!r} has no attribute {name!r}"
+        raise AttributeError(msg)
+
+    module_name, attr_name = _LAZY_ATTRS[name]
+    value = getattr(import_module(module_name), attr_name)
+    globals()[name] = value
+    return value
+
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))
 
 
 __all__ = [
