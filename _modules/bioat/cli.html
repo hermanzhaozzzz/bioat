@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.cli &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -112,21 +112,42 @@
 <span class="sd">    For commercial use: Not permitted without prior permission from the author.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">bioat</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">__VERSION__</span><span class="p">,</span>
-    <span class="n">BamTools</span><span class="p">,</span>
-    <span class="n">BedTools</span><span class="p">,</span>
-    <span class="n">CrisprTools</span><span class="p">,</span>
-    <span class="n">FastxTools</span><span class="p">,</span>
-    <span class="n">FoldTools</span><span class="p">,</span>
-    <span class="n">HiCTools</span><span class="p">,</span>
-    <span class="n">MetaTools</span><span class="p">,</span>
-    <span class="n">SearchTools</span><span class="p">,</span>
-    <span class="c1"># SystemTools,</span>
-    <span class="n">TableTools</span><span class="p">,</span>
-    <span class="n">TargetSeq</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.about</span><span class="w"> </span><span class="kn">import</span> <span class="n">__ABOUT__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioat._meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">__VERSION__</span>
+
+<span class="n">_TOOL_SPECS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;bam&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.bamtools&quot;</span><span class="p">,</span> <span class="s2">&quot;BamTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;bed&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.bedtools&quot;</span><span class="p">,</span> <span class="s2">&quot;BedTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;crispr&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.crisprtools&quot;</span><span class="p">,</span> <span class="s2">&quot;CrisprTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;fastx&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.fastxtools&quot;</span><span class="p">,</span> <span class="s2">&quot;FastxTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;fold&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.foldtools&quot;</span><span class="p">,</span> <span class="s2">&quot;FoldTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;hic&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.hictools&quot;</span><span class="p">,</span> <span class="s2">&quot;HiCTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;meta&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.metatools&quot;</span><span class="p">,</span> <span class="s2">&quot;MetaTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.searchtools&quot;</span><span class="p">,</span> <span class="s2">&quot;SearchTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.tabletools&quot;</span><span class="p">,</span> <span class="s2">&quot;TableTools&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;target_seq&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bioat.target_seq&quot;</span><span class="p">,</span> <span class="s2">&quot;TargetSeq&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_public_tool_methods</span><span class="p">(</span><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="n">module_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.py&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">module_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">class_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">()</span>
 
 
 <div class="viewcode-block" id="Cli">
@@ -180,17 +201,54 @@
     <span class="c1"># &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bam</span> <span class="o">=</span> <span class="n">BamTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bed</span> <span class="o">=</span> <span class="n">BedTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">crispr</span> <span class="o">=</span> <span class="n">CrisprTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fastx</span> <span class="o">=</span> <span class="n">FastxTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="n">FoldTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hic</span> <span class="o">=</span> <span class="n">HiCTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">MetaTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">search</span> <span class="o">=</span> <span class="n">SearchTools</span><span class="p">()</span>
-        <span class="c1"># self.system = SystemTools()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">TableTools</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_seq</span> <span class="o">=</span> <span class="n">TargetSeq</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tool_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tool_cache</span><span class="p">:</span>
+            <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span> <span class="o">=</span> <span class="n">_TOOL_SPECS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">tool_class</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">),</span> <span class="n">class_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tool_cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool_class</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tool_cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;bam&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;bed&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crispr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;crispr&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fastx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;fastx&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;fold&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;hic&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tool</span><span class="p">(</span><span class="s2">&quot;target_seq&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Cli.about">
 <a class="viewcode-back" href="../../bioat.html#bioat.cli.Cli.about">[docs]</a>
@@ -222,15 +280,13 @@
 <span class="sd">            str: A tree formatted string representing the available</span>
 <span class="sd">                 subcommands and their attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># ! do not change OBJ method to CLASS method</span>
-        <span class="c1"># ! because some attr and methods do not exit before obj instantiation</span>
         <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">att</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
                 <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">att</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-                <span class="k">for</span> <span class="n">sub_att</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">att</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_att</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">_TOOL_SPECS</span><span class="p">:</span>
+                    <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span> <span class="o">=</span> <span class="n">_TOOL_SPECS</span><span class="p">[</span><span class="n">att</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">sub_att</span> <span class="ow">in</span> <span class="n">_get_public_tool_methods</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
                         <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  ├── </span><span class="si">{</span><span class="n">sub_att</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">out</span></div>
 

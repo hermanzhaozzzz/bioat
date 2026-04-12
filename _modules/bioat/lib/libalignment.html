@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>bioat.lib.libalignment &mdash; Unknown Project Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -107,6 +107,20 @@
 <span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libalignment&quot;</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_terminal_gap_scores</span><span class="p">(</span>
+    <span class="n">aligner</span><span class="p">:</span> <span class="n">PairwiseAligner</span><span class="p">,</span>
+    <span class="n">penalty_query_left_gap_score</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">penalty_query_right_gap_score</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set query terminal gap scores without triggering Biopython deprecation warnings.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">left_deletion_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">right_deletion_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_left_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
+        <span class="n">aligner</span><span class="o">.</span><span class="n">query_right_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+
+
 <div class="viewcode-block" id="instantiate_pairwise_aligner">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libalignment.instantiate_pairwise_aligner">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">instantiate_pairwise_aligner</span><span class="p">(</span>
@@ -187,8 +201,11 @@
         <span class="n">aligner</span><span class="o">.</span><span class="n">mismatch</span> <span class="o">=</span> <span class="n">penalty_mismatch</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">open_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_open</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">extend_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_extension</span>
-        <span class="n">aligner</span><span class="o">.</span><span class="n">query_left_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
-        <span class="n">aligner</span><span class="o">.</span><span class="n">query_right_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+        <span class="n">_set_terminal_gap_scores</span><span class="p">(</span>
+            <span class="n">aligner</span><span class="o">=</span><span class="n">aligner</span><span class="p">,</span>
+            <span class="n">penalty_query_left_gap_score</span><span class="o">=</span><span class="n">penalty_query_left_gap_score</span><span class="p">,</span>
+            <span class="n">penalty_query_right_gap_score</span><span class="o">=</span><span class="n">penalty_query_right_gap_score</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">wildcard</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">score_matrix_dict</span><span class="p">:</span>
@@ -230,8 +247,11 @@
         <span class="c1"># !aligner.mismatch = penalty_mismatch</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">open_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_open</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">extend_gap_score</span> <span class="o">=</span> <span class="n">penalty_gap_extension</span>
-        <span class="n">aligner</span><span class="o">.</span><span class="n">query_left_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_left_gap_score</span>
-        <span class="n">aligner</span><span class="o">.</span><span class="n">query_right_gap_score</span> <span class="o">=</span> <span class="n">penalty_query_right_gap_score</span>
+        <span class="n">_set_terminal_gap_scores</span><span class="p">(</span>
+            <span class="n">aligner</span><span class="o">=</span><span class="n">aligner</span><span class="p">,</span>
+            <span class="n">penalty_query_left_gap_score</span><span class="o">=</span><span class="n">penalty_query_left_gap_score</span><span class="p">,</span>
+            <span class="n">penalty_query_right_gap_score</span><span class="o">=</span><span class="n">penalty_query_right_gap_score</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">aligner</span><span class="o">.</span><span class="n">wildcard</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># !自定义的打分矩阵中如果有&quot;N&quot;，则wildcard最好注释掉</span>
         <span class="c1"># !wildcard是一个特殊字符，用于在序列比对过程中表示一个可以与任何字符匹配的通配符</span>
