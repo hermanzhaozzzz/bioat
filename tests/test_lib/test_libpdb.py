@@ -22,7 +22,7 @@ from bioat.lib.libpdb import (
     structure2string,
 )
 
-from ._pytest_meta import DATA_PATH
+from .._pytest_meta import DATA_PATH
 
 ref_fasta_file = DATA_PATH / "pdb/EGFP_4EUL_ref.fa"
 ref_pdb_file = DATA_PATH / "pdb/EGFP_4EUL_ref.pdb"
