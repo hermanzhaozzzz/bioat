@@ -98,7 +98,9 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
@@ -118,6 +120,16 @@
     <span class="s2">&quot;Helvetica-Oblique.ttf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Helvetica.ttf&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="n">BIOAT_MORANDI_PALETTE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;#8FA58E&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#8BA4B8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#C8B6A6&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#B4867A&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#A792A6&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#D0C2A4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#A7B6A3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;#7D8C99&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_plot_modules</span><span class="p">():</span>
@@ -126,6 +138,106 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rectangle</span>
 
     <span class="k">return</span> <span class="n">plt</span><span class="p">,</span> <span class="n">sns</span><span class="p">,</span> <span class="n">Rectangle</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_svg_namespaces</span><span class="p">(</span><span class="n">svg_path</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ns</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">svg_path</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;start-ns&quot;</span><span class="p">]):</span>
+        <span class="n">prefix</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">ns</span>
+        <span class="n">ET</span><span class="o">.</span><span class="n">register_namespace</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_adjacent_svg_text_spans</span><span class="p">(</span><span class="n">svg_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge adjacent Matplotlib SVG tspan glyphs for easier Illustrator edits.&quot;&quot;&quot;</span>
+    <span class="n">svg_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">svg_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">svg_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">_register_svg_namespaces</span><span class="p">(</span><span class="n">svg_path</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">svg_path</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+    <span class="n">namespace</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+        <span class="n">namespace</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">text_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="se">}}</span><span class="s2">text&quot;</span> <span class="k">if</span> <span class="n">namespace</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span>
+    <span class="n">tspan_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="se">}}</span><span class="s2">tspan&quot;</span> <span class="k">if</span> <span class="n">namespace</span> <span class="k">else</span> <span class="s2">&quot;tspan&quot;</span>
+
+    <span class="n">merged_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">text_tag</span><span class="p">):</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">children</span><span class="p">):</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="n">tspan_tag</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="n">child</span><span class="p">]</span>
+            <span class="n">group_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">))</span>
+            <span class="n">next_idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">next_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">children</span><span class="p">):</span>
+                <span class="n">next_child</span> <span class="o">=</span> <span class="n">children</span><span class="p">[</span><span class="n">next_idx</span><span class="p">]</span>
+                <span class="n">next_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">next_child</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">next_child</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="n">tspan_tag</span> <span class="ow">or</span> <span class="n">next_key</span> <span class="o">!=</span> <span class="n">group_key</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_child</span><span class="p">)</span>
+                <span class="n">next_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">span</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">group</span><span class="p">):</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">span</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">group</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="n">text</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">span</span><span class="p">)</span>
+                <span class="n">merged_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">next_idx</span>
+
+    <span class="k">if</span> <span class="n">merged_count</span><span class="p">:</span>
+        <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">svg_path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">svg_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.bioat_tmp&quot;</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">xml_declaration</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">svg_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged_count</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_svg_savefig_target</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;svg&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.svg&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_patch_savefig_for_illustrator</span><span class="p">(</span><span class="n">plt</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">,</span> <span class="s2">&quot;_bioat_illustrator_patch&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">original_savefig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">savefig_for_illustrator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">original_savefig</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fname&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">_is_svg_savefig_target</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">merged_count</span> <span class="o">=</span> <span class="n">_merge_adjacent_svg_text_spans</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">merged_count</span><span class="p">:</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Post-processed SVG for Illustrator-friendly text spans: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">merged_count</span><span class="si">}</span><span class="s2"> adjacent tspans merged).&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="n">BioatRuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Failed to post-process SVG for Illustrator-friendly text &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;spans: </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">; </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">savefig_for_illustrator</span><span class="o">.</span><span class="n">_bioat_illustrator_patch</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">savefig_for_illustrator</span><span class="o">.</span><span class="n">_bioat_original_savefig</span> <span class="o">=</span> <span class="n">original_savefig</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span> <span class="o">=</span> <span class="n">savefig_for_illustrator</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">):</span>
@@ -174,32 +286,34 @@
 <div class="viewcode-block" id="init_matplotlib">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libplot.init_matplotlib">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">init_matplotlib</span><span class="p">(</span>
-    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;seaborn-v0_8-white&quot;</span><span class="p">,</span>
     <span class="n">font</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span>
     <span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">sns_context</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
-    <span class="n">sns_style</span><span class="o">=</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">,</span>
-    <span class="n">sns_palette</span><span class="o">=</span><span class="s2">&quot;deep&quot;</span><span class="p">,</span>
-    <span class="n">sns_font_scale</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">sns_style</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">sns_palette</span><span class="o">=</span><span class="n">BIOAT_MORANDI_PALETTE</span><span class="p">,</span>
+    <span class="n">sns_font_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">figure_dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
     <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Easily set matplotlib style.</span>
 
-<span class="sd">    :param style: matplotlib style, defaults to &#39;seaborn-v0_8-white&#39;</span>
-<span class="sd">    :type style: str, optional</span>
 <span class="sd">    :param font: use what font in matplotlib, defaults to &#39;Helvetica&#39;</span>
 <span class="sd">    :type font: str, optional</span>
-<span class="sd">    :param refresh: wether to remove matplotlib font cache and reset it, defaults to False</span>
+<span class="sd">    :param refresh: whether to remove matplotlib font cache and reload bundled fonts, defaults to False</span>
 <span class="sd">    :type refresh: bool, optional</span>
+<span class="sd">    :param sns_context: seaborn context, defaults to &#39;paper&#39;</span>
+<span class="sd">    :type sns_context: str, optional</span>
+<span class="sd">    :param sns_style: seaborn style, defaults to &#39;white&#39;</span>
+<span class="sd">    :type sns_style: str, optional</span>
+<span class="sd">    :param sns_palette: seaborn palette, defaults to a muted Morandi palette</span>
+<span class="sd">    :type sns_palette: str or sequence, optional</span>
+<span class="sd">    :param sns_font_scale: seaborn font scale, defaults to 1.0</span>
+<span class="sd">    :type sns_font_scale: float, optional</span>
+<span class="sd">    :param figure_dpi: default figure resolution, defaults to 300</span>
+<span class="sd">    :type figure_dpi: int, optional</span>
 <span class="sd">    :param log_level: log level, defaults to &#39;INFO&#39;</span>
 <span class="sd">    :type log_level: str, optional</span>
-<span class="sd">    :param set_backend_pdf: whether to use core fonts for the PDF backend, defaults to True</span>
-<span class="sd">    :type set_backend_pdf: bool, optional</span>
-<span class="sd">    :param set_backend_ps: whether to use core fonts for the PS backend, defaults to True</span>
-<span class="sd">    :type set_backend_ps: bool, optional</span>
-<span class="sd">    :param set_backend_svg: whether to use &#39;none&#39; to replace &#39;path&#39; (use font but not plot path for characters)for the SVG backend, defaults to &#39;none&#39;</span>
-<span class="sd">    :type set_backend_svg: str, optional</span>
 <span class="sd">    :raises BioatError: if failed to copy fonts</span>
 <span class="sd">    :raises BioatRuntimeError: if site-packages not found in sys.path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -207,8 +321,29 @@
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">,</span> <span class="n">sns</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_plot_modules</span><span class="p">()</span>
 
+    <span class="c1"># Keep rarely changed knobs in kwargs so the public signature stays simple.</span>
+    <span class="n">style</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">,</span> <span class="s2">&quot;seaborn-v0_8-white&quot;</span><span class="p">)</span>
+    <span class="c1"># Use ASCII hyphen-minus for negative ticks; some fonts/Illustrator imports</span>
+    <span class="c1"># render the Unicode minus as a missing glyph or question mark.</span>
+    <span class="n">axes_unicode_minus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;axes_unicode_minus&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Illustrator-friendly PDF/PS defaults: embed TrueType fonts instead of</span>
+    <span class="c1"># relying on core/AFM fonts, which are less predictable for later editing.</span>
+    <span class="n">set_backend_pdf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_pdf&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">set_backend_ps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_ps&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_svg&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">pdf_fonttype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdf_fonttype&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+    <span class="n">ps_fonttype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ps_fonttype&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+    <span class="c1"># Regular mathtext keeps labels like CFTR$_{wt}$ from mixing italic letters</span>
+    <span class="c1"># with upright digits, making SVG text-span merging more reliable.</span>
+    <span class="n">mathtext_default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mathtext_default&quot;</span><span class="p">,</span> <span class="s2">&quot;regular&quot;</span><span class="p">)</span>
+    <span class="c1"># SVG is the most reliable editable format for Illustrator; patch savefig so</span>
+    <span class="c1"># Matplotlib&#39;s character-level mathtext tspans are merged after export.</span>
+    <span class="n">patch_savefig_for_illustrator</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;patch_savefig_for_illustrator&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initializing matplotlib&quot;</span><span class="p">)</span>
     <span class="n">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;init_matplotlib&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;set: plt.style.use(&#39;</span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;# set matplotlib style theme</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -220,26 +355,41 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">font</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;font.sans-serif&#39;] = [&#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">font</span><span class="p">]</span>
+    <span class="c1"># 300 dpi is a safe publication default; final figure dimensions should</span>
+    <span class="c1"># still be controlled by figsize, usually width ~= 7 inches.</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;figure.dpi&#39;] = </span><span class="si">{</span><span class="n">figure_dpi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">figure_dpi</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;axes.unicode_minus&#39;] = </span><span class="si">{</span><span class="n">axes_unicode_minus</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes_unicode_minus</span>
 
-    <span class="c1"># set backends</span>
-    <span class="n">set_backend_pdf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_pdf&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">set_backend_ps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_ps&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_svg&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="c1"># Preserve mathtext as editable text where possible rather than forcing</span>
+    <span class="c1"># inconsistent italic/upright fragments in vector editors.</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;mathtext.default&#39;] = &#39;</span><span class="si">{</span><span class="n">mathtext_default</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;mathtext.default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mathtext_default</span>
 
-    <span class="k">if</span> <span class="n">set_backend_pdf</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.use14corefonts&#39;] = </span><span class="si">{</span><span class="n">set_backend_pdf</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;# whether to use core fonts for the PDF backend</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.use14corefonts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_pdf</span>
-    <span class="k">if</span> <span class="n">set_backend_ps</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.useafm&#39;] = </span><span class="si">{</span><span class="n">set_backend_ps</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;# whether to use core fonts for the PS backend&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.useafm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_ps</span>
+    <span class="c1"># For Illustrator editing, embedded TrueType fonts are usually more useful</span>
+    <span class="c1"># than PDF/PS core fonts; this improves editability but cannot fully control</span>
+    <span class="c1"># Illustrator&#39;s PDF text-object grouping.</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.use14corefonts&#39;] = </span><span class="si">{</span><span class="n">set_backend_pdf</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;# Illustrator-friendly default: embed TrueType fonts instead of using PDF core fonts</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.use14corefonts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_pdf</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.fonttype&#39;] = </span><span class="si">{</span><span class="n">pdf_fonttype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdf_fonttype</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.useafm&#39;] = </span><span class="si">{</span><span class="n">set_backend_ps</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;# Illustrator-friendly default: embed TrueType fonts instead of using PS AFM core fonts&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.useafm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_ps</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.fonttype&#39;] = </span><span class="si">{</span><span class="n">ps_fonttype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps_fonttype</span>
     <span class="k">if</span> <span class="n">set_backend_svg</span><span class="p">:</span>
+        <span class="c1"># Keep SVG text as text instead of paths; the savefig patch below then</span>
+        <span class="c1"># merges Matplotlib&#39;s per-character mathtext tspans.</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;svg.fonttype&#39;] = &#39;</span><span class="si">{</span><span class="n">set_backend_svg</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;# whether to use &#39;none&#39; to replace &#39;path&#39; (use font but not plot path for characters)for the SVG backend&quot;</span><span class="p">,</span>
@@ -247,10 +397,6 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;svg.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_svg</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;matplotlib initialized successfully&quot;</span><span class="p">)</span>
 
-    <span class="n">sns_context</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sns_context&quot;</span><span class="p">,</span> <span class="s2">&quot;paper&quot;</span><span class="p">)</span>
-    <span class="n">sns_style</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sns_style&quot;</span><span class="p">,</span> <span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
-    <span class="n">sns_palette</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sns_palette&quot;</span><span class="p">,</span> <span class="s2">&quot;deep&quot;</span><span class="p">)</span>
-    <span class="n">sns_font_scale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sns_font_scale&quot;</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">)</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span>
         <span class="n">context</span><span class="o">=</span><span class="n">sns_context</span><span class="p">,</span>
         <span class="n">style</span><span class="o">=</span><span class="n">sns_style</span><span class="p">,</span>
@@ -260,7 +406,23 @@
     <span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;set: sns.set_theme(context=&#39;</span><span class="si">{</span><span class="n">sns_context</span><span class="si">}</span><span class="s2">&#39;, style=&#39;</span><span class="si">{</span><span class="n">sns_style</span><span class="si">}</span><span class="s2">&#39;, palette=&#39;</span><span class="si">{</span><span class="n">sns_palette</span><span class="si">}</span><span class="s2">&#39;, font=&#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;, font_scale=</span><span class="si">{</span><span class="n">sns_font_scale</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Suggested publication figure command: &quot;</span>
+        <span class="s2">&quot;fig, ax = plt.subplots(figsize=(7, height), dpi=300)  &quot;</span>
+        <span class="s2">&quot;# replace height with the panel layout height&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">patch_savefig_for_illustrator</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_patch_savefig_for_illustrator</span><span class="p">(</span><span class="n">plt</span><span class="p">):</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Patched plt.savefig: SVG outputs will be post-processed for &quot;</span>
+                <span class="s2">&quot;Illustrator-friendly text spans.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;plt.savefig already patched: SVG outputs will be post-processed &quot;</span>
+                <span class="s2">&quot;for Illustrator-friendly text spans.&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
 
 
 
