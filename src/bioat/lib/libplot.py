@@ -28,9 +28,7 @@ import math
 import os
 import shutil
 import sys
-import xml.etree.ElementTree as ET
 from glob import glob
-from pathlib import Path
 
 import pandas as pd
 
@@ -68,106 +66,6 @@ def _load_plot_modules():
     from matplotlib.patches import Rectangle
 
     return plt, sns, Rectangle
-
-
-def _register_svg_namespaces(svg_path):
-    for _, ns in ET.iterparse(svg_path, events=["start-ns"]):
-        prefix, uri = ns
-        ET.register_namespace(prefix, uri)
-
-
-def _merge_adjacent_svg_text_spans(svg_path):
-    """Merge adjacent Matplotlib SVG tspan glyphs for easier Illustrator edits."""
-    svg_path = Path(svg_path)
-    if not svg_path.exists():
-        return 0
-
-    _register_svg_namespaces(svg_path)
-    tree = ET.parse(svg_path)
-    root = tree.getroot()
-    namespace = ""
-    if root.tag.startswith("{"):
-        namespace = root.tag.split("}", maxsplit=1)[0][1:]
-    text_tag = f"{{{namespace}}}text" if namespace else "text"
-    tspan_tag = f"{{{namespace}}}tspan" if namespace else "tspan"
-
-    merged_count = 0
-    for text in root.iter(text_tag):
-        children = list(text)
-        idx = 0
-        while idx < len(children):
-            child = children[idx]
-            if child.tag != tspan_tag:
-                idx += 1
-                continue
-
-            group = [child]
-            group_key = (child.attrib.get("y"), child.attrib.get("style"))
-            next_idx = idx + 1
-            while next_idx < len(children):
-                next_child = children[next_idx]
-                next_key = (next_child.attrib.get("y"), next_child.attrib.get("style"))
-                if next_child.tag != tspan_tag or next_key != group_key:
-                    break
-                group.append(next_child)
-                next_idx += 1
-
-            if len(group) > 1 and all(span.text for span in group):
-                child.text = "".join(span.text for span in group)
-                for span in group[1:]:
-                    text.remove(span)
-                merged_count += len(group) - 1
-
-            idx = next_idx
-
-    if merged_count:
-        tmp_path = svg_path.with_name(f"{svg_path.name}.bioat_tmp")
-        tree.write(tmp_path, encoding="utf-8", xml_declaration=True)
-        os.replace(tmp_path, svg_path)
-    return merged_count
-
-
-def _is_svg_savefig_target(fname, kwargs):
-    if fname is None or not isinstance(fname, (str, os.PathLike)):
-        return False
-    fmt = kwargs.get("format")
-    if fmt and str(fmt).lower() == "svg":
-        return True
-    return Path(fname).suffix.lower() == ".svg"
-
-
-def _patch_savefig_for_illustrator(plt):
-    if getattr(plt.savefig, "_bioat_illustrator_patch", False):
-        return False
-
-    original_savefig = plt.savefig
-
-    def savefig_for_illustrator(*args, **kwargs):
-        result = original_savefig(*args, **kwargs)
-        fname = kwargs.get("fname")
-        if args:
-            fname = args[0]
-        if _is_svg_savefig_target(fname, kwargs):
-            try:
-                merged_count = _merge_adjacent_svg_text_spans(fname)
-                if merged_count:
-                    lm.logger.info(
-                        "Post-processed SVG for Illustrator-friendly text spans: "
-                        f"{fname} ({merged_count} adjacent tspans merged).",
-                    )
-            except Exception as e:
-                lm.logger.warning(
-                    BioatRuntimeError(
-                        "Failed to post-process SVG for Illustrator-friendly text "
-                        f"spans: {fname}; {e}",
-                    ),
-                )
-        return result
-
-    savefig_for_illustrator._bioat_illustrator_patch = True
-    savefig_for_illustrator._bioat_original_savefig = original_savefig
-    plt.savefig = savefig_for_illustrator
-    return True
 
 
 def _copy_fonts(refresh=False, log_level="warning"):
@@ -254,19 +152,11 @@ def init_matplotlib(
     # Use ASCII hyphen-minus for negative ticks; some fonts/Illustrator imports
     # render the Unicode minus as a missing glyph or question mark.
     axes_unicode_minus = kwargs.get("axes_unicode_minus", False)
-    # Illustrator-friendly PDF/PS defaults: embed TrueType fonts instead of
-    # relying on core/AFM fonts, which are less predictable for later editing.
-    set_backend_pdf = kwargs.get("set_backend_pdf", False)
-    set_backend_ps = kwargs.get("set_backend_ps", False)
-    set_backend_svg = kwargs.get("set_backend_svg", "none")
-    pdf_fonttype = kwargs.get("pdf_fonttype", 42)
-    ps_fonttype = kwargs.get("ps_fonttype", 42)
-    # Regular mathtext keeps labels like CFTR$_{wt}$ from mixing italic letters
-    # with upright digits, making SVG text-span merging more reliable.
-    mathtext_default = kwargs.get("mathtext_default", "regular")
-    # SVG is the most reliable editable format for Illustrator; patch savefig so
-    # Matplotlib's character-level mathtext tspans are merged after export.
-    patch_savefig_for_illustrator = kwargs.get("patch_savefig_for_illustrator", True)
+    # Keep the historical vector backend defaults. The newer editable text
+    # settings made Illustrator split labels into single-character objects.
+    set_backend_pdf = kwargs.get("set_backend_pdf", True)
+    set_backend_ps = kwargs.get("set_backend_ps", True)
+    set_backend_svg = kwargs.get("set_backend_svg", "path")
 
     lm.logger.info("Initializing matplotlib")
     _copy_fonts(refresh=refresh, log_level=log_level)
@@ -292,32 +182,18 @@ def init_matplotlib(
     )
     plt.rcParams["axes.unicode_minus"] = axes_unicode_minus
 
-    # Preserve mathtext as editable text where possible rather than forcing
-    # inconsistent italic/upright fragments in vector editors.
-    lm.logger.info(f"set: plt.rcParams['mathtext.default'] = '{mathtext_default}'")
-    plt.rcParams["mathtext.default"] = mathtext_default
-
-    # For Illustrator editing, embedded TrueType fonts are usually more useful
-    # than PDF/PS core fonts; this improves editability but cannot fully control
-    # Illustrator's PDF text-object grouping.
     lm.logger.info(
         f"set: plt.rcParams['pdf.use14corefonts'] = {set_backend_pdf} \n"
-        "# Illustrator-friendly default: embed TrueType fonts instead of using PDF core fonts\n"
+        "# whether to use core fonts for the PDF backend\n"
         "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)",
     )
     plt.rcParams["pdf.use14corefonts"] = set_backend_pdf
-    lm.logger.info(f"set: plt.rcParams['pdf.fonttype'] = {pdf_fonttype}")
-    plt.rcParams["pdf.fonttype"] = pdf_fonttype
     lm.logger.info(
         f"set: plt.rcParams['ps.useafm'] = {set_backend_ps}\n"
-        "# Illustrator-friendly default: embed TrueType fonts instead of using PS AFM core fonts",
+        "# whether to use core fonts for the PS backend",
     )
     plt.rcParams["ps.useafm"] = set_backend_ps
-    lm.logger.info(f"set: plt.rcParams['ps.fonttype'] = {ps_fonttype}")
-    plt.rcParams["ps.fonttype"] = ps_fonttype
     if set_backend_svg:
-        # Keep SVG text as text instead of paths; the savefig patch below then
-        # merges Matplotlib's per-character mathtext tspans.
         lm.logger.info(
             f"set: plt.rcParams['svg.fonttype'] = '{set_backend_svg}'\n"
             "# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend",
@@ -340,17 +216,6 @@ def init_matplotlib(
         "fig, ax = plt.subplots(figsize=(7, height), dpi=300)  "
         "# replace height with the panel layout height",
     )
-    if patch_savefig_for_illustrator:
-        if _patch_savefig_for_illustrator(plt):
-            lm.logger.info(
-                "Patched plt.savefig: SVG outputs will be post-processed for "
-                "Illustrator-friendly text spans.",
-            )
-        else:
-            lm.logger.info(
-                "plt.savefig already patched: SVG outputs will be post-processed "
-                "for Illustrator-friendly text spans.",
-            )
 
 
 def plot_colortable(colors, *, ncols=4):
