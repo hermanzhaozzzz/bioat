@@ -26,6 +26,7 @@ example 2:
 
 import math
 import os
+import re
 import shutil
 import sys
 from glob import glob
@@ -58,6 +59,10 @@ BIOAT_MORANDI_PALETTE = (
     "#A7B6A3",
     "#7D8C99",
 )
+
+
+_MATH_TITLE_TOKEN_RE = re.compile(r"\$([^$]+)\$")
+_SIMPLE_SCRIPT_RE = re.compile(r"^([_^])(?:\{([^{}\\]+)\}|([^{}\\]))$")
 
 
 def _load_plot_modules():
@@ -111,6 +116,180 @@ def _copy_fonts(refresh=False, log_level="warning"):
         lm.logger.exception(BioatError(f"Failed to copy fonts: {e}"))
 
 
+def _parse_simple_script_title(label):
+    chunks = []
+    pos = 0
+    matched_script = False
+
+    for match in _MATH_TITLE_TOKEN_RE.finditer(label):
+        if match.start() > pos:
+            chunks.append(("text", label[pos : match.start()]))
+
+        body = match.group(1)
+        if "\\" in body:
+            return None
+
+        script_match = _SIMPLE_SCRIPT_RE.fullmatch(body)
+        if script_match is None:
+            return None
+
+        script_mark, braced_text, single_char = script_match.groups()
+        script_text = braced_text if braced_text is not None else single_char
+        chunks.append(("sub" if script_mark == "_" else "sup", script_text))
+        matched_script = True
+        pos = match.end()
+
+    if pos < len(label):
+        chunks.append(("text", label[pos:]))
+
+    if not matched_script:
+        return None
+    return chunks
+
+
+def _patch_simple_script_titles():
+    """Render simple title superscripts/subscripts as editable text chunks."""
+    from matplotlib import rcParams
+    from matplotlib.axes import Axes
+    from matplotlib.offsetbox import AnchoredOffsetbox, DrawingArea, HPacker, TextArea, VPacker
+
+    if getattr(Axes.set_title, "_bioat_simple_script_title_patch", False):
+        return False
+
+    original_set_title = Axes.set_title
+
+    def set_title_with_simple_scripts(
+        self,
+        label,
+        fontdict=None,
+        loc=None,
+        pad=None,
+        *,
+        y=None,
+        **kwargs,
+    ):
+        previous_artist = getattr(self, "_bioat_simple_script_title_artist", None)
+        if previous_artist is not None:
+            try:
+                previous_artist.remove()
+            except ValueError:
+                pass
+            self._bioat_simple_script_title_artist = None
+
+        chunks = _parse_simple_script_title(label) if isinstance(label, str) else None
+        if chunks is None or loc not in (None, "center"):
+            return original_set_title(
+                self,
+                label,
+                fontdict=fontdict,
+                loc=loc,
+                pad=pad,
+                y=y,
+                **kwargs,
+            )
+
+        textprops = {}
+        if fontdict:
+            textprops.update(fontdict)
+        textprops.update(kwargs)
+        textprops.setdefault("fontsize", rcParams["axes.titlesize"])
+        textprops.setdefault("fontweight", rcParams["axes.titleweight"])
+        textprops.setdefault("color", rcParams["text.color"])
+
+        script_props = textprops.copy()
+        fontsize = textprops.get("fontsize", rcParams["axes.titlesize"])
+        script_offset = 1.5
+        if isinstance(fontsize, (int, float)):
+            script_props["fontsize"] = fontsize * 0.7
+            script_offset = max(fontsize * 0.2, 1.0)
+
+        children = []
+        for kind, text in chunks:
+            if not text:
+                continue
+            if kind == "text":
+                children.append(TextArea(text, textprops=textprops))
+            elif kind == "sub":
+                children.append(
+                    VPacker(
+                        children=[
+                            DrawingArea(0, script_offset),
+                            TextArea(text, textprops=script_props),
+                        ],
+                        align="left",
+                        pad=0,
+                        sep=0,
+                    )
+                )
+            elif kind == "sup":
+                children.append(
+                    VPacker(
+                        children=[
+                            TextArea(text, textprops=script_props),
+                            DrawingArea(0, script_offset),
+                        ],
+                        align="left",
+                        pad=0,
+                        sep=0,
+                    )
+                )
+
+        if not children:
+            return original_set_title(
+                self,
+                label,
+                fontdict=fontdict,
+                loc=loc,
+                pad=pad,
+                y=y,
+                **kwargs,
+            )
+
+        title_box = HPacker(children=children, align="baseline", pad=0, sep=0)
+        anchor_y = 1.02 if y is None else y
+        anchored_title = AnchoredOffsetbox(
+            loc="upper center",
+            child=title_box,
+            pad=0,
+            borderpad=0,
+            frameon=False,
+            bbox_to_anchor=(0.5, anchor_y),
+            bbox_transform=self.transAxes,
+        )
+        self.add_artist(anchored_title)
+        self._bioat_simple_script_title_artist = anchored_title
+
+        return original_set_title(
+            self,
+            "",
+            fontdict=fontdict,
+            loc=loc,
+            pad=pad,
+            y=y,
+            **kwargs,
+        )
+
+    set_title_with_simple_scripts._bioat_simple_script_title_patch = True
+    set_title_with_simple_scripts._bioat_original_set_title = original_set_title
+    Axes.set_title = set_title_with_simple_scripts
+    return True
+
+
+def _unpatch_simple_script_titles():
+    from matplotlib.axes import Axes
+
+    original_set_title = getattr(
+        Axes.set_title,
+        "_bioat_original_set_title",
+        None,
+    )
+    if original_set_title is None:
+        return False
+
+    Axes.set_title = original_set_title
+    return True
+
+
 def init_matplotlib(
     font="Helvetica",
     refresh=False,
@@ -149,17 +328,23 @@ def init_matplotlib(
 
     # Keep rarely changed knobs in kwargs so the public signature stays simple.
     style = kwargs.get("style", "seaborn-v0_8-white")
-    # Use ASCII hyphen-minus for negative ticks; some fonts/Illustrator imports
+    # Use ASCII hyphen-minus for negative ticks; some font imports
     # render the Unicode minus as a missing glyph or question mark.
     axes_unicode_minus = kwargs.get("axes_unicode_minus", False)
-    # Keep the historical vector backend defaults. The newer editable text
-    # settings made Illustrator split labels into single-character objects.
-    set_backend_pdf = kwargs.get("set_backend_pdf", True)
-    set_backend_ps = kwargs.get("set_backend_ps", True)
-    set_backend_svg = kwargs.get("set_backend_svg", "path")
+    # Primary vector-editing requirement: keep words grouped as editable text.
+    # Core PDF/PS fonts import more consistently as word-level text boxes; the
+    # simple-subscript title patch avoids mathtext Type 3 glyph paths there.
+    pdf_use14corefonts = kwargs.get("pdf_use14corefonts", True)
+    ps_useafm = kwargs.get("ps_useafm", True)
+    split_simple_math_titles = kwargs.get("split_simple_math_titles", True)
+    set_backend_svg = kwargs.get("set_backend_svg", "none")
 
     lm.logger.info("Initializing matplotlib")
     _copy_fonts(refresh=refresh, log_level=log_level)
+    if split_simple_math_titles:
+        _patch_simple_script_titles()
+    else:
+        _unpatch_simple_script_titles()
     lm.set_names(func_name="init_matplotlib")
     lm.set_level(log_level)
     lm.logger.info(
@@ -183,16 +368,16 @@ def init_matplotlib(
     plt.rcParams["axes.unicode_minus"] = axes_unicode_minus
 
     lm.logger.info(
-        f"set: plt.rcParams['pdf.use14corefonts'] = {set_backend_pdf} \n"
-        "# whether to use core fonts for the PDF backend\n"
+        f"set: plt.rcParams['pdf.use14corefonts'] = {pdf_use14corefonts} \n"
+        "# use core fonts so vector editors keep words grouped as text\n"
         "# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)",
     )
-    plt.rcParams["pdf.use14corefonts"] = set_backend_pdf
+    plt.rcParams["pdf.use14corefonts"] = pdf_use14corefonts
     lm.logger.info(
-        f"set: plt.rcParams['ps.useafm'] = {set_backend_ps}\n"
-        "# whether to use core fonts for the PS backend",
+        f"set: plt.rcParams['ps.useafm'] = {ps_useafm}\n"
+        "# use AFM core fonts so vector editors keep words grouped as text",
     )
-    plt.rcParams["ps.useafm"] = set_backend_ps
+    plt.rcParams["ps.useafm"] = ps_useafm
     if set_backend_svg:
         lm.logger.info(
             f"set: plt.rcParams['svg.fonttype'] = '{set_backend_svg}'\n"
@@ -212,7 +397,7 @@ def init_matplotlib(
         f"set: sns.set_theme(context='{sns_context}', style='{sns_style}', palette='{sns_palette}', font='{font}', font_scale={sns_font_scale})",
     )
     lm.logger.info(
-        "Suggested publication figure command: "
+        "Run this for publication figures: "
         "fig, ax = plt.subplots(figsize=(7, height), dpi=300)  "
         "# replace height with the panel layout height",
     )
