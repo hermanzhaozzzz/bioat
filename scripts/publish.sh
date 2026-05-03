@@ -34,6 +34,52 @@ calc_sha256() {
   fi
 }
 
+run_grayskull_pypi() {
+  local package_name="$1"
+  local output_dir="$2"
+  local grayskull_bin
+  local grayskull_python
+
+  grayskull_bin="$(command -v grayskull)"
+  grayskull_python="$(head -n 1 "$grayskull_bin" | sed 's/^#!//')"
+
+  if [[ -x "$grayskull_python" ]]; then
+    # grayskull 3.1.0 can fail when api.opensource.org returns a non-JSON
+    # response with HTTP 200. Use grayskull's bundled license cache instead.
+    "$grayskull_python" - "$package_name" "$output_dir" <<'PY'
+import sys
+
+from grayskull.license import discovery
+from grayskull.main import main
+
+original_get_short_license_id = discovery.get_short_license_id
+
+
+def get_short_license_id(name):
+    if isinstance(name, str):
+        normalized_name = name.strip().lower()
+        apache_names = {
+            "apache-2.0",
+            "apache 2.0",
+            "apache license 2.0",
+            "apache license version 2.0",
+            "apache software license",
+        }
+        if normalized_name in apache_names:
+            return "Apache-2.0"
+    return original_get_short_license_id(name)
+
+
+discovery.get_opensource_license_data = discovery.read_licence_cache
+discovery.get_short_license_id = get_short_license_id
+sys.argv = ["grayskull", "pypi", sys.argv[1], "--output", sys.argv[2]]
+raise SystemExit(main())
+PY
+  else
+    grayskull pypi "$package_name" --output "$output_dir"
+  fi
+}
+
 rewrite_maintainers_block() {
   local meta_yaml="$1"
 
@@ -124,7 +170,7 @@ done
 echo "用 grayskull 生成配方 ..."
 /bin/rm -rf staged-recipes 2>/dev/null || true
 git clone https://github.com/conda-forge/staged-recipes.git >/dev/null
-grayskull pypi "${PACKAGE_NAME}" --output staged-recipes/recipes
+run_grayskull_pypi "${PACKAGE_NAME}" staged-recipes/recipes
 
 META_YAML="staged-recipes/recipes/${PACKAGE_NAME}/meta.yaml"
 [[ -f "$META_YAML" ]] || { echo "Error: 未生成 $META_YAML"; exit 1; }
