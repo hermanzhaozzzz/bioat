@@ -96,6 +96,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
@@ -128,6 +129,10 @@
     <span class="s2">&quot;#A7B6A3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;#7D8C99&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<span class="n">_MATH_TITLE_TOKEN_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\$([^$]+)\$&quot;</span><span class="p">)</span>
+<span class="n">_SIMPLE_SCRIPT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([_^])(?:\{([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]+)\}|([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]))$&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_plot_modules</span><span class="p">():</span>
@@ -181,6 +186,180 @@
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">BioatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to copy fonts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_simple_script_title</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">matched_script</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">_MATH_TITLE_TOKEN_RE</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">body</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">script_match</span> <span class="o">=</span> <span class="n">_SIMPLE_SCRIPT_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">script_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">script_mark</span><span class="p">,</span> <span class="n">braced_text</span><span class="p">,</span> <span class="n">single_char</span> <span class="o">=</span> <span class="n">script_match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+        <span class="n">script_text</span> <span class="o">=</span> <span class="n">braced_text</span> <span class="k">if</span> <span class="n">braced_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">single_char</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;sub&quot;</span> <span class="k">if</span> <span class="n">script_mark</span> <span class="o">==</span> <span class="s2">&quot;_&quot;</span> <span class="k">else</span> <span class="s2">&quot;sup&quot;</span><span class="p">,</span> <span class="n">script_text</span><span class="p">))</span>
+        <span class="n">matched_script</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span><span class="p">:]))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">matched_script</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">chunks</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_patch_simple_script_titles</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render simple title superscripts/subscripts as editable text chunks.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.offsetbox</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnchoredOffsetbox</span><span class="p">,</span> <span class="n">DrawingArea</span><span class="p">,</span> <span class="n">HPacker</span><span class="p">,</span> <span class="n">TextArea</span><span class="p">,</span> <span class="n">VPacker</span>
+
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span> <span class="s2">&quot;_bioat_simple_script_title_patch&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">original_set_title</span> <span class="o">=</span> <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_title_with_simple_scripts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">,</span>
+        <span class="n">fontdict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">previous_artist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_bioat_simple_script_title_artist&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">previous_artist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">previous_artist</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bioat_simple_script_title_artist</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="n">_parse_simple_script_title</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">chunks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">original_set_title</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">label</span><span class="p">,</span>
+                <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">,</span>
+                <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span>
+                <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">textprops</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">fontdict</span><span class="p">:</span>
+            <span class="n">textprops</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fontdict</span><span class="p">)</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">])</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;fontweight&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titleweight&quot;</span><span class="p">])</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;text.color&quot;</span><span class="p">])</span>
+
+        <span class="n">script_props</span> <span class="o">=</span> <span class="n">textprops</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">fontsize</span> <span class="o">=</span> <span class="n">textprops</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">])</span>
+        <span class="n">script_offset</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fontsize</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">script_props</span><span class="p">[</span><span class="s2">&quot;fontsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fontsize</span> <span class="o">*</span> <span class="mf">0.7</span>
+            <span class="n">script_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">fontsize</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">textprops</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;sub&quot;</span><span class="p">:</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">VPacker</span><span class="p">(</span>
+                        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+                            <span class="n">DrawingArea</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">script_offset</span><span class="p">),</span>
+                            <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">script_props</span><span class="p">),</span>
+                        <span class="p">],</span>
+                        <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;sup&quot;</span><span class="p">:</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">VPacker</span><span class="p">(</span>
+                        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+                            <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">script_props</span><span class="p">),</span>
+                            <span class="n">DrawingArea</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">script_offset</span><span class="p">),</span>
+                        <span class="p">],</span>
+                        <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">original_set_title</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">label</span><span class="p">,</span>
+                <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">,</span>
+                <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span>
+                <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">title_box</span> <span class="o">=</span> <span class="n">HPacker</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;baseline&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">anchor_y</span> <span class="o">=</span> <span class="mf">1.02</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y</span>
+        <span class="n">anchored_title</span> <span class="o">=</span> <span class="n">AnchoredOffsetbox</span><span class="p">(</span>
+            <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper center&quot;</span><span class="p">,</span>
+            <span class="n">child</span><span class="o">=</span><span class="n">title_box</span><span class="p">,</span>
+            <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">borderpad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">anchor_y</span><span class="p">),</span>
+            <span class="n">bbox_transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">anchored_title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bioat_simple_script_title_artist</span> <span class="o">=</span> <span class="n">anchored_title</span>
+
+        <span class="k">return</span> <span class="n">original_set_title</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span>
+            <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">set_title_with_simple_scripts</span><span class="o">.</span><span class="n">_bioat_simple_script_title_patch</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">set_title_with_simple_scripts</span><span class="o">.</span><span class="n">_bioat_original_set_title</span> <span class="o">=</span> <span class="n">original_set_title</span>
+    <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span> <span class="o">=</span> <span class="n">set_title_with_simple_scripts</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unpatch_simple_script_titles</span><span class="p">():</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+
+    <span class="n">original_set_title</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+        <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span>
+        <span class="s2">&quot;_bioat_original_set_title&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">original_set_title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span> <span class="o">=</span> <span class="n">original_set_title</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
 <div class="viewcode-block" id="init_matplotlib">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libplot.init_matplotlib">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">init_matplotlib</span><span class="p">(</span>
@@ -221,17 +400,23 @@
 
     <span class="c1"># Keep rarely changed knobs in kwargs so the public signature stays simple.</span>
     <span class="n">style</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">,</span> <span class="s2">&quot;seaborn-v0_8-white&quot;</span><span class="p">)</span>
-    <span class="c1"># Use ASCII hyphen-minus for negative ticks; some fonts/Illustrator imports</span>
+    <span class="c1"># Use ASCII hyphen-minus for negative ticks; some font imports</span>
     <span class="c1"># render the Unicode minus as a missing glyph or question mark.</span>
     <span class="n">axes_unicode_minus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;axes_unicode_minus&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="c1"># Keep the historical vector backend defaults. The newer editable text</span>
-    <span class="c1"># settings made Illustrator split labels into single-character objects.</span>
-    <span class="n">set_backend_pdf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_pdf&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">set_backend_ps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_ps&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_svg&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span>
+    <span class="c1"># Primary vector-editing requirement: keep words grouped as editable text.</span>
+    <span class="c1"># Core PDF/PS fonts import more consistently as word-level text boxes; the</span>
+    <span class="c1"># simple-subscript title patch avoids mathtext Type 3 glyph paths there.</span>
+    <span class="n">pdf_use14corefonts</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdf_use14corefonts&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ps_useafm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ps_useafm&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">split_simple_math_titles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;split_simple_math_titles&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_svg&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initializing matplotlib&quot;</span><span class="p">)</span>
     <span class="n">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">split_simple_math_titles</span><span class="p">:</span>
+        <span class="n">_patch_simple_script_titles</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_unpatch_simple_script_titles</span><span class="p">()</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;init_matplotlib&quot;</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -255,16 +440,16 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes_unicode_minus</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.use14corefonts&#39;] = </span><span class="si">{</span><span class="n">set_backend_pdf</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# whether to use core fonts for the PDF backend</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.use14corefonts&#39;] = </span><span class="si">{</span><span class="n">pdf_use14corefonts</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;# use core fonts so vector editors keep words grouped as text</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="s2">&quot;# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.use14corefonts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_pdf</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.use14corefonts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdf_use14corefonts</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.useafm&#39;] = </span><span class="si">{</span><span class="n">set_backend_ps</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# whether to use core fonts for the PS backend&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.useafm&#39;] = </span><span class="si">{</span><span class="n">ps_useafm</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;# use AFM core fonts so vector editors keep words grouped as text&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.useafm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_ps</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.useafm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps_useafm</span>
     <span class="k">if</span> <span class="n">set_backend_svg</span><span class="p">:</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;svg.fonttype&#39;] = &#39;</span><span class="si">{</span><span class="n">set_backend_svg</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -284,7 +469,7 @@
         <span class="sa">f</span><span class="s2">&quot;set: sns.set_theme(context=&#39;</span><span class="si">{</span><span class="n">sns_context</span><span class="si">}</span><span class="s2">&#39;, style=&#39;</span><span class="si">{</span><span class="n">sns_style</span><span class="si">}</span><span class="s2">&#39;, palette=&#39;</span><span class="si">{</span><span class="n">sns_palette</span><span class="si">}</span><span class="s2">&#39;, font=&#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;, font_scale=</span><span class="si">{</span><span class="n">sns_font_scale</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Suggested publication figure command: &quot;</span>
+        <span class="s2">&quot;Run this for publication figures: &quot;</span>
         <span class="s2">&quot;fig, ax = plt.subplots(figsize=(7, height), dpi=300)  &quot;</span>
         <span class="s2">&quot;# replace height with the panel layout height&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
