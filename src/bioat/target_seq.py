@@ -296,8 +296,7 @@ class TargetSeq:
         # define align direction and final align res
         # make alignment info
         if any(
-            x >= local_alignment_min_score
-                for x in (fwd["aln_score"], rev["aln_score"])
+            x >= local_alignment_min_score for x in (fwd["aln_score"], rev["aln_score"])
         ):
             if fwd["aln_score"] >= rev["aln_score"]:
                 aln_direction = "Forward Alignment"
@@ -1106,8 +1105,7 @@ class TargetSeq:
         # define align direction and final align res
         # make alignment info
         if any(
-            x >= local_alignment_min_score
-                for x in (fwd["aln_score"], rev["aln_score"])
+            x >= local_alignment_min_score for x in (fwd["aln_score"], rev["aln_score"])
         ):
             if fwd["aln_score"] >= rev["aln_score"]:
                 aln_direction = "Forward Alignment"
@@ -1232,9 +1230,12 @@ class TargetSeq:
         df_bmat_all = df_tmp.copy()
 
         # ref_seq：用第一份表构建
-        ref_seq = "".join(ls_bmat_table[0][f"ref_base_{label_panel[0]}"].astype(str).fillna("").tolist())
-
-
+        ref_seq = "".join(
+            ls_bmat_table[0][f"ref_base_{label_panel[0]}"]
+            .astype(str)
+            .fillna("")
+            .tolist()
+        )
 
         possible_target_region_start = max(aln_start - region_extend_length, 0)
         possible_target_region_end = min(
@@ -1543,10 +1544,10 @@ class TargetSeq:
                 # print 'testTTTTTTTTTTTTTTT'
 
             except:
-                msg = "The param [num_extend] is too large or <0, it must be a integer>=0"
-                raise ValueError(
-                    msg
+                msg = (
+                    "The param [num_extend] is too large or <0, it must be a integer>=0"
                 )
+                raise ValueError(msg)
             df_matrix.loc["Target_seq", :].tolist()
             ls_ref = df_matrix.loc["Ref_seq", :].tolist()
 
@@ -1708,8 +1709,10 @@ class TargetSeq:
             # print(f'df_plot_rec: \n{df_plot_rec}')
             # exit()
             df_plot_rec_cmap = df_plot_rec.copy()
-            df_plot_rec_cmap.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(map_hex_for_matrix)
-            
+            df_plot_rec_cmap.iloc[2:, :] = df_plot_rec.iloc[2:, :].map(
+                map_hex_for_matrix
+            )
+
             # print(df_plot_rec_cmap)
             # exit()
 

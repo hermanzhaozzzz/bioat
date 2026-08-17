@@ -244,9 +244,7 @@ class Garc:
                         amount += 1
                 else:
                     msg = "List elements should be int type or tuple consisting of two int values"
-                    raise ValueError(
-                        msg
-                    )
+                    raise ValueError(msg)
             densities.append(amount)
 
         source = tuple(range(i, self.size))
@@ -260,9 +258,7 @@ class Garc:
                     amount += 1
             else:
                 msg = "List elements should be int type or tuple consisting of two int values"
-                raise ValueError(
-                    msg
-                )
+                raise ValueError(msg)
         densities.append(amount * ((self.size - i) / window_size))
         return densities
 

@@ -281,17 +281,19 @@ class SearchTools:
                 lm.logger.warning(f"Failed to plot citation distribution: {e}")
 
         if output:
-            lm.logger.info(f"Exporting results to {output}")
-            if not output:
-                output = f"{keyword.replace(' ', '_')}.xlsx"
-            if output.endswith(".csv"):
-                df_sorted.to_csv(output, index=False)
-            elif output.endswith(".tsv"):
-                df_sorted.to_csv(output, sep="\t", index=False)
-            elif output.endswith(".xlsx") or output.endswith(".xls"):
-                df_sorted.to_excel(output, index=False)
+            output_path = Path(output)
+            output_suffix = output_path.suffix.lower()
+            lm.logger.info(f"Exporting results to {output_path}")
+            if output_suffix == ".csv":
+                df_sorted.to_csv(output_path, index=False)
+            elif output_suffix == ".tsv":
+                df_sorted.to_csv(output_path, sep="\t", index=False)
+            elif output_suffix in {".xlsx", ".xls"}:
+                df_sorted.to_excel(output_path, index=False)
             else:
-                raise BioatInvalidOptionError("Unsupported output format: " + output)
+                raise BioatInvalidOptionError(
+                    f"Unsupported output format: {output_path}"
+                )
         else:
             print(df_sorted)
         if kwargs.get("_for_test", False):

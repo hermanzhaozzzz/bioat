@@ -10,7 +10,7 @@ def test_metadata():
     assert "Author" in META  # __AUTHOR__
     assert "Author-email" in META  # __AUTHOR_EMAIL__
     assert "Summary" in META  # __DESCRIPTION__
-    assert "License" in META  # __LICENSE__
+    assert META["License-Expression"] == "Apache-2.0"  # __LICENSE__
     assert "Version" in META  # __VERSION__
 
 
@@ -19,7 +19,7 @@ def test_doc_format():
 
 
 def test_doc_page():
-    assert bioat.__DOC_PAGE__ == "https://bioat.readthedocs.io/en/latest/"
+    assert bioat.__DOC_PAGE__ == "https://hermanzhaozzzz.github.io/bioat/"
 
 
 def test_issue_page():

@@ -151,7 +151,13 @@ def _patch_simple_script_titles():
     """Render simple title superscripts/subscripts as editable text chunks."""
     from matplotlib import rcParams
     from matplotlib.axes import Axes
-    from matplotlib.offsetbox import AnchoredOffsetbox, DrawingArea, HPacker, TextArea, VPacker
+    from matplotlib.offsetbox import (
+        AnchoredOffsetbox,
+        DrawingArea,
+        HPacker,
+        TextArea,
+        VPacker,
+    )
 
     if getattr(Axes.set_title, "_bioat_simple_script_title_patch", False):
         return False
@@ -338,6 +344,7 @@ def init_matplotlib(
     ps_useafm = kwargs.get("ps_useafm", True)
     split_simple_math_titles = kwargs.get("split_simple_math_titles", True)
     set_backend_svg = kwargs.get("set_backend_svg", "none")
+    mathtext_default = kwargs.get("mathtext_default", "it")
 
     lm.logger.info("Initializing matplotlib")
     _copy_fonts(refresh=refresh, log_level=log_level)
@@ -393,6 +400,9 @@ def init_matplotlib(
         font=font,
         font_scale=sns_font_scale,
     )
+    # Matplotlib 3.11 changed this default to "normal". Keep BioAT's
+    # established publication style stable across supported versions.
+    plt.rcParams["mathtext.default"] = mathtext_default
     lm.logger.info(
         f"set: sns.set_theme(context='{sns_context}', style='{sns_style}', palette='{sns_palette}', font='{font}', font_scale={sns_font_scale})",
     )
@@ -582,10 +592,22 @@ def plot_dna_features(
                 "name": ["AAAAAAA", "BBBB", "CC"] + [None] * 50 + [None] * 50,
                 "type": ["CDS", "CDS", "CDS"] + ["DR"] * 50 + ["spacer"] * 50,
                 "start": (
-                    [1050, 3500, 14000, *list(range(10300, 10300 + 66 * 50, 66)), *list(range(10336, 10336 + 66 * 50, 66))]
+                    [
+                        1050,
+                        3500,
+                        14000,
+                        *list(range(10300, 10300 + 66 * 50, 66)),
+                        *list(range(10336, 10336 + 66 * 50, 66)),
+                    ]
                 ),
                 "end": (
-                    [4000, 6000, 16000, *list(range(10336, 10336 + 66 * 50, 66)), *list(range(10366, 10366 + 66 * 50, 66))]
+                    [
+                        4000,
+                        6000,
+                        16000,
+                        *list(range(10336, 10336 + 66 * 50, 66)),
+                        *list(range(10366, 10366 + 66 * 50, 66)),
+                    ]
                 ),
                 "strand": [1, -1, None] + [None] * 50 + [None] * 50,
                 "color": (

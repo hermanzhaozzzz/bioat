@@ -66,7 +66,9 @@ _TOOL_SPECS = {
 
 @lru_cache(maxsize=None)
 def _get_public_tool_methods(module_name: str, class_name: str) -> tuple[str, ...]:
-    module_path = Path(__file__).resolve().parent / f"{module_name.rsplit('.', 1)[1]}.py"
+    module_path = (
+        Path(__file__).resolve().parent / f"{module_name.rsplit('.', 1)[1]}.py"
+    )
     tree = ast.parse(module_path.read_text(encoding="utf-8"))
 
     for node in tree.body:

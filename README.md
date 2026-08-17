@@ -37,9 +37,21 @@ samtools view -h test_sorted_n.bam | bioat bam remove_clip | tail
 ```
 [circos plot](docs/demo_circos-plot.ipynb)
 
+## Development
+```shell
+# create/update .venv from pyproject.toml and uv.lock
+uv sync
+
+# run checks in the locked project environment
+uv run pytest
+
+# build distributions for release
+uv build --no-sources --clear
+```
+
 ## Doc
 
-See [Doc](https://bioat.readthedocs.io/en/latest/)
+See [Doc](https://hermanzhaozzzz.github.io/bioat/)
 
 ## Citation
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15093444.svg)](https://doi.org/10.5281/zenodo.15093444)

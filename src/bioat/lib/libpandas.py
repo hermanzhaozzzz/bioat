@@ -90,9 +90,7 @@ def move_column(
     # Validate inputs for first and last
     if first and last:
         msg = "Cannot specify both 'first' and 'last' as True. Please choose one."
-        raise ValueError(
-            msg
-        )
+        raise ValueError(msg)
     if first is not None and not isinstance(first, bool):
         msg = "'first' must be a boolean or None."
         raise ValueError(msg)
@@ -103,25 +101,19 @@ def move_column(
     if after is not None:
         if after not in df.columns:
             msg = f"Column '{after}' not found in the DataFrame. Cannot use it as a reference."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         if to_move == after:
-            msg = f"to_move({to_move}) is not allowed to be the same with after({after})"
-            raise ValueError(
-                msg
+            msg = (
+                f"to_move({to_move}) is not allowed to be the same with after({after})"
             )
+            raise ValueError(msg)
     if before is not None:
         if before not in df.columns:
             msg = f"Column '{before}' not found in the DataFrame. Cannot use it as a reference."
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
         if to_move == before:
             msg = f"to_move({to_move}) is not allowed to be the same with before({before})"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
     if after is not None and before is not None:
         msg = "Cannot specify both 'after' and 'before'. Please choose one."
         raise ValueError(msg)
@@ -153,9 +145,7 @@ def move_column(
             )
         else:
             msg = "you must define one of the params(first/last/before/after) for operation"
-            raise ValueError(
-                msg
-            )
+            raise ValueError(msg)
 
     # Return the modified DataFrame or None if inplace=True
     if inplace:

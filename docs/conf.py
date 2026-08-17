@@ -1,25 +1,28 @@
-import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
-import toml
+import tomllib
 
-# 将项目路径添加到 sys.path，以便 Sphinx 能找到代码
-sys.path.insert(0, os.path.abspath("../src"))
+# 将项目路径添加到 sys.path, 以便 Sphinx 能找到代码
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root / "src"))
 
 # 解析 pyproject.toml 文件
-pyproject_path = os.path.abspath("../pyproject.toml")
-if not os.path.exists(pyproject_path):
+pyproject_path = project_root / "pyproject.toml"
+if not pyproject_path.exists():
     msg = f"pyproject.toml not found at {pyproject_path}"
     raise FileNotFoundError(msg)
 
-with open(pyproject_path) as f:
-    pyproject_data = toml.load(f)
+with pyproject_path.open("rb") as f:
+    pyproject_data = tomllib.load(f)
 
 # 从 pyproject.toml 中提取元信息
-project_metadata = pyproject_data.get("tool", {}).get("poetry", {})
+project_metadata = pyproject_data.get("project", {})
 project = project_metadata.get("name", "Unknown Project")
-author = ", ".join(project_metadata.get("authors", ["Unknown Author"]))
+author = ", ".join(
+    item.get("name", "Unknown Author") for item in project_metadata.get("authors", [{}])
+)
 release = project_metadata.get("version", "0.1.0")
 description = project_metadata.get("description", "Project Description")
 year = datetime.now().year
@@ -28,14 +31,13 @@ year = datetime.now().year
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_rtd_theme",
     "sphinx.ext.viewcode",
     "myst_parser",
 ]
 
 # 模板路径和主题设置
 templates_path = ["_templates"]
-html_theme = "sphinx_rtd_theme"
+html_theme = "alabaster"
 
 # 支持的文档格式
 source_suffix = [".rst", ".md"]
@@ -45,9 +47,8 @@ language = "en"
 
 # 静态文件路径
 html_static_path = ["_static"]
-static_path = os.path.join(os.path.dirname(__file__), "_static")
-if not os.path.exists(static_path):
-    os.makedirs(static_path)
+static_path = Path(__file__).parent / "_static"
+static_path.mkdir(exist_ok=True)
 
 # Napoleon 配置
 napoleon_google_docstring = True

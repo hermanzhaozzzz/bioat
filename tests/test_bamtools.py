@@ -24,6 +24,7 @@ MPILEUP_FILE = DATA_PATH / Path("bam/test_sorted.mpileup.gz")
 BAM_SORTP_FILE = DATA_PATH / Path("bam/test_sorted.bam")
 BAM_SORTN_FILE = DATA_PATH / Path("bam/test_sorted_n.bam")
 
+
 @pytest.fixture
 def test_mpileup_to_table(tmp_path):
     """Tests the mpileup to table conversion functionality.
@@ -49,6 +50,7 @@ def test_mpileup_to_table(tmp_path):
         remove_temp=True,
         log_level="WARNING",
     )
+
 
 @pytest.fixture
 def test_cli_mpileup_to_table(tmp_path):

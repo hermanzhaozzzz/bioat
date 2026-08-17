@@ -18,7 +18,7 @@ def _load_pyproject_fallback() -> dict[str, str]:
             "bioat, a python package & command line toolkit for Bioinformatics "
             "and data science!"
         ),
-        "License": "Apache-2.0",
+        "License-Expression": "Apache-2.0",
         "Version": "0.0.0",
     }
 
@@ -29,13 +29,19 @@ def _load_pyproject_fallback() -> dict[str, str]:
         project = tomllib.load(handle).get("project", {})
 
     author = next(iter(project.get("authors", [])), {})
-    license_info = project.get("license", {})
+    license_info = project.get("license")
+    if isinstance(license_info, str):
+        license_expression = license_info
+    elif isinstance(license_info, dict):
+        license_expression = license_info.get("text", fallback["License-Expression"])
+    else:
+        license_expression = fallback["License-Expression"]
     fallback.update(
         {
             "Author": author.get("name", fallback["Author"]),
             "Author-email": author.get("email", fallback["Author-email"]),
             "Summary": project.get("description", fallback["Summary"]),
-            "License": license_info.get("text", fallback["License"]),
+            "License-Expression": license_expression,
             "Version": project.get("version", fallback["Version"]),
         }
     )
@@ -51,10 +57,10 @@ __AUTHOR__ = __META__["Author"]
 __AUTHOR_EMAIL__ = __META__["Author-email"]
 __DESCRIPTION__ = __META__["Summary"]
 __DOC_FORMAT__ = "google"
-__DOC_PAGE__ = f"https://{__PKG_NAME__}.readthedocs.io/en/latest/"
+__DOC_PAGE__ = f"https://hermanzhaozzzz.github.io/{__PKG_NAME__}/"
 __HOME_PAGE__ = f"https://github.com/hermanzhaozzzz/{__PKG_NAME__}"
 __ISSUE_PAGE__ = f"{__HOME_PAGE__}/issues"
-__LICENSE__ = __META__["License"]
+__LICENSE__ = __META__.get("License-Expression") or __META__.get("License")
 __VERSION__ = __META__["Version"]
 
 

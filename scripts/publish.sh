@@ -120,7 +120,7 @@ rewrite_maintainers_block() {
 ########################################
 #           依赖检查 & 版本取值         #
 ########################################
-for bin in poetry grayskull git curl; do
+for bin in uv grayskull git curl; do
   command -v "$bin" >/dev/null 2>&1 || { echo "Error: 需要安装 $bin"; exit 1; }
 done
 
@@ -146,8 +146,8 @@ echo "检查 PyPI 上是否已有 ${PACKAGE_NAME}==${VERSION} ..."
 code=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json")
 if [[ "$code" != "200" ]]; then
   echo "未发现该版本，开始发布至 PyPI ..."
-  poetry build
-  poetry publish
+  uv build --no-sources --clear
+  uv publish --username __token__
 else
   echo "PyPI 已存在 ${PACKAGE_NAME}==${VERSION}，跳过发布。"
 fi

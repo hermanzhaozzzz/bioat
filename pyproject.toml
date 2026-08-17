@@ -1,12 +1,13 @@
 # ------------------------------------------------------------------->>>>>>>>>>
 # specially for this project (bioat)
 # ------------------------------------------------------------------->>>>>>>>>>
-# ref https://python-poetry.org/docs/pyproject/
+# ref https://docs.astral.sh/uv/concepts/projects/config/
 [project]
 name = "bioat"
-version = "0.17.4"
+version = "0.17.5"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10.0,<4.0"
 authors = [{ name = "Huanan Herman Zhao", email = "hermanzhaozzzz@gmail.com" }]
@@ -18,7 +19,6 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -31,7 +31,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Utilities",
 ]
-dependencies = [ # https://python-poetry.org/docs/dependency-specification/
+dependencies = [ # https://docs.astral.sh/uv/concepts/projects/dependencies/
   "pandas>=1.5",
   "numpy>=1.24.1",
   "tqdm>=4.64.1",
@@ -58,42 +58,32 @@ dependencies = [ # https://python-poetry.org/docs/dependency-specification/
 [project.urls]
 homepage = "https://github.com/hermanzhaozzzz/bioat"
 repository = "https://github.com/hermanzhaozzzz/bioat"
-documentation = "https://bioat.readthedocs.io/en/latest/"
+documentation = "https://hermanzhaozzzz.github.io/bioat/"
 "Bug Tracker" = "https://github.com/hermanzhaozzzz/bioat/issues"
 
 [project.scripts]
 bioat = "bioat.__main__:main"
 
-# ------------------------------------------------------------------->>>>>>>>>>
-# Poetry 环境激活
-# ------------------------------------------------------------------->>>>>>>>>>
-# 进入项目目录
-# eval $(poetry env activate)
-# ------------------------------------------------------------------->>>>>>>>>>
-# 构建、依赖与开发分组
-# ------------------------------------------------------------------->>>>>>>>>>
-[tool.poetry]
-requires-poetry = ">=2.0"
-
 [build-system]
-# 声明build-system后,可通过可选的 pip install -e . 的命令成功将项目及其依赖项安装至虚拟环境
-# 但 pip 不会使用锁定文件来确定依赖版本，因为 poetry-core 构建系统主要面向库开发者
-# https://python-poetry.org/docs/basic-usage/#operating-modes
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
 
-[project.optional-dependencies]
-dev = ["ruff", "toml"]
-# ruff # 替换 black、isort、flake8、mypy 等功能
-# toml # 解析 pyproject.toml 文件
-docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "myst-parser"]
-# sphinx # 文档生成工具
-# sphinx-autobuild # 自动更新文档
-# sphinx-rtd-theme # 文档主题
-# myst-parser # 解析 MyST 格式文档
+# ------------------------------------------------------------------->>>>>>>>>>
+# uv 开发依赖分组
+# ------------------------------------------------------------------->>>>>>>>>>
+[dependency-groups]
+dev = [
+  { include-group = "test" },
+  "ruff",
+]
+docs = [
+  "myst-parser>=4.0.0",
+  "playwright>=1.48.0",
+  "sphinx>=8.1.3",
+  "sphinx-autobuild>=2024.10.3",
+]
 test = ["pytest", "pytest-cov"]
-# pytest # 单元测试框架
-# pytest-cov # 单元测试覆盖率插件
+github-actions = ["pytest-github-actions-annotate-failures>=0.1.7"]
 
 # ------------------------------------------------------------------->>>>>>>>>>
 # 通用 Ruff 格式化与风格配置
@@ -187,9 +177,3 @@ unfixable = [
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.poetry.group.github-actions]
-optional = true
-
-[tool.poetry.group.github-actions.dependencies]
-pytest-github-actions-annotate-failures = "^0.1.7"
