@@ -1,74 +1,37 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libpatentseq &mdash; Unknown Project Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bioat.lib.libpatentseq &#8212; bioat Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=54344a33"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
 
   
-      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script src="../../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
-</head>
+  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  </head><body>
+  
 
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
           
-          
-          <a href="../../../index.html" class="icon icon-home">
-            Unknown Project
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Unknown Project</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">bioat.lib.libpatentseq</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+          <div class="body" role="main">
+            
   <h1>Source code for bioat.lib.libpatentseq</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;_summary_.</span>
+<span></span><span class="sd">"""_summary_.</span>
 
 <span class="sd">author: Herman Huanan Zhao</span>
 <span class="sd">email: hermanzhaozzzz@gmail.com</span>
@@ -88,7 +51,7 @@
 
 <span class="sd">example 2:</span>
 <span class="sd">    _example_</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -103,43 +66,43 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libspider</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProxyPool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
-<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libpatentseq&quot;</span><span class="p">)</span>
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">"bioat.lib.libpatentseq"</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"run"</span><span class="p">]</span>
 
-<span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;RUN&quot;</span>
+<span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"RUN"</span>
 <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">COOKIE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">HOME</span><span class="si">}</span><span class="s2">/.bioat/LENS.ORG/cookie.json&quot;</span>
-<span class="n">CSS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;patentseq&quot;</span><span class="p">)</span>
+<span class="n">COOKIE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">HOME</span><span class="si">}</span><span class="s2">/.bioat/LENS.ORG/cookie.json"</span>
+<span class="n">CSS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"patentseq"</span><span class="p">)</span>
 <span class="n">IP_ERRORS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;NS_ERROR_UNKNOWN_HOST&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NS_ERROR_NET_INTERRUPT&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NS_ERROR_PROXY_FORBIDDEN&quot;</span><span class="p">,</span>
+    <span class="s2">"NS_ERROR_UNKNOWN_HOST"</span><span class="p">,</span>
+    <span class="s2">"NS_ERROR_NET_INTERRUPT"</span><span class="p">,</span>
+    <span class="s2">"NS_ERROR_PROXY_FORBIDDEN"</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">):</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_save_cookies&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"_save_cookies"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="c1"># 保存 cookies</span>
     <span class="n">storage_state</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">storage_state</span><span class="p">()</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving cookie to </span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saving cookie to </span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">storage_state</span><span class="p">))</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving cookie time to </span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saving cookie time to </span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">object</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">object</span><span class="p">:</span>
     <span class="c1"># 加载 cookies</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_load_cookies&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"_load_cookies"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">login_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
         <span class="n">login_time</span> <span class="o">=</span> <span class="kc">None</span>
@@ -151,34 +114,34 @@
     <span class="n">current_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
     <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">login_time</span>
     <span class="k">if</span> <span class="n">elapsed_time</span> <span class="o">&gt;</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">:</span>  <span class="c1"># 1 hour</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cookies are expired, performing re-login...&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Cookies are expired, performing re-login..."</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="p">):</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cookies are still valid, skip login and load cookies&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Cookies are still valid, skip login and load cookies"</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">storage_state</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;new_context&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"new_context"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">browser</span><span class="o">.</span><span class="n">new_context</span><span class="p">(</span>
             <span class="n">storage_state</span><span class="o">=</span><span class="n">storage_state</span><span class="p">,</span>
-            <span class="n">proxy</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server&quot;</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">}</span> <span class="k">if</span> <span class="n">proxy_ip</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">proxy</span><span class="o">=</span><span class="p">{</span><span class="s2">"server"</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">}</span> <span class="k">if</span> <span class="n">proxy_ip</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">):</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_remove_cookie&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"_remove_cookie"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing cookie&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Removing cookie"</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">COOKIE</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">COOKIE</span><span class="si">}</span><span class="s2">.time"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cookies are not found, skip remove.&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Cookies are not found, skip remove."</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="run">
@@ -197,7 +160,7 @@
     <span class="n">rm_fail_cookie</span><span class="p">,</span>
     <span class="n">log_level</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;run&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"run"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">playwright._impl._errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TargetClosedError</span><span class="p">,</span> <span class="ne">TimeoutError</span>
@@ -205,10 +168,10 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">playwright</span><span class="p">,</span> <span class="n">Playwright</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">"info"</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Unable to import playwright. please exec `python -m pip install playwright`, then try again.&quot;</span><span class="p">,</span>
+            <span class="s2">"Unable to import playwright. please exec `python -m pip install playwright`, then try again."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span>
     <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -216,31 +179,31 @@
         <span class="k">return</span>
 
     <span class="n">account</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
-        <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+        <span class="s2">"password"</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set account: </span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set account: </span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="c1"># headers = {  # not change it, for bypassing cloudflare challenge with firefox</span>
-    <span class="c1">#     &#39;User-Agent&#39;: &#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)&#39;</span>
+    <span class="c1">#     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'</span>
     <span class="c1"># }</span>
 
-    <span class="c1"># lm.logger.debug(f&#39;Set headers: {headers}&#39;)</span>
-    <span class="n">url_login</span> <span class="o">=</span> <span class="s2">&quot;https://www.lens.org/lens/bio/&quot;</span>
-    <span class="n">url_query</span> <span class="o">=</span> <span class="s2">&quot;https://www.lens.org/lens/bio/patseqfinder&quot;</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set url_login: </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set url_query: </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># lm.logger.debug(f'Set headers: {headers}')</span>
+    <span class="n">url_login</span> <span class="o">=</span> <span class="s2">"https://www.lens.org/lens/bio/"</span>
+    <span class="n">url_query</span> <span class="o">=</span> <span class="s2">"https://www.lens.org/lens/bio/patseqfinder"</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set url_login: </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set url_query: </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;queryString&quot;</span><span class="p">:</span> <span class="n">seq</span><span class="p">,</span>
-        <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;patseq-aa&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;sequenceType&quot;</span><span class="p">:</span> <span class="s2">&quot;AA&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;blastTool&quot;</span><span class="p">:</span> <span class="s2">&quot;blastp&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;numAlignments&quot;</span><span class="p">:</span> <span class="s2">&quot;50&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;expValue&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;matrix&quot;</span><span class="p">:</span> <span class="s2">&quot;BLOSUM62&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;seqLength&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">"queryString"</span><span class="p">:</span> <span class="n">seq</span><span class="p">,</span>
+        <span class="s2">"database"</span><span class="p">:</span> <span class="s2">"patseq-aa"</span><span class="p">,</span>
+        <span class="s2">"sequenceType"</span><span class="p">:</span> <span class="s2">"AA"</span><span class="p">,</span>
+        <span class="s2">"blastTool"</span><span class="p">:</span> <span class="s2">"blastp"</span><span class="p">,</span>
+        <span class="s2">"numAlignments"</span><span class="p">:</span> <span class="s2">"50"</span><span class="p">,</span>
+        <span class="s2">"expValue"</span><span class="p">:</span> <span class="s2">"0.1"</span><span class="p">,</span>
+        <span class="s2">"matrix"</span><span class="p">:</span> <span class="s2">"BLOSUM62"</span><span class="p">,</span>
+        <span class="s2">"seqLength"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set data: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set headless: </span><span class="si">{</span><span class="n">headless</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set data: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set headless: </span><span class="si">{</span><span class="n">headless</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">proxy_ip</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">proxy_pool</span> <span class="o">=</span> <span class="kc">None</span>
@@ -248,29 +211,29 @@
     <span class="k">if</span> <span class="n">proxy_server</span><span class="p">:</span>
         <span class="n">proxy_pool</span> <span class="o">=</span> <span class="n">ProxyPool</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">proxy_server</span><span class="p">)</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;proxy&quot;</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set proxy_server: </span><span class="si">{</span><span class="n">proxy_server</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"proxy"</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set proxy_server: </span><span class="si">{</span><span class="n">proxy_server</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">proxy_ip</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Get valid proxy, go on&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Get valid proxy, go on"</span><span class="p">)</span>
                 <span class="k">break</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No proxy found in proxy pool, waiting 10 seconds...&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No proxy found in proxy pool, waiting 10 seconds..."</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Next try to get proxy&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Next try to get proxy"</span><span class="p">)</span>
             <span class="k">continue</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Get proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># start to test</span>
     <span class="n">browser</span> <span class="o">=</span> <span class="n">playwright</span><span class="o">.</span><span class="n">firefox</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span>
         <span class="n">headless</span><span class="o">=</span><span class="n">headless</span><span class="p">,</span>
         <span class="n">executable_path</span><span class="o">=</span><span class="n">local_browser</span> <span class="k">if</span> <span class="n">local_browser</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Try to load cookies&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Try to load cookies"</span><span class="p">)</span>
 
     <span class="n">context</span> <span class="o">=</span> <span class="n">_load_cookies</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">proxy_ip</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
 
     <span class="c1"># context = None</span>
     <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># need login</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cookies not exist or out of time. try to login&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Cookies not exist or out of time. try to login"</span><span class="p">)</span>
 
         <span class="c1"># login part</span>
         <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -278,207 +241,207 @@
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;</span> <span class="n">nretry</span><span class="p">:</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">, already retry maximum (</span><span class="si">{</span><span class="n">nretry</span><span class="si">}</span><span class="s2">)number of retries&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">, already retry maximum (</span><span class="si">{</span><span class="n">nretry</span><span class="si">}</span><span class="s2">)number of retries"</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;browser close&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"browser close"</span><span class="p">)</span>
                 <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Login failed&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Login failed"</span><span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;new_context&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"new_context"</span><span class="p">)</span>
                 <span class="n">context</span> <span class="o">=</span> <span class="n">browser</span><span class="o">.</span><span class="n">new_context</span><span class="p">(</span>
                     <span class="n">viewport</span><span class="o">=</span><span class="p">(</span>
-                        <span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">headless</span> <span class="k">else</span> <span class="kc">None</span>
+                        <span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">:</span> <span class="mi">1080</span><span class="p">}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">headless</span> <span class="k">else</span> <span class="kc">None</span>
                     <span class="p">),</span>
-                    <span class="n">proxy</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server&quot;</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">}</span> <span class="k">if</span> <span class="n">proxy_ip</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">proxy</span><span class="o">=</span><span class="p">{</span><span class="s2">"server"</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">}</span> <span class="k">if</span> <span class="n">proxy_ip</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">page</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">new_page</span><span class="p">()</span>
                 <span class="c1"># page.set_extra_http_headers(headers)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Goto </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Goto </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="n">page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url_login</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Thanks, Got It&#39;</span><span class="p">)</span>
-                <span class="n">page</span><span class="o">.</span><span class="n">get_by_text</span><span class="p">(</span><span class="s2">&quot;Thanks, Got It&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Sign in&#39;</span><span class="p">)</span>
-                <span class="n">page</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sign in&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-                <span class="c1"># lm.logger.debug(f&#39;Try to fill account info: {account}&#39;)</span>
-                <span class="c1"># page.get_by_label(&quot;Email address or Username&quot;).click()</span>
-                <span class="c1"># page.get_by_label(&quot;Email address or Username&quot;).fill(account[&#39;username&#39;])</span>
-                <span class="c1"># page.get_by_label(&quot;Email address or Username&quot;).press(&quot;Tab&quot;)</span>
-                <span class="c1"># page.get_by_label(&quot;Password&quot;).fill(account[&#39;password&#39;])</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Thanks, Got It'</span><span class="p">)</span>
+                <span class="n">page</span><span class="o">.</span><span class="n">get_by_text</span><span class="p">(</span><span class="s2">"Thanks, Got It"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Sign in'</span><span class="p">)</span>
+                <span class="n">page</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Sign in"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="c1"># lm.logger.debug(f'Try to fill account info: {account}')</span>
+                <span class="c1"># page.get_by_label("Email address or Username").click()</span>
+                <span class="c1"># page.get_by_label("Email address or Username").fill(account['username'])</span>
+                <span class="c1"># page.get_by_label("Email address or Username").press("Tab")</span>
+                <span class="c1"># page.get_by_label("Password").fill(account['password'])</span>
                 <span class="c1"># add remember me</span>
-                <span class="c1"># page.locator(&quot;label&quot;).filter(has_text=&quot;Keep me logged in&quot;).locator(&quot;i&quot;).click()</span>
+                <span class="c1"># page.locator("label").filter(has_text="Keep me logged in").locator("i").click()</span>
                 <span class="c1"># bypass cloudflare challenge</span>
-                <span class="c1"># page.frame_locator(&quot;iframe[title=\&quot;Widget containing a Cloudflare security challenge\&quot;]&quot;).get_by_label(</span>
-                <span class="c1">#     &quot;Verify you are human&quot;).check()</span>
+                <span class="c1"># page.frame_locator("iframe[title=\"Widget containing a Cloudflare security challenge\"]").get_by_label(</span>
+                <span class="c1">#     "Verify you are human").check()</span>
 
                 <span class="c1"># must sleep for passing cloudflare</span>
                 <span class="c1"># time.sleep(2)</span>
-                <span class="c1"># lm.logger.debug(f&#39;Try to sign in account&#39;)</span>
-                <span class="c1"># page.get_by_role(&quot;button&quot;, name=&quot;Sign in&quot;).click()</span>
+                <span class="c1"># lm.logger.debug(f'Try to sign in account')</span>
+                <span class="c1"># page.get_by_role("button", name="Sign in").click()</span>
                 <span class="k">with</span> <span class="n">page</span><span class="o">.</span><span class="n">expect_popup</span><span class="p">()</span> <span class="k">as</span> <span class="n">page1_info</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;SignIn with ORCID&quot;&#39;</span><span class="p">)</span>
-                    <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">has_text</span><span class="o">=</span><span class="s2">&quot;SignIn with ORCID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "SignIn with ORCID"'</span><span class="p">)</span>
+                    <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">has_text</span><span class="o">=</span><span class="s2">"SignIn with ORCID"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
                 <span class="n">page1</span> <span class="o">=</span> <span class="n">page1_info</span><span class="o">.</span><span class="n">value</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Proceed&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Proceed&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Proceed"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">"link"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Proceed"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Accept All Cookies&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Accept All Cookies&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Accept All Cookies"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Accept All Cookies"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Email or 16-digit ORCID iD&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">&quot;Email or 16-digit ORCID iD&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fill &quot;Email or 16-digit ORCID iD&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">&quot;Email or 16-digit ORCID iD&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span>
-                    <span class="n">account</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Email or 16-digit ORCID iD"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">"Email or 16-digit ORCID iD"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Fill "Email or 16-digit ORCID iD"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">"Email or 16-digit ORCID iD"</span><span class="p">)</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span>
+                    <span class="n">account</span><span class="p">[</span><span class="s2">"username"</span><span class="p">],</span>
                 <span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Press Tab&quot;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">&quot;Email or 16-digit ORCID iD&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;Tab&quot;</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fill &quot;Password&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">&quot;Password&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">account</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">])</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Press Tab"</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">"Email or 16-digit ORCID iD"</span><span class="p">)</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">"Tab"</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Fill "Password"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span><span class="s2">"Password"</span><span class="p">)</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">account</span><span class="p">[</span><span class="s2">"password"</span><span class="p">])</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;SIGN IN&quot;&#39;</span><span class="p">)</span>
-                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;SIGN IN&quot;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Waiting...&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "SIGN IN"'</span><span class="p">)</span>
+                <span class="n">page1</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span><span class="s2">"button"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"SIGN IN"</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting..."</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
                 <span class="n">page1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
                 <span class="n">_save_cookies</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
                 <span class="k">break</span>  <span class="c1"># to else for break</span>
             <span class="k">except</span> <span class="ne">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"context close"</span><span class="p">)</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry...&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry..."</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
                 <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">continue</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">in</span> <span class="n">IP_ERRORS</span><span class="p">:</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;proxy error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, delete ip (</span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">) from remote server and retry...&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">"proxy error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, delete ip (</span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">) from remote server and retry..."</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">proxy_pool</span><span class="o">.</span><span class="n">delete_proxy</span><span class="p">(</span><span class="n">proxy_ip</span><span class="p">)</span>
-                    <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;proxy&quot;</span><span class="p">)</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get new proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2"> and retry...&quot;</span><span class="p">)</span>
+                    <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"proxy"</span><span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Get new proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2"> and retry..."</span><span class="p">)</span>
 
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"context close"</span><span class="p">)</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry...&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_login</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry..."</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
                 <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">continue</span>
     <span class="c1"># now login status is ok</span>
     <span class="n">page</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">new_page</span><span class="p">()</span>
     <span class="c1"># page.set_extra_http_headers(headers)</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Goto </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Goto </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="c1"># query</span>
     <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;</span> <span class="n">nretry</span><span class="p">:</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">, already retry maximum (</span><span class="si">{</span><span class="n">nretry</span><span class="si">}</span><span class="s2">)number of retries&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">, already retry maximum (</span><span class="si">{</span><span class="n">nretry</span><span class="si">}</span><span class="s2">)number of retries"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"context close"</span><span class="p">)</span>
             <span class="n">context</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;browser close&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"browser close"</span><span class="p">)</span>
             <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Query failed&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Query failed"</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;wait until networkidle&quot;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url_query</span><span class="p">,</span> <span class="n">wait_until</span><span class="o">=</span><span class="s2">&quot;networkidle&quot;</span><span class="p">)</span>
-            <span class="n">checker1</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;a.parent&quot;</span><span class="p">,</span> <span class="n">has_text</span><span class="o">=</span><span class="s2">&quot;Signed in as&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"wait until networkidle"</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url_query</span><span class="p">,</span> <span class="n">wait_until</span><span class="o">=</span><span class="s2">"networkidle"</span><span class="p">)</span>
+            <span class="n">checker1</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">"a.parent"</span><span class="p">,</span> <span class="n">has_text</span><span class="o">=</span><span class="s2">"Signed in as"</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
             <span class="n">checker2</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span><span class="s2">&quot;Enter a query sequence.&quot;</span><span class="p">)</span>
+                <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span><span class="s2">"Enter a query sequence."</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">count</span><span class="p">()</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">checker1</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">checker2</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;checker1 and checker2 pass!&quot;</span><span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"checker1 and checker2 pass!"</span><span class="p">)</span>
                     <span class="n">login_status</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">rm_cookie</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">login_status</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="n">rm_cookie</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;checker2 failed, it might because that the proxy IP has been banned!&quot;</span><span class="p">,</span>
+                        <span class="s2">"checker2 failed, it might because that the proxy IP has been banned!"</span><span class="p">,</span>
                     <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">login_status</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">rm_cookie</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;checker1 failed, it might because that the cookies out of time!&quot;</span><span class="p">,</span>
+                    <span class="s2">"checker1 failed, it might because that the cookies out of time!"</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">login_status</span><span class="p">:</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Login failed! checker1: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker1</span><span class="p">)</span><span class="si">}</span><span class="s2">, checker2: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Login failed! checker1: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker1</span><span class="p">)</span><span class="si">}</span><span class="s2">, checker2: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"context close"</span><span class="p">)</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;browser close&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"browser close"</span><span class="p">)</span>
                 <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Query failed! checker1: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker1</span><span class="p">)</span><span class="si">}</span><span class="s2">, checker2: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Query failed! checker1: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker1</span><span class="p">)</span><span class="si">}</span><span class="s2">, checker2: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">checker2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">rm_cookie</span><span class="p">:</span>
                     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="s2">&quot;Consider to remove cookies because checker1 is failed!&quot;</span><span class="p">,</span>
+                        <span class="s2">"Consider to remove cookies because checker1 is failed!"</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">rm_fail_cookie</span><span class="p">:</span>
-                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                         <span class="n">_remove_cookie</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;User set to not remove cookies.&quot;</span><span class="p">)</span>
+                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Param rm_fail_cookie = </span><span class="si">{</span><span class="n">rm_fail_cookie</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"User set to not remove cookies."</span><span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Passed cookies and success login!&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Passed cookies and success login!"</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span>
-                <span class="s2">&quot;Enter a query sequence.&quot;</span><span class="p">,</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span>
+                <span class="s2">"Enter a query sequence."</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Try to fill seq: </span><span class="si">{</span><span class="n">seq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span>
-                <span class="s2">&quot;Enter a query sequence.&quot;</span><span class="p">,</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Try to fill seq: </span><span class="si">{</span><span class="n">seq</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_placeholder</span><span class="p">(</span>
+                <span class="s2">"Enter a query sequence."</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;Protein&quot;&#39;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_text</span><span class="p">(</span><span class="s2">&quot;Protein&quot;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Click &quot;advanced options&quot;&#39;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="n">has_text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^advanced options$&quot;</span><span class="p">),</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Set maximum number of hits to 50&quot;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span>
-                <span class="s2">&quot;Maximum Number of Hits to&quot;</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">select_option</span><span class="p">(</span><span class="s2">&quot;50&quot;</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Set maximum e-value to 1.0&quot;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span>
-                <span class="s2">&quot;Expectation value threshold&quot;</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">select_option</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Submit blastp query info&quot;</span><span class="p">)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span>
-                <span class="s2">&quot;button&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Submit search&quot;</span><span class="p">,</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "Protein"'</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_text</span><span class="p">(</span><span class="s2">"Protein"</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">'Click "advanced options"'</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">"div"</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">has_text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^advanced options$"</span><span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">locator</span><span class="p">(</span><span class="s2">"div"</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Set maximum number of hits to 50"</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span>
+                <span class="s2">"Maximum Number of Hits to"</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">select_option</span><span class="p">(</span><span class="s2">"50"</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Set maximum e-value to 1.0"</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_label</span><span class="p">(</span>
+                <span class="s2">"Expectation value threshold"</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">select_option</span><span class="p">(</span><span class="s2">"1.0"</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Submit blastp query info"</span><span class="p">)</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">frame_locator</span><span class="p">(</span><span class="s2">"iframe"</span><span class="p">)</span><span class="o">.</span><span class="n">get_by_role</span><span class="p">(</span>
+                <span class="s2">"button"</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"Submit search"</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">nth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Task has been submitted, waiting for completion&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Task has been submitted, waiting for completion"</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="k">except</span> <span class="ne">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry...&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry..."</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
             <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">continue</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">in</span> <span class="n">IP_ERRORS</span><span class="p">:</span>
                 <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;proxy error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, delete ip (</span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">) from remote server and retry...&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"proxy error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, delete ip (</span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2">) from remote server and retry..."</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">proxy_pool</span><span class="o">.</span><span class="n">delete_proxy</span><span class="p">(</span><span class="n">proxy_ip</span><span class="p">)</span>
-                <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;proxy&quot;</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get new proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2"> and retry...&quot;</span><span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry...&quot;</span><span class="p">)</span>
+                <span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">proxy_pool</span><span class="o">.</span><span class="n">get_proxy</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"proxy"</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Get new proxy_ip: </span><span class="si">{</span><span class="n">proxy_ip</span><span class="si">}</span><span class="s2"> and retry..."</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not load url </span><span class="si">{</span><span class="n">url_query</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, retry..."</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
             <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">continue</span>
@@ -486,7 +449,7 @@
     <span class="c1"># set global var to check program status</span>
     <span class="k">global</span> <span class="n">STATUS</span>
     <span class="k">global</span> <span class="n">SEQ_HEADER</span>
-    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;RUN&quot;</span>
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"RUN"</span>
     <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="n">seq_header</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
@@ -494,8 +457,8 @@
         <span class="k">global</span> <span class="n">SEQ_HEADER</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;#/results&quot;</span> <span class="ow">in</span> <span class="n">full_url</span>
-            <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span>
+            <span class="s2">"#/results"</span> <span class="ow">in</span> <span class="n">full_url</span>
+            <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">"POST"</span>
             <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span>
         <span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
@@ -504,61 +467,61 @@
                 <span class="c1"># 尝试解析 JSON，但先确保它不是空的</span>
                 <span class="k">if</span> <span class="n">response_text</span><span class="p">:</span>
                     <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response_text</span><span class="p">)</span>
-                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s2">&quot;hits&quot;</span><span class="p">])</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s2">"hits"</span><span class="p">])</span>
                     <span class="n">set_option</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result hit:</span><span class="se">\n</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Result hit:</span><span class="se">\n</span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">SEQ_HEADER</span><span class="p">:</span>
-                        <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="n">SEQ_HEADER</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;queryName&quot;</span><span class="p">,</span> <span class="n">SEQ_HEADER</span><span class="p">)</span>
+                        <span class="n">SEQ_HEADER</span> <span class="o">=</span> <span class="n">SEQ_HEADER</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"queryName"</span><span class="p">,</span> <span class="n">SEQ_HEADER</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
-                            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Export hit info to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Export hit info to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                             <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;FINISHED&quot;</span>
+                    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"FINISHED"</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Response text is empty&quot;</span><span class="p">)</span>
-                    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;ResponseEmptyError&quot;</span>
+                    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Response text is empty"</span><span class="p">)</span>
+                    <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"ResponseEmptyError"</span>
             <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error decoding JSON: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;JSONDecodeError&quot;</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error decoding JSON: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"JSONDecodeError"</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while handling response: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error while handling response: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">STATUS</span> <span class="o">=</span> <span class="s2">"ERROR"</span>
             <span class="k">finally</span><span class="p">:</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STATUS: </span><span class="si">{</span><span class="n">STATUS</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Task complete.&quot;</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"STATUS: </span><span class="si">{</span><span class="n">STATUS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Task complete."</span><span class="p">)</span>
 
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># more than 150 seconds, failed</span>
-        <span class="k">if</span> <span class="n">STATUS</span> <span class="o">!=</span> <span class="s2">&quot;RUN&quot;</span><span class="p">:</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STATUS=</span><span class="si">{</span><span class="n">STATUS</span><span class="si">}</span><span class="s2">, SPEND=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">STATUS</span> <span class="o">!=</span> <span class="s2">"RUN"</span><span class="p">:</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"STATUS=</span><span class="si">{</span><span class="n">STATUS</span><span class="si">}</span><span class="s2">, SPEND=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">)</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">300</span><span class="p">:</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;TimeoutError (waiting for more than 300s), &quot;</span>
-                <span class="s2">&quot;this might be a problem with browser was terminated external&quot;</span><span class="p">,</span>
+                <span class="s2">"TimeoutError (waiting for more than 300s), "</span>
+                <span class="s2">"this might be a problem with browser was terminated external"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You can try again later&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"You can try again later"</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">full_url</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;window.location.href&quot;</span><span class="p">)</span>
+            <span class="n">full_url</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"window.location.href"</span><span class="p">)</span>
             <span class="c1"># if time.time() - start_time % 5 == 0:</span>
-            <span class="c1">#     lm.logger.info(f&#39;STATUS={STATUS}, SPEND={int(time.time() - start_time)}s, waiting for completion&#39;)</span>
-            <span class="c1">#     lm.logger.debug(f&quot;Current URL: {page.url}&quot;)</span>
-            <span class="c1">#     lm.logger.debug(f&quot;Full URL including hash: {full_url}&quot;)</span>
-            <span class="n">page</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="n">handle_response</span><span class="p">)</span>
+            <span class="c1">#     lm.logger.info(f'STATUS={STATUS}, SPEND={int(time.time() - start_time)}s, waiting for completion')</span>
+            <span class="c1">#     lm.logger.debug(f"Current URL: {page.url}")</span>
+            <span class="c1">#     lm.logger.debug(f"Full URL including hash: {full_url}")</span>
+            <span class="n">page</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">"response"</span><span class="p">,</span> <span class="n">handle_response</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">TargetClosedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Meet error</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, this might be a problem with browser was terminated external&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Meet error</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, this might be a problem with browser was terminated external"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;you can try again later&quot;</span><span class="p">)</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"you can try again later"</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="c1"># ---------------------</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context close&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"context close"</span><span class="p">)</span>
     <span class="n">context</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;browser close&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"browser close"</span><span class="p">)</span>
     <span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End. Exit.&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"End. Exit."</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
@@ -574,15 +537,15 @@
     <span class="n">nretry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">local_browser</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rm_fail_cookie</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">playwright.sync_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">sync_playwright</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="s2">"info"</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Unable to import playwright. please exec `python -m pip install playwright`, then try again.&quot;</span><span class="p">,</span>
+            <span class="s2">"Unable to import playwright. please exec `python -m pip install playwright`, then try again."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span>
     <span class="k">with</span> <span class="n">sync_playwright</span><span class="p">()</span> <span class="k">as</span> <span class="n">playwright</span><span class="p">:</span>
@@ -602,40 +565,76 @@
         <span class="p">)</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">query_patent</span><span class="p">(</span>
-        <span class="n">seq</span><span class="o">=</span><span class="s2">&quot;MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGY&quot;</span><span class="p">,</span>
-        <span class="n">username</span><span class="o">=</span><span class="s2">&quot;your_account&quot;</span><span class="p">,</span>
-        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;abc123456&quot;</span><span class="p">,</span>
-        <span class="n">proxy_server</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8234&quot;</span><span class="p">,</span>
+        <span class="n">seq</span><span class="o">=</span><span class="s2">"MEDDKKTTDSIRYELKDKHFWAAFLNLARHNVYITVNHINKILEEGEINRDGY"</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="s2">"your_account"</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">"abc123456"</span><span class="p">,</span>
+        <span class="n">proxy_server</span><span class="o">=</span><span class="s2">"http://127.0.0.1:8234"</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 
-           </div>
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright .</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">bioat</a></h1>
 
-</body>
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
 </html>

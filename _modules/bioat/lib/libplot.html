@@ -1,74 +1,37 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libplot &mdash; Unknown Project Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bioat.lib.libplot &#8212; bioat Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=54344a33"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
 
   
-      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script src="../../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
-</head>
+  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  </head><body>
+  
 
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
           
-          
-          <a href="../../../index.html" class="icon icon-home">
-            Unknown Project
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Unknown Project</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">bioat.lib.libplot</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+          <div class="body" role="main">
+            
   <h1>Source code for bioat.lib.libplot</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;bioat.lib.libplot.</span>
+<span></span><span class="sd">"""bioat.lib.libplot.</span>
 
 <span class="sd">author: Herman Huanan Zhao</span>
 <span class="sd">email: hermanzhaozzzz@gmail.com</span>
@@ -81,7 +44,7 @@
 <span class="sd">        &lt;in python consolo&gt;:</span>
 <span class="sd">            &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">            &gt;&gt;&gt; from bioat.lib.libplot import init_matplotlib</span>
-<span class="sd">            &gt;&gt;&gt; init_matplotlib(log_level=&quot;info&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; init_matplotlib(log_level="info")</span>
 <span class="sd">            &gt;&gt;&gt; plt.plot([1, 2, 3], [4, 5, 6])</span>
 <span class="sd">            &gt;&gt;&gt; plt.show()</span>
 
@@ -89,10 +52,10 @@
 <span class="sd">    plot_colortable</span>
 <span class="sd">        &lt;in python consolo&gt;:</span>
 <span class="sd">            &gt;&gt;&gt; from bioat.lib.libplot import plot_colortable</span>
-<span class="sd">            &gt;&gt;&gt; colors = [&quot;#64C1E8&quot;, &quot;#80CED7&quot;, &quot;#63C7B2&quot;, &quot;#8E6C88&quot;, &quot;#CA61C3&quot;, &quot;#FF958C&quot;, &quot;#883677&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; colors = ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"]</span>
 <span class="sd">            &gt;&gt;&gt; plot_colortable(colors, ncols=1, labels=[1, 2, 3, 4, 5, 6, 7])</span>
 <span class="sd">            &gt;&gt;&gt; plt.show()</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -107,32 +70,32 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.lib.libpath</span><span class="w"> </span><span class="kn">import</span> <span class="n">HOME</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bioat.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerManager</span>
 
-<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">&quot;bioat.lib.libplot&quot;</span><span class="p">)</span>
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="p">(</span><span class="n">mod_name</span><span class="o">=</span><span class="s2">"bioat.lib.libplot"</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;init_matplotlib&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_colortable&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"init_matplotlib"</span><span class="p">,</span> <span class="s2">"plot_colortable"</span><span class="p">]</span>
 
-<span class="n">BIOAT_DEFAULT_FONTS_DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;libplot&quot;</span><span class="p">)</span>
+<span class="n">BIOAT_DEFAULT_FONTS_DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"libplot"</span><span class="p">)</span>
 <span class="n">BIOAT_DEFAULT_FONTS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Helvetica-Bold.ttf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Helvetica-BoldOblique.ttf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Helvetica-Light.ttf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Helvetica-Oblique.ttf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Helvetica.ttf&quot;</span><span class="p">,</span>
+    <span class="s2">"Helvetica-Bold.ttf"</span><span class="p">,</span>
+    <span class="s2">"Helvetica-BoldOblique.ttf"</span><span class="p">,</span>
+    <span class="s2">"Helvetica-Light.ttf"</span><span class="p">,</span>
+    <span class="s2">"Helvetica-Oblique.ttf"</span><span class="p">,</span>
+    <span class="s2">"Helvetica.ttf"</span><span class="p">,</span>
 <span class="p">]</span>
 <span class="n">BIOAT_MORANDI_PALETTE</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;#8FA58E&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#8BA4B8&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#C8B6A6&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#B4867A&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#A792A6&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#D0C2A4&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#A7B6A3&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;#7D8C99&quot;</span><span class="p">,</span>
+    <span class="s2">"#8FA58E"</span><span class="p">,</span>
+    <span class="s2">"#8BA4B8"</span><span class="p">,</span>
+    <span class="s2">"#C8B6A6"</span><span class="p">,</span>
+    <span class="s2">"#B4867A"</span><span class="p">,</span>
+    <span class="s2">"#A792A6"</span><span class="p">,</span>
+    <span class="s2">"#D0C2A4"</span><span class="p">,</span>
+    <span class="s2">"#A7B6A3"</span><span class="p">,</span>
+    <span class="s2">"#7D8C99"</span><span class="p">,</span>
 <span class="p">)</span>
 
 
-<span class="n">_MATH_TITLE_TOKEN_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\$([^$]+)\$&quot;</span><span class="p">)</span>
-<span class="n">_SIMPLE_SCRIPT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([_^])(?:\{([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]+)\}|([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]))$&quot;</span><span class="p">)</span>
+<span class="n">_MATH_TITLE_TOKEN_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\$([^$]+)\$"</span><span class="p">)</span>
+<span class="n">_SIMPLE_SCRIPT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^([_^])(?:\{([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]+)\}|([^</span><span class="si">{}</span><span class="se">\\</span><span class="s2">]))$"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_plot_modules</span><span class="p">():</span>
@@ -143,47 +106,47 @@
     <span class="k">return</span> <span class="n">plt</span><span class="p">,</span> <span class="n">sns</span><span class="p">,</span> <span class="n">Rectangle</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy fonts from bioat package to matplotlib package.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="s2">"warning"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Copy fonts from bioat package to matplotlib package.</span>
 
 <span class="sd">    :param log_level: log level for logger</span>
 <span class="sd">    :type log_level: string</span>
 <span class="sd">    :raises FileNotFoundError: if not found which site-packages to copy fonts to</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;_copy_fonts&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"_copy_fonts"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">refresh</span><span class="p">:</span>
-        <span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">,</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">,</span> <span class="s2">&quot;fontlist*&quot;</span><span class="p">))</span>
+        <span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME</span><span class="p">,</span> <span class="s2">".cache"</span><span class="p">,</span> <span class="s2">"matplotlib"</span><span class="p">,</span> <span class="s2">"fontlist*"</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files_to_remove</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">to_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;site-packages&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"site-packages"</span><span class="p">):</span>
                 <span class="n">to_path</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">to_path</span><span class="p">:</span>
-            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">BioatRuntimeError</span><span class="p">(</span><span class="s2">&quot;site-packages not found in sys.path&quot;</span><span class="p">))</span>
+            <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">BioatRuntimeError</span><span class="p">(</span><span class="s2">"site-packages not found in sys.path"</span><span class="p">))</span>
             <span class="k">return</span>
-        <span class="n">to_path</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;site-packages&quot;</span><span class="p">))</span>
+        <span class="n">to_path</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"site-packages"</span><span class="p">))</span>
         <span class="n">to_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">to_path</span><span class="p">,</span>
-            <span class="s2">&quot;matplotlib&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mpl-data&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fonts&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ttf&quot;</span><span class="p">,</span>
+            <span class="s2">"matplotlib"</span><span class="p">,</span>
+            <span class="s2">"mpl-data"</span><span class="p">,</span>
+            <span class="s2">"fonts"</span><span class="p">,</span>
+            <span class="s2">"ttf"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">from_path</span> <span class="o">=</span> <span class="n">BIOAT_DEFAULT_FONTS_DATAPATH</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Copying fonts from </span><span class="si">{</span><span class="n">from_path</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">to_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Copying fonts from </span><span class="si">{</span><span class="n">from_path</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">to_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">font</span> <span class="ow">in</span> <span class="n">BIOAT_DEFAULT_FONTS</span><span class="p">:</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">from_path</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_path</span><span class="p">,</span> <span class="n">font</span><span class="p">),</span>
             <span class="p">)</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fonts copied successfully&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fonts copied successfully"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">BioatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to copy fonts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">BioatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to copy fonts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_simple_script_title</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
@@ -193,10 +156,10 @@
 
     <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">_MATH_TITLE_TOKEN_RE</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
-            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
 
         <span class="n">body</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">body</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"</span><span class="se">\\</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">body</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">script_match</span> <span class="o">=</span> <span class="n">_SIMPLE_SCRIPT_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
@@ -205,12 +168,12 @@
 
         <span class="n">script_mark</span><span class="p">,</span> <span class="n">braced_text</span><span class="p">,</span> <span class="n">single_char</span> <span class="o">=</span> <span class="n">script_match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
         <span class="n">script_text</span> <span class="o">=</span> <span class="n">braced_text</span> <span class="k">if</span> <span class="n">braced_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">single_char</span>
-        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;sub&quot;</span> <span class="k">if</span> <span class="n">script_mark</span> <span class="o">==</span> <span class="s2">&quot;_&quot;</span> <span class="k">else</span> <span class="s2">&quot;sup&quot;</span><span class="p">,</span> <span class="n">script_text</span><span class="p">))</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"sub"</span> <span class="k">if</span> <span class="n">script_mark</span> <span class="o">==</span> <span class="s2">"_"</span> <span class="k">else</span> <span class="s2">"sup"</span><span class="p">,</span> <span class="n">script_text</span><span class="p">))</span>
         <span class="n">matched_script</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
-        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span><span class="p">:]))</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">pos</span><span class="p">:]))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">matched_script</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -218,12 +181,18 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_patch_simple_script_titles</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render simple title superscripts/subscripts as editable text chunks.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Render simple title superscripts/subscripts as editable text chunks."""</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.offsetbox</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnchoredOffsetbox</span><span class="p">,</span> <span class="n">DrawingArea</span><span class="p">,</span> <span class="n">HPacker</span><span class="p">,</span> <span class="n">TextArea</span><span class="p">,</span> <span class="n">VPacker</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.offsetbox</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">AnchoredOffsetbox</span><span class="p">,</span>
+        <span class="n">DrawingArea</span><span class="p">,</span>
+        <span class="n">HPacker</span><span class="p">,</span>
+        <span class="n">TextArea</span><span class="p">,</span>
+        <span class="n">VPacker</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span> <span class="s2">&quot;_bioat_simple_script_title_patch&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span> <span class="s2">"_bioat_simple_script_title_patch"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">original_set_title</span> <span class="o">=</span> <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span>
@@ -238,7 +207,7 @@
         <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">previous_artist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_bioat_simple_script_title_artist&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">previous_artist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_bioat_simple_script_title_artist"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">previous_artist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">previous_artist</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -247,7 +216,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_bioat_simple_script_title_artist</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">chunks</span> <span class="o">=</span> <span class="n">_parse_simple_script_title</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">chunks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">chunks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"center"</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">original_set_title</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>
                 <span class="n">label</span><span class="p">,</span>
@@ -262,43 +231,43 @@
         <span class="k">if</span> <span class="n">fontdict</span><span class="p">:</span>
             <span class="n">textprops</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fontdict</span><span class="p">)</span>
         <span class="n">textprops</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">])</span>
-        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;fontweight&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titleweight&quot;</span><span class="p">])</span>
-        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;text.color&quot;</span><span class="p">])</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"fontsize"</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.titlesize"</span><span class="p">])</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"fontweight"</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.titleweight"</span><span class="p">])</span>
+        <span class="n">textprops</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">"text.color"</span><span class="p">])</span>
 
         <span class="n">script_props</span> <span class="o">=</span> <span class="n">textprops</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">fontsize</span> <span class="o">=</span> <span class="n">textprops</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">])</span>
+        <span class="n">fontsize</span> <span class="o">=</span> <span class="n">textprops</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fontsize"</span><span class="p">,</span> <span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.titlesize"</span><span class="p">])</span>
         <span class="n">script_offset</span> <span class="o">=</span> <span class="mf">1.5</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fontsize</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="n">script_props</span><span class="p">[</span><span class="s2">&quot;fontsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fontsize</span> <span class="o">*</span> <span class="mf">0.7</span>
+            <span class="n">script_props</span><span class="p">[</span><span class="s2">"fontsize"</span><span class="p">]</span> <span class="o">=</span> <span class="n">fontsize</span> <span class="o">*</span> <span class="mf">0.7</span>
             <span class="n">script_offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">fontsize</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
         <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"text"</span><span class="p">:</span>
                 <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">textprops</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;sub&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"sub"</span><span class="p">:</span>
                 <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">VPacker</span><span class="p">(</span>
                         <span class="n">children</span><span class="o">=</span><span class="p">[</span>
                             <span class="n">DrawingArea</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">script_offset</span><span class="p">),</span>
                             <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">script_props</span><span class="p">),</span>
                         <span class="p">],</span>
-                        <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">align</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
                         <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                         <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;sup&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"sup"</span><span class="p">:</span>
                 <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">VPacker</span><span class="p">(</span>
                         <span class="n">children</span><span class="o">=</span><span class="p">[</span>
                             <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="n">script_props</span><span class="p">),</span>
                             <span class="n">DrawingArea</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">script_offset</span><span class="p">),</span>
                         <span class="p">],</span>
-                        <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                        <span class="n">align</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
                         <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                         <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -315,10 +284,10 @@
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">title_box</span> <span class="o">=</span> <span class="n">HPacker</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;baseline&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">title_box</span> <span class="o">=</span> <span class="n">HPacker</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">"baseline"</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">anchor_y</span> <span class="o">=</span> <span class="mf">1.02</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y</span>
         <span class="n">anchored_title</span> <span class="o">=</span> <span class="n">AnchoredOffsetbox</span><span class="p">(</span>
-            <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper center&quot;</span><span class="p">,</span>
+            <span class="n">loc</span><span class="o">=</span><span class="s2">"upper center"</span><span class="p">,</span>
             <span class="n">child</span><span class="o">=</span><span class="n">title_box</span><span class="p">,</span>
             <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">borderpad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -331,7 +300,7 @@
 
         <span class="k">return</span> <span class="n">original_set_title</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">""</span><span class="p">,</span>
             <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">,</span>
             <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span>
             <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">,</span>
@@ -350,7 +319,7 @@
 
     <span class="n">original_set_title</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
         <span class="n">Axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span>
-        <span class="s2">&quot;_bioat_original_set_title&quot;</span><span class="p">,</span>
+        <span class="s2">"_bioat_original_set_title"</span><span class="p">,</span>
         <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">original_set_title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -363,25 +332,25 @@
 <div class="viewcode-block" id="init_matplotlib">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libplot.init_matplotlib">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">init_matplotlib</span><span class="p">(</span>
-    <span class="n">font</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span>
+    <span class="n">font</span><span class="o">=</span><span class="s2">"Helvetica"</span><span class="p">,</span>
     <span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">sns_context</span><span class="o">=</span><span class="s2">&quot;paper&quot;</span><span class="p">,</span>
-    <span class="n">sns_style</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">sns_context</span><span class="o">=</span><span class="s2">"paper"</span><span class="p">,</span>
+    <span class="n">sns_style</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
     <span class="n">sns_palette</span><span class="o">=</span><span class="n">BIOAT_MORANDI_PALETTE</span><span class="p">,</span>
     <span class="n">sns_font_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">figure_dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-    <span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Easily set matplotlib style.</span>
+<span class="w">    </span><span class="sd">"""Easily set matplotlib style.</span>
 
-<span class="sd">    :param font: use what font in matplotlib, defaults to &#39;Helvetica&#39;</span>
+<span class="sd">    :param font: use what font in matplotlib, defaults to 'Helvetica'</span>
 <span class="sd">    :type font: str, optional</span>
 <span class="sd">    :param refresh: whether to remove matplotlib font cache and reload bundled fonts, defaults to False</span>
 <span class="sd">    :type refresh: bool, optional</span>
-<span class="sd">    :param sns_context: seaborn context, defaults to &#39;paper&#39;</span>
+<span class="sd">    :param sns_context: seaborn context, defaults to 'paper'</span>
 <span class="sd">    :type sns_context: str, optional</span>
-<span class="sd">    :param sns_style: seaborn style, defaults to &#39;white&#39;</span>
+<span class="sd">    :param sns_style: seaborn style, defaults to 'white'</span>
 <span class="sd">    :type sns_style: str, optional</span>
 <span class="sd">    :param sns_palette: seaborn palette, defaults to a muted Morandi palette</span>
 <span class="sd">    :type sns_palette: str or sequence, optional</span>
@@ -389,74 +358,75 @@
 <span class="sd">    :type sns_font_scale: float, optional</span>
 <span class="sd">    :param figure_dpi: default figure resolution, defaults to 300</span>
 <span class="sd">    :type figure_dpi: int, optional</span>
-<span class="sd">    :param log_level: log level, defaults to &#39;INFO&#39;</span>
+<span class="sd">    :param log_level: log level, defaults to 'INFO'</span>
 <span class="sd">    :type log_level: str, optional</span>
 <span class="sd">    :raises BioatError: if failed to copy fonts</span>
 <span class="sd">    :raises BioatRuntimeError: if site-packages not found in sys.path</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;init_matplotlib&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"init_matplotlib"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="n">plt</span><span class="p">,</span> <span class="n">sns</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_plot_modules</span><span class="p">()</span>
 
     <span class="c1"># Keep rarely changed knobs in kwargs so the public signature stays simple.</span>
-    <span class="n">style</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">,</span> <span class="s2">&quot;seaborn-v0_8-white&quot;</span><span class="p">)</span>
+    <span class="n">style</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"style"</span><span class="p">,</span> <span class="s2">"seaborn-v0_8-white"</span><span class="p">)</span>
     <span class="c1"># Use ASCII hyphen-minus for negative ticks; some font imports</span>
     <span class="c1"># render the Unicode minus as a missing glyph or question mark.</span>
-    <span class="n">axes_unicode_minus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;axes_unicode_minus&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">axes_unicode_minus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"axes_unicode_minus"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="c1"># Primary vector-editing requirement: keep words grouped as editable text.</span>
     <span class="c1"># Core PDF/PS fonts import more consistently as word-level text boxes; the</span>
     <span class="c1"># simple-subscript title patch avoids mathtext Type 3 glyph paths there.</span>
-    <span class="n">pdf_use14corefonts</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdf_use14corefonts&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">ps_useafm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ps_useafm&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">split_simple_math_titles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;split_simple_math_titles&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;set_backend_svg&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">pdf_use14corefonts</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pdf_use14corefonts"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">ps_useafm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ps_useafm"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">split_simple_math_titles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"split_simple_math_titles"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">set_backend_svg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"set_backend_svg"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">)</span>
+    <span class="n">mathtext_default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mathtext_default"</span><span class="p">,</span> <span class="s2">"it"</span><span class="p">)</span>
 
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initializing matplotlib&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Initializing matplotlib"</span><span class="p">)</span>
     <span class="n">_copy_fonts</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="n">refresh</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">split_simple_math_titles</span><span class="p">:</span>
         <span class="n">_patch_simple_script_titles</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">_unpatch_simple_script_titles</span><span class="p">()</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;init_matplotlib&quot;</span><span class="p">)</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="s2">"init_matplotlib"</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.style.use(&#39;</span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# set matplotlib style theme</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# ref: https://matplotlib.org/stable/api/style_api.html&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"set: plt.style.use('</span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">')</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"# set matplotlib style theme</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"# ref: https://matplotlib.org/stable/api/style_api.html"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
 
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;font.family&#39;] = &#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">font</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;font.sans-serif&#39;] = [&#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">font</span><span class="p">]</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set: plt.rcParams['font.family'] = '</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"font.family"</span><span class="p">]</span> <span class="o">=</span> <span class="n">font</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set: plt.rcParams['font.sans-serif'] = ['</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">']"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"font.sans-serif"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">font</span><span class="p">]</span>
     <span class="c1"># 300 dpi is a safe publication default; final figure dimensions should</span>
     <span class="c1"># still be controlled by figsize, usually width ~= 7 inches.</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;figure.dpi&#39;] = </span><span class="si">{</span><span class="n">figure_dpi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">figure_dpi</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"set: plt.rcParams['figure.dpi'] = </span><span class="si">{</span><span class="n">figure_dpi</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"figure.dpi"</span><span class="p">]</span> <span class="o">=</span> <span class="n">figure_dpi</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;axes.unicode_minus&#39;] = </span><span class="si">{</span><span class="n">axes_unicode_minus</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"set: plt.rcParams['axes.unicode_minus'] = </span><span class="si">{</span><span class="n">axes_unicode_minus</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes_unicode_minus</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.unicode_minus"</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes_unicode_minus</span>
 
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;pdf.use14corefonts&#39;] = </span><span class="si">{</span><span class="n">pdf_use14corefonts</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# use core fonts so vector editors keep words grouped as text</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"set: plt.rcParams['pdf.use14corefonts'] = </span><span class="si">{</span><span class="n">pdf_use14corefonts</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"# use core fonts so vector editors keep words grouped as text</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"# ref: https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams)"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.use14corefonts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdf_use14corefonts</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"pdf.use14corefonts"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdf_use14corefonts</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;ps.useafm&#39;] = </span><span class="si">{</span><span class="n">ps_useafm</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;# use AFM core fonts so vector editors keep words grouped as text&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"set: plt.rcParams['ps.useafm'] = </span><span class="si">{</span><span class="n">ps_useafm</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"# use AFM core fonts so vector editors keep words grouped as text"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.useafm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps_useafm</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"ps.useafm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps_useafm</span>
     <span class="k">if</span> <span class="n">set_backend_svg</span><span class="p">:</span>
         <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;set: plt.rcParams[&#39;svg.fonttype&#39;] = &#39;</span><span class="si">{</span><span class="n">set_backend_svg</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;# whether to use &#39;none&#39; to replace &#39;path&#39; (use font but not plot path for characters)for the SVG backend&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"set: plt.rcParams['svg.fonttype'] = '</span><span class="si">{</span><span class="n">set_backend_svg</span><span class="si">}</span><span class="s2">'</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"# whether to use 'none' to replace 'path' (use font but not plot path for characters)for the SVG backend"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;svg.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_svg</span>
-    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;matplotlib initialized successfully&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"svg.fonttype"</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_backend_svg</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"matplotlib initialized successfully"</span><span class="p">)</span>
 
     <span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span>
         <span class="n">context</span><span class="o">=</span><span class="n">sns_context</span><span class="p">,</span>
@@ -465,13 +435,16 @@
         <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span>
         <span class="n">font_scale</span><span class="o">=</span><span class="n">sns_font_scale</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="c1"># Matplotlib 3.11 changed this default to "normal". Keep BioAT's</span>
+    <span class="c1"># established publication style stable across supported versions.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"mathtext.default"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mathtext_default</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;set: sns.set_theme(context=&#39;</span><span class="si">{</span><span class="n">sns_context</span><span class="si">}</span><span class="s2">&#39;, style=&#39;</span><span class="si">{</span><span class="n">sns_style</span><span class="si">}</span><span class="s2">&#39;, palette=&#39;</span><span class="si">{</span><span class="n">sns_palette</span><span class="si">}</span><span class="s2">&#39;, font=&#39;</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">&#39;, font_scale=</span><span class="si">{</span><span class="n">sns_font_scale</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"set: sns.set_theme(context='</span><span class="si">{</span><span class="n">sns_context</span><span class="si">}</span><span class="s2">', style='</span><span class="si">{</span><span class="n">sns_style</span><span class="si">}</span><span class="s2">', palette='</span><span class="si">{</span><span class="n">sns_palette</span><span class="si">}</span><span class="s2">', font='</span><span class="si">{</span><span class="n">font</span><span class="si">}</span><span class="s2">', font_scale=</span><span class="si">{</span><span class="n">sns_font_scale</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Run this for publication figures: &quot;</span>
-        <span class="s2">&quot;fig, ax = plt.subplots(figsize=(7, height), dpi=300)  &quot;</span>
-        <span class="s2">&quot;# replace height with the panel layout height&quot;</span><span class="p">,</span>
+        <span class="s2">"Run this for publication figures: "</span>
+        <span class="s2">"fig, ax = plt.subplots(figsize=(7, height), dpi=300)  "</span>
+        <span class="s2">"# replace height with the panel layout height"</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -521,8 +494,8 @@
             <span class="n">y</span><span class="p">,</span>
             <span class="n">name</span><span class="p">,</span>
             <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-            <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+            <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
+            <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span>
@@ -531,7 +504,7 @@
                 <span class="n">width</span><span class="o">=</span><span class="n">swatch_width</span><span class="p">,</span>
                 <span class="n">height</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
                 <span class="n">facecolor</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;0.7&quot;</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"0.7"</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -540,20 +513,20 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">set_figsize</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the figure size for matplotlib.</span>
+<span class="w">    </span><span class="sd">"""Set the figure size for matplotlib.</span>
 
 <span class="sd">    Defined in :numref:`sec_calculus`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># use_svg_display()</span>
     <span class="n">plt</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_plot_modules</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">figsize</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"figure.figsize"</span><span class="p">]</span> <span class="o">=</span> <span class="n">figsize</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">set_axes</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">ylim</span><span class="p">,</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">yscale</span><span class="p">,</span> <span class="n">legend</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the axes for matplotlib.</span>
+<span class="w">    </span><span class="sd">"""Set the axes for matplotlib.</span>
 
 <span class="sd">    Defined in :numref:`sec_calculus`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">xscale</span><span class="p">)</span>
@@ -574,24 +547,24 @@
     <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
-    <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
-    <span class="n">fmts</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;m--&quot;</span><span class="p">,</span> <span class="s2">&quot;g-.&quot;</span><span class="p">,</span> <span class="s2">&quot;r:&quot;</span><span class="p">),</span>
+    <span class="n">xscale</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span>
+    <span class="n">yscale</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span>
+    <span class="n">fmts</span><span class="o">=</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"m--"</span><span class="p">,</span> <span class="s2">"g-."</span><span class="p">,</span> <span class="s2">"r:"</span><span class="p">),</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
     <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot data points.</span>
+<span class="w">    </span><span class="sd">"""Plot data points.</span>
 
 <span class="sd">    Defined in :numref:`sec_calculus`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">legend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">legend</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">plt</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_plot_modules</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">has_one_axis</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>  <span class="c1"># True if X (tensor or list) has 1 axis</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;ndim&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">"ndim"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"__len__"</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">has_one_axis</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
@@ -618,17 +591,17 @@
     <span class="n">use_demo_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">fig_width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">fig_height</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">col_locus_start</span><span class="o">=</span><span class="s2">&quot;locus_start&quot;</span><span class="p">,</span>
-    <span class="n">col_locus_length</span><span class="o">=</span><span class="s2">&quot;locus_length&quot;</span><span class="p">,</span>
-    <span class="n">col_group</span><span class="o">=</span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
-    <span class="n">col_name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
-    <span class="n">col_start</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">,</span>
-    <span class="n">col_end</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">,</span>
-    <span class="n">col_strand</span><span class="o">=</span><span class="s2">&quot;strand&quot;</span><span class="p">,</span>
-    <span class="n">col_color</span><span class="o">=</span><span class="s2">&quot;color&quot;</span><span class="p">,</span>
+    <span class="n">col_locus_start</span><span class="o">=</span><span class="s2">"locus_start"</span><span class="p">,</span>
+    <span class="n">col_locus_length</span><span class="o">=</span><span class="s2">"locus_length"</span><span class="p">,</span>
+    <span class="n">col_group</span><span class="o">=</span><span class="s2">"group"</span><span class="p">,</span>
+    <span class="n">col_name</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span>
+    <span class="n">col_start</span><span class="o">=</span><span class="s2">"start"</span><span class="p">,</span>
+    <span class="n">col_end</span><span class="o">=</span><span class="s2">"end"</span><span class="p">,</span>
+    <span class="n">col_strand</span><span class="o">=</span><span class="s2">"strand"</span><span class="p">,</span>
+    <span class="n">col_color</span><span class="o">=</span><span class="s2">"color"</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># """</span>
     <span class="c1"># ![](https://raw.githubusercontent.com/hermanzhaozzzz/PicturesBed01/master/PicGo/202406260156158.png)</span>
     <span class="c1"># ==================== DEMO ====================</span>
     <span class="c1">#     group     name    type  start    end  strand    color  locus_length  locus_start</span>
@@ -646,59 +619,71 @@
 
     <span class="c1"># [515 rows x 9 columns]</span>
     <span class="c1"># ==================== /DEMO ====================</span>
-    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># """</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_demo_data</span><span class="p">():</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get demo data for DNA features.</span>
+<span class="w">        </span><span class="sd">"""Get demo data for DNA features.</span>
 
 <span class="sd">        :return: demo DNA features</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;AAAAAAA&quot;</span><span class="p">,</span> <span class="s2">&quot;BBBB&quot;</span><span class="p">,</span> <span class="s2">&quot;CC&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CDS&quot;</span><span class="p">,</span> <span class="s2">&quot;CDS&quot;</span><span class="p">,</span> <span class="s2">&quot;CDS&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;DR&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;spacer&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
-                <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="p">[</span><span class="mi">1050</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">14000</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10300</span><span class="p">,</span> <span class="mi">10300</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10336</span><span class="p">,</span> <span class="mi">10336</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">))]</span>
-                <span class="p">),</span>
-                <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="p">[</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">6000</span><span class="p">,</span> <span class="mi">16000</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10336</span><span class="p">,</span> <span class="mi">10336</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10366</span><span class="p">,</span> <span class="mi">10366</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">))]</span>
-                <span class="p">),</span>
-                <span class="s2">&quot;strand&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
-                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"AAAAAAA"</span><span class="p">,</span> <span class="s2">"BBBB"</span><span class="p">,</span> <span class="s2">"CC"</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"CDS"</span><span class="p">,</span> <span class="s2">"CDS"</span><span class="p">,</span> <span class="s2">"CDS"</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"DR"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"spacer"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="s2">"start"</span><span class="p">:</span> <span class="p">(</span>
                     <span class="p">[</span>
-                        <span class="s2">&quot;#ffd700&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;#ffcccc&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;#cffccc&quot;</span><span class="p">,</span>
+                        <span class="mi">1050</span><span class="p">,</span>
+                        <span class="mi">3500</span><span class="p">,</span>
+                        <span class="mi">14000</span><span class="p">,</span>
+                        <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10300</span><span class="p">,</span> <span class="mi">10300</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span>
+                        <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10336</span><span class="p">,</span> <span class="mi">10336</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span>
                     <span class="p">]</span>
-                    <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span>
-                    <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span>
                 <span class="p">),</span>
-                <span class="s2">&quot;locus_length&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20000</span><span class="p">]</span> <span class="o">*</span> <span class="mi">103</span><span class="p">,</span>
-                <span class="s2">&quot;locus_start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">103</span><span class="p">,</span>
+                <span class="s2">"end"</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="mi">4000</span><span class="p">,</span>
+                        <span class="mi">6000</span><span class="p">,</span>
+                        <span class="mi">16000</span><span class="p">,</span>
+                        <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10336</span><span class="p">,</span> <span class="mi">10336</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span>
+                        <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10366</span><span class="p">,</span> <span class="mi">10366</span> <span class="o">+</span> <span class="mi">66</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">66</span><span class="p">)),</span>
+                    <span class="p">]</span>
+                <span class="p">),</span>
+                <span class="s2">"strand"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="s2">"color"</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="s2">"#ffd700"</span><span class="p">,</span>
+                        <span class="s2">"#ffcccc"</span><span class="p">,</span>
+                        <span class="s2">"#cffccc"</span><span class="p">,</span>
+                    <span class="p">]</span>
+                    <span class="o">+</span> <span class="p">[</span><span class="s2">"black"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span>
+                    <span class="o">+</span> <span class="p">[</span><span class="s2">"red"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">50</span>
+                <span class="p">),</span>
+                <span class="s2">"locus_length"</span><span class="p">:</span> <span class="p">[</span><span class="mi">20000</span><span class="p">]</span> <span class="o">*</span> <span class="mi">103</span><span class="p">,</span>
+                <span class="s2">"locus_start"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">103</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
             <span class="n">tmpdf</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">tmpdf</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">tmpdf</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;locus_length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;locus_length&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1500</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">&quot;locus_start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
+                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">i</span>
+                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"end"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"end"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">i</span>
+                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"locus_length"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"locus_length"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1500</span> <span class="o">*</span> <span class="n">i</span>
+                <span class="n">tmpdf</span><span class="p">[</span><span class="s2">"locus_start"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
             <span class="n">ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpdf</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;DEMO&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">"DEMO"</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;/DEMO&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">"/DEMO"</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">use_demo_data</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">_get_demo_data</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please provide a DataFrame with DNA features.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Please provide a DataFrame with DNA features."</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># 设置子图的数量</span>
@@ -714,11 +699,11 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">dna_features_viewer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphicFeature</span><span class="p">,</span> <span class="n">GraphicRecord</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Please install dna_features_viewer to use this function.&quot;</span><span class="p">)</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Please install dna_features_viewer to use this function."</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col_group</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">group_name</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">g</span>
-        <span class="c1"># print(f&quot;group_name = {group_name}&quot;)</span>
+        <span class="c1"># print(f"group_name = {group_name}")</span>
 
         <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
@@ -728,7 +713,7 @@
             <span class="n">start</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_start</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">)</span>
             <span class="n">end</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_end</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">strand</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_strand</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">color</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_color</span><span class="p">,</span> <span class="s2">&quot;grey&quot;</span><span class="p">)</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_color</span><span class="p">,</span> <span class="s2">"grey"</span><span class="p">)</span>
             <span class="n">feature</span> <span class="o">=</span> <span class="n">GraphicFeature</span><span class="p">(</span>
                 <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
                 <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
@@ -738,8 +723,8 @@
             <span class="p">)</span>
             <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">use_demo_data</span><span class="p">:</span>
-            <span class="n">locus_start</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;locus_start&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">locus_length</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;locus_length&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">locus_start</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"locus_start"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">locus_length</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"locus_length"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">locus_start</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">col_locus_start</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">locus_length</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">col_locus_length</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -753,23 +738,23 @@
         <span class="n">record</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>  <span class="c1"># https://github.com/Edinburgh-Genome-Foundry/DnaFeaturesViewer</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
             <span class="n">figure_width</span><span class="o">=</span><span class="n">fig_width</span><span class="p">,</span>
-            <span class="n">draw_line</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;draw_line&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="n">with_ruler</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;with_ruler&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">draw_line</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"draw_line"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">with_ruler</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"with_ruler"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="n">plot_sequence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">annotate_inline</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;annotate_inline&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="n">max_label_length</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_label_length&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-            <span class="n">max_line_length</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_line_length&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+            <span class="n">annotate_inline</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"annotate_inline"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">max_label_length</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_label_length"</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+            <span class="n">max_line_length</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_line_length"</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
             <span class="n">level_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">strand_in_label_threshold</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-            <span class="n">elevate_outline_annotations</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="n">strand_in_label_threshold</span><span class="o">=</span><span class="s2">"default"</span><span class="p">,</span>
+            <span class="n">elevate_outline_annotations</span><span class="o">=</span><span class="s2">"default"</span><span class="p">,</span>
             <span class="n">figure_height</span><span class="o">=</span><span class="n">fig_height</span><span class="p">,</span>
             <span class="n">sequence_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># ax.set_title(f&quot;Subplot {i+1}&quot;)  # 设置子图的标题</span>
+        <span class="c1"># ax.set_title(f"Subplot {i+1}")  # 设置子图的标题</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
             <span class="n">group_name</span><span class="p">,</span>
         <span class="p">)</span>  <span class="c1"># 设置x轴标签</span>
-        <span class="c1"># ax.set_ylabel(&quot;Y Label&quot;)  # 设置y轴标签</span>
+        <span class="c1"># ax.set_ylabel("Y Label")  # 设置y轴标签</span>
         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># 显示网格线</span>
         <span class="c1"># plt.show()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -778,12 +763,12 @@
     <span class="c1"># 调整子图之间的距离</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="k">pass</span>
     <span class="c1"># test for init_matplotlib</span>
-    <span class="c1"># init_matplotlib(log_level=&quot;warning&quot;)</span>
+    <span class="c1"># init_matplotlib(log_level="warning")</span>
     <span class="c1"># plot_colortable(</span>
-    <span class="c1">#     [&quot;#64C1E8&quot;, &quot;#80CED7&quot;, &quot;#63C7B2&quot;, &quot;#8E6C88&quot;, &quot;#CA61C3&quot;, &quot;#FF958C&quot;, &quot;#883677&quot;],</span>
+    <span class="c1">#     ["#64C1E8", "#80CED7", "#63C7B2", "#8E6C88", "#CA61C3", "#FF958C", "#883677"],</span>
     <span class="c1">#     ncols=1,</span>
     <span class="c1"># )</span>
 
@@ -796,14 +781,14 @@
     <span class="c1"># plot(</span>
     <span class="c1">#     x,</span>
     <span class="c1">#     [normal(x, mu, sigma) for mu, sigma in params],</span>
-    <span class="c1">#     xlabel=&quot;x&quot;,</span>
-    <span class="c1">#     ylabel=&quot;p(x)&quot;,</span>
+    <span class="c1">#     xlabel="x",</span>
+    <span class="c1">#     ylabel="p(x)",</span>
     <span class="c1">#     figsize=(4.5, 2.5),</span>
-    <span class="c1">#     legend=[f&quot;mean {mu}, std {sigma}&quot; for mu, sigma in params],</span>
+    <span class="c1">#     legend=[f"mean {mu}, std {sigma}" for mu, sigma in params],</span>
     <span class="c1"># )</span>
     <span class="c1"># plt.show()</span>
     <span class="c1"># plt.close()</span>
-    <span class="c1"># df_plot = pd.read_csv(&quot;~/demo.tsv&quot;, sep=&quot;\t&quot;)</span>
+    <span class="c1"># df_plot = pd.read_csv("~/demo.tsv", sep="\t")</span>
     <span class="c1"># # print(df_plot)</span>
     <span class="c1"># plot_dna_features()</span>
     <span class="c1"># plot_dna_features(</span>
@@ -811,46 +796,82 @@
     <span class="c1">#     # use_demo_data=True</span>
     <span class="c1">#     fig_width=20,</span>
     <span class="c1">#     fig_height=3,</span>
-    <span class="c1">#     col_locus_start=&quot;locus_start&quot;,</span>
-    <span class="c1">#     col_locus_length=&quot;locus_length&quot;,</span>
-    <span class="c1">#     col_group=&quot;crispr_id:member&quot;,</span>
-    <span class="c1">#     col_name=&quot;pep_name&quot;,</span>
-    <span class="c1">#     col_start=&quot;pep_start&quot;,</span>
-    <span class="c1">#     col_end=&quot;pep_end&quot;,</span>
-    <span class="c1">#     col_strand=&quot;pep_strand&quot;,</span>
-    <span class="c1">#     col_color=&quot;color&quot;,</span>
+    <span class="c1">#     col_locus_start="locus_start",</span>
+    <span class="c1">#     col_locus_length="locus_length",</span>
+    <span class="c1">#     col_group="crispr_id:member",</span>
+    <span class="c1">#     col_name="pep_name",</span>
+    <span class="c1">#     col_start="pep_start",</span>
+    <span class="c1">#     col_end="pep_end",</span>
+    <span class="c1">#     col_strand="pep_strand",</span>
+    <span class="c1">#     col_color="color",</span>
     <span class="c1"># )</span>
 
-    <span class="c1"># # fig.savefig(&quot;/Users/zhaohuanan/Downloads/test.png&quot;, dpi=300)</span>
+    <span class="c1"># # fig.savefig("/Users/zhaohuanan/Downloads/test.png", dpi=300)</span>
     <span class="c1"># # 显示图形</span>
     <span class="c1"># # plt.show()</span>
 </pre></div>
 
-           </div>
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright .</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">bioat</a></h1>
 
-</body>
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
 </html>

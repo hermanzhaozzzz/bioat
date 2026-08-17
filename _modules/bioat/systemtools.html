@@ -1,72 +1,35 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.systemtools &mdash; Unknown Project Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bioat.systemtools &#8212; bioat Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=54344a33"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
 
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
+  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  </head><body>
+  
 
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
           
-          
-          <a href="../../index.html" class="icon icon-home">
-            Unknown Project
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Unknown Project</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">bioat.systemtools</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+          <div class="body" role="main">
+            
   <h1>Source code for bioat.systemtools</h1><div class="highlight"><pre>
 <span></span><span class="c1"># from bioat.api.internet_speed import main as speedtest</span>
 
@@ -80,37 +43,37 @@
 
 
 
-<span class="c1">#     def __convert_size(self, size, mode=&#39;b&#39;) -&gt; float:</span>
-<span class="c1">#         &quot;&quot;&quot;将单位为Byte的数字转为其它单位</span>
+<span class="c1">#     def __convert_size(self, size, mode='b') -&gt; float:</span>
+<span class="c1">#         """将单位为Byte的数字转为其它单位</span>
 <span class="c1">#</span>
 <span class="c1">#         :param size: int, 单位为Byte的数字</span>
 <span class="c1">#         :param mode: str, 单位，b、k、m、g、t或者B、K、M、G、T</span>
 <span class="c1">#         :return:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         assert mode in list(&#39;bkmgtBKMGT&#39;)</span>
+<span class="c1">#         """</span>
+<span class="c1">#         assert mode in list('bkmgtBKMGT')</span>
 <span class="c1">#         mode = mode.lower()</span>
 <span class="c1">#</span>
-<span class="c1">#         if mode == &#39;b&#39;:</span>
+<span class="c1">#         if mode == 'b':</span>
 <span class="c1">#             return float(size)</span>
-<span class="c1">#         elif mode == &#39;k&#39;:</span>
+<span class="c1">#         elif mode == 'k':</span>
 <span class="c1">#             return size / 1024.0</span>
-<span class="c1">#         elif mode == &#39;m&#39;:</span>
+<span class="c1">#         elif mode == 'm':</span>
 <span class="c1">#             return size / 1024.0 / 1024.0</span>
-<span class="c1">#         elif mode == &#39;g&#39;:</span>
+<span class="c1">#         elif mode == 'g':</span>
 <span class="c1">#             return size / 1024.0 / 1024.0 / 1024.0</span>
-<span class="c1">#         elif mode == &#39;t&#39;:</span>
+<span class="c1">#         elif mode == 't':</span>
 <span class="c1">#             return size / 1024.0 / 1024.0 / 1024.0 / 1024.0</span>
 <span class="c1">#         else:</span>
 <span class="c1">#             return None</span>
 <span class="c1">#</span>
-<span class="c1">#     def __get_size(self, path, mode=&#39;b&#39;):</span>
-<span class="c1">#         &quot;&quot;&quot;获取路径占用大小.</span>
+<span class="c1">#     def __get_size(self, path, mode='b'):</span>
+<span class="c1">#         """获取路径占用大小.</span>
 <span class="c1">#         通过递归函数获取路径占用大小</span>
 <span class="c1">#         :param path: str, 目标路径</span>
 <span class="c1">#         :param mode: str, 单位，b、k、m、g、t或者B、K、M、G、T</span>
 <span class="c1">#         :return: str, 占用大小</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         assert mode in list(&#39;bkmgtBKMGT&#39;)</span>
+<span class="c1">#         """</span>
+<span class="c1">#         assert mode in list('bkmgtBKMGT')</span>
 <span class="c1">#         mode = mode.lower()</span>
 <span class="c1">#</span>
 <span class="c1">#         # 目标是否存在</span>
@@ -134,49 +97,49 @@
 <span class="c1">#</span>
 <span class="c1">#             return self.__convert_size(size=byte_size, mode=mode)</span>
 <span class="c1">#         else:</span>
-<span class="c1">#             # print(f&#39;{path} not exists!&#39;)</span>
+<span class="c1">#             # print(f'{path} not exists!')</span>
 <span class="c1">#             pass</span>
 <span class="c1">#</span>
 <span class="c1">#</span>
-<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
+<span class="c1"># if __name__ == '__main__':</span>
 <span class="c1">#     # 大路径</span>
 <span class="c1">#     aim_paths = [</span>
-<span class="c1">#         # &#39;/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T/fastq&#39;, # for test</span>
-<span class="c1">#         # &#39;/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T.1/1T/fastq&#39;, # for test\</span>
+<span class="c1">#         # '/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T/fastq', # for test</span>
+<span class="c1">#         # '/lustre1/chengqiyi_pkuhpc/zhaohn/2.disk_occupy/1T.1/1T/fastq', # for test\</span>
 <span class="c1">#         #</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/zhaohn&#39;,</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/JiangZhe&#39;,</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/LiuCong&#39;,</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/liuwenqing&#39;,</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/lubo&#39;,</span>
-<span class="c1">#         &#39;/lustre1/chengqiyi_pkuhpc/shx&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/bds&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/bds&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/dyy&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/LK&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/log&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/LSY&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/RenweiLi&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/wuhao&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/xiongxs_tmp&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/zhangxt&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/zhangxt&#39;,</span>
-<span class="c1">#         &#39;/lustre2/chengqiyi_pkuhpc/zml&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/Alumni/mshq&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/Alumni/Shuxiaoting&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/Alumni/SJH&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/Alumni/WK&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/dlt&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/Leizhixin&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/LiuJiangle&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/lixy&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/lzc&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/test2&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/ydy&#39;,</span>
-<span class="c1">#         &#39;/lustre3/chengqiyi_pkuhpc/folder_for_learning/ZhuangYuan&#39;,</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/zhaohn',</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/JiangZhe',</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/LiuCong',</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/liuwenqing',</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/lubo',</span>
+<span class="c1">#         '/lustre1/chengqiyi_pkuhpc/shx',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/bds',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/bds',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/dyy',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/LK',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/log',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/LSY',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/RenweiLi',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/wuhao',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/xiongxs_tmp',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/zhangxt',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/zhangxt',</span>
+<span class="c1">#         '/lustre2/chengqiyi_pkuhpc/zml',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/Alumni/mshq',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/Alumni/Shuxiaoting',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/Alumni/SJH',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/Alumni/WK',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/dlt',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/Leizhixin',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/LiuJiangle',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/lixy',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/lzc',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/test2',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/ydy',</span>
+<span class="c1">#         '/lustre3/chengqiyi_pkuhpc/folder_for_learning/ZhuangYuan',</span>
 <span class="c1">#     ]</span>
 <span class="c1">#</span>
-<span class="c1">#     out_path = &#39;/lustre1/chengqiyi_pkuhpc/zhaohn/__diskusage.all_user.csv&#39;</span>
+<span class="c1">#     out_path = '/lustre1/chengqiyi_pkuhpc/zhaohn/__diskusage.all_user.csv'</span>
 <span class="c1">#</span>
 <span class="c1">#     dt_size = {key: [] for key in aim_paths}</span>
 <span class="c1">#</span>
@@ -184,67 +147,103 @@
 <span class="c1">#         file_sizes = []</span>
 <span class="c1">#         files = os.listdir(aim_path)</span>
 <span class="c1">#</span>
-<span class="c1">#         # print(&quot;aim_path: &quot;, aim_path)</span>
+<span class="c1">#         # print("aim_path: ", aim_path)</span>
 <span class="c1">#         for file in files:</span>
 <span class="c1">#             # continue</span>
 <span class="c1">#             cur_path = os.path.join(aim_path, file)</span>
-<span class="c1">#             # print(&quot;cur_path: &quot;, cur_path)</span>
+<span class="c1">#             # print("cur_path: ", cur_path)</span>
 <span class="c1">#             if os.path.isdir(cur_path):</span>
 <span class="c1">#                 try:</span>
-<span class="c1">#                     file_size = (file, get_size(cur_path, &#39;t&#39;))</span>
+<span class="c1">#                     file_size = (file, get_size(cur_path, 't'))</span>
 <span class="c1">#                     file_sizes.append(file_size)</span>
-<span class="c1">#                     print(f&quot;INFO:    Processed {file_size[0]}  {file_size[1]:.3f}TB&quot;)</span>
+<span class="c1">#                     print(f"INFO:    Processed {file_size[0]}  {file_size[1]:.3f}TB")</span>
 <span class="c1">#                 except Exception as err:  # 捕捉所有异常</span>
-<span class="c1">#                     print(f&quot;WARNING: {err} @ {cur_path}, Skip ...&quot;)</span>
+<span class="c1">#                     print(f"WARNING: {err} @ {cur_path}, Skip ...")</span>
 <span class="c1">#                 except FileNotFoundError:</span>
-<span class="c1">#                     print(f&quot;FileNotFoundError @ {cur_path}&quot;)</span>
+<span class="c1">#                     print(f"FileNotFoundError @ {cur_path}")</span>
 <span class="c1">#                     continue</span>
 <span class="c1">#                 except Exception as err:</span>
-<span class="c1">#                     print(f&quot;Exception @ {cur_path}: {err}&quot;)</span>
+<span class="c1">#                     print(f"Exception @ {cur_path}: {err}")</span>
 <span class="c1">#</span>
-<span class="c1">#         # print(&quot;file_sizes: &quot;, file_sizes)</span>
+<span class="c1">#         # print("file_sizes: ", file_sizes)</span>
 <span class="c1">#         file_sizes.sort(key=lambda t: t[1], reverse=True)</span>
 <span class="c1">#         dt_size[aim_path] = file_sizes</span>
-<span class="c1">#     date_time = time.strftime(&quot;%Y/%m/%d %H:%M:%S&quot;, time.localtime())</span>
+<span class="c1">#     date_time = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())</span>
 <span class="c1">#</span>
-<span class="c1">#     with open(out_path, &#39;wt&#39;) as f:</span>
-<span class="c1">#         f.write(f&#39;{date_time},by,Huanan Zhao,\n,,,\n&#39;)</span>
-<span class="c1">#         f.write(&quot;USER,PATH,TOTAL_SIZE,UNIT\n&quot;)</span>
+<span class="c1">#     with open(out_path, 'wt') as f:</span>
+<span class="c1">#         f.write(f'{date_time},by,Huanan Zhao,\n,,,\n')</span>
+<span class="c1">#         f.write("USER,PATH,TOTAL_SIZE,UNIT\n")</span>
 <span class="c1">#         # print(dt_size)</span>
 <span class="c1">#</span>
 <span class="c1">#         for key in dt_size.keys():</span>
 <span class="c1">#             user = os.path.basename(key)</span>
 <span class="c1">#             size = sum([item[1] for item in dt_size[key]])</span>
-<span class="c1">#             f.write(f&#39;{user},{key},{size:&gt;3f},TB\n&#39;)</span>
+<span class="c1">#             f.write(f'{user},{key},{size:&gt;3f},TB\n')</span>
 <span class="c1">#</span>
-<span class="c1">#     print(f&#39;one loop done! @ {date_time}&#39;)</span>
+<span class="c1">#     print(f'one loop done! @ {date_time}')</span>
 </pre></div>
 
-           </div>
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright .</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">bioat</a></h1>
 
-</body>
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
 </html>

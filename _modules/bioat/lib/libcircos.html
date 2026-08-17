@@ -1,77 +1,40 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bioat.lib.libcircos &mdash; Unknown Project Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bioat.lib.libcircos &#8212; bioat Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=54344a33"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
 
   
-      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-    <script src="../../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
-</head>
+  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  </head><body>
+  
 
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
           
-          
-          <a href="../../../index.html" class="icon icon-home">
-            Unknown Project
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Unknown Project</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">bioat.lib.libcircos</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+          <div class="body" role="main">
+            
   <h1>Source code for bioat.lib.libcircos</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Doc.</span>
+<span></span><span class="sd">"""Doc.</span>
 <span class="sd">Adapt from https://github.com/ponnhide/pyCircos</span>
 <span class="sd">and thanks for this github user.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
@@ -89,33 +52,33 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Phylo</span><span class="p">,</span> <span class="n">SeqIO</span>
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.max_open_warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ps.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;pdf.fonttype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.sans-serif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Arial&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Lucida Sans&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DejaVu Sans&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Lucida Grande&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Verdana&quot;</span><span class="p">,</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"figure.max_open_warning"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"ps.fonttype"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"pdf.fonttype"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"font.sans-serif"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Arial"</span><span class="p">,</span>
+    <span class="s2">"Lucida Sans"</span><span class="p">,</span>
+    <span class="s2">"DejaVu Sans"</span><span class="p">,</span>
+    <span class="s2">"Lucida Grande"</span><span class="p">,</span>
+    <span class="s2">"Verdana"</span><span class="p">,</span>
 <span class="p">]</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans-serif&quot;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.labelcolor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#000000&quot;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.linewidth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.pad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.pad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;xtick.major.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;ytick.major.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;circos&quot;</span><span class="p">)</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"font.family"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"sans-serif"</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"font.size"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.labelcolor"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"#000000"</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"axes.linewidth"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"xtick.major.width"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"ytick.major.width"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"xtick.major.pad"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"ytick.major.pad"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"xtick.major.size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"ytick.major.size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">DATAPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"circos"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Garc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Garc</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representation for an arc section in a graphic circle.</span>
+<span class="w">    </span><span class="sd">"""Class representation for an arc section in a graphic circle.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        colorlist (list of str): List of color codes for the arc sections.</span>
@@ -126,45 +89,45 @@
 <span class="sd">            Sets the attribute `key` with the value `item`.</span>
 <span class="sd">        __getitem__(key):</span>
 <span class="sd">            Retrieves the value of the attribute `key`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">colorlist</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;#ff8a80&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff80ab&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ea80fc&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#b388ff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#8c9eff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#82b1ff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#84ffff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#a7ffeb&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#b9f6ca&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ccff90&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#f4ff81&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffff8d&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffe57f&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffd180&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff9e80&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#bcaaa4&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#eeeeee&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#b0bec5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff5252&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff4081&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#e040fb&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#7c4dff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#536dfe&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#448aff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#18ffff&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#64ffda&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#69f0ae&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#b2ff59&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#eeff41&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffff00&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffd740&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffab40&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff6e40&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#a1887f&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#e0e0e0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#90a4ae&quot;</span><span class="p">,</span>
+        <span class="s2">"#ff8a80"</span><span class="p">,</span>
+        <span class="s2">"#ff80ab"</span><span class="p">,</span>
+        <span class="s2">"#ea80fc"</span><span class="p">,</span>
+        <span class="s2">"#b388ff"</span><span class="p">,</span>
+        <span class="s2">"#8c9eff"</span><span class="p">,</span>
+        <span class="s2">"#82b1ff"</span><span class="p">,</span>
+        <span class="s2">"#84ffff"</span><span class="p">,</span>
+        <span class="s2">"#a7ffeb"</span><span class="p">,</span>
+        <span class="s2">"#b9f6ca"</span><span class="p">,</span>
+        <span class="s2">"#ccff90"</span><span class="p">,</span>
+        <span class="s2">"#f4ff81"</span><span class="p">,</span>
+        <span class="s2">"#ffff8d"</span><span class="p">,</span>
+        <span class="s2">"#ffe57f"</span><span class="p">,</span>
+        <span class="s2">"#ffd180"</span><span class="p">,</span>
+        <span class="s2">"#ff9e80"</span><span class="p">,</span>
+        <span class="s2">"#bcaaa4"</span><span class="p">,</span>
+        <span class="s2">"#eeeeee"</span><span class="p">,</span>
+        <span class="s2">"#b0bec5"</span><span class="p">,</span>
+        <span class="s2">"#ff5252"</span><span class="p">,</span>
+        <span class="s2">"#ff4081"</span><span class="p">,</span>
+        <span class="s2">"#e040fb"</span><span class="p">,</span>
+        <span class="s2">"#7c4dff"</span><span class="p">,</span>
+        <span class="s2">"#536dfe"</span><span class="p">,</span>
+        <span class="s2">"#448aff"</span><span class="p">,</span>
+        <span class="s2">"#18ffff"</span><span class="p">,</span>
+        <span class="s2">"#64ffda"</span><span class="p">,</span>
+        <span class="s2">"#69f0ae"</span><span class="p">,</span>
+        <span class="s2">"#b2ff59"</span><span class="p">,</span>
+        <span class="s2">"#eeff41"</span><span class="p">,</span>
+        <span class="s2">"#ffff00"</span><span class="p">,</span>
+        <span class="s2">"#ffd740"</span><span class="p">,</span>
+        <span class="s2">"#ffab40"</span><span class="p">,</span>
+        <span class="s2">"#ff6e40"</span><span class="p">,</span>
+        <span class="s2">"#a1887f"</span><span class="p">,</span>
+        <span class="s2">"#e0e0e0"</span><span class="p">,</span>
+        <span class="s2">"#90a4ae"</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">_arcnum</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -190,14 +153,14 @@
         <span class="n">interspace</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">550</span><span class="p">),</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
         <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">labelposition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">label_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the Garc object with specified parameters.</span>
+<span class="w">        </span><span class="sd">"""Initializes the Garc object with specified parameters.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            arc_id (str, optional):</span>
@@ -213,7 +176,7 @@
 <span class="sd">            facecolor (str or tuple, optional):</span>
 <span class="sd">                Color for filling the arc section. Default is automatically set.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Color for the edge of the filled area. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Color for the edge of the filled area. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Width of the edge line. Default is 0.75.</span>
 <span class="sd">            label (str, optional):</span>
@@ -228,7 +191,7 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError:</span>
 <span class="sd">                If no match for the provided NCBI accession number is found in `record`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parental_gcircle</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">arc_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">arc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Garc</span><span class="o">.</span><span class="n">_arcnum</span><span class="p">)</span>
@@ -244,18 +207,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">seq</span><span class="p">))</span>
 
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="s2">&quot;[a-zA-Z]{1,2}_?[0-9]{5,6}&quot;</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="s2">"[a-zA-Z]{1,2}_?[0-9]{5,6}"</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;genbank&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"genbank"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect value for NCBI accession number.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Incorrect value for NCBI accession number."</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&amp;save=file&amp;log$=seqview&amp;db=nuccore&amp;report=gbwithparts&amp;id=</span><span class="si">{</span><span class="n">record</span><span class="si">}</span><span class="s2">&amp;withparts=on&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&amp;save=file&amp;log$=seqview&amp;db=nuccore&amp;report=gbwithparts&amp;id=</span><span class="si">{</span><span class="n">record</span><span class="si">}</span><span class="s2">&amp;withparts=on"</span>
             <span class="n">outb</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
             <span class="n">outs</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0&quot;</span><span class="p">,</span>
+                <span class="s2">"User-Agent"</span><span class="p">:</span> <span class="s2">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0"</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
 
@@ -263,11 +226,11 @@
                 <span class="n">outb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
             <span class="n">outs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outb</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
 
-            <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">outs</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
                 <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
                 <span class="n">o</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="n">record</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s2">&quot;genbank&quot;</span><span class="p">)</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s2">"genbank"</span><span class="p">)</span>
                 <span class="n">record</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">seq</span><span class="p">))</span>
@@ -297,7 +260,7 @@
 <div class="viewcode-block" id="Garc.calc_density">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_density">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calc_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates density values in a sliding window based on given positions.</span>
+<span class="w">        </span><span class="sd">"""Calculates density values in a sliding window based on given positions.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            positions (list of int or tuple): A list of x-coordinate values</span>
@@ -312,7 +275,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list: A list containing the calculated density values.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">densities</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">positions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
@@ -326,10 +289,8 @@
                     <span class="k">if</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">source</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                         <span class="n">amount</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="n">msg</span>
-                    <span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">"List elements should be int type or tuple consisting of two int values"</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">densities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
 
         <span class="n">source</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
@@ -342,24 +303,22 @@
                 <span class="k">if</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">source</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                     <span class="n">amount</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;List elements should be int type or tuple consisting of two int values&quot;</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="n">msg</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"List elements should be int type or tuple consisting of two int values"</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">densities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">window_size</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">densities</span></div>
 
 
 <div class="viewcode-block" id="Garc.calc_nnratio">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnratio">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the ratio of nucleotide base frequencies for two specified bases over multiple windows along a sequence.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">"G"</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">"C"</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculates the ratio of nucleotide base frequencies for two specified bases over multiple windows along a sequence.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n1 (str): The first nucleotide base to be compared.</span>
-<span class="sd">                Must be one of &quot;ATGC&quot;. Default is &quot;G&quot;.</span>
+<span class="sd">                Must be one of "ATGC". Default is "G".</span>
 <span class="sd">            n2 (str): The second nucleotide base to be compared.</span>
-<span class="sd">                Must be one of &quot;ATGC&quot;. Default is &quot;C&quot;.</span>
+<span class="sd">                Must be one of "ATGC". Default is "C".</span>
 <span class="sd">            window_size (int): Size of the sliding window.</span>
 <span class="sd">                Default is 1000.</span>
 <span class="sd">            step_size (int, optional): Size of the sliding step.</span>
@@ -370,9 +329,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: An array containing the computed ratios of n1 to n2 for each window.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;self.record is None, please specify record value&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"self.record is None, please specify record value"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -404,21 +363,21 @@
                 <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_amounts</span>
+        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_ratio"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_amounts</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_amounts</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Garc.calc_nnskew">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Garc.calc_nnskew">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnskew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_nnskew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="s2">"G"</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="s2">"C"</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculates n1,n2 skew (n1-n2)/(n1+n2) for multiple windows along</span>
 <span class="sd">        the sequence.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n1 (str, optional): The first of the two nucleotide bases to be compared.</span>
-<span class="sd">                The default is &quot;G&quot;.</span>
+<span class="sd">                The default is "G".</span>
 <span class="sd">            n2 (str, optional): The second of the two nucleotide bases to be compared.</span>
-<span class="sd">                The default is &quot;C&quot;.</span>
+<span class="sd">                The default is "C".</span>
 <span class="sd">            window_size (int, optional): Size of the sliding window. The default is 1000.</span>
 <span class="sd">            step_size (int, optional): Size of the sliding step. The default is window_size.</span>
 
@@ -427,10 +386,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: An array of the skews computed by this method.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># (G-C)/(G+C)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;self.record is None, please specify record value&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"self.record is None, please specify record value"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -459,7 +418,7 @@
             <span class="o">/</span> <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="n">seq</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span>
             <span class="o">*</span> <span class="mf">1.0</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_skew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_skews</span>
+        <span class="bp">self</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n1</span><span class="si">}{</span><span class="n">n2</span><span class="si">}</span><span class="s2">_skew"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_skews</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gc_skews</span><span class="p">)</span></div>
 </div>
 
@@ -468,50 +427,50 @@
 <div class="viewcode-block" id="Gcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gcircle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a</span>
+<span class="w">    </span><span class="sd">"""A Gcircle class object provides a circle whose diameter is 1000 (a.u.) as a</span>
 <span class="sd">    drawing space. Any graph (line plot, scatter plot, barplot, heatmap, and chordplot)</span>
 <span class="sd">    can be placed on the space by specifying the raxis_range (from 0 to 1000) and</span>
 <span class="sd">    the corresponding Garc class object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;#f44336&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#e91e63&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#9c27b0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#673ab7&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#3f51b5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#2196f3&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#00bcd4&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#009688&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#4caf50&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#8bc34a&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#cddc39&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffeb3b&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ffc107&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff9800&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#ff5722&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#795548&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#9e9e9e&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#607d8b&quot;</span><span class="p">,</span>
+        <span class="s2">"#f44336"</span><span class="p">,</span>
+        <span class="s2">"#e91e63"</span><span class="p">,</span>
+        <span class="s2">"#9c27b0"</span><span class="p">,</span>
+        <span class="s2">"#673ab7"</span><span class="p">,</span>
+        <span class="s2">"#3f51b5"</span><span class="p">,</span>
+        <span class="s2">"#2196f3"</span><span class="p">,</span>
+        <span class="s2">"#00bcd4"</span><span class="p">,</span>
+        <span class="s2">"#009688"</span><span class="p">,</span>
+        <span class="s2">"#4caf50"</span><span class="p">,</span>
+        <span class="s2">"#8bc34a"</span><span class="p">,</span>
+        <span class="s2">"#cddc39"</span><span class="p">,</span>
+        <span class="s2">"#ffeb3b"</span><span class="p">,</span>
+        <span class="s2">"#ffc107"</span><span class="p">,</span>
+        <span class="s2">"#ff9800"</span><span class="p">,</span>
+        <span class="s2">"#ff5722"</span><span class="p">,</span>
+        <span class="s2">"#795548"</span><span class="p">,</span>
+        <span class="s2">"#9e9e9e"</span><span class="p">,</span>
+        <span class="s2">"#607d8b"</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="c1"># colors = [&quot;#4E79A7&quot;,&quot;#F2BE2B&quot;,&quot;#E15759&quot;,&quot;#76B7B2&quot;,&quot;#59A14F&quot;,&quot;#EDC948&quot;,&quot;#B07AA1&quot;,&quot;#FF9DA7&quot;,&quot;#9C755F&quot;,&quot;#BAB0AC&quot;]</span>
+    <span class="c1"># colors = ["#4E79A7","#F2BE2B","#E15759","#76B7B2","#59A14F","#EDC948","#B07AA1","#FF9DA7","#9C755F","#BAB0AC"]</span>
     <span class="n">cmaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greens</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;garc_dict&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"garc_dict"</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span>
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Gcircle.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the circular map.</span>
+<span class="w">        </span><span class="sd">"""Initializes the circular map.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fig (matplotlib.pyplot.Figure, optional): A Matplotlib Figure object. If not provided, a new figure will be created.</span>
 <span class="sd">            figsize (tuple, optional): A tuple specifying the size of the figure for the circular map, e.g., (width, height).</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">figsize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -530,21 +489,21 @@
 <div class="viewcode-block" id="Gcircle.add_garc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.add_garc">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_garc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">garc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new Garc class object to the garc_dict.</span>
+<span class="w">        </span><span class="sd">"""Add a new Garc class object to the garc_dict.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            garc (Garc): The Garc class object to be added.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc</span><span class="o">.</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">garc</span></div>
 
 
 <div class="viewcode-block" id="Gcircle.set_garcs">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.set_garcs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_garcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize arc rectangles for Garc class objects in .garc_dict.</span>
+<span class="w">        </span><span class="sd">"""Visualize arc rectangles for Garc class objects in .garc_dict.</span>
 
 <span class="sd">        This method draws the arc rectangles of the Garc class objects in the drawing space.</span>
 <span class="sd">        After executing this method, no new Garc class objects can be added to garc_dict,</span>
@@ -561,12 +520,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">sum_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">"size"</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
         <span class="p">)</span>
         <span class="n">sum_interspace</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">"interspace"</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
         <span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">360</span>
         <span class="n">end</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span> <span class="o">-</span> <span class="n">sum_interspace</span>
@@ -578,7 +537,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
-            <span class="p">)</span>  <span class="c1"># self.theta_list[s:s+self._garc_dict[key][&quot;size&quot;]+1]</span>
+            <span class="p">)</span>  <span class="c1"># self.theta_list[s:s+self._garc_dict[key]["size"]+1]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">sum_interspace</span> <span class="o">+</span> <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_length</span><span class="p">)</span>
             <span class="p">)</span>
@@ -593,10 +552,10 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">"N"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;polar&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">"polar"</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
@@ -625,7 +584,7 @@
                 <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
                 <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-                <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+                <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span><span class="p">:</span>
                 <span class="n">rot</span> <span class="o">=</span> <span class="p">(</span>
@@ -640,8 +599,8 @@
                     <span class="n">height</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
                     <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span>
-                    <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                    <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
                     <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelsize</span><span class="p">,</span>
                 <span class="p">)</span></div>
 
@@ -652,11 +611,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">garc_id</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
-        <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;#30303000&quot;</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">facecolor</span><span class="o">=</span><span class="s2">"#30303000"</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the spines in the sector corresponding to the arc of</span>
+<span class="w">        </span><span class="sd">"""Sets the spines in the sector corresponding to the arc of</span>
 <span class="sd">        the Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -666,15 +625,15 @@
 <span class="sd">                Radial axis range where the line plot is drawn.</span>
 <span class="sd">                Defaults to (550, 600).</span>
 <span class="sd">            facecolor (str, optional):</span>
-<span class="sd">                Color for the spines area. Default is &quot;#30303000&quot;.</span>
+<span class="sd">                Color for the spines area. Default is "#30303000".</span>
 <span class="sd">            edgecolor (str, optional):</span>
-<span class="sd">                Edge color of the spines boundary area. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the spines boundary area. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width of the spines boundary area. Default is 0.75.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">width</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -690,7 +649,7 @@
             <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
             <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="p">)</span></div>
 
@@ -704,12 +663,12 @@
         <span class="n">positions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
         <span class="n">rlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">"solid"</span><span class="p">,</span>
         <span class="n">linecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot a line in the sector corresponding to the arc of the Garc class</span>
+<span class="w">        </span><span class="sd">"""Plot a line in the sector corresponding to the arc of the Garc class</span>
 <span class="sd">        object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -733,7 +692,7 @@
 <span class="sd">                is not given, the maximum value and the minimum value in data</span>
 <span class="sd">                will be set to top and bottom, respectively. The default is None.</span>
 <span class="sd">            linestyle (str, optional):</span>
-<span class="sd">                Line style. The default is &quot;solid&quot;. Possible line styles are documented at</span>
+<span class="sd">                Line style. The default is "solid". Possible line styles are documented at</span>
 <span class="sd">                https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html</span>
 <span class="sd">            linecolor (str or tuple, optional):</span>
 <span class="sd">                Color of the line plot. If linecolor value is not given, the color</span>
@@ -748,7 +707,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -822,11 +781,11 @@
         <span class="n">rlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">base_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill a specified area in the sector corresponding to the arc of the</span>
+<span class="w">        </span><span class="sd">"""Fill a specified area in the sector corresponding to the arc of the</span>
 <span class="sd">        Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -853,7 +812,7 @@
 <span class="sd">            facecolor (str or tuple, optional):</span>
 <span class="sd">                Color for filling. Default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the filled area. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the filled area. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width. The default is 0.0.</span>
 <span class="sd">            spine (bool, optional):</span>
@@ -863,7 +822,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None:</span>
 <span class="sd">                This function does not return any value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -942,14 +901,14 @@
         <span class="n">positions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
         <span class="n">rlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">markershape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">markershape</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
         <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draws a scatter plot on the sector corresponding to the arc of the Garc class object.</span>
+<span class="w">        </span><span class="sd">"""Draws a scatter plot on the sector corresponding to the arc of the Garc class object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            garc_id (str):</span>
@@ -968,7 +927,7 @@
 <span class="sd">                The top and bottom r limits in data coordinates. Default is</span>
 <span class="sd">                (min(data), max(data)) if not provided.</span>
 <span class="sd">            markershape (str, optional):</span>
-<span class="sd">                Marker shape. Default is &quot;o&quot;.</span>
+<span class="sd">                Marker shape. Default is "o".</span>
 <span class="sd">                Possible markers are listed at</span>
 <span class="sd">                https://matplotlib.org/stable/gallery/lines_bars_and_markers/marker_reference.html.</span>
 <span class="sd">            markersize (float or list of float, optional):</span>
@@ -977,7 +936,7 @@
 <span class="sd">                Face color(s) of the markers. If a list is provided, its length</span>
 <span class="sd">                should match the length of data. Default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the markers. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the markers. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width of the markers. Default is 0.0.</span>
 <span class="sd">            spine (bool, optional):</span>
@@ -986,7 +945,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1064,23 +1023,23 @@
         <span class="n">rlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">base_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draws a bar plot within the specified arc of the Garc class object.</span>
+<span class="w">        </span><span class="sd">"""Draws a bar plot within the specified arc of the Garc class object.</span>
 
 <span class="sd">        This method visualizes numerical data as bars in a sector corresponding</span>
 <span class="sd">        to the specified arc of a Garc class object identified by `garc_id`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            garc_id (str): The ID of the Garc class object. It should exist</span>
-<span class="sd">                in the Gcircle object&#39;s garc_dict.</span>
+<span class="sd">                in the Gcircle object's garc_dict.</span>
 <span class="sd">            data (list or numpy.ndarray): The numerical data used to generate</span>
 <span class="sd">                the plot.</span>
 <span class="sd">            positions (list or numpy.ndarray, optional): The x-coordinates of</span>
 <span class="sd">                the values in `data` when plotted in rectangular coordinates.</span>
-<span class="sd">                Each value should be within the range of the Garc class object&#39;s</span>
+<span class="sd">                Each value should be within the range of the Garc class object's</span>
 <span class="sd">                size identified by `garc_id`. If not provided, coordinates are</span>
 <span class="sd">                automatically generated based on the length of `data`.</span>
 <span class="sd">            width (float or list of float, optional): The width(s) of the bars.</span>
@@ -1097,7 +1056,7 @@
 <span class="sd">                of the bars. If a list is provided, its length must match that of `data`.</span>
 <span class="sd">                Default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional): Color of the edges of the bars,</span>
-<span class="sd">                defaulting to &quot;#303030&quot;.</span>
+<span class="sd">                defaulting to "#303030".</span>
 <span class="sd">            linewidth (float, optional): Width of the edge lines of the bars;</span>
 <span class="sd">                defaults to 0.0 (no lines).</span>
 <span class="sd">            spine (bool, optional): If True, displays the spines of the Garc</span>
@@ -1105,7 +1064,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None: This method does not return any value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
@@ -1203,7 +1162,7 @@
                     <span class="n">color</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
                     <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
                     <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-                    <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+                    <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
                 <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
@@ -1222,11 +1181,11 @@
         <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize magnitudes of data values by color scale in the sector</span>
+<span class="w">        </span><span class="sd">"""Visualize magnitudes of data values by color scale in the sector</span>
 <span class="sd">        corresponding to the arc of the Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -1246,13 +1205,13 @@
 <span class="sd">            raxis_range (tuple, optional):</span>
 <span class="sd">                Radial axis range where heatmap is drawn. Default is (550, 600).</span>
 <span class="sd">            cmap (str or matplotlib.colors.Colormap, optional):</span>
-<span class="sd">                The mapping from data values to color space. Default is &#39;Reds&#39;.</span>
+<span class="sd">                The mapping from data values to color space. Default is 'Reds'.</span>
 <span class="sd">            vmin (float, optional):</span>
 <span class="sd">                Minimum data threshold for color scale. Defaults to min(data).</span>
 <span class="sd">            vmax (float, optional):</span>
 <span class="sd">                Maximum data threshold for color scale. Defaults to max(data).</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the bars. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the bars. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width of the bars. Default is 0.0.</span>
 <span class="sd">            spine (bool, optional):</span>
@@ -1261,7 +1220,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
@@ -1310,7 +1269,7 @@
             <span class="n">color</span><span class="o">=</span><span class="n">facecolors</span><span class="p">,</span>
             <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
-            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
@@ -1326,11 +1285,11 @@
         <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">spine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize sequence features with bar plots in the sector corresponding</span>
+<span class="w">        </span><span class="sd">"""Visualize sequence features with bar plots in the sector corresponding</span>
 <span class="sd">        to the arc of the Garc class object specified by garc_id.</span>
 
 <span class="sd">        Args:</span>
@@ -1339,9 +1298,9 @@
 <span class="sd">            feature_type (str, optional):</span>
 <span class="sd">                Biological nature of the Bio.Seqfeature class objects.</span>
 <span class="sd">                Accepts any value, but GenBank format requires registering a biological</span>
-<span class="sd">                nature category for each sequence feature. If the value is &quot;all&quot;,</span>
+<span class="sd">                nature category for each sequence feature. If the value is "all",</span>
 <span class="sd">                all features in source will be drawn in the sector of the Garc</span>
-<span class="sd">                class object specified by garc_id. The default is &#39;all&#39;.</span>
+<span class="sd">                class object specified by garc_id. The default is 'all'.</span>
 <span class="sd">            source (list of Bio.SeqFeature, optional):</span>
 <span class="sd">                List of Bio.SeqFeature class objects. If not provided,</span>
 <span class="sd">                record.features of the Garc class object specified by garc_id is used.</span>
@@ -1353,7 +1312,7 @@
 <span class="sd">                Facecolor(s) of the bars. If a list is provided, its length</span>
 <span class="sd">                should match the data length. The default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the bars. The default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the bars. The default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width of the bars. The default is 0.0.</span>
 <span class="sd">            spine (bool, optional):</span>
@@ -1362,7 +1321,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1407,7 +1366,7 @@
             <span class="n">color</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
             <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
-            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">spine</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setspine</span><span class="p">(</span><span class="n">garc_id</span><span class="p">,</span> <span class="n">raxis_range</span><span class="p">)</span></div>
@@ -1423,17 +1382,17 @@
         <span class="n">edgecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize interrelationships between data.</span>
+<span class="w">        </span><span class="sd">"""Visualize interrelationships between data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            start_list (tuple): Start data location of linked data. The tuple is composed of four parameters:</span>
-<span class="sd">                - `arc_id` (str): The ID of the first Garc class object to be compared. The ID should be in `Gcircle` object&#39;s `garc_dict`.</span>
+<span class="sd">                - `arc_id` (str): The ID of the first Garc class object to be compared. The ID should be in `Gcircle` object's `garc_dict`.</span>
 <span class="sd">                - `edge_position1` (int): The minimal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.</span>
 <span class="sd">                - `edge_position2` (int): The maximal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.</span>
 <span class="sd">                - `raxis_position` (int): The base height for the drawing chord.</span>
 
 <span class="sd">            end_list (tuple): End data location of linked data. The tuple is composed of four parameters:</span>
-<span class="sd">                - `arc_id` (str): The ID of the second Garc class object to be compared. the ID should be in `Gcircle` object&#39;s `garc_dict`.</span>
+<span class="sd">                - `arc_id` (str): The ID of the second Garc class object to be compared. the ID should be in `Gcircle` object's `garc_dict`.</span>
 <span class="sd">                - `edge_position1` (int): The minimal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.</span>
 <span class="sd">                - `edge_position2` (int): The maximal x coordinate on the Garc class object when the plot is drawn on the rectangular coordinates.</span>
 <span class="sd">                - `raxis_position` (int): The base height for the drawing chord.</span>
@@ -1441,13 +1400,13 @@
 <span class="sd">            facecolor (str or tuple, optional):</span>
 <span class="sd">                Facecolor of the link. The default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the link. The default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the link. The default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width of the link. The default is 0.0.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">garc_id1</span> <span class="o">=</span> <span class="n">start_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">garc_id2</span> <span class="o">=</span> <span class="n">end_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">center</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1467,7 +1426,7 @@
         <span class="n">etop</span> <span class="o">=</span> <span class="n">end_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">facecolor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">facecolor</span> <span class="o">=</span> <span class="n">Gcircle</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycle</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">Gcircle</span><span class="o">.</span><span class="n">colors</span><span class="p">)]</span> <span class="o">+</span> <span class="s2">&quot;80&quot;</span>
+            <span class="n">facecolor</span> <span class="o">=</span> <span class="n">Gcircle</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycle</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">Gcircle</span><span class="o">.</span><span class="n">colors</span><span class="p">)]</span> <span class="o">+</span> <span class="s2">"80"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">color_cycle</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">z1</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">stop</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">send</span> <span class="o">-</span> <span class="n">sstart</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
@@ -1509,14 +1468,14 @@
         <span class="n">tickpositions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">ticklabels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tickwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">tickcolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">tickcolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">ticklabelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">ticklabelcolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">ticklabelcolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">ticklabelmargin</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">tickdirection</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span>
-        <span class="n">ticklabelorientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+        <span class="n">tickdirection</span><span class="o">=</span><span class="s2">"outer"</span><span class="p">,</span>
+        <span class="n">ticklabelorientation</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots ticks on the arc of the Garc class object.</span>
+<span class="w">        </span><span class="sd">"""Plots ticks on the arc of the Garc class object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            garc_id (str):</span>
@@ -1524,9 +1483,9 @@
 <span class="sd">                Gcircle object.garc_dict.</span>
 <span class="sd">            raxis_range (tuple of int, optional):</span>
 <span class="sd">                Radial axis range where tick plot is drawn.</span>
-<span class="sd">                If direction is &quot;inner&quot;, the default is</span>
+<span class="sd">                If direction is "inner", the default is</span>
 <span class="sd">                `(r0 - 0.5 * abs(r1 - r0), r0)`. If direction is</span>
-<span class="sd">                &quot;outer&quot;, the default is `(r1, r1 + 0.5 * abs(r1 - r0))`.</span>
+<span class="sd">                "outer", the default is `(r1, r1 + 0.5 * abs(r1 - r0))`.</span>
 <span class="sd">                `r0` and `r1` are defined as</span>
 <span class="sd">                `Garc_object.raxis_range[0], Garc_object.raxis_range[1]`.</span>
 <span class="sd">            tickinterval (int, optional):</span>
@@ -1542,23 +1501,23 @@
 <span class="sd">            tickwidth (float, optional):</span>
 <span class="sd">                The width of the ticks. The default value is 1.0.</span>
 <span class="sd">            tickcolor (str or float, optional):</span>
-<span class="sd">                The color of the ticks. The default value is &quot;#303030&quot;.</span>
+<span class="sd">                The color of the ticks. The default value is "#303030".</span>
 <span class="sd">            ticklabelsize (float, optional):</span>
 <span class="sd">                The font size of the tick labels. The default value is 10.</span>
 <span class="sd">            ticklabelcolor (str, optional):</span>
-<span class="sd">                The color of the tick labels. The default value is &quot;#303030&quot;.</span>
+<span class="sd">                The color of the tick labels. The default value is "#303030".</span>
 <span class="sd">            ticklabelmargin (float, optional):</span>
 <span class="sd">                The margin of the tick labels. The default value is 10.</span>
 <span class="sd">            tickdirection (str, optional):</span>
-<span class="sd">                The direction of the ticks (&quot;outer&quot; or &quot;inner&quot;).</span>
-<span class="sd">                The default value is &quot;outer&quot;.</span>
+<span class="sd">                The direction of the ticks ("outer" or "inner").</span>
+<span class="sd">                The default value is "outer".</span>
 <span class="sd">            ticklabelorientation (str, optional):</span>
-<span class="sd">                The orientation of the tick labels (&quot;vertical&quot; or &quot;horizontal&quot;).</span>
-<span class="sd">                The default value is &quot;vertical&quot;.</span>
+<span class="sd">                The orientation of the tick labels ("vertical" or "horizontal").</span>
+<span class="sd">                The default value is "vertical".</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span>
@@ -1567,9 +1526,9 @@
         <span class="k">if</span> <span class="n">raxis_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">r0</span><span class="p">,</span> <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">garc_id</span><span class="p">]</span><span class="o">.</span><span class="n">raxis_range</span>
             <span class="n">tickheight</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r1</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">&quot;outer&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">"outer"</span><span class="p">:</span>
                 <span class="n">raxis_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r1</span> <span class="o">+</span> <span class="n">tickheight</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">&quot;inner&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">"inner"</span><span class="p">:</span>
                 <span class="n">raxis_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">r0</span> <span class="o">-</span> <span class="n">tickheight</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tickpositions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1578,7 +1537,7 @@
         <span class="k">if</span> <span class="n">ticklabels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ticklabels</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">tickpositions</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">ticklabels</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">ticklabels</span> <span class="o">==</span> <span class="s2">"None"</span><span class="p">:</span>
             <span class="n">ticklabels</span> <span class="o">=</span> <span class="n">tickpositions</span>
 
         <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tickpositions</span><span class="p">,</span> <span class="n">ticklabels</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1595,14 +1554,14 @@
                     <span class="n">start</span> <span class="o">+</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos</span> <span class="o">/</span> <span class="n">size</span><span class="p">)),</span>
                     <span class="n">ticklabelorientation</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="n">ticklabelorientation</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ticklabelorientation</span> <span class="o">==</span> <span class="s2">"horizontal"</span><span class="p">:</span>
                     <span class="n">label_width</span> <span class="o">=</span> <span class="n">ticklabelsize</span> <span class="o">*</span> <span class="mi">2</span>
-                <span class="k">elif</span> <span class="n">ticklabelorientation</span> <span class="o">==</span> <span class="s2">&quot;vertical&quot;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">ticklabelorientation</span> <span class="o">==</span> <span class="s2">"vertical"</span><span class="p">:</span>
                     <span class="n">label_width</span> <span class="o">=</span> <span class="n">ticklabelsize</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
 
-                <span class="k">if</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">&quot;outer&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">"outer"</span><span class="p">:</span>
                     <span class="n">y_pos</span> <span class="o">=</span> <span class="n">raxis_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">label_width</span> <span class="o">+</span> <span class="n">ticklabelmargin</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">&quot;inner&quot;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">tickdirection</span> <span class="o">==</span> <span class="s2">"inner"</span><span class="p">:</span>
                     <span class="n">y_pos</span> <span class="o">=</span> <span class="n">raxis_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">label_width</span> <span class="o">+</span> <span class="n">ticklabelmargin</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
@@ -1610,36 +1569,36 @@
                     <span class="n">y_pos</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
                     <span class="n">rotation</span><span class="o">=</span><span class="n">ticklabel_rot</span><span class="p">,</span>
-                    <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                    <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
                     <span class="n">fontsize</span><span class="o">=</span><span class="n">ticklabelsize</span><span class="p">,</span>
                     <span class="n">color</span><span class="o">=</span><span class="n">ticklabelcolor</span><span class="p">,</span>
                 <span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the rotation angle for a label based on its position and orientation.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculates the rotation angle for a label based on its position and orientation.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            position (float):</span>
 <span class="sd">                The radian position of the label, which should be in the range</span>
 <span class="sd">                (-2 * np.pi &lt;= position &lt;= 2 * np.pi).</span>
 <span class="sd">            orientation (str):</span>
-<span class="sd">                The orientation of the label, either &quot;vertical&quot; or &quot;horizontal&quot;.</span>
-<span class="sd">                Defaults to &quot;horizontal&quot;.</span>
+<span class="sd">                The orientation of the label, either "vertical" or "horizontal".</span>
+<span class="sd">                Defaults to "horizontal".</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float:</span>
 <span class="sd">                The calculated rotation angle for the label in degrees.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">position_degree</span> <span class="o">=</span> <span class="n">position</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
         <span class="p">)</span>  <span class="c1"># Convert radian to degree (-360 &lt;= position_degree &lt;= 360)</span>
-        <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">"horizontal"</span><span class="p">:</span>
             <span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">position_degree</span>
             <span class="k">if</span> <span class="o">-</span><span class="mi">270</span> <span class="o">&lt;=</span> <span class="n">position_degree</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">90</span> <span class="ow">or</span> <span class="mi">90</span> <span class="o">&lt;=</span> <span class="n">position_degree</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">:</span>
                 <span class="n">rotation</span> <span class="o">+=</span> <span class="mi">180</span>
-        <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">&quot;vertical&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s2">"vertical"</span><span class="p">:</span>
             <span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">position_degree</span>
             <span class="k">if</span> <span class="o">-</span><span class="mi">180</span> <span class="o">&lt;=</span> <span class="n">position_degree</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">180</span> <span class="o">&lt;=</span> <span class="n">position_degree</span> <span class="o">&lt;</span> <span class="mi">360</span><span class="p">:</span>
                 <span class="n">rotation</span> <span class="o">+=</span> <span class="mi">180</span>
@@ -1647,27 +1606,27 @@
 
 <div class="viewcode-block" id="Gcircle.save">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Gcircle.save">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the figure object of the Gcircle class to a file.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">"test"</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"pdf"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Saves the figure object of the Gcircle class to a file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file_name (str, optional):</span>
-<span class="sd">                The name of the file to save the figure. Defaults to &quot;test&quot;.</span>
+<span class="sd">                The name of the file to save the figure. Defaults to "test".</span>
 <span class="sd">            format (str, optional):</span>
-<span class="sd">                The file format for the saved figure. Defaults to &quot;pdf&quot;.</span>
+<span class="sd">                The file format for the saved figure. Defaults to "pdf".</span>
 <span class="sd">            dpi (int, optional):</span>
 <span class="sd">                The resolution of the saved figure in dots per inch. Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;pdf&quot;</span> <span class="ow">and</span> <span class="n">dpi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"pdf"</span> <span class="ow">and</span> <span class="n">dpi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">".pdf"</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dpi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">dpi</span> <span class="o">=</span> <span class="mi">600</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="nb">format</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span></div>
 </div>
 
@@ -1682,18 +1641,18 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arc_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;newick&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">"newick"</span><span class="p">,</span>
         <span class="n">interspace</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="n">raxis_range</span><span class="o">=</span><span class="p">(</span><span class="mi">900</span><span class="p">,</span> <span class="mi">950</span><span class="p">),</span>
         <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">labelposition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">label_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes a Garc class object.</span>
+<span class="w">        </span><span class="sd">"""Initializes a Garc class object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            arc_id (str, optional):</span>
@@ -1702,7 +1661,7 @@
 <span class="sd">            tree (str):</span>
 <span class="sd">                File name of phylogenetic tree.</span>
 <span class="sd">            format (str):</span>
-<span class="sd">                Format of the phylogenetic tree. Default is &quot;newick&quot;.</span>
+<span class="sd">                Format of the phylogenetic tree. Default is "newick".</span>
 <span class="sd">            interspace (float, optional):</span>
 <span class="sd">                Distance angle (degrees) to the adjacent arc section in clockwise</span>
 <span class="sd">                sequence. The actual interspace size is determined by the ratio</span>
@@ -1713,7 +1672,7 @@
 <span class="sd">            facecolor (str or tuple, optional):</span>
 <span class="sd">                Color for filling. Default is None.</span>
 <span class="sd">            edgecolor (str or tuple, optional):</span>
-<span class="sd">                Edge color of the filled area. Default is &quot;#303030&quot;.</span>
+<span class="sd">                Edge color of the filled area. Default is "#303030".</span>
 <span class="sd">            linewidth (float, optional):</span>
 <span class="sd">                Edge line width. Default is 0.</span>
 <span class="sd">            label (str, optional):</span>
@@ -1728,7 +1687,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">Phylo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">get_terminals</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1843,16 +1802,16 @@
             <span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span>
 
         <span class="k">if</span> <span class="n">linecolor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">linecolor</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+            <span class="n">linecolor</span> <span class="o">=</span> <span class="s2">"k"</span>
 
         <span class="k">if</span> <span class="n">cladevisual_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cladevisual_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tree_rlim</span> <span class="o">=</span> <span class="n">rlim</span>
         <span class="k">if</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">=</span> <span class="s2">&quot;inner&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">=</span> <span class="s2">"inner"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">=</span> <span class="s2">&quot;outer&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">=</span> <span class="s2">"outer"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_convert</span><span class="p">(</span><span class="n">thetalim</span><span class="p">,</span> <span class="n">rlim</span><span class="p">)</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1862,14 +1821,14 @@
         <span class="k">for</span> <span class="n">clade</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">clade</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cladevisual_dict</span><span class="p">:</span>
                 <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
-            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;edgecolor&quot;</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
-            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;linewidth&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
-            <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;color&quot;</span><span class="p">])</span>
-            <span class="n">ecs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;edgecolor&quot;</span><span class="p">])</span>
-            <span class="n">lws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;linewidth&quot;</span><span class="p">])</span>
+            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"k"</span><span class="p">)</span>
+            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"edgecolor"</span><span class="p">,</span> <span class="s2">"k"</span><span class="p">)</span>
+            <span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"linewidth"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"size"</span><span class="p">])</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"color"</span><span class="p">])</span>
+            <span class="n">ecs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"edgecolor"</span><span class="p">])</span>
+            <span class="n">lws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cladevisual_dict</span><span class="p">[</span><span class="n">clade</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"linewidth"</span><span class="p">])</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span><span class="p">[</span><span class="n">clade</span><span class="p">]</span> <span class="k">for</span> <span class="n">clade</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_theta_dict</span><span class="p">],</span>
@@ -1903,21 +1862,21 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_plotted</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please run `plot_tree` before running `plot_highlight`&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Please run `plot_tree` before running `plot_highlight`"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">clade_names</span> <span class="ow">in</span> <span class="n">highlight_dict</span><span class="p">:</span>
-            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;#000000&quot;</span><span class="p">)</span>
-            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
-            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelsize</span><span class="p">)</span>
+            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"color"</span><span class="p">,</span> <span class="s2">"#000000"</span><span class="p">)</span>
+            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"fontsize"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelsize</span><span class="p">)</span>
 
-            <span class="n">color</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;color&quot;</span><span class="p">]</span>
-            <span class="n">alpha</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-            <span class="n">fontsize</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;fontsize&quot;</span><span class="p">]</span>
-            <span class="n">yloc</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"color"</span><span class="p">]</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"alpha"</span><span class="p">]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"label"</span><span class="p">]</span>
+            <span class="n">fontsize</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"fontsize"</span><span class="p">]</span>
+            <span class="n">yloc</span> <span class="o">=</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"y"</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">clade_names</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
                 <span class="n">ca</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">common_ancestor</span><span class="p">(</span>
@@ -1932,7 +1891,7 @@
             <span class="n">minc_theta</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">c_thetas</span><span class="p">)</span>
             <span class="n">maxc_theta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">c_thetas</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">==</span> <span class="s2">&quot;inner&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tree_direction</span> <span class="o">==</span> <span class="s2">"inner"</span><span class="p">:</span>
                 <span class="n">c_rs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_r_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clades</span><span class="p">]</span>
                 <span class="n">maxc_r</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">c_rs</span><span class="p">)</span>
                 <span class="n">width</span> <span class="o">=</span> <span class="n">minc_theta</span> <span class="o">-</span> <span class="n">maxc_theta</span>
@@ -1947,7 +1906,7 @@
                     <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="n">zorder</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="n">maxc_r</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"label"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rot</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
@@ -1962,8 +1921,8 @@
                         <span class="n">yloc</span><span class="p">,</span>
                         <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
                         <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span>
-                        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                        <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                        <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
                         <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="n">maxc_r</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -1983,7 +1942,7 @@
                     <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="n">zorder</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">minc_r</span><span class="p">),</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">highlight_dict</span><span class="p">[</span><span class="n">clade_names</span><span class="p">][</span><span class="s2">"label"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rot</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">*</span> <span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
@@ -1998,8 +1957,8 @@
                         <span class="n">yloc</span><span class="p">,</span>
                         <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
                         <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span>
-                        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                        <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                        <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
                         <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">minc_r</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span>
                     <span class="p">)</span></div>
@@ -2009,37 +1968,37 @@
 <div class="viewcode-block" id="Tcircle">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tcircle</span><span class="p">(</span><span class="n">Gcircle</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tcircle class is the subclass of Gcircle. All methods implemented in the</span>
+<span class="w">    </span><span class="sd">"""Tcircle class is the subclass of Gcircle. All methods implemented in the</span>
 <span class="sd">    Gcircle class also can be used. Then, the two additional methods set_tarc,</span>
 <span class="sd">    plot_tree and plot_highlight is provided in the Tcircle class.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="Tcircle.__init__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the circular mapping object.</span>
+<span class="w">        </span><span class="sd">"""Initializes the circular mapping object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fig (matplotlib.pyplot.figure, optional):</span>
 <span class="sd">                Matplotlib Figure class object to be used.</span>
 <span class="sd">            figsize (tuple, optional):</span>
 <span class="sd">                Size of the figure for the circular map.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Tcircle.__getattr__">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.__getattr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves attributes of the object.</span>
+<span class="w">        </span><span class="sd">"""Retrieves attributes of the object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): The name of the attribute to retrieve.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: The corresponding _garc_dict if name is &#39;tarc_dict&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;tarc_dict&quot;</span><span class="p">:</span>
+<span class="sd">            dict: The corresponding _garc_dict if name is 'tarc_dict'.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"tarc_dict"</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -2047,7 +2006,7 @@
 <div class="viewcode-block" id="Tcircle.add_tarc">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.add_tarc">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_tarc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a new Tarc or Garc object to the tarc_dict.</span>
+<span class="w">        </span><span class="sd">"""Adds a new Tarc or Garc object to the tarc_dict.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tarc (Tarc or Garc):</span>
@@ -2055,14 +2014,14 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc</span><span class="o">.</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">tarc</span></div>
 
 
 <div class="viewcode-block" id="Tcircle.set_tarcs">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.set_tarcs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_tarcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">360</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualizes the arc rectangles of Tarc objects in the .garc_dict.</span>
+<span class="w">        </span><span class="sd">"""Visualizes the arc rectangles of Tarc objects in the .garc_dict.</span>
 
 <span class="sd">        After execution, no new Tarc objects can be added to garc_dict,</span>
 <span class="sd">        and a matplotlib.pyplot.figure will be created in the Tcircle object.</span>
@@ -2075,12 +2034,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">sum_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">"size"</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
         <span class="p">)</span>
         <span class="n">sum_interspace</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;interspace&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">"interspace"</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
         <span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">360</span>
         <span class="n">end</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span> <span class="o">-</span> <span class="n">sum_interspace</span>
@@ -2105,10 +2064,10 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">"N"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;polar&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">"polar"</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span>
@@ -2142,7 +2101,7 @@
                     <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
                     <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
                     <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-                    <span class="n">align</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span>
+                    <span class="n">align</span><span class="o">=</span><span class="s2">"edge"</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label_visible</span><span class="p">:</span>
@@ -2158,8 +2117,8 @@
                     <span class="n">height</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
                     <span class="n">rotation</span><span class="o">=</span><span class="n">rot</span><span class="p">,</span>
-                    <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                    <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
                     <span class="n">fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labelsize</span><span class="p">,</span>
                 <span class="p">)</span></div>
 
@@ -2172,10 +2131,10 @@
         <span class="n">rlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span><span class="p">),</span>
         <span class="n">cladevisual_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">linecolor</span><span class="o">=</span><span class="s2">&quot;#303030&quot;</span><span class="p">,</span>
+        <span class="n">linecolor</span><span class="o">=</span><span class="s2">"#303030"</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw a circular phylogenetic tree.</span>
+<span class="w">        </span><span class="sd">"""Draw a circular phylogenetic tree.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tarc_id (str):</span>
@@ -2191,9 +2150,9 @@
 
 <span class="sd">                - `size` (float): Size of the dot. Defaults to 5.</span>
 <span class="sd">                - `color` (str or float): Face color of the dot.</span>
-<span class="sd">                  Defaults to &quot;#303030&quot;.</span>
+<span class="sd">                  Defaults to "#303030".</span>
 <span class="sd">                - `edgecolor` (str or float): Edge line color of the dot.</span>
-<span class="sd">                  Defaults to &quot;#303030&quot;.</span>
+<span class="sd">                  Defaults to "#303030".</span>
 <span class="sd">                - `linewidth` (float): Edge line width of the dot.</span>
 <span class="sd">                  Defaults to 0.5.</span>
 
@@ -2203,7 +2162,7 @@
 <span class="sd">                The structure includes:</span>
 
 <span class="sd">                - `color` (str): Color for highlighting clades.</span>
-<span class="sd">                  Defaults to &quot;#000000&quot;.</span>
+<span class="sd">                  Defaults to "#000000".</span>
 <span class="sd">                - `alpha` (float): Transparency level for highlights.</span>
 <span class="sd">                  Defaults to 0.25.</span>
 <span class="sd">                - `label` (str): Label for the highlight. Defaults to None.</span>
@@ -2213,13 +2172,13 @@
 <span class="sd">                  Defaults to the bottom edge of the highlight.</span>
 
 <span class="sd">            linecolor (str or tuple, optional):</span>
-<span class="sd">                Color of the tree line. Defaults to &quot;#303030&quot;.</span>
+<span class="sd">                Color of the tree line. Defaults to "#303030".</span>
 <span class="sd">            linewidth (float):</span>
 <span class="sd">                Line width of the tree. Defaults to 0.5.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
@@ -2244,11 +2203,11 @@
 <div class="viewcode-block" id="Tcircle.plot_highlight">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.Tcircle.plot_highlight">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tarc_id</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add highlight for a specific clade under the given internal clade.</span>
+<span class="w">        </span><span class="sd">"""Add highlight for a specific clade under the given internal clade.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tarc_id (str):</span>
-<span class="sd">                ID of the Tarc class object. The ID should be in Tcircle object&#39;s</span>
+<span class="sd">                ID of the Tarc class object. The ID should be in Tcircle object's</span>
 <span class="sd">                tarc_dict.</span>
 <span class="sd">            highlight_dict (dict, optional):</span>
 <span class="sd">                A dictionary composed of pairs of internal clade name and a sub-dict.</span>
@@ -2256,7 +2215,7 @@
 <span class="sd">                A sub-dict is composed of the following key-value pairs:</span>
 
 <span class="sd">                - color (str):</span>
-<span class="sd">                    Color of the highlight for clades. The default is &quot;#000000&quot;.</span>
+<span class="sd">                    Color of the highlight for clades. The default is "#000000".</span>
 <span class="sd">                - alpha (float):</span>
 <span class="sd">                    Alpha of the highlight for clades. The default is 0.25.</span>
 <span class="sd">                - label (str, optional):</span>
@@ -2268,7 +2227,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_garc_dict</span><span class="p">[</span><span class="n">tarc_id</span><span class="p">]</span><span class="o">.</span><span class="n">_plot_highlight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="n">highlight_dict</span><span class="o">=</span><span class="n">highlight_dict</span><span class="p">)</span></div>
 </div>
 
@@ -2277,35 +2236,35 @@
 <div class="viewcode-block" id="table_hg38_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_chromosome_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_chromosome_length</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;hg38_chromosome_length.csv&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">"hg38_chromosome_length.csv"</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="table_hg38_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_hg38_cytoband">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_hg38_cytoband</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;hg38_cytoBand.csv&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">"hg38_cytoBand.csv"</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="table_mm10_chromosome_length">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_chromosome_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_chromosome_length</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;mm10_chromosome_length.csv&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">"mm10_chromosome_length.csv"</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="table_mm10_cytoband">
 <a class="viewcode-back" href="../../../bioat.lib.html#bioat.lib.libcircos.table_mm10_cytoband">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">table_mm10_cytoband</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">&quot;mm10_cytoBand.csv&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATAPATH</span><span class="p">,</span> <span class="s2">"mm10_cytoBand.csv"</span><span class="p">))</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    tree = next(Phylo.parse(&quot;../tutorial/circos/hmptree.xml&quot;, &quot;phyloxml&quot;))</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    tree = next(Phylo.parse("../tutorial/circos/hmptree.xml", "phyloxml"))</span>
 <span class="sd">    col_positions = get_col_positions(tree)</span>
 <span class="sd">    row_positions = get_row_positions(tree)</span>
 
@@ -2315,40 +2274,76 @@
 <span class="sd">    ax  = fig.add_axes([0, 0, 1, 1], polar=True)</span>
 <span class="sd">    theta_dict, r_dict = convert(tree, col_positions, row_positions, (0, np.pi), (0,10))</span>
 
-<span class="sd">    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color=&quot;k&quot;)</span>
+<span class="sd">    #ax.scatter(theta_dict.values(), [r_dict[clade] for clade in theta_dict], s=1, color="k")</span>
 
 <span class="sd">    plot_lines(ax, theta_dict, r_dict)</span>
 
 <span class="sd">    ax.set_ylim([0,10])</span>
-<span class="sd">    fig.savefig(&quot;test.pdf&quot;, bbox_inches=&quot;tight&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    fig.savefig("test.pdf", bbox_inches="tight")</span>
+<span class="sd">    """</span>
 </pre></div>
 
-           </div>
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright .</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">bioat</a></h1>
 
-</body>
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
 </html>
