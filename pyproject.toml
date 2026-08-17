@@ -4,7 +4,7 @@
 # ref https://docs.astral.sh/uv/concepts/projects/config/
 [project]
 name = "bioat"
-version = "0.17.5"
+version = "0.17.5.post1"
 description = "bioat, a python package & command line toolkit for Bioinformatics and data science!"
 license = "Apache-2.0"
 license-files = ["LICENSE"]

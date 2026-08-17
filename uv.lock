@@ -88,7 +88,7 @@ wheels = [
 
 [[package]]
 name = "bioat"
-version = "0.17.5"
+version = "0.17.5.post1"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
