@@ -65,7 +65,7 @@ documentation = "https://hermanzhaozzzz.github.io/bioat/"
 bioat = "bioat.__main__:main"
 
 [build-system]
-requires = ["uv_build>=0.12.3,<0.13.0"]
+requires = ["uv-build>=0.12.3,<0.13.0"]
 build-backend = "uv_build"
 
 # ------------------------------------------------------------------->>>>>>>>>>
